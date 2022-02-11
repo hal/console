@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.ballroom.listview;
 
@@ -19,8 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import elemental2.dom.HTMLDivElement;
-import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
@@ -29,14 +27,17 @@ import org.jboss.hal.ballroom.dataprovider.Display;
 import org.jboss.hal.ballroom.dataprovider.PageInfo;
 import org.jboss.hal.ballroom.dataprovider.SelectionInfo;
 
+import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLElement;
+
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.hal.resources.CSS.active;
 import static org.jboss.hal.resources.CSS.listPf;
 import static org.jboss.hal.resources.CSS.listPfStacked;
 
 /**
- * PatternFly list view. The list view does not manage data by itself. Instead you have to use a {@link DataProvider}
- * and add the list view as a display to the data provider:
+ * PatternFly list view. The list view does not manage data by itself. Instead you have to use a {@link DataProvider} and add
+ * the list view as a display to the data provider:
  *
  * <pre>
  * DataProvider dataProvider = ...;
@@ -46,7 +47,8 @@ import static org.jboss.hal.resources.CSS.listPfStacked;
  * dataProvider.setItems(...);
  * </pre>
  *
- * @see <a href="https://www.patternfly.org/pattern-library/content-views/list-view/">https://www.patternfly.org/pattern-library/content-views/list-view/</a>
+ * @see <a href=
+ *      "https://www.patternfly.org/pattern-library/content-views/list-view/">https://www.patternfly.org/pattern-library/content-views/list-view/</a>
  */
 public class ListView<T> implements Display<T>, IsElement<HTMLElement> {
 
@@ -59,7 +61,7 @@ public class ListView<T> implements Display<T>, IsElement<HTMLElement> {
 
     public ListView(String id, DataProvider<T> dataProvider, ItemRenderer<T> itemRenderer,
             boolean stacked, boolean multiSelect) {
-        this(id, dataProvider, itemRenderer, stacked, multiSelect, new String[]{"60%", "40%"});
+        this(id, dataProvider, itemRenderer, stacked, multiSelect, new String[] { "60%", "40%" });
     }
 
     @SuppressWarnings("WeakerAccess")

@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.infinispan;
 
@@ -27,15 +27,17 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.THREAD_POOL;
 enum ThreadPool {
 
     ASYNC_OPERATIONS(Ids.CACHE_CONTAINER_THREAD_POOL_ASYNC_OPERATIONS, Names.ASYNC_OPERATIONS,
-            ModelDescriptionConstants.ASYNC_OPERATIONS),
-    EXPIRATION(Ids.CACHE_CONTAINER_THREAD_POOL_EXPIRATION, Names.EXPIRATION, ModelDescriptionConstants.EXPIRATION),
-    LISTENER(Ids.CACHE_CONTAINER_THREAD_POOL_LISTENER, Names.LISTENER, ModelDescriptionConstants.LISTENER),
-    PERSISTENCE(Ids.CACHE_CONTAINER_THREAD_POOL_PERSISTENCE, Names.PERSISTENCE, ModelDescriptionConstants.PERSISTENCE),
-    REMOTE_COMMAND(Ids.CACHE_CONTAINER_THREAD_POOL_REMOTE_COMMAND, Names.REMOTE_COMMAND,
-            ModelDescriptionConstants.REMOTE_COMMAND),
-    STATE_TRANSFER(Ids.CACHE_CONTAINER_THREAD_POOL_STATE_TRANSFER, Names.STATE_TRANSFER,
-            ModelDescriptionConstants.STATE_TRANSFER),
-    TRANSPORT(Ids.CACHE_CONTAINER_THREAD_POOL_TRANSPORT, Names.TRANSPORT, ModelDescriptionConstants.TRANSPORT),;
+            ModelDescriptionConstants.ASYNC_OPERATIONS), EXPIRATION(Ids.CACHE_CONTAINER_THREAD_POOL_EXPIRATION,
+                    Names.EXPIRATION, ModelDescriptionConstants.EXPIRATION), LISTENER(Ids.CACHE_CONTAINER_THREAD_POOL_LISTENER,
+                            Names.LISTENER,
+                            ModelDescriptionConstants.LISTENER), PERSISTENCE(Ids.CACHE_CONTAINER_THREAD_POOL_PERSISTENCE,
+                                    Names.PERSISTENCE, ModelDescriptionConstants.PERSISTENCE), REMOTE_COMMAND(
+                                            Ids.CACHE_CONTAINER_THREAD_POOL_REMOTE_COMMAND, Names.REMOTE_COMMAND,
+                                            ModelDescriptionConstants.REMOTE_COMMAND), STATE_TRANSFER(
+                                                    Ids.CACHE_CONTAINER_THREAD_POOL_STATE_TRANSFER, Names.STATE_TRANSFER,
+                                                    ModelDescriptionConstants.STATE_TRANSFER), TRANSPORT(
+                                                            Ids.CACHE_CONTAINER_THREAD_POOL_TRANSPORT, Names.TRANSPORT,
+                                                            ModelDescriptionConstants.TRANSPORT),;
 
     final String baseId;
     final String type;

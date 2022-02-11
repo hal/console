@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.modcluster;
 
@@ -19,8 +19,6 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import elemental2.dom.Element;
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
@@ -36,6 +34,9 @@ import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
+
+import elemental2.dom.Element;
+import elemental2.dom.HTMLElement;
 
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.hal.client.configuration.subsystem.modcluster.AddressTemplates.LOAD_PROVIDER_DYNAMIC_TEMPLATE;
@@ -64,7 +65,6 @@ public abstract class ModclusterView extends MbuiViewImpl<ModclusterPresenter> i
             mbuiContext.resources().messages().loadProviderDynamicWarning());
     private Alert alertLoadProviderDynamic2 = new Alert(Icons.WARNING,
             mbuiContext.resources().messages().loadProviderDynamicWarning());
-
 
     ModclusterView(MbuiContext mbuiContext) {
         super(mbuiContext);
@@ -136,8 +136,6 @@ public abstract class ModclusterView extends MbuiViewImpl<ModclusterPresenter> i
         navigation.insertPrimary("load-provider-simple-item", "load-provider-dynamic-item", LOAD_PROVIDER_SIMPLE,
                 "fa fa-exchange", loadProviderSimpleElement);
         registerAttachable(loadProviderSimpleForm);
-
-
 
     }
 

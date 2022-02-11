@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.jmx;
 
@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.Sets;
 import org.jboss.hal.core.OperationFactory;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.ModelNode;
@@ -32,6 +31,9 @@ import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
+
+import com.google.common.collect.Sets;
+
 import rx.Completable;
 
 import static org.jboss.hal.client.configuration.subsystem.jmx.AddressTemplates.AUDIT_LOG_HANDLER_TEMPLATE;
@@ -66,7 +68,6 @@ class HandlerTasks {
         }
     }
 
-
     static class ReadHandlers implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
@@ -81,8 +82,8 @@ class HandlerTasks {
         public Completable call(FlowContext context) {
             Operation operation = new Operation.Builder(AUDIT_LOG_TEMPLATE.resolve(statementContext),
                     READ_CHILDREN_NAMES_OPERATION)
-                    .param(CHILD_TYPE, HANDLER)
-                    .build();
+                            .param(CHILD_TYPE, HANDLER)
+                            .build();
             return dispatcher.execute(operation)
                     .doOnSuccess(result -> context.push(result.asList().stream()
                             .map(ModelNode::asString)
@@ -91,7 +92,6 @@ class HandlerTasks {
                     .toCompletable();
         }
     }
-
 
     static class MergeHandler implements Task<FlowContext> {
 
@@ -114,13 +114,11 @@ class HandlerTasks {
             List<Operation> operations = new ArrayList<>();
             add.stream()
                     .map(handler -> new Operation.Builder(AUDIT_LOG_HANDLER_TEMPLATE.resolve(statementContext, handler),
-                            ADD
-                    ).build())
+                            ADD).build())
                     .forEach(operations::add);
             remove.stream()
                     .map(handler -> new Operation.Builder(AUDIT_LOG_HANDLER_TEMPLATE.resolve(statementContext, handler),
-                            REMOVE
-                    ).build())
+                            REMOVE).build())
                     .forEach(operations::add);
             Composite composite = new Composite(operations);
             return composite.isEmpty()

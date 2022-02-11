@@ -1,33 +1,35 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.core.modelbrowser;
 
 import java.util.List;
 
-import com.google.common.collect.Ordering;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import elemental2.dom.HTMLElement;
-import elemental2.dom.HTMLTableRowElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Resources;
+
+import com.google.common.collect.Ordering;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLTableRowElement;
 
 import static org.jboss.gwt.elemento.core.Elements.li;
 import static org.jboss.gwt.elemento.core.Elements.table;
@@ -74,11 +76,11 @@ class OperationsTable implements IsElement {
 
             // operation name & description
             SafeHtmlBuilder html = new SafeHtmlBuilder();
-            html.appendHtmlConstant("<strong>") //NON-NLS
+            html.appendHtmlConstant("<strong>") // NON-NLS
                     .appendEscaped(property.getName())
-                    .appendHtmlConstant("</strong>"); //NON-NLS
+                    .appendHtmlConstant("</strong>"); // NON-NLS
             if (description != null) {
-                html.appendHtmlConstant("<br/>").appendEscaped(description); //NON-NLS
+                html.appendHtmlConstant("<br/>").appendEscaped(description); // NON-NLS
             }
             builder.add(td().innerHtml(html.toSafeHtml()));
 
@@ -118,7 +120,7 @@ class OperationsTable implements IsElement {
 
         SafeHtmlBuilder html = new SafeHtmlBuilder();
         if (name != null) {
-            //noinspection HardCodedStringLiteral
+            // noinspection HardCodedStringLiteral
             html.appendHtmlConstant("<code>").appendEscaped(name).appendHtmlConstant("</code>").appendEscaped(": ");
         }
         html.appendEscaped(Types.formatType(parameter));
@@ -126,7 +128,7 @@ class OperationsTable implements IsElement {
             html.appendHtmlConstant(NBSP).append(resources.messages().requiredMarker());
         }
         if (description != null) {
-            html.appendHtmlConstant("<br/>").appendEscaped(description); //NON-NLS
+            html.appendHtmlConstant("<br/>").appendEscaped(description); // NON-NLS
         }
         element.innerHTML = html.toSafeHtml().asString();
     }

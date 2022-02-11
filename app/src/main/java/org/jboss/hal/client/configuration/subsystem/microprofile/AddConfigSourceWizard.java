@@ -1,25 +1,23 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.microprofile;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import elemental2.dom.HTMLDivElement;
-import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.Form;
@@ -40,6 +38,9 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+
+import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLElement;
 
 import static java.util.Arrays.asList;
 import static org.jboss.gwt.elemento.core.Elements.div;
@@ -144,9 +145,7 @@ class AddConfigSourceWizard {
                 ctx -> presenter.reload());
     }
 
-
     // ------------------------------------------------------ context and state
-
 
     static class Context {
 
@@ -155,14 +154,11 @@ class AddConfigSourceWizard {
         ModelNode modelNode = new ModelNode();
     }
 
-
     enum State {
         SOURCE, INPUT, ORDINAL
     }
 
-
     // ------------------------------------------------------ steps
-
 
     class SourceStep extends WizardStep<Context, State> {
 
@@ -178,7 +174,7 @@ class AddConfigSourceWizard {
             Metadata emptyMetadata = Metadata.empty();
             nameItem = new NameItem();
             sourceItem = new RadioItem(SOURCE, resources.constants().source(),
-                    asList(new String[]{CLASS, DIR, PROPERTIES}), false);
+                    asList(new String[] { CLASS, DIR, PROPERTIES }), false);
             sourceItem.setName(SOURCE);
             form = new ModelNodeForm.Builder<>(id, emptyMetadata)
                     .unboundFormItem(nameItem, 0)
@@ -228,7 +224,6 @@ class AddConfigSourceWizard {
             return true;
         }
     }
-
 
     class InputStep extends WizardStep<Context, State> {
 
@@ -296,8 +291,8 @@ class AddConfigSourceWizard {
                     .onSave((f, changedValues) -> {
                         Map<String, String> properties = (Map<String, String>) changedValues.get(PROPERTIES);
                         if (properties != null) {
-                            properties.forEach((key, value) ->
-                                    wizard.getContext().modelNode.get(PROPERTIES).get(key).set(value));
+                            properties
+                                    .forEach((key, value) -> wizard.getContext().modelNode.get(PROPERTIES).get(key).set(value));
                         }
                     })
                     .build();
@@ -347,7 +342,6 @@ class AddConfigSourceWizard {
             return true;
         }
     }
-
 
     class OrdinalStep extends WizardStep<Context, State> {
 

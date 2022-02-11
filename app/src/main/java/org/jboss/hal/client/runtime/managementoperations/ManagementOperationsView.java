@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.runtime.managementoperations;
 
@@ -63,28 +63,30 @@ public class ManagementOperationsView extends HalViewImpl implements ManagementO
         listView = new ModelNodeListView.Builder<>(
                 Ids.build(ACTIVE_OPERATION, CANCEL_OPERATION), metadata,
                 dataProvider, item -> new ManagementOperationsDisplay(item, presenter, resources))
-                .toolbarAttribute(new Toolbar.Attribute<>(ACCESS_MECHANISM, constants.accessMechanism(),
-                        (node, filter) -> node.getAccessMechanism().toLowerCase().equals(filter.toLowerCase()),
-                        comparing(ManagementOperations::getAccessMechanism)))
-                .toolbarAttribute(new Toolbar.Attribute<>(ADDRESS, resources.constants().address(),
-                        // filter by three address attributes: address, host and server
-                        (model, filter) -> model.getAddress().contains(filter)
-                                || (model.getActiveAddressHost() != null && model.getActiveAddressHost().contains(filter))
-                                || (model.getActiveAddressServer() != null && model.getActiveAddressServer().contains(filter)),
-                        null))
-                .toolbarAttribute(new Toolbar.Attribute<>(EXECUTION_STATUS, resources.constants().executionStatus(),
-                        (node, filter) -> node.getExecutionStatus().toLowerCase().contains(filter.toLowerCase()),
-                        comparing(ManagementOperations::getExecutionStatus)))
-                .toolbarAttribute(new Toolbar.Attribute<>(OPERATION, resources.constants().operation(),
-                        (model, filter) -> model.getOperation().contains(filter), null))
-                .toolbarAction(new Toolbar.Action(Ids.build(ACTIVE_OPERATION, Ids.REFRESH),
-                        constants.reload(), findDescription, () -> presenter.reload()))
-                .toolbarAction(new Toolbar.Action(Ids.build(ACTIVE_OPERATION, Ids.CANCEL_NON_PROGRESSING_OPERATION),
-                        constants.cancelNonProgressingOperation(), cancelDescription,
-                        () -> presenter.cancelNonProgressingOperation()))
-                .noItems(constants.noItems(), messages.noItems())
-                .emptyState(EMPTY, emptyState)
-                .build();
+                        .toolbarAttribute(new Toolbar.Attribute<>(ACCESS_MECHANISM, constants.accessMechanism(),
+                                (node, filter) -> node.getAccessMechanism().toLowerCase().equals(filter.toLowerCase()),
+                                comparing(ManagementOperations::getAccessMechanism)))
+                        .toolbarAttribute(new Toolbar.Attribute<>(ADDRESS, resources.constants().address(),
+                                // filter by three address attributes: address, host and server
+                                (model, filter) -> model.getAddress().contains(filter)
+                                        || (model.getActiveAddressHost() != null
+                                                && model.getActiveAddressHost().contains(filter))
+                                        || (model.getActiveAddressServer() != null
+                                                && model.getActiveAddressServer().contains(filter)),
+                                null))
+                        .toolbarAttribute(new Toolbar.Attribute<>(EXECUTION_STATUS, resources.constants().executionStatus(),
+                                (node, filter) -> node.getExecutionStatus().toLowerCase().contains(filter.toLowerCase()),
+                                comparing(ManagementOperations::getExecutionStatus)))
+                        .toolbarAttribute(new Toolbar.Attribute<>(OPERATION, resources.constants().operation(),
+                                (model, filter) -> model.getOperation().contains(filter), null))
+                        .toolbarAction(new Toolbar.Action(Ids.build(ACTIVE_OPERATION, Ids.REFRESH),
+                                constants.reload(), findDescription, () -> presenter.reload()))
+                        .toolbarAction(new Toolbar.Action(Ids.build(ACTIVE_OPERATION, Ids.CANCEL_NON_PROGRESSING_OPERATION),
+                                constants.cancelNonProgressingOperation(), cancelDescription,
+                                () -> presenter.cancelNonProgressingOperation()))
+                        .noItems(constants.noItems(), messages.noItems())
+                        .emptyState(EMPTY, emptyState)
+                        .build();
         registerAttachable(listView);
         initElements(listView);
     }

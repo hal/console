@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.elytron;
 
@@ -21,10 +21,6 @@ import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
@@ -53,6 +49,11 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
+
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.annotations.NameToken;
+import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
 import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.*;
@@ -199,11 +200,11 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
                 .forComplexAttribute(PERMISSIONS);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.ELYTRON_PERMISSIONS_ADD, metadata)
                 .addOnly()
-                //.include(TO, INDEX)
+                // .include(TO, INDEX)
                 .build();
         AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(Names.PERMISSIONS),
                 form, (name, model) -> ca.listAdd(resource, permissionsAttribute(pmIndex),
-                Names.PERMISSIONS, SIMPLE_PERMISSION_MAPPER_TEMPLATE, model, this::reloadSimplePermissionMapper));
+                        Names.PERMISSIONS, SIMPLE_PERMISSION_MAPPER_TEMPLATE, model, this::reloadSimplePermissionMapper));
         dialog.show();
     }
 
@@ -267,31 +268,47 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
             MAPPED_ROLE_MAPPER_ADDRESS,
             SIMPLE_PERMISSION_MAPPER_ADDRESS,
             SIMPLE_ROLE_DECODER_ADDRESS,
-            X500_ATTRIBUTE_PRINCIPAL_DECODER_ADDRESS})
+            X500_ATTRIBUTE_PRINCIPAL_DECODER_ADDRESS })
     @NameToken(NameTokens.ELYTRON_MAPPERS_DECODERS)
     public interface MyProxy extends ProxyPlace<MapperDecoderPresenter> {
     }
 
-
     // @formatter:off
     public interface MyView extends MbuiView<MapperDecoderPresenter> {
         void updateAddPrefixRoleMapper(List<NamedNode> model);
+
         void updateAddSuffixRoleMapper(List<NamedNode> model);
+
         void updateAggregatePrincipalDecoder(List<NamedNode> model);
+
         void updateAggregateRoleMapper(List<NamedNode> model);
+
         void updateConcatenatingPrincipalDecoder(List<NamedNode> model);
+
         void updateConstantPermissionMapper(List<NamedNode> model);
+
         void updateConstantPrincipalDecoder(List<NamedNode> model);
+
         void updateConstantRoleMapper(List<NamedNode> model);
+
         void updateCustomPermissionMapper(List<NamedNode> model);
+
         void updateCustomPrincipalDecoder(List<NamedNode> model);
+
         void updateCustomRoleDecoder(List<NamedNode> model);
+
         void updateCustomRoleMapper(List<NamedNode> model);
+
         void updateLogicalPermissionMapper(List<NamedNode> model);
+
         void updateLogicalRoleMapper(List<NamedNode> model);
+
         void updateMappedRoleMapper(List<NamedNode> model);
+
         void updateSimplePermissionMapper(List<NamedNode> model);
+
         void updateSimpleRoleDecoder(List<NamedNode> model);
+
         void updateX500AttributePrincipalDecoder(List<NamedNode> model);
     }
     // @formatter:on

@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.runtime.subsystem.messaging;
 
@@ -51,13 +51,13 @@ class CloseConnectionsDialog implements HasPresenter<ServerPresenter> {
     void show() {
         Form<ModelNode> cfaForm = new OperationFormBuilder<>(
                 Ids.MESSAGING_SERVER_CONNECTION_CLOSE_FOR_ADDRESS_FORM, metadata, CLOSE_CONNECTIONS_FOR_ADDRESS)
-                .build();
+                        .build();
         Form<ModelNode> ccForm = new OperationFormBuilder<>(
                 Ids.MESSAGING_SERVER_CONNECTION_CLOSE_CONSUMER_FORM, metadata, CLOSE_CONSUMER_CONNECTIONS_FOR_ADDRESS)
-                .build();
+                        .build();
         Form<ModelNode> cfuForm = new OperationFormBuilder<>(
                 Ids.MESSAGING_SERVER_CONNECTION_CLOSE_FOR_USER_FORM, metadata, CLOSE_CONNECTIONS_FOR_USER)
-                .build();
+                        .build();
         operationToForm = new HashMap<>();
         operationToForm.put(CLOSE_CONNECTIONS_FOR_ADDRESS, cfaForm);
         operationToForm.put(CLOSE_CONSUMER_CONNECTIONS_FOR_ADDRESS, ccForm);

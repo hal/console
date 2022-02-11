@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.meta;
 
@@ -24,16 +24,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import com.google.common.collect.Lists;
-import jsinterop.annotations.JsIgnore;
-import jsinterop.annotations.JsMethod;
-import jsinterop.annotations.JsProperty;
-import jsinterop.annotations.JsType;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.spi.EsParam;
+
+import com.google.common.collect.Lists;
+
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsProperty;
+import jsinterop.annotations.JsType;
 
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
@@ -42,6 +44,7 @@ import static java.util.stream.Collectors.toList;
  * Template for a DMR address which might contain multiple variable parts.
  * <p>
  * An address template can be defined using the following BNF:
+ *
  * <pre>
  * &lt;address template&gt; ::= "/" | &lt;segment&gt;
  * &lt;segment&gt;          ::= &lt;tuple&gt; | &lt;segment&gt;"/"&lt;tuple&gt;
@@ -57,12 +60,14 @@ import static java.util.stream.Collectors.toList;
  * Following variables are supported: - <code>{domain.controller}</code> - <code>{selected.profile}</code> -
  * <code>{selected.group}</code> - <code>{selected.server-config}</code> - <code>{selected.server}</code>
  * <p>
- * To get a fully qualified address from an address template use the method <code>resolve()</code>. For standalone mode
- * the variables will resolve to an empty string. The values of the variables are managed by the {@link
- * StatementContext}.
+ * To get a fully qualified address from an address template use the method <code>resolve()</code>. For standalone mode the
+ * variables will resolve to an empty string. The values of the variables are managed by the {@link StatementContext}.
  *
- * @example AddressTemplate a2 = AddressTemplate.of("{selected.profile}"); AddressTemplate a3 =
- * AddressTemplate.of("{selected.profile}/subsystem=mail"); AddressTemplate a4 = AddressTemplate.of("{selected.profile}/subsystem=mail/mail-session=*");
+ * <pre>
+ * AddressTemplate a2 = AddressTemplate.of("{selected.profile}");
+ * AddressTemplate a3 = AddressTemplate.of("{selected.profile}/subsystem=mail");
+ * AddressTemplate a4 = AddressTemplate.of("{selected.profile}/subsystem=mail/mail-session=*");
+ * </pre>
  */
 @JsType(namespace = "hal.meta")
 public final class AddressTemplate implements Iterable<String> {
@@ -80,8 +85,8 @@ public final class AddressTemplate implements Iterable<String> {
     }
 
     /**
-     * Creates a new address template from a placeholder and an encoded string template. '/' characters inside values
-     * must have been encoded using {@link ModelNodeHelper#encodeValue(String)}.
+     * Creates a new address template from a placeholder and an encoded string template. '/' characters inside values must have
+     * been encoded using {@link ModelNodeHelper#encodeValue(String)}.
      */
     @JsIgnore
     public static AddressTemplate of(StatementContext.Expression placeholder, String template) {
@@ -97,8 +102,8 @@ public final class AddressTemplate implements Iterable<String> {
     }
 
     /**
-     * Creates a new address template from two placeholders and an encoded string template. '/' characters inside values
-     * must have been encoded using {@link ModelNodeHelper#encodeValue(String)}.
+     * Creates a new address template from two placeholders and an encoded string template. '/' characters inside values must
+     * have been encoded using {@link ModelNodeHelper#encodeValue(String)}.
      */
     @JsIgnore
     public static AddressTemplate of(StatementContext.Expression placeholder1, StatementContext.Expression placeholder2,
@@ -113,8 +118,7 @@ public final class AddressTemplate implements Iterable<String> {
     }
 
     /**
-     * Turns a resource address into an address template which is the opposite of {@link #resolve(StatementContext,
-     * String...)}.
+     * Turns a resource address into an address template which is the opposite of {@link #resolve(StatementContext, String...)}.
      */
     @JsIgnore
     public static AddressTemplate of(ResourceAddress address) {
@@ -122,9 +126,9 @@ public final class AddressTemplate implements Iterable<String> {
     }
 
     /**
-     * Turns a resource address into an address template which is the opposite of {@link #resolve(StatementContext,
-     * String...)}. Use the {@link Unresolver} function to specify how the segments of the resource address are
-     * "unresolved". It is called for each segment of the specified resource address.
+     * Turns a resource address into an address template which is the opposite of {@link #resolve(StatementContext, String...)}.
+     * Use the {@link Unresolver} function to specify how the segments of the resource address are "unresolved". It is called
+     * for each segment of the specified resource address.
      */
     @JsIgnore
     public static AddressTemplate of(ResourceAddress address, Unresolver unresolver) {
@@ -133,7 +137,7 @@ public final class AddressTemplate implements Iterable<String> {
         StringBuilder builder = new StringBuilder();
         if (address.isDefined()) {
             int size = address.size();
-            for (Iterator<Property> iterator = address.asPropertyList().iterator(); iterator.hasNext(); ) {
+            for (Iterator<Property> iterator = address.asPropertyList().iterator(); iterator.hasNext();) {
                 Property property = iterator.next();
                 String name = property.getName();
                 String value = property.getValue().asString();
@@ -169,7 +173,6 @@ public final class AddressTemplate implements Iterable<String> {
         }
         return template;
     }
-
 
     // ------------------------------------------------------ template methods
 
@@ -275,9 +278,9 @@ public final class AddressTemplate implements Iterable<String> {
     }
 
     /**
-     * Appends the specified encoded template to this template and returns a new template. If the specified template
-     * does not start with a slash, '/' is automatically appended. '/' characters inside values must have been encoded
-     * using {@link ModelNodeHelper#encodeValue(String)}.
+     * Appends the specified encoded template to this template and returns a new template. If the specified template does not
+     * start with a slash, '/' is automatically appended. '/' characters inside values must have been encoded using
+     * {@link ModelNodeHelper#encodeValue(String)}.
      *
      * @param template the encoded template to append (makes no difference whether it starts with '/' or not)
      * @return a new template
@@ -297,7 +300,7 @@ public final class AddressTemplate implements Iterable<String> {
      * Works like {@link List#subList(int, int)} over the tokens of this template and throws the same exceptions.
      *
      * @param fromIndex low endpoint (inclusive) of the sub template
-     * @param toIndex   high endpoint (exclusive) of the sub template
+     * @param toIndex high endpoint (exclusive) of the sub template
      * @return a new address template containing the specified tokens.
      * @throws IndexOutOfBoundsException for an illegal endpoint index value (<tt>fromIndex &lt; 0 || toIndex &gt; size
      *                                   || fromIndex &gt; toIndex</tt>)
@@ -321,12 +324,11 @@ public final class AddressTemplate implements Iterable<String> {
     }
 
     /**
-     * Replaces one or more wildcards with the specified values starting from left to right and returns a new address
-     * template.
+     * Replaces one or more wildcards with the specified values starting from left to right and returns a new address template.
      * <p>
      * This method does <em>not</em> resolve the address template. The returned template is still unresolved.
      *
-     * @param wildcard  the first wildcard (mandatory)
+     * @param wildcard the first wildcard (mandatory)
      * @param wildcards more wildcards (optional)
      * @return a new (still unresolved) address template with the wildcards replaced by the specified values.
      */
@@ -407,15 +409,14 @@ public final class AddressTemplate implements Iterable<String> {
         return template;
     }
 
-
     // ------------------------------------------------------ resolve
 
     /**
      * Resolve this address template against the specified statement context.
      *
-     * @param context   the statement context
-     * @param wildcards An optional list of values which are used to resolve any wildcards in this address template from
-     *                  left to right
+     * @param context the statement context
+     * @param wildcards An optional list of values which are used to resolve any wildcards in this address template from left to
+     *        right
      * @return a fully qualified resource address which might be empty, but which does not contain any tokens
      */
     public ResourceAddress resolve(StatementContext context, @EsParam("...string") String... wildcards) {
@@ -497,7 +498,6 @@ public final class AddressTemplate implements Iterable<String> {
         return resolved;
     }
 
-
     // ------------------------------------------------------ JS methods
 
     /**
@@ -516,16 +516,13 @@ public final class AddressTemplate implements Iterable<String> {
         return this;
     }
 
-
     // ------------------------------------------------------ inner classes
-
 
     @FunctionalInterface
     public interface Unresolver {
 
         String unresolve(String name, String value, boolean first, boolean last, int index, int size);
     }
-
 
     private static class Memory<T> {
 
@@ -557,7 +554,6 @@ public final class AddressTemplate implements Iterable<String> {
             return result;
         }
     }
-
 
     private static class StringTokenizer {
 
@@ -605,7 +601,6 @@ public final class AddressTemplate implements Iterable<String> {
             return true;
         }
     }
-
 
     private static class Token {
 

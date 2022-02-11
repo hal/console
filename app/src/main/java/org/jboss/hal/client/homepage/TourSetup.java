@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.homepage;
 
@@ -19,9 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.ballroom.Popover.Placement;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.accesscontrol.AccessControl;
@@ -38,6 +35,10 @@ import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
@@ -130,7 +131,8 @@ class TourSetup {
         // place requests for domain mode
         PlaceRequest deploymentsContentRepository = places.finderPlace(NameTokens.DEPLOYMENTS,
                 new FinderPath().append(Ids.DEPLOYMENT_BROWSE_BY,
-                        Ids.asId(resources.constants().contentRepository()))).build();
+                        Ids.asId(resources.constants().contentRepository())))
+                .build();
         PlaceRequest profiles = places.finderPlace(NameTokens.CONFIGURATION,
                 new FinderPath().append(Ids.CONFIGURATION, Ids.asId(Names.PROFILES))).build();
         PlaceRequest serverGroups = places.finderPlace(NameTokens.RUNTIME,
@@ -152,7 +154,8 @@ class TourSetup {
         if (profile != null) {
             PlaceRequest profileSubsystems = places.finderPlace(NameTokens.CONFIGURATION,
                     new FinderPath().append(Ids.CONFIGURATION, Ids.asId(Names.PROFILES))
-                            .append(Ids.PROFILE, profile)).build();
+                            .append(Ids.PROFILE, profile))
+                    .build();
             tour.addStep(profileSubsystems, Ids.CONFIGURATION_SUBSYSTEM, Names.CONFIGURATION,
                     resources.messages().tourDomainConfigurationSubsystem(), Placement.RIGHT);
         }
@@ -165,7 +168,8 @@ class TourSetup {
         if (serverGroup != null) {
             PlaceRequest firstServerGroup = places.finderPlace(NameTokens.RUNTIME,
                     new FinderPath().append(Ids.DOMAIN_BROWSE_BY, Ids.asId(Names.SERVER_GROUPS))
-                            .append(Ids.SERVER_GROUP, Ids.serverGroup(serverGroup))).build();
+                            .append(Ids.SERVER_GROUP, Ids.serverGroup(serverGroup)))
+                    .build();
             tour.addStep(firstServerGroup, Ids.SERVER, Names.RUNTIME,
                     resources.messages().tourDomainRuntimeServer(), Placement.RIGHT);
             tour.addStep(firstServerGroup, Ids.SERVER_ADD, Names.RUNTIME,
@@ -179,10 +183,12 @@ class TourSetup {
             PlaceRequest browseBy = new PlaceRequest.Builder().nameToken(NameTokens.ACCESS_CONTROL).build();
             PlaceRequest users = places.finderPlace(NameTokens.ACCESS_CONTROL,
                     new FinderPath().append(Ids.ACCESS_CONTROL_BROWSE_BY,
-                            Ids.ACCESS_CONTROL_BROWSE_BY_USERS)).build();
+                            Ids.ACCESS_CONTROL_BROWSE_BY_USERS))
+                    .build();
             PlaceRequest roles = places.finderPlace(NameTokens.ACCESS_CONTROL,
                     new FinderPath().append(Ids.ACCESS_CONTROL_BROWSE_BY,
-                            Ids.ACCESS_CONTROL_BROWSE_BY_ROLES)).build();
+                            Ids.ACCESS_CONTROL_BROWSE_BY_ROLES))
+                    .build();
             tour.addStep(browseBy, Ids.ACCESS_CONTROL_BROWSE_BY, Names.ACCESS_CONTROL,
                     resources.messages().tourAccessControl(), Placement.RIGHT);
             tour.addStep(users, Ids.USER, Names.ACCESS_CONTROL,

@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.messaging;
 
@@ -20,7 +20,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.Form;
@@ -33,6 +32,8 @@ import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
+
+import elemental2.dom.HTMLElement;
 
 import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.gwt.elemento.core.Elements.p;
@@ -86,27 +87,27 @@ public class JmsBridgeView extends HalViewImpl implements JmsBridgePresenter.MyV
                 .build();
 
         crSource = cr.form(Ids.JMS_BRIDGE, jmsBridgeMetadata, SOURCE_CREDENTIAL_REFERENCE, SOURCE_PASSWORD,
-                () -> sourceForm.<String>getFormItem(SOURCE_PASSWORD).getValue(),
+                () -> sourceForm.<String> getFormItem(SOURCE_PASSWORD).getValue(),
                 () -> presenter.resourceAddress(),
                 () -> presenter.reload());
         sourceForm.addFormValidation(
                 new CredentialReference.AlternativeValidation<>(SOURCE_PASSWORD, () -> crSource.getModel(),
                         mbuiContext.resources()));
         crTarget = cr.form(Ids.JMS_BRIDGE, jmsBridgeMetadata, TARGET_CREDENTIAL_REFERENCE, TARGET_PASSWORD,
-                () -> targetForm.<String>getFormItem(TARGET_PASSWORD).getValue(),
+                () -> targetForm.<String> getFormItem(TARGET_PASSWORD).getValue(),
                 () -> presenter.resourceAddress(),
                 () -> presenter.reload());
         targetForm.addFormValidation(
                 new CredentialReference.AlternativeValidation<>(TARGET_PASSWORD, () -> crTarget.getModel(),
                         mbuiContext.resources()));
 
-
         registerAttachable(attributesForm, sourceForm, targetForm, crSource, crTarget);
 
         LabelBuilder labelBuilder = new LabelBuilder();
         Tabs tabs = new Tabs(Ids.build(Ids.JMS_BRIDGE, Ids.TAB_CONTAINER));
         tabs.add(Ids.JMS_BRIDGE_TAB, mbuiContext.resources().constants().attributes(), attributesForm.element());
-        tabs.add(Ids.build(Ids.JMS_BRIDGE, SOURCE, Ids.TAB), mbuiContext.resources().constants().source(), sourceForm.element());
+        tabs.add(Ids.build(Ids.JMS_BRIDGE, SOURCE, Ids.TAB), mbuiContext.resources().constants().source(),
+                sourceForm.element());
         tabs.add(Ids.build(Ids.JMS_BRIDGE, SOURCE_CREDENTIAL_REFERENCE, Ids.TAB),
                 labelBuilder.label(SOURCE_CREDENTIAL_REFERENCE), crSource.element());
         tabs.add(Ids.build(Ids.JMS_BRIDGE, TARGET, Ids.TAB), Names.TARGET, targetForm.element());

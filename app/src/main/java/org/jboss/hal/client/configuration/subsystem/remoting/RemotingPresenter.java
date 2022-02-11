@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.remoting;
 
@@ -21,10 +21,6 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.Form.FinishRemove;
 import org.jboss.hal.ballroom.form.Form.FinishReset;
@@ -57,6 +53,12 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
+
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.annotations.NameToken;
+import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+
 import rx.Completable;
 
 import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.*;
@@ -137,13 +139,13 @@ public class RemotingPresenter
         });
     }
 
-
     // ------------------------------------------------------ remote connector
 
     void selectConnector(String connector) {
         this.connector = connector;
-        NamedNode namedNode = connector == null ? null : new NamedNode(connector, failSafeGet(payload,
-                CONNECTOR_TEMPLATE.lastName() + "/" + connector));
+        NamedNode namedNode = connector == null ? null
+                : new NamedNode(connector, failSafeGet(payload,
+                        CONNECTOR_TEMPLATE.lastName() + "/" + connector));
         getView().updateConnector(namedNode);
     }
 
@@ -151,7 +153,7 @@ public class RemotingPresenter
         Metadata metadata = metadataRegistry.lookup(CONNECTOR_TEMPLATE);
         ResourceAddress address = SELECTED_CONNECTOR_TEMPLATE.resolve(selectedConnectorContext);
         propertiesOperations.saveWithProperties(Names.REMOTE_CONNECTOR, form.getModel().getName(), address,
-                changedValues, metadata, PROPERTY, form.<Map<String, String>>getFormItem(PROPERTY).getValue(),
+                changedValues, metadata, PROPERTY, form.<Map<String, String>> getFormItem(PROPERTY).getValue(),
                 this::reload);
     }
 
@@ -181,7 +183,7 @@ public class RemotingPresenter
         ResourceAddress address = SELECTED_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedConnectorContext);
         Metadata metadata = metadataRegistry.lookup(CONNECTOR_SECURITY_TEMPLATE);
         propertiesOperations.saveSingletonWithProperties(Names.REMOTE_CONNECTOR_SECURITY, address, changedValues,
-                metadata, PROPERTY, form.<Map<String, String>>getFormItem(PROPERTY).getValue(), this::reload);
+                metadata, PROPERTY, form.<Map<String, String>> getFormItem(PROPERTY).getValue(), this::reload);
     }
 
     void resetConnectorSecurity(Form<ModelNode> form) {
@@ -240,13 +242,13 @@ public class RemotingPresenter
                 });
     }
 
-
     // ------------------------------------------------------ http connector
 
     void selectHttpConnector(@Nullable String httpConnector) {
         this.httpConnector = httpConnector;
-        NamedNode namedNode = httpConnector == null ? null : new NamedNode(httpConnector, failSafeGet(payload,
-                HTTP_CONNECTOR_TEMPLATE.lastName() + "/" + httpConnector));
+        NamedNode namedNode = httpConnector == null ? null
+                : new NamedNode(httpConnector, failSafeGet(payload,
+                        HTTP_CONNECTOR_TEMPLATE.lastName() + "/" + httpConnector));
         getView().updateHttpConnector(namedNode);
     }
 
@@ -254,7 +256,7 @@ public class RemotingPresenter
         Metadata metadata = metadataRegistry.lookup(HTTP_CONNECTOR_TEMPLATE);
         ResourceAddress address = SELECTED_HTTP_CONNECTOR_TEMPLATE.resolve(selectedHttpConnectorContext);
         propertiesOperations.saveWithProperties(Names.HTTP_CONNECTOR, form.getModel().getName(),
-                address, changedValues, metadata, PROPERTY, form.<Map<String, String>>getFormItem(PROPERTY).getValue(),
+                address, changedValues, metadata, PROPERTY, form.<Map<String, String>> getFormItem(PROPERTY).getValue(),
                 this::reload);
     }
 
@@ -284,7 +286,7 @@ public class RemotingPresenter
         ResourceAddress address = SELECTED_HTTP_CONNECTOR_SECURITY_TEMPLATE.resolve(selectedHttpConnectorContext);
         Metadata metadata = metadataRegistry.lookup(HTTP_CONNECTOR_SECURITY_TEMPLATE);
         propertiesOperations.saveSingletonWithProperties(Names.HTTP_CONNECTOR_SECURITY, address, changedValues,
-                metadata, PROPERTY, form.<Map<String, String>>getFormItem(PROPERTY).getValue(), this::reload);
+                metadata, PROPERTY, form.<Map<String, String>> getFormItem(PROPERTY).getValue(), this::reload);
     }
 
     void resetHttpConnectorSecurity(Form<ModelNode> form) {
@@ -343,19 +345,19 @@ public class RemotingPresenter
                 });
     }
 
-
     // ------------------------------------------------------ local outbound connection
 
     void selectLocalOutbound(@Nullable String localOutbound) {
-        NamedNode namedNode = localOutbound == null ? null : new NamedNode(localOutbound, failSafeGet(payload,
-                LOCAL_OUTBOUND_TEMPLATE.lastName() + "/" + localOutbound));
+        NamedNode namedNode = localOutbound == null ? null
+                : new NamedNode(localOutbound, failSafeGet(payload,
+                        LOCAL_OUTBOUND_TEMPLATE.lastName() + "/" + localOutbound));
         getView().updateLocalOutbound(namedNode);
     }
 
     void saveLocalOutbound(Form<NamedNode> form, Map<String, Object> changedValues) {
         propertiesOperations.saveWithProperties(Names.LOCAL_OUTBOUND_CONNECTION, form.getModel().getName(),
                 LOCAL_OUTBOUND_TEMPLATE, changedValues, PROPERTY,
-                form.<Map<String, String>>getFormItem(PROPERTY).getValue(), this::reload);
+                form.<Map<String, String>> getFormItem(PROPERTY).getValue(), this::reload);
     }
 
     void resetLocalOutbound(Form<NamedNode> form) {
@@ -369,18 +371,18 @@ public class RemotingPresenter
                 });
     }
 
-
     // ------------------------------------------------------ outbound connection
 
     void selectOutbound(@Nullable String outbound) {
-        NamedNode namedNode = outbound == null ? null : new NamedNode(outbound, failSafeGet(payload,
-                OUTBOUND_TEMPLATE.lastName() + "/" + outbound));
+        NamedNode namedNode = outbound == null ? null
+                : new NamedNode(outbound, failSafeGet(payload,
+                        OUTBOUND_TEMPLATE.lastName() + "/" + outbound));
         getView().updateOutbound(namedNode);
     }
 
     void saveOutbound(Form<NamedNode> form, Map<String, Object> changedValues) {
         propertiesOperations.saveWithProperties(Names.OUTBOUND_CONNECTION, form.getModel().getName(), OUTBOUND_TEMPLATE,
-                changedValues, PROPERTY, form.<Map<String, String>>getFormItem(PROPERTY).getValue(), this::reload);
+                changedValues, PROPERTY, form.<Map<String, String>> getFormItem(PROPERTY).getValue(), this::reload);
     }
 
     void resetOutbound(Form<NamedNode> form) {
@@ -394,19 +396,19 @@ public class RemotingPresenter
                 });
     }
 
-
     // ------------------------------------------------------ local outbound connection
 
     void selectRemoteOutbound(@Nullable String remoteOutbound) {
-        NamedNode namedNode = remoteOutbound == null ? null : new NamedNode(remoteOutbound, failSafeGet(payload,
-                REMOTE_OUTBOUND_TEMPLATE.lastName() + "/" + remoteOutbound));
+        NamedNode namedNode = remoteOutbound == null ? null
+                : new NamedNode(remoteOutbound, failSafeGet(payload,
+                        REMOTE_OUTBOUND_TEMPLATE.lastName() + "/" + remoteOutbound));
         getView().updateRemoteOutbound(namedNode);
     }
 
     void saveRemoteOutbound(Form<NamedNode> form, Map<String, Object> changedValues) {
         propertiesOperations.saveWithProperties(Names.REMOTE_OUTBOUND_CONNECTION, form.getModel().getName(),
                 REMOTE_OUTBOUND_TEMPLATE, changedValues, PROPERTY,
-                form.<Map<String, String>>getFormItem(PROPERTY).getValue(), this::reload);
+                form.<Map<String, String>> getFormItem(PROPERTY).getValue(), this::reload);
     }
 
     void resetRemoteOutbound(Form<NamedNode> form) {
@@ -420,12 +422,11 @@ public class RemotingPresenter
                 });
     }
 
-
     // ------------------------------------------------------ helper methods
 
     /**
-     * Creates the singleton {@code /subsystem=remoting/(http-)connector=foo/security=sasl/sasl-policy=policy}
-     * in a fail-safe manner: A missing {@code security=sasl} parent resource is created on demand.
+     * Creates the singleton {@code /subsystem=remoting/(http-)connector=foo/security=sasl/sasl-policy=policy} in a fail-safe
+     * manner: A missing {@code security=sasl} parent resource is created on demand.
      */
     private void failSafeCreatePolicy(String type, AddressTemplate securityTemplate, AddressTemplate policyTemplate,
             StatementContext statementContext) {
@@ -446,32 +447,36 @@ public class RemotingPresenter
                     Operation operation = new Operation.Builder(policyTemplate.resolve(statementContext), ADD).build();
                     return dispatcher.execute(operation).toCompletable();
                 })
-                .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
-                    @Override
-                    public void onSuccess(FlowContext context) {
-                        MessageEvent.fire(getEventBus(),
-                                Message.success(resources.messages().addSingleResourceSuccess(type)));
-                        reload();
-                    }
-                });
+                        .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
+                            @Override
+                            public void onSuccess(FlowContext context) {
+                                MessageEvent.fire(getEventBus(),
+                                        Message.success(resources.messages().addSingleResourceSuccess(type)));
+                                reload();
+                            }
+                        });
     }
-
 
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(NameTokens.REMOTING)
-    @Requires({REMOTING_SUBSYSTEM_ADDRESS,
+    @Requires({ REMOTING_SUBSYSTEM_ADDRESS,
             CONNECTOR_SECURITY_ADDRESS, CONNECTOR_SECURITY_POLICY_ADDRESS,
-            HTTP_CONNECTOR_SECURITY_ADDRESS, HTTP_CONNECTOR_SECURITY_POLICY_ADDRESS})
+            HTTP_CONNECTOR_SECURITY_ADDRESS, HTTP_CONNECTOR_SECURITY_POLICY_ADDRESS })
     public interface MyProxy extends ProxyPlace<RemotingPresenter> {
     }
 
     public interface MyView extends MbuiView<RemotingPresenter> {
         void update(ModelNode payload);
+
         void updateConnector(@Nullable NamedNode connector);
+
         void updateHttpConnector(@Nullable NamedNode httpConnector);
+
         void updateLocalOutbound(@Nullable NamedNode localOutbound);
+
         void updateOutbound(@Nullable NamedNode outbound);
+
         void updateRemoteOutbound(@Nullable NamedNode remoteOutbound);
     }
     // @formatter:on

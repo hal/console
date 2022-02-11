@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.ballroom.chart;
 
@@ -23,14 +23,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.ArrayListMultimap;
-import elemental2.core.JsArray;
-import elemental2.dom.HTMLElement;
-import jsinterop.base.JsPropertyMap;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.js.JsHelper;
 import org.jboss.hal.resources.UIConstants;
+
+import com.google.common.collect.ArrayListMultimap;
+
+import elemental2.core.JsArray;
+import elemental2.dom.HTMLElement;
+import jsinterop.base.JsPropertyMap;
 
 import static elemental2.dom.DomGlobal.window;
 import static java.util.Arrays.asList;
@@ -41,7 +43,8 @@ import static org.jboss.hal.resources.UIConstants.HASH;
 /**
  * Grouped bar chart to visualize quantitative data. Can be rendered horizontal or vertical. Values can be stacked.
  *
- * @see <a href="https://www.patternfly.org/pattern-library/data-visualization/bar-chart/">https://www.patternfly.org/pattern-library/data-visualization/bar-chart/</a>
+ * @see <a href=
+ *      "https://www.patternfly.org/pattern-library/data-visualization/bar-chart/">https://www.patternfly.org/pattern-library/data-visualization/bar-chart/</a>
  */
 public class GroupedBar implements IsElement<HTMLElement>, Attachable {
 
@@ -133,8 +136,8 @@ public class GroupedBar implements IsElement<HTMLElement>, Attachable {
     }
 
     /**
-     * Use this method if you created the bar chart with multiple categories and provide a value for each category in
-     * the multimap.
+     * Use this method if you created the bar chart with multiple categories and provide a value for each category in the
+     * multimap.
      */
     @SuppressWarnings("unchecked")
     public void update(ArrayListMultimap<String, Long> data) {
@@ -150,7 +153,7 @@ public class GroupedBar implements IsElement<HTMLElement>, Attachable {
             columns.push(column);
         }
 
-        dataMap.set("columns", columns); //NON-NLS
+        dataMap.set("columns", columns); // NON-NLS
         api().load(dataMap);
     }
 
@@ -174,11 +177,9 @@ public class GroupedBar implements IsElement<HTMLElement>, Attachable {
         resize((int) $(parent).width());
     }
 
-
     private enum Orientation {
         HORIZONTAL, VERTICAL
     }
-
 
     public static class Builder {
 

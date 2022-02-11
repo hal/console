@@ -1,33 +1,35 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.ballroom.form;
 
 import java.util.EnumSet;
 
-import com.google.common.base.Strings;
-import com.google.web.bindery.event.shared.HandlerRegistration;
-import elemental2.dom.HTMLElement;
-import elemental2.dom.HTMLInputElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 
+import com.google.common.base.Strings;
+import com.google.web.bindery.event.shared.HandlerRegistration;
+
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLInputElement;
+
 import static elemental2.dom.DomGlobal.setTimeout;
-import static org.jboss.gwt.elemento.core.Elements.i;
 import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.gwt.elemento.core.Elements.i;
 import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.change;
 import static org.jboss.gwt.elemento.core.EventType.click;
@@ -69,7 +71,6 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         editingAppearance.setExpressionAllowed(expressionAllowed);
     }
 
-
     private static class SwitchReadOnlyAppearance extends ReadOnlyAppearance<Boolean> {
 
         SwitchReadOnlyAppearance() {
@@ -81,7 +82,6 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
             return "SwitchReadOnlyAppearance";
         }
     }
-
 
     private class SwitchEditingAppearance extends EditingAppearance<Boolean> {
 
@@ -95,7 +95,6 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         private final HandlerRegistration expressionHandler;
         private HandlerRegistration resolveHandler;
         private SwitchBridge.Api api;
-
 
         // ------------------------------------------------------ ui code
 
@@ -127,7 +126,8 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
                             .add(resolveExpressionButton = button()
                                     .css(btn, btnDefault)
                                     .title(CONSTANTS.resolveExpression())
-                                    .add(i().css(fontAwesome("link"))).element())).element();
+                                    .add(i().css(fontAwesome("link"))).element()))
+                    .element();
 
             // Append both the <input type=checkbox/> for the normal mode
             // and the <input type=text/> for the expression mode
@@ -195,7 +195,6 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
             return "SwitchEditingAppearance";
         }
 
-
         // ------------------------------------------------------ value
 
         @Override
@@ -222,7 +221,6 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
                 inputElement.checked = false;
             }
         }
-
 
         // ------------------------------------------------------ decorations
 
@@ -260,7 +258,6 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         void setExpressionAllowed(boolean expressionAllowed) {
             Elements.setVisible(switchToExpressionButton, expressionAllowed);
         }
-
 
         // ------------------------------------------------------ properties & delegates
 

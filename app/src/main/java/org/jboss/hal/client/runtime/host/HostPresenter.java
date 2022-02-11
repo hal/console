@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.runtime.host;
 
@@ -24,12 +24,6 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
@@ -72,6 +66,14 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
+
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.annotations.NameToken;
+import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+
+import elemental2.dom.HTMLElement;
 
 import static elemental2.dom.DomGlobal.window;
 import static org.jboss.hal.client.runtime.host.AddressTemplates.ELYTRON_TEMPLATE;
@@ -297,8 +299,8 @@ public class HostPresenter
 
                         EnableSSLWizard wzd = new EnableSSLWizard.Builder(existingResources, resources, getEventBus(),
                                 statementContext, dispatcher, progress, HostPresenter.this, environment)
-                                .host(host)
-                                .build();
+                                        .host(host)
+                                        .build();
                         wzd.show();
                     }
                 });
@@ -344,102 +346,102 @@ public class HostPresenter
         ResourceAddress httpAddress = HTTP_INTERFACE_TEMPLATE.resolve(statementContext);
 
         DialogFactory.buildConfirmation(constants.disableSSL(),
-                        resources.messages().disableSSLManagementQuestion(serverName), formElement, Dialog.Size.MEDIUM, () -> {
+                resources.messages().disableSSLManagementQuestion(serverName), formElement, Dialog.Size.MEDIUM, () -> {
 
-                            List<Task<FlowContext>> tasks = new ArrayList<>();
-                            // load the http-interface resource to get the port
-                            Task<FlowContext> loadHttpInterface = flowContext -> {
-                                Operation readHttpInterface = new Operation.Builder(httpAddress, READ_RESOURCE_OPERATION)
-                                        .build();
-                                return dispatcher.execute(readHttpInterface)
-                                        .doOnSuccess(value -> {
-                                            if (value.hasDefined(PORT)) {
-                                                // only domain mode contains "port" attribute
-                                                String port = value.get(PORT).asString();
-                                                if (port.contains("$")) {
-                                                    // if it contains an expression value, resolve it at host level
-                                                    ResourceAddress address = AddressTemplate.of(
-                                                                    "/host=" + environment.getDomainController())
-                                                            .resolve(statementContext);
-                                                    Operation readPort = new Operation.Builder(address, RESOLVE_EXPRESSION)
-                                                            .param(EXPRESSION, port)
-                                                            .build();
-                                                    dispatcher.execute(readPort,
-                                                            portResult -> flowContext.set(PORT, portResult.asString()));
-                                                } else {
-                                                    flowContext.set(PORT, port);
-                                                }
-                                            }
-                                        })
-                                        .toCompletable();
-
-                            };
-                            tasks.add(loadHttpInterface);
-
-                            // in domain-mode read the /host=<dc> domain controller
-                            // it is important for later use if user wants to reload dc if in admin-mode
-                            Task<FlowContext> loadDc = flowContext -> {
-                                ResourceAddress dcAddress = AddressTemplate.of("/host=" + environment.getDomainController())
-                                        .resolve(statementContext);
-                                Operation readDcOp = new Operation.Builder(dcAddress, READ_RESOURCE_OPERATION)
-                                        .param(ATTRIBUTES_ONLY, true)
-                                        .build();
-
-                                return dispatcher.execute(readDcOp)
-                                        .doOnSuccess(value -> flowContext.set(HOST, new Host(value)))
-                                        .toCompletable();
-                            };
-                            tasks.add(loadDc);
-
-                            // as part of the disable ssl task, undefine the secure-port, it only exists in domain mode
-                            Task<FlowContext> undefineSecurePortTask = flowContext -> {
-                                Operation op = new Operation.Builder(httpAddress, UNDEFINE_ATTRIBUTE_OPERATION)
-                                        .param(NAME, SECURE_PORT)
-                                        .build();
-                                return dispatcher.execute(op)
-                                        .toCompletable();
-                            };
-                            tasks.add(undefineSecurePortTask);
-                            // as part of the disable ssl task, undefine the ssl-context
-                            Task<FlowContext> undefineSslContextTask = flowContext -> {
-                                Operation op = new Operation.Builder(httpAddress, UNDEFINE_ATTRIBUTE_OPERATION)
-                                        .param(NAME, SSL_CONTEXT)
-                                        .build();
-                                return dispatcher.execute(op)
-                                        .toCompletable();
-                            };
-                            tasks.add(undefineSslContextTask);
-
-                            series(new FlowContext(progress.get()), tasks)
-                                    .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
-                                        @Override
-                                        public void onSuccess(FlowContext flowContext) {
-                                            if (reload.getValue() != null && reload.getValue()) {
-                                                String port = flowContext.get(PORT).toString();
-                                                // extracts the url search path, so the reload shows the same view the use is on
-                                                String urlSuffix = window.location.getHref();
-                                                urlSuffix = urlSuffix.substring(urlSuffix.indexOf("//") + 2);
-                                                urlSuffix = urlSuffix.substring(urlSuffix.indexOf("/"));
-                                                // the location to redirect the browser to the unsecure URL
-                                                // TODO Replace hardcoded scheme
-                                                String location = "http://" + window.location.getHostname() + ":" + port + urlSuffix;
-                                                Host host = flowContext.get(HOST);
-                                                reloadServer(host, location);
-                                            } else {
-                                                reloadView();
-                                                MessageEvent.fire(getEventBus(),
-                                                        Message.success(resources.messages().disableSSLManagementSuccess()));
-                                            }
+                    List<Task<FlowContext>> tasks = new ArrayList<>();
+                    // load the http-interface resource to get the port
+                    Task<FlowContext> loadHttpInterface = flowContext -> {
+                        Operation readHttpInterface = new Operation.Builder(httpAddress, READ_RESOURCE_OPERATION)
+                                .build();
+                        return dispatcher.execute(readHttpInterface)
+                                .doOnSuccess(value -> {
+                                    if (value.hasDefined(PORT)) {
+                                        // only domain mode contains "port" attribute
+                                        String port = value.get(PORT).asString();
+                                        if (port.contains("$")) {
+                                            // if it contains an expression value, resolve it at host level
+                                            ResourceAddress address = AddressTemplate.of(
+                                                    "/host=" + environment.getDomainController())
+                                                    .resolve(statementContext);
+                                            Operation readPort = new Operation.Builder(address, RESOLVE_EXPRESSION)
+                                                    .param(EXPRESSION, port)
+                                                    .build();
+                                            dispatcher.execute(readPort,
+                                                    portResult -> flowContext.set(PORT, portResult.asString()));
+                                        } else {
+                                            flowContext.set(PORT, port);
                                         }
+                                    }
+                                })
+                                .toCompletable();
 
-                                        @Override
-                                        public void onError(FlowContext context, Throwable throwable) {
-                                            MessageEvent.fire(getEventBus(),
-                                                    Message.error(resources.messages()
-                                                            .disableSSLManagementError(throwable.getMessage())));
-                                        }
-                                    });
-                        })
+                    };
+                    tasks.add(loadHttpInterface);
+
+                    // in domain-mode read the /host=<dc> domain controller
+                    // it is important for later use if user wants to reload dc if in admin-mode
+                    Task<FlowContext> loadDc = flowContext -> {
+                        ResourceAddress dcAddress = AddressTemplate.of("/host=" + environment.getDomainController())
+                                .resolve(statementContext);
+                        Operation readDcOp = new Operation.Builder(dcAddress, READ_RESOURCE_OPERATION)
+                                .param(ATTRIBUTES_ONLY, true)
+                                .build();
+
+                        return dispatcher.execute(readDcOp)
+                                .doOnSuccess(value -> flowContext.set(HOST, new Host(value)))
+                                .toCompletable();
+                    };
+                    tasks.add(loadDc);
+
+                    // as part of the disable ssl task, undefine the secure-port, it only exists in domain mode
+                    Task<FlowContext> undefineSecurePortTask = flowContext -> {
+                        Operation op = new Operation.Builder(httpAddress, UNDEFINE_ATTRIBUTE_OPERATION)
+                                .param(NAME, SECURE_PORT)
+                                .build();
+                        return dispatcher.execute(op)
+                                .toCompletable();
+                    };
+                    tasks.add(undefineSecurePortTask);
+                    // as part of the disable ssl task, undefine the ssl-context
+                    Task<FlowContext> undefineSslContextTask = flowContext -> {
+                        Operation op = new Operation.Builder(httpAddress, UNDEFINE_ATTRIBUTE_OPERATION)
+                                .param(NAME, SSL_CONTEXT)
+                                .build();
+                        return dispatcher.execute(op)
+                                .toCompletable();
+                    };
+                    tasks.add(undefineSslContextTask);
+
+                    series(new FlowContext(progress.get()), tasks)
+                            .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
+                                @Override
+                                public void onSuccess(FlowContext flowContext) {
+                                    if (reload.getValue() != null && reload.getValue()) {
+                                        String port = flowContext.get(PORT).toString();
+                                        // extracts the url search path, so the reload shows the same view the use is on
+                                        String urlSuffix = window.location.getHref();
+                                        urlSuffix = urlSuffix.substring(urlSuffix.indexOf("//") + 2);
+                                        urlSuffix = urlSuffix.substring(urlSuffix.indexOf("/"));
+                                        // the location to redirect the browser to the unsecure URL
+                                        // TODO Replace hardcoded scheme
+                                        String location = "http://" + window.location.getHostname() + ":" + port + urlSuffix;
+                                        Host host = flowContext.get(HOST);
+                                        reloadServer(host, location);
+                                    } else {
+                                        reloadView();
+                                        MessageEvent.fire(getEventBus(),
+                                                Message.success(resources.messages().disableSSLManagementSuccess()));
+                                    }
+                                }
+
+                                @Override
+                                public void onError(FlowContext context, Throwable throwable) {
+                                    MessageEvent.fire(getEventBus(),
+                                            Message.error(resources.messages()
+                                                    .disableSSLManagementError(throwable.getMessage())));
+                                }
+                            });
+                })
                 .show();
     }
 
@@ -558,25 +560,30 @@ public class HostPresenter
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(NameTokens.HOST_CONFIGURATION)
-    @Requires(value = {"{selected.host}",
+    @Requires(value = { "{selected.host}",
             "{selected.host}/interface=*",
             "{selected.host}/jvm=*",
             "{selected.host}/path=*",
             "{selected.host}/socket-binding-group=*",
             "{selected.host}/system-property=*",
             "{selected.host}/core-service=management/management-interface=http-interface",
-            "{selected.host}/core-service=management/management-interface=native-interface"},
-            recursive = false)
+            "{selected.host}/core-service=management/management-interface=native-interface" }, recursive = false)
     public interface MyProxy extends ProxyPlace<HostPresenter> {
     }
 
     public interface MyView extends MbuiView<HostPresenter> {
         void updateHost(Host host);
+
         void updateManagementInterfaces(List<NamedNode> endpoints, int pathIndex);
+
         void updateInterfaces(List<NamedNode> interfaces);
+
         void updateJvms(List<NamedNode> interfaces);
+
         void updatePaths(List<NamedNode> paths);
+
         void updateSocketBindingGroups(List<NamedNode> groups);
+
         void updateSystemProperties(List<NamedNode> properties);
     }
     // @formatter:on

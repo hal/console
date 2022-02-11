@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.undertow;
 
@@ -44,7 +44,8 @@ interface AddressTemplates {
     String SERVLET_CONTAINER_ADDRESS = UNDERTOW_SUBSYSTEM_ADDRESS + "/servlet-container=*";
 
     String SELECTED_SERVER_ADDRESS = UNDERTOW_SUBSYSTEM_ADDRESS + "/server=" + SELECTION_EXPRESSION;
-    String SELECTED_APPLICATION_SECURITY_DOMAIN_ADDRESS = UNDERTOW_SUBSYSTEM_ADDRESS + "/application-security-domain=" + SELECTION_EXPRESSION;
+    String SELECTED_APPLICATION_SECURITY_DOMAIN_ADDRESS = UNDERTOW_SUBSYSTEM_ADDRESS + "/application-security-domain="
+            + SELECTION_EXPRESSION;
     String SELECTED_SINGLE_SIGN_ON_ADDRESS = SELECTED_APPLICATION_SECURITY_DOMAIN_ADDRESS + "/setting=single-sign-on";
     String SELECTED_HOST_ADDRESS = SELECTED_SERVER_ADDRESS + "/host={host}";
     String SELECTED_SERVLET_CONTAINER_ADDRESS = UNDERTOW_SUBSYSTEM_ADDRESS + "/servlet-container=" + SELECTION_EXPRESSION;
@@ -80,11 +81,9 @@ interface AddressTemplates {
             FILTER_TEMPLATE.append("mod-cluster=*"),
             FILTER_TEMPLATE.append("request-limit=*"),
             FILTER_TEMPLATE.append("response-header=*"),
-            FILTER_TEMPLATE.append("rewrite=*")
-    );
+            FILTER_TEMPLATE.append("rewrite=*"));
 
     List<AddressTemplate> HANDLER_SUGGESTIONS = asList(
             HANDLER_TEMPLATE.append("file=*"),
-            HANDLER_TEMPLATE.append("reverse-proxy=*")
-    );
+            HANDLER_TEMPLATE.append("reverse-proxy=*"));
 }

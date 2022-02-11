@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.config;
 
@@ -22,9 +22,10 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.jboss.hal.resources.Ids;
+
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import org.jboss.hal.resources.Ids;
 
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.StreamSupport.stream;
@@ -36,7 +37,7 @@ public class Settings {
     public static final int DEFAULT_PAGE_SIZE = 10;
     // keep in sync with the poll-time attribute of settings.dmr
     public static final int DEFAULT_POLL_TIME = 10;
-    public static final int[] PAGE_SIZE_VALUES = new int[]{10, 20, 50};
+    public static final int[] PAGE_SIZE_VALUES = new int[] { 10, 20, 50 };
     private static final int EXPIRES = 365; // days
 
     private final Map<Key, Value> values;
@@ -81,16 +82,11 @@ public class Settings {
         return Ids.build(Ids.COOKIE, key.key);
     }
 
-
     @SuppressWarnings("DuplicateStringLiteralInspection")
     public enum Key {
-        TITLE("title", true),
-        COLLECT_USER_DATA("collect-user-data", true),
-        LOCALE("locale", true),
-        PAGE_SIZE("page-size", true),
-        POLL("poll", true),
-        POLL_TIME("poll-time", true),
-        RUN_AS("run-as", false); // can contain multiple roles separated by ","
+        TITLE("title", true), COLLECT_USER_DATA("collect-user-data", true), LOCALE("locale", true), PAGE_SIZE("page-size",
+                true), POLL("poll", true), POLL_TIME("poll-time", true), RUN_AS("run-as", false); // can contain multiple roles
+                                                                                                  // separated by ","
 
         public static Key from(String key) {
             switch (key) {
@@ -125,7 +121,6 @@ public class Settings {
             return key;
         }
     }
-
 
     public static class Value {
 

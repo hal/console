@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.undertow;
 
@@ -25,14 +25,6 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.dialog.Dialog;
@@ -79,6 +71,16 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
+
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.annotations.NameToken;
+import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+
+import elemental2.dom.HTMLElement;
 
 import static java.util.Collections.singletonList;
 import static org.jboss.gwt.elemento.core.Elements.div;
@@ -183,11 +185,17 @@ public class ServerPresenter
             // HAL-1753
             if (hostName != null) {
                 // if hostName is null or no hostName is selected, no need to update filter-ref and location
-                getView().updateLocation(asNamedNodes(failSafePropertyList(result, String.join("/", HOST, hostName, LOCATION))), false);
+                getView().updateLocation(asNamedNodes(failSafePropertyList(result, String.join("/", HOST, hostName, LOCATION))),
+                        false);
                 if (locationName != null) {
-                    getView().updateLocationFilterRef(asNamedNodes(failSafePropertyList(result, String.join("/", HOST, hostName, LOCATION, encodeValue(locationName), FILTER_REF))), false);
+                    getView()
+                            .updateLocationFilterRef(
+                                    asNamedNodes(failSafePropertyList(result,
+                                            String.join("/", HOST, hostName, LOCATION, encodeValue(locationName), FILTER_REF))),
+                                    false);
                 }
-                getView().updateFilterRef(asNamedNodes(failSafePropertyList(result, String.join("/", HOST, hostName, FILTER_REF))), false);
+                getView().updateFilterRef(
+                        asNamedNodes(failSafePropertyList(result, String.join("/", HOST, hostName, FILTER_REF))), false);
             }
         });
     }
@@ -212,7 +220,6 @@ public class ServerPresenter
                     }
                 });
     }
-
 
     // ------------------------------------------------------ host
 
@@ -296,7 +303,6 @@ public class ServerPresenter
         });
     }
 
-
     // ------------------------------------------------------ host filter-ref
 
     void showFilterRef(NamedNode host) {
@@ -312,7 +318,8 @@ public class ServerPresenter
                 .build();
         form.getFormItem(NAME)
                 .registerSuggestHandler(new ReadChildrenAutoComplete(dispatcher, statementContext, FILTER_SUGGESTIONS));
-        AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(resources.constants().filter()), form,
+        AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(resources.constants().filter()),
+                form,
                 (name, model) -> {
                     ResourceAddress address = SELECTED_HOST_TEMPLATE.append(FILTER_REF + EQUALS + name)
                             .resolve(statementContext);
@@ -424,7 +431,6 @@ public class ServerPresenter
     String locationSegment() {
         return locationName != null ? Names.LOCATION + ": " + locationName : Names.NOT_AVAILABLE;
     }
-
 
     // ------------------------------------------------------ host location filter-ref
 
@@ -562,9 +568,9 @@ public class ServerPresenter
 
                         EnableSSLWizard ww = new EnableSSLWizard.Builder(existingResources, resources, getEventBus(),
                                 statementContext, dispatcher, progress, ServerPresenter.this, environment)
-                                .undertowServer(serverName)
-                                .httpsListenerName(httpsName)
-                                .build();
+                                        .undertowServer(serverName)
+                                        .httpsListenerName(httpsName)
+                                        .build();
                         ww.show();
                     }
                 });
@@ -664,7 +670,6 @@ public class ServerPresenter
         return statementContext;
     }
 
-
     // @formatter:off
     @ProxyCodeSplit
     @Requires(SERVER_ADDRESS)
@@ -674,8 +679,11 @@ public class ServerPresenter
 
     public interface MyView extends HalView, HasPresenter<ServerPresenter> {
         void update(ModelNode payload);
+
         void updateFilterRef(List<NamedNode> filters, boolean showPage);
+
         void updateLocation(List<NamedNode> locations, boolean showPage);
+
         void updateLocationFilterRef(List<NamedNode> filters, boolean showPage);
     }
     // @formatter:on

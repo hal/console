@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.ballroom;
 
@@ -21,11 +21,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.jboss.hal.dmr.Property;
+
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
-import org.jboss.hal.dmr.Property;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HAL_LABEL;
 
@@ -35,8 +36,8 @@ public class LabelBuilder {
     private static final String QUOTE = "'";
     private static final String SPACE = " ";
 
-    @SuppressWarnings("HardCodedStringLiteral")
-    private final ImmutableMap<String, String> SPECIALS = ImmutableMap.<String, String>builder()
+    @SuppressWarnings("HardCodedStringLiteral") private final ImmutableMap<String, String> SPECIALS = ImmutableMap
+            .<String, String> builder()
             .put("ajp", "AJP")
             .put("ccm", "CCM")
             .put("dn", "DN")
@@ -118,8 +119,8 @@ public class LabelBuilder {
     }
 
     /**
-     * Turns a list of names from the management model into a human readable enumeration wrapped in quotes and
-     * separated with commas. The last name is separated with the specified conjunction.
+     * Turns a list of names from the management model into a human readable enumeration wrapped in quotes and separated with
+     * commas. The last name is separated with the specified conjunction.
      *
      * @return The list of names as human readable string or an empty string if the names are null or empty.
      */

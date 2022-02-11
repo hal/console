@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.runtime.server;
 
@@ -21,10 +21,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.FinderPath;
@@ -60,6 +56,12 @@ import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Requires;
 
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+
+import elemental2.dom.HTMLElement;
+
 import static java.util.Collections.singletonList;
 import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.HOST_CONFIGURATION_CHANGES_ADDRESS;
 import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.HOST_CONFIGURATION_CHANGES_TEMPLATE;
@@ -70,8 +72,8 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.AddressTemplate.OPTIONAL;
 
 @Column(Ids.STANDALONE_SERVER_COLUMN)
-@Requires(value = {"/", MANAGEMENT_ADDRESS, OPTIONAL + HOST_CONFIGURATION_CHANGES_ADDRESS, MANAGEMENT_OPERATIONS_ADDRESS},
-        recursive = false)
+@Requires(value = { "/", MANAGEMENT_ADDRESS, OPTIONAL + HOST_CONFIGURATION_CHANGES_ADDRESS,
+        MANAGEMENT_OPERATIONS_ADDRESS }, recursive = false)
 public class StandaloneServerColumn extends FinderColumn<Server> implements ServerActionHandler, ServerResultHandler {
 
     static final String MANAGEMENT_ADDRESS = "/core-service=management";
@@ -94,7 +96,7 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
                             .build();
                     Operation bootErrors = new Operation.Builder(ResourceAddress.root().add(CORE_SERVICE, MANAGEMENT),
                             READ_BOOT_ERRORS)
-                            .build();
+                                    .build();
                     dispatcher.execute(new Composite(attributes, bootErrors), (CompositeResult result) -> {
                         Server.STANDALONE.addServerAttributes(result.step(0).get(RESULT));
                         Server.STANDALONE.setBootErrors(!result.step(1).get(RESULT).asList().isEmpty());
@@ -109,8 +111,7 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
 
                 .onItemSelect(server -> eventBus.fireEvent(new ServerSelectionEvent(server.getName())))
                 .onPreview(item -> new ServerPreview(serverActions, item, dispatcher, eventBus, progress,
-                        statementContext, placeManager, places, finderPathFactory, resources))
-        );
+                        statementContext, placeManager, places, finderPathFactory, resources)));
 
         this.finder = finder;
         eventBus.addHandler(ServerActionEvent.getType(), this);
@@ -210,7 +211,7 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
 
     @Override
     public void onServerResult(ServerResultEvent event) {
-        //noinspection Duplicates
+        // noinspection Duplicates
         if (isVisible()) {
             ItemMonitor.stopProgress(event.getServer().getId());
 

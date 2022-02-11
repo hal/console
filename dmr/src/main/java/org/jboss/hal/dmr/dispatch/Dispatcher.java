@@ -1,35 +1,45 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.dmr.dispatch;
 
-import com.google.web.bindery.event.shared.EventBus;
-import elemental2.dom.*;
-import elemental2.dom.Blob.ConstructorBlobPartsArrayUnionType;
-import elemental2.dom.FormData.AppendValueUnionType;
-import jsinterop.annotations.JsFunction;
-import jsinterop.annotations.JsIgnore;
-import jsinterop.annotations.JsMethod;
-import jsinterop.annotations.JsType;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Consumer;
+
+import javax.inject.Inject;
+
 import org.jboss.hal.config.AccessControlProvider;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Settings;
-import org.jboss.hal.dmr.*;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.Property;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.ResponseHeadersProcessor.Header;
-import org.jboss.hal.dmr.macro.*;
+import org.jboss.hal.dmr.macro.Action;
+import org.jboss.hal.dmr.macro.Macro;
+import org.jboss.hal.dmr.macro.MacroFinishedEvent;
+import org.jboss.hal.dmr.macro.MacroOperationEvent;
+import org.jboss.hal.dmr.macro.MacroOptions;
+import org.jboss.hal.dmr.macro.Macros;
+import org.jboss.hal.dmr.macro.RecordingEvent;
 import org.jboss.hal.dmr.macro.RecordingEvent.RecordingHandler;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.EsParam;
@@ -37,24 +47,42 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.web.bindery.event.shared.EventBus;
+
+import elemental2.dom.Blob;
+import elemental2.dom.Blob.ConstructorBlobPartsArrayUnionType;
+import elemental2.dom.BlobPropertyBag;
+import elemental2.dom.File;
+import elemental2.dom.FormData;
+import elemental2.dom.FormData.AppendValueUnionType;
+import elemental2.dom.XMLHttpRequest;
+import jsinterop.annotations.JsFunction;
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsType;
 import rx.Single;
 import rx.SingleSubscriber;
-
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Consumer;
 
 import static com.google.common.collect.Sets.difference;
 import static elemental2.core.Global.encodeURIComponent;
 import static elemental2.dom.DomGlobal.navigator;
 import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.config.Settings.Key.RUN_AS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.OP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.QUERY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESPONSE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESPONSE_HEADERS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUPS;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.GET;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.POST;
-import static org.jboss.hal.dmr.dispatch.RequestHeader.*;
+import static org.jboss.hal.dmr.dispatch.RequestHeader.ACCEPT;
+import static org.jboss.hal.dmr.dispatch.RequestHeader.CONTENT_TYPE;
+import static org.jboss.hal.dmr.dispatch.RequestHeader.X_MANAGEMENT_CLIENT_NAME;
 
 /** Executes operations against the management endpoint. */
 @JsType(namespace = "hal.dmr")
@@ -74,7 +102,6 @@ public class Dispatcher implements RecordingHandler {
         pendingLifecycleAction = value;
         logger.debug("Dispatcher.pendingLifecycleAction = {}", pendingLifecycleAction);
     }
-
 
     private final Environment environment;
     private final Endpoints endpoints;
@@ -114,7 +141,6 @@ public class Dispatcher implements RecordingHandler {
         };
     }
 
-
     // ------------------------------------------------------ execute composite
 
     @JsIgnore
@@ -134,14 +160,13 @@ public class Dispatcher implements RecordingHandler {
 
     @JsIgnore
     public Single<CompositeResult> execute(Composite operations) {
-        //noinspection Convert2MethodRef
+        // noinspection Convert2MethodRef
         return dmr(operations).map(payload -> compositeResult(payload));
     }
 
     private CompositeResult compositeResult(ModelNode payload) {
         return new CompositeResult(payload.get(RESULT));
     }
-
 
     // ------------------------------------------------------ execute operation
 
@@ -166,15 +191,14 @@ public class Dispatcher implements RecordingHandler {
     }
 
     /**
-     * Executes the operation and upon successful result calls the success function with the response results, but
-     * doesn't retrieve the "result" payload as the other execute methods does. You should use this execute method if
-     * the response node you want is not in the "result" attribute.
+     * Executes the operation and upon successful result calls the success function with the response results, but doesn't
+     * retrieve the "result" payload as the other execute methods does. You should use this execute method if the response node
+     * you want is not in the "result" attribute.
      */
     @JsIgnore
     public void executeDMR(Operation operation, Consumer<ModelNode> success, OnFail fail, OnError error) {
         dmr(operation, success, fail, error);
     }
-
 
     // ------------------------------------------------------ dmr
 
@@ -200,7 +224,6 @@ public class Dispatcher implements RecordingHandler {
             recordOperation(operation);
         });
     }
-
 
     // ------------------------------------------------------ upload
 
@@ -238,11 +261,11 @@ public class Dispatcher implements RecordingHandler {
             // Safari does not support sending new files
             // https://bugs.webkit.org/show_bug.cgi?id=165081
             ConstructorBlobPartsArrayUnionType fileAsBlob = ConstructorBlobPartsArrayUnionType.of(file);
-            formData.append(file.name, new Blob(new ConstructorBlobPartsArrayUnionType[]{fileAsBlob}));
+            formData.append(file.name, new Blob(new ConstructorBlobPartsArrayUnionType[] { fileAsBlob }));
         } else {
             formData.append(file.name, AppendValueUnionType.of(file));
         }
-        formData.append(OPERATION, new Blob(new ConstructorBlobPartsArrayUnionType[]{blob}, options));
+        formData.append(OPERATION, new Blob(new ConstructorBlobPartsArrayUnionType[] { blob }, options));
         return uploadFormData(formData, uploadOperation).map(payload -> payload.get(RESULT));
     }
 
@@ -257,7 +280,6 @@ public class Dispatcher implements RecordingHandler {
             // Uploads are not supported in macros!
         });
     }
-
 
     // ------------------------------------------------------ download
 
@@ -283,9 +305,8 @@ public class Dispatcher implements RecordingHandler {
 
     @JsIgnore
     public String downloadUrl(Operation operation) {
-        return operationUrl(operation) + "&useStreamAsResponse"; //NON-NLS
+        return operationUrl(operation) + "&useStreamAsResponse"; // NON-NLS
     }
-
 
     // ------------------------------------------------------ run-as and urls
 
@@ -341,7 +362,6 @@ public class Dispatcher implements RecordingHandler {
         return builder.toString();
     }
 
-
     // ------------------------------------------------------ xhr
 
     private XMLHttpRequest newDmrXhr(String url, Operation operation, PayloadProcessor payloadProcessor,
@@ -356,7 +376,7 @@ public class Dispatcher implements RecordingHandler {
                 if (!payload.isFailure()) {
                     if (environment.isStandalone()) {
                         if (payload.hasDefined(RESPONSE_HEADERS)) {
-                            Header[] headers = new Header[]{new Header(payload.get(RESPONSE_HEADERS))};
+                            Header[] headers = new Header[] { new Header(payload.get(RESPONSE_HEADERS)) };
                             for (ResponseHeadersProcessor processor : responseHeadersProcessors.processors()) {
                                 processor.process(headers);
                             }
@@ -388,7 +408,7 @@ public class Dispatcher implements RecordingHandler {
 
         // The order of the XHR methods is important! Do not rearrange the code unless you know what you're doing!
         xhr.onload = event -> onLoad.onLoad(xhr);
-        xhr.addEventListener("error",  //NON-NLS
+        xhr.addEventListener("error", // NON-NLS
                 event -> handleErrorCodes(url, xhr.status, operation, error), false);
         xhr.open(method.name(), url, true);
         xhr.setRequestHeader(X_MANAGEMENT_CLIENT_NAME.header(), HEADER_MANAGEMENT_CLIENT_VALUE);
@@ -431,7 +451,6 @@ public class Dispatcher implements RecordingHandler {
         }
     }
 
-
     // ------------------------------------------------------ response headers in domain
 
     private Header[] collectHeaders(ModelNode serverGroups) {
@@ -455,7 +474,6 @@ public class Dispatcher implements RecordingHandler {
         }
         return headers.toArray(new Header[0]);
     }
-
 
     // ------------------------------------------------------ macro recording
 
@@ -504,14 +522,13 @@ public class Dispatcher implements RecordingHandler {
         }
     }
 
-
     // ------------------------------------------------------ JS methods
 
     /**
      * Executes the specified composite operation.
      *
      * @param composite The composite operation to execute.
-     * @param callback  The callback receiving the result.
+     * @param callback The callback receiving the result.
      */
     @JsMethod(name = "executeComposite")
     public void jsExecuteComposite(Composite composite,
@@ -523,13 +540,12 @@ public class Dispatcher implements RecordingHandler {
      * Executes the specified operation. The callback contains just the result w/o surrounding nodes like "outcome".
      *
      * @param operation The operation to execute.
-     * @param callback  The callback receiving the result.
+     * @param callback The callback receiving the result.
      */
     @JsMethod(name = "execute")
     public void jsExecute(Operation operation, @EsParam("function(result: ModelNode)") JsOperationCallback callback) {
         dmr(operation, payload -> callback.onSuccess(payload.get(RESULT)), failedCallback, exceptionCallback);
     }
-
 
     // ------------------------------------------------------ Keycloak methods
 
@@ -544,9 +560,7 @@ public class Dispatcher implements RecordingHandler {
         return null;
     }-*/;
 
-
     // ------------------------------------------------------ inner classes
-
 
     @FunctionalInterface
     public interface OnFail {
@@ -554,13 +568,11 @@ public class Dispatcher implements RecordingHandler {
         void onFailed(Operation operation, String failure);
     }
 
-
     @FunctionalInterface
     public interface OnError {
 
         void onException(Operation operation, Throwable exception);
     }
-
 
     @FunctionalInterface
     private interface OnLoad {
@@ -568,13 +580,11 @@ public class Dispatcher implements RecordingHandler {
         void onLoad(XMLHttpRequest xhr);
     }
 
-
     @JsFunction
     public interface JsOperationCallback {
 
         void onSuccess(ModelNode result);
     }
-
 
     @JsFunction
     public interface JsCompositeCallback {
@@ -582,11 +592,9 @@ public class Dispatcher implements RecordingHandler {
         void onSuccess(CompositeResult result);
     }
 
-
     public enum HttpMethod {
         GET, POST
     }
-
 
     private static class ModelNodeSingleSubscriber extends SingleSubscriber<ModelNode> {
 

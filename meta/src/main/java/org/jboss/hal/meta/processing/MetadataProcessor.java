@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.meta.processing;
 
@@ -21,12 +21,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import com.google.common.base.Stopwatch;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import jsinterop.annotations.JsFunction;
-import jsinterop.annotations.JsIgnore;
-import jsinterop.annotations.JsMethod;
-import jsinterop.annotations.JsType;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Settings;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -46,6 +40,14 @@ import org.jboss.hal.meta.security.SecurityContextRegistry;
 import org.jboss.hal.spi.EsParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Stopwatch;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
+import jsinterop.annotations.JsFunction;
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsType;
 
 import static java.util.Collections.singleton;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -180,12 +182,11 @@ public class MetadataProcessor {
         }
     }
 
-
     // ------------------------------------------------------ JS methods
 
     /**
-     * Reads the metadata for the template and passes it to the callback. If the metadata has been already processed,
-     * it's passed directly to the callback.
+     * Reads the metadata for the template and passes it to the callback. If the metadata has been already processed, it's
+     * passed directly to the callback.
      *
      * @param template The address template to lookup.
      * @param callback The callback which receives the metadata.
@@ -214,13 +215,11 @@ public class MetadataProcessor {
         }
     }
 
-
     @JsFunction
     public interface JsMetadataCallback {
 
         void onMetadata(Metadata metadata);
     }
-
 
     public interface MetadataCallback {
 

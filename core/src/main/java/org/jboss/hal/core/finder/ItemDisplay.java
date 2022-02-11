@@ -1,37 +1,38 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.core.finder;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.HasTitle;
 import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 
+import elemental2.dom.HTMLElement;
+
 import static org.jboss.gwt.elemento.core.Elements.small;
 import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.resources.CSS.itemText;
 
 /**
- * Controls the layout of a finder item. For simple items you only need to implement the {@link #getTitle()} method.
- * Override the default implementations if you need more control over the display and behaviour of the item.
+ * Controls the layout of a finder item. For simple items you only need to implement the {@link #getTitle()} method. Override
+ * the default implementations if you need more control over the display and behaviour of the item.
  */
 @FunctionalInterface
 public interface ItemDisplay<T> extends IsElement, HasTitle {
@@ -39,8 +40,8 @@ public interface ItemDisplay<T> extends IsElement, HasTitle {
     /**
      * An unique id for this item.
      * <p>
-     * Please make sure the id returned by this method matches the id which is part of the {@link FinderPath} returned
-     * by {@link ApplicationFinderPresenter#finderPath()}
+     * Please make sure the id returned by this method matches the id which is part of the {@link FinderPath} returned by
+     * {@link ApplicationFinderPresenter#finderPath()}
      *
      * @return an id based on {@link #getTitle()}: {@code Ids.asId(getTitle())}
      */
@@ -67,8 +68,8 @@ public interface ItemDisplay<T> extends IsElement, HasTitle {
     }
 
     /**
-     * Whether to show an icon left to the item text. The icon should be a PatternFly or FontAwesome icon in normal
-     * size. See {@link org.jboss.hal.resources.Icons} for a list of common icons.
+     * Whether to show an icon left to the item text. The icon should be a PatternFly or FontAwesome icon in normal size. See
+     * {@link org.jboss.hal.resources.Icons} for a list of common icons.
      *
      * @return {@code null} by default
      */
@@ -105,8 +106,8 @@ public interface ItemDisplay<T> extends IsElement, HasTitle {
     }
 
     /**
-     * Factory methods which can be used when overriding {@link #element()}. Creates a {@code <div>} element with two
-     * nested {@code <span>} elements. One for the title and a smaller one for the subtitle.
+     * Factory methods which can be used when overriding {@link #element()}. Creates a {@code <div>} element with two nested
+     * {@code <span>} elements. One for the title and a smaller one for the subtitle.
      *
      * @param title
      * @param subtitle

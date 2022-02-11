@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.runtime.subsystem.logging;
 
@@ -19,11 +19,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -43,6 +38,12 @@ import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
+
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.annotations.NameToken;
+import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import static elemental2.dom.DomGlobal.clearInterval;
 import static elemental2.dom.DomGlobal.clearTimeout;
@@ -123,7 +124,7 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
             Operation logFileOp = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                     .param(INCLUDE_RUNTIME, true)
                     .build();
-            //noinspection HardCodedStringLiteral
+            // noinspection HardCodedStringLiteral
             Operation contentOp = new Operation.Builder(address, "read-log-file")
                     .param("lines", LogFiles.LINES)
                     .param("tail", true)
@@ -166,17 +167,17 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
             } else {
                 address = PROFILE_LOG_FILE_TEMPLATE.resolve(statementContext, loggingProfile, logFileName);
             }
-            //noinspection HardCodedStringLiteral
+            // noinspection HardCodedStringLiteral
             Operation operation = new Operation.Builder(address, READ_LOG_FILE)
                     .param(LINES, linesToRead)
                     .param(TAIL, true)
                     .build();
             dispatcher.execute(operation, result -> {
-                        clearTimeout(handle);
-                        List<ModelNode> linesRead = result.asList();
-                        String content = linesRead.stream().map(ModelNode::asString).collect(joining("\n"));
-                        getView().refresh(linesRead.size(), content);
-                    },
+                clearTimeout(handle);
+                List<ModelNode> linesRead = result.asList();
+                String content = linesRead.stream().map(ModelNode::asString).collect(joining("\n"));
+                getView().refresh(linesRead.size(), content);
+            },
                     (op, failure) -> {
                         clearTimeout(handle);
                         MessageEvent.fire(getEventBus(),
@@ -212,7 +213,6 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
         return intervalHandle != -1;
     }
 
-
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(LOG_FILE)
@@ -222,8 +222,11 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
 
     public interface MyView extends HalView, HasPresenter<LogFilePresenter> {
         void loading();
+
         void show(LogFile logFile, int lines, String content);
+
         void refresh(int lines, String content);
+
         int visibleLines();
     }
     // @formatter:on

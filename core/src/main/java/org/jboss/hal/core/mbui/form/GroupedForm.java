@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.core.mbui.form;
 
@@ -24,9 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.Iterables;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.Tabs;
@@ -40,16 +37,20 @@ import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 
+import com.google.common.collect.Iterables;
+import com.google.gwt.safehtml.shared.SafeHtml;
+
+import elemental2.dom.HTMLElement;
+
 import static com.google.common.collect.Lists.asList;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 
 /**
- * A form which groups attributes on different tabs. Each group will include the attributes specified by the {@linkplain
- * Builder grouped form builder}.
+ * A form which groups attributes on different tabs. Each group will include the attributes specified by the {@linkplain Builder
+ * grouped form builder}.
  * <p>
- * Internally this class uses a separate form for each group / tab. All forms share the same save, cancel and reset
- * callbacks.
+ * Internally this class uses a separate form for each group / tab. All forms share the same save, cancel and reset callbacks.
  */
 public class GroupedForm<T extends ModelNode> implements Form<T> {
 
@@ -119,7 +120,6 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
         currentForm = forms.get(0);
     }
 
-
     // ------------------------------------------------------ element and attachable contract
 
     @Override
@@ -136,7 +136,6 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
     public void detach() {
         forms.forEach(Form::detach);
     }
-
 
     // ------------------------------------------------------ form contract
 
@@ -264,9 +263,7 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
         }
     }
 
-
     // ------------------------------------------------------ inner classes
-
 
     private static class Group {
 
@@ -289,13 +286,11 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
         }
     }
 
-
     private enum Mode {
         ADD_ONLY, FROM_REQUEST_PROPERTIES, VIEW_ONLY
     }
 
-
-    @SuppressWarnings({"ResultOfMethodCallIgnored", "WeakerAccess"})
+    @SuppressWarnings({ "ResultOfMethodCallIgnored", "WeakerAccess" })
     public static class Builder<T extends ModelNode> {
 
         private final String id;
@@ -315,8 +310,8 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
         }
 
         /**
-         * Starts a custom group with custom attributes. Use one of the {@code include()} and {@code exclude()} methods
-         * to include and exclude attributes.
+         * Starts a custom group with custom attributes. Use one of the {@code include()} and {@code exclude()} methods to
+         * include and exclude attributes.
          */
         public Builder<T> customGroup(String id, String title) {
             assertNoCurrentGroup();
@@ -325,9 +320,9 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
         }
 
         /**
-         * Starts an attribute group backed by a group definition from the resource description. All attributes defined
-         * in the specified group are included in alphabetic order. The id and title of the group is derived from the
-         * attribute group name.
+         * Starts an attribute group backed by a group definition from the resource description. All attributes defined in the
+         * specified group are included in alphabetic order. The id and title of the group is derived from the attribute group
+         * name.
          */
         public Builder<T> attributeGroup(String name) {
             return attributeGroup(Ids.build(id, "group", name), name, new LabelBuilder().label(name));
@@ -414,8 +409,8 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
         }
 
         /**
-         * Adds a custom element to the current group. All attributes, includes, excludes, custom or unbound form items
-         * added so far are ignored.
+         * Adds a custom element to the current group. All attributes, includes, excludes, custom or unbound form items added so
+         * far are ignored.
          */
         public Builder<T> add(HTMLElement element) {
             assertCurrentGroup();
@@ -462,7 +457,7 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
         }
 
         private String formId() {
-            return "grouped form(" + id + ")"; //NON-NLS
+            return "grouped form(" + id + ")"; // NON-NLS
         }
     }
 }

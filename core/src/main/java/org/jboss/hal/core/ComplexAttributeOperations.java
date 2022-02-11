@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.core;
 
@@ -22,10 +22,6 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.common.collect.Iterables;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.web.bindery.event.shared.EventBus;
-import jsinterop.annotations.JsIgnore;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
@@ -49,14 +45,20 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
+import com.google.common.collect.Iterables;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.web.bindery.event.shared.EventBus;
+
+import jsinterop.annotations.JsIgnore;
+
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.StreamSupport.stream;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
- * Class to create, read, update and delete complex attributes. This class mirrors and delegates to methods from {@link
- * CrudOperations}.
+ * Class to create, read, update and delete complex attributes. This class mirrors and delegates to methods from
+ * {@link CrudOperations}.
  */
 public class ComplexAttributeOperations {
 
@@ -85,21 +87,20 @@ public class ComplexAttributeOperations {
         this.resources = resources;
     }
 
-
     // ------------------------------------------------------ (c)reate with dialog
 
     /**
-     * Opens an add-resource-dialog for the given complex attribute. The dialog contains fields for all required
-     * attributes. When clicking "Add", a new complex attribute is created and written to the specified resource.
-     * After the resource has been updated, a success message is fired and the specified callback is executed.
+     * Opens an add-resource-dialog for the given complex attribute. The dialog contains fields for all required attributes.
+     * When clicking "Add", a new complex attribute is created and written to the specified resource. After the resource has
+     * been updated, a success message is fired and the specified callback is executed.
      *
-     * @param id               the id used for the add resource dialog
-     * @param resource         the resource name
+     * @param id the id used for the add resource dialog
+     * @param resource the resource name
      * @param complexAttribute the name of the complex attribute
-     * @param type             the human readable name of the complex attribute
-     * @param template         the address template which is resolved against the current statement context and the
-     *                         resource name to get the resource address for the operation
-     * @param callback         the callback executed after the resource has been added
+     * @param type the human readable name of the complex attribute
+     * @param template the address template which is resolved against the current statement context and the resource name to get
+     *        the resource address for the operation
+     * @param callback the callback executed after the resource has been added
      */
     @JsIgnore
     public void add(String id, String resource, String complexAttribute, String type, AddressTemplate template,
@@ -109,18 +110,18 @@ public class ComplexAttributeOperations {
     }
 
     /**
-     * Opens an add-resource-dialog for the given complex attribute. The dialog contains fields for all required
-     * attributes. When clicking "Add", a new complex attribute is created and written to the specified resource.
-     * After the resource has been updated, a success message is fired and the specified callback is executed.
+     * Opens an add-resource-dialog for the given complex attribute. The dialog contains fields for all required attributes.
+     * When clicking "Add", a new complex attribute is created and written to the specified resource. After the resource has
+     * been updated, a success message is fired and the specified callback is executed.
      *
-     * @param id               the id used for the add resource dialog
-     * @param resource         the resource name
+     * @param id the id used for the add resource dialog
+     * @param resource the resource name
      * @param complexAttribute the name of the complex attribute
-     * @param type             the human readable name of the complex attribute
-     * @param template         the address template which is resolved against the current statement context and the
-     *                         resource name to get the resource address for the operation
-     * @param attributes       additional attributes which should be part of the add resource dialog
-     * @param callback         the callback executed after the resource has been added
+     * @param type the human readable name of the complex attribute
+     * @param template the address template which is resolved against the current statement context and the resource name to get
+     *        the resource address for the operation
+     * @param attributes additional attributes which should be part of the add resource dialog
+     * @param callback the callback executed after the resource has been added
      */
     @JsIgnore
     public void add(String id, String resource, String complexAttribute, String type, AddressTemplate template,
@@ -130,17 +131,17 @@ public class ComplexAttributeOperations {
     }
 
     /**
-     * Opens an add-resource-dialog for the given complex attribute. The dialog contains fields for all required
-     * attributes. When clicking "Add", a new model node is created and added to the complex attribute in the specified
-     * resource. After the resource has been updated, a success message is fired and the specified callback is executed.
+     * Opens an add-resource-dialog for the given complex attribute. The dialog contains fields for all required attributes.
+     * When clicking "Add", a new model node is created and added to the complex attribute in the specified resource. After the
+     * resource has been updated, a success message is fired and the specified callback is executed.
      *
-     * @param id               the id used for the add resource dialog
-     * @param resource         the resource name
+     * @param id the id used for the add resource dialog
+     * @param resource the resource name
      * @param complexAttribute the name of the complex attribute
-     * @param type             the human readable name of the complex attribute
-     * @param template         the address template which is resolved against the current statement context and the
-     *                         resource name to get the resource address for the operation
-     * @param callback         the callback executed after the resource has been added
+     * @param type the human readable name of the complex attribute
+     * @param template the address template which is resolved against the current statement context and the resource name to get
+     *        the resource address for the operation
+     * @param callback the callback executed after the resource has been added
      */
     @JsIgnore
     public void listAdd(String id, String resource, String complexAttribute, String type, AddressTemplate template,
@@ -150,20 +151,19 @@ public class ComplexAttributeOperations {
     }
 
     /**
-     * Opens an add-resource-dialog for the given complex attribute. If the resource contains required attributes, they
-     * are displayed, otherwise all attributes are displayed.
-     * When clicking "Add", a new model node is created and added to the complex attribute in the specified
-     * resource. After the resource has been updated, a success message is fired and the specified callback is
-     * executed.
+     * Opens an add-resource-dialog for the given complex attribute. If the resource contains required attributes, they are
+     * displayed, otherwise all attributes are displayed. When clicking "Add", a new model node is created and added to the
+     * complex attribute in the specified resource. After the resource has been updated, a success message is fired and the
+     * specified callback is executed.
      *
-     * @param id               the id used for the add resource dialog
-     * @param resource         the resource name
+     * @param id the id used for the add resource dialog
+     * @param resource the resource name
      * @param complexAttribute the name of the complex attribute
-     * @param type             the human readable name of the complex attribute
-     * @param template         the address template which is resolved against the current statement context and the
-     *                         resource name to get the resource address for the operation
-     * @param attributes       additional attributes which should be part of the add resource dialog
-     * @param callback         the callback executed after the resource has been added
+     * @param type the human readable name of the complex attribute
+     * @param template the address template which is resolved against the current statement context and the resource name to get
+     *        the resource address for the operation
+     * @param attributes additional attributes which should be part of the add resource dialog
+     * @param callback the callback executed after the resource has been added
      */
     @JsIgnore
     public void listAdd(String id, String resource, String complexAttribute, String type, AddressTemplate template,
@@ -196,20 +196,19 @@ public class ComplexAttributeOperations {
         });
     }
 
-
     // ------------------------------------------------------ (c)reate operation
 
     /**
-     * Writes the payload to the complex attribute in the specified resource. After the resource has been updated,
-     * a success message is fired and the specified callback is executed.
+     * Writes the payload to the complex attribute in the specified resource. After the resource has been updated, a success
+     * message is fired and the specified callback is executed.
      *
-     * @param resource         the resource name
+     * @param resource the resource name
      * @param complexAttribute the name of the complex attribute
-     * @param type             the human readable name of the complex attribute
-     * @param template         the address template which is resolved against the current statement context and the
-     *                         resource name to get the resource address for the operation
-     * @param payload          the optional payload for the complex attribute (may be null or undefined)
-     * @param callback         the callback executed after the resource has been added
+     * @param type the human readable name of the complex attribute
+     * @param template the address template which is resolved against the current statement context and the resource name to get
+     *        the resource address for the operation
+     * @param payload the optional payload for the complex attribute (may be null or undefined)
+     * @param callback the callback executed after the resource has been added
      */
     @JsIgnore
     public void add(String resource, String complexAttribute, String type, AddressTemplate template,
@@ -219,14 +218,14 @@ public class ComplexAttributeOperations {
     }
 
     /**
-     * Writes the payload to the complex attribute in the specified resource. After the resource has been updated,
-     * a success message is fired and the specified callback is executed.
+     * Writes the payload to the complex attribute in the specified resource. After the resource has been updated, a success
+     * message is fired and the specified callback is executed.
      *
      * @param complexAttribute the name of the complex attribute
-     * @param type             the human readable name of the complex attribute
-     * @param address          the fq address for the operation
-     * @param payload          the optional payload for the complex attribute (may be null or undefined)
-     * @param callback         the callback executed after the resource has been added
+     * @param type the human readable name of the complex attribute
+     * @param address the fq address for the operation
+     * @param payload the optional payload for the complex attribute (may be null or undefined)
+     * @param callback the callback executed after the resource has been added
      */
     @JsIgnore
     public void add(String complexAttribute, String type, ResourceAddress address, @Nullable ModelNode payload,
@@ -242,16 +241,16 @@ public class ComplexAttributeOperations {
     }
 
     /**
-     * Adds the payload to the complex attribute in the specified resource. After the resource has been updated,
-     * a success message is fired and the specified callback is executed.
+     * Adds the payload to the complex attribute in the specified resource. After the resource has been updated, a success
+     * message is fired and the specified callback is executed.
      *
-     * @param resource         the resource name
+     * @param resource the resource name
      * @param complexAttribute the name of the complex attribute
-     * @param type             the human readable name of the complex attribute
-     * @param template         the address template which is resolved against the current statement context and the
-     *                         resource name to get the resource address for the operation
-     * @param payload          the optional payload for the complex attribute (may be null or undefined)
-     * @param callback         the callback executed after the resource has been added
+     * @param type the human readable name of the complex attribute
+     * @param template the address template which is resolved against the current statement context and the resource name to get
+     *        the resource address for the operation
+     * @param payload the optional payload for the complex attribute (may be null or undefined)
+     * @param callback the callback executed after the resource has been added
      */
     @JsIgnore
     public void listAdd(String resource, String complexAttribute, String type, AddressTemplate template,
@@ -267,22 +266,21 @@ public class ComplexAttributeOperations {
         });
     }
 
-
     // ------------------------------------------------------ (u)pdate using template
 
     /**
-     * Writes the changed values to the complex attribute. After the complex attribute has been saved a standard success
-     * message is fired and the specified callback is executed.
+     * Writes the changed values to the complex attribute. After the complex attribute has been saved a standard success message
+     * is fired and the specified callback is executed.
      * <p>
      * If the change set is empty, a warning message is fired and the specified callback is executed.
      *
-     * @param resource         the resource name
+     * @param resource the resource name
      * @param complexAttribute the name of the complex attribute
-     * @param type             the human readable name of the complex attribute
-     * @param template         the address template which is resolved against the current statement context and the
-     *                         resource name to get the resource address for the operation
-     * @param changedValues    the changed values / payload for the operation
-     * @param callback         the callback executed after the resource has been saved
+     * @param type the human readable name of the complex attribute
+     * @param template the address template which is resolved against the current statement context and the resource name to get
+     *        the resource address for the operation
+     * @param changedValues the changed values / payload for the operation
+     * @param callback the callback executed after the resource has been saved
      */
     @JsIgnore
     public void save(String resource, String complexAttribute, String type, AddressTemplate template,
@@ -298,19 +296,19 @@ public class ComplexAttributeOperations {
     }
 
     /**
-     * Writes the changed values to the list-type complex attribute. After the complex attribute has been saved a
-     * standard success message is fired and the specified callback is executed.
+     * Writes the changed values to the list-type complex attribute. After the complex attribute has been saved a standard
+     * success message is fired and the specified callback is executed.
      * <p>
      * If the change set is empty, a warning message is fired and the specified callback is executed.
      *
-     * @param resource         the resource name
+     * @param resource the resource name
      * @param complexAttribute the name of the complex attribute
-     * @param type             the human readable name of the complex attribute
-     * @param index            the index for the list-type complex attribute
-     * @param template         the address template which is resolved against the current statement context and the
-     *                         resource name to get the resource address for the operation
-     * @param changedValues    the changed values / payload for the operation
-     * @param callback         the callback executed after the resource has been saved
+     * @param type the human readable name of the complex attribute
+     * @param index the index for the list-type complex attribute
+     * @param template the address template which is resolved against the current statement context and the resource name to get
+     *        the resource address for the operation
+     * @param changedValues the changed values / payload for the operation
+     * @param callback the callback executed after the resource has been saved
      */
     @JsIgnore
     public void save(String resource, String complexAttribute, String type, int index, AddressTemplate template,
@@ -326,14 +324,14 @@ public class ComplexAttributeOperations {
     }
 
     /**
-     * Writes the full payload to the complex attribute in the specified resource. After the resource has been
-     * updated, a success message is fired and the specified callback is executed.
+     * Writes the full payload to the complex attribute in the specified resource. After the resource has been updated, a
+     * success message is fired and the specified callback is executed.
      *
      * @param complexAttribute the name of the complex attribute
-     * @param type             the human readable name of the complex attribute
-     * @param address          the fq address for the operation
-     * @param payload          the optional payload for the complex attribute (may be null or undefined)
-     * @param callback         the callback executed after the resource has been added
+     * @param type the human readable name of the complex attribute
+     * @param address the fq address for the operation
+     * @param payload the optional payload for the complex attribute (may be null or undefined)
+     * @param callback the callback executed after the resource has been added
      */
     @JsIgnore
     public void save(String complexAttribute, String type, ResourceAddress address, @Nullable ModelNode payload,
@@ -351,17 +349,17 @@ public class ComplexAttributeOperations {
     // ------------------------------------------------------ (u)pdate using address
 
     /**
-     * Writes the changed values to the complex attribute. After the complex attribute has been saved a standard success
-     * message is fired and the specified callback is executed.
+     * Writes the changed values to the complex attribute. After the complex attribute has been saved a standard success message
+     * is fired and the specified callback is executed.
      * <p>
      * If the change set is empty, a warning message is fired and the specified callback is executed.
      *
      * @param complexAttribute the name of the complex attribute
-     * @param type             the human readable name of the complex attribute
-     * @param address          the fq address for the operation
-     * @param changedValues    the changed values / payload for the operation
-     * @param metadata         the metadata for the complex attribute
-     * @param callback         the callback executed after the resource has been saved
+     * @param type the human readable name of the complex attribute
+     * @param address the fq address for the operation
+     * @param changedValues the changed values / payload for the operation
+     * @param metadata the metadata for the complex attribute
+     * @param callback the callback executed after the resource has been saved
      */
     @JsIgnore
     public void save(String complexAttribute, String type, ResourceAddress address, Map<String, Object> changedValues,
@@ -371,18 +369,18 @@ public class ComplexAttributeOperations {
     }
 
     /**
-     * Writes the changed values to the list-type complex attribute. After the complex attribute has been saved a
-     * standard success message is fired and the specified callback is executed.
+     * Writes the changed values to the list-type complex attribute. After the complex attribute has been saved a standard
+     * success message is fired and the specified callback is executed.
      * <p>
      * If the change set is empty, a warning message is fired and the specified callback is executed.
      *
      * @param complexAttribute the name of the complex attribute
-     * @param type             the human readable name of the complex attribute
-     * @param index            the index for the list-type complex attribute
-     * @param address          the fq address for the operation
-     * @param changedValues    the changed values / payload for the operation
-     * @param metadata         the metadata for the complex attribute
-     * @param callback         the callback executed after the resource has been saved
+     * @param type the human readable name of the complex attribute
+     * @param index the index for the list-type complex attribute
+     * @param address the fq address for the operation
+     * @param changedValues the changed values / payload for the operation
+     * @param metadata the metadata for the complex attribute
+     * @param callback the callback executed after the resource has been saved
      */
     @JsIgnore
     public void save(String complexAttribute, String type, int index, ResourceAddress address,
@@ -392,22 +390,21 @@ public class ComplexAttributeOperations {
         crud.save(operations, resources.messages().modifySingleResourceSuccess(type), callback);
     }
 
-
     // ------------------------------------------------------ (u) reset using template
 
     /**
-     * Undefines all non required attributes in the specified form. After the attributes in the complex attribute have
-     * been undefined a standard success message is fired and the specified callback is executed.
+     * Undefines all non required attributes in the specified form. After the attributes in the complex attribute have been
+     * undefined a standard success message is fired and the specified callback is executed.
      * <p>
      * If the form contains only required attributes, a warning message is fired and the specified callback is executed.
      *
-     * @param resource         the resource name
+     * @param resource the resource name
      * @param complexAttribute the name of the complex attribute
-     * @param type             the human readable name of the complex attribute
-     * @param template         the address template which is resolved against the current statement context and the
-     *                         resource name to get the resource address for the operation
-     * @param form             the form which should be reset
-     * @param callback         the callback executed after the resource has been saved
+     * @param type the human readable name of the complex attribute
+     * @param template the address template which is resolved against the current statement context and the resource name to get
+     *        the resource address for the operation
+     * @param form the form which should be reset
+     * @param callback the callback executed after the resource has been saved
      */
     @JsIgnore
     public <T> void reset(String resource, String complexAttribute, String type, AddressTemplate template, Form<T> form,
@@ -422,18 +419,18 @@ public class ComplexAttributeOperations {
     }
 
     /**
-     * Undefines all non required attributes in the specified form. After the attributes in the complex attribute have
-     * been undefined a standard success message is fired and the specified callback is executed.
+     * Undefines all non required attributes in the specified form. After the attributes in the complex attribute have been
+     * undefined a standard success message is fired and the specified callback is executed.
      * <p>
      * If the form contains only required attributes, a warning message is fired and the specified callback is executed.
      *
-     * @param resource         the resource name
+     * @param resource the resource name
      * @param complexAttribute the name of the complex attribute
-     * @param type             the human readable name of the complex attribute
-     * @param template         the address template which is resolved against the current statement context and the
-     *                         resource name to get the resource address for the operation
-     * @param form             the form which should be reset
-     * @param callback         the callback executed after the resource has been saved
+     * @param type the human readable name of the complex attribute
+     * @param template the address template which is resolved against the current statement context and the resource name to get
+     *        the resource address for the operation
+     * @param form the form which should be reset
+     * @param callback the callback executed after the resource has been saved
      */
     @JsIgnore
     public <T> void reset(String resource, String complexAttribute, String type, AddressTemplate template,
@@ -448,16 +445,16 @@ public class ComplexAttributeOperations {
     }
 
     /**
-     * Undefines all non required attributes in the specified form. After the attributes in the complex attribute have
-     * been undefined a standard success message is fired and the specified callback is executed.
+     * Undefines all non required attributes in the specified form. After the attributes in the complex attribute have been
+     * undefined a standard success message is fired and the specified callback is executed.
      * <p>
      * If the form contains only required attributes, a warning message is fired and the specified callback is executed.
      *
      * @param complexAttribute the name of the complex attribute
-     * @param type             the human readable name of the complex attribute
-     * @param address          the fq address for the operation
-     * @param form             the form which should be reset
-     * @param callback         the callback executed after the resource has been saved
+     * @param type the human readable name of the complex attribute
+     * @param address the fq address for the operation
+     * @param form the form which should be reset
+     * @param callback the callback executed after the resource has been saved
      */
     @JsIgnore
     public <T> void reset(String complexAttribute, String type, ResourceAddress address, Metadata metadata,
@@ -486,19 +483,18 @@ public class ComplexAttributeOperations {
         }
     }
 
-
     // ------------------------------------------------------ (d)elete using template
 
     /**
-     * Undefines the complex attribute. After the attribute has been undefined a standard success message is fired and
-     * the specified callback is executed.
+     * Undefines the complex attribute. After the attribute has been undefined a standard success message is fired and the
+     * specified callback is executed.
      *
-     * @param resource         the resource name
+     * @param resource the resource name
      * @param complexAttribute the name of the complex attribute
-     * @param type             the human readable name of the complex attribute
-     * @param template         the address template which is resolved against the current statement context and the
-     *                         resource name to get the resource address for the operation
-     * @param callback         the callback executed after the complex attribute has been undefined
+     * @param type the human readable name of the complex attribute
+     * @param template the address template which is resolved against the current statement context and the resource name to get
+     *        the resource address for the operation
+     * @param callback the callback executed after the complex attribute has been undefined
      */
     @JsIgnore
     public void remove(String resource, String complexAttribute, String type, AddressTemplate template,
@@ -508,13 +504,13 @@ public class ComplexAttributeOperations {
     }
 
     /**
-     * Undefines the complex attribute. After the attribute has been undefined a standard success message is fired and
-     * the specified callback is executed.
+     * Undefines the complex attribute. After the attribute has been undefined a standard success message is fired and the
+     * specified callback is executed.
      *
      * @param complexAttribute the name of the complex attribute
-     * @param type             the human readable name of the complex attribute
-     * @param address          the fq address for the operation
-     * @param callback         the callback executed after the complex attribute has been undefined
+     * @param type the human readable name of the complex attribute
+     * @param address the fq address for the operation
+     * @param callback the callback executed after the complex attribute has been undefined
      */
     @JsIgnore
     public void remove(String complexAttribute, String type, ResourceAddress address, Callback callback) {
@@ -532,16 +528,16 @@ public class ComplexAttributeOperations {
     }
 
     /**
-     * Undefines the complex attribute at the specified index. After the attribute has been undefined a standard success
-     * message is fired and the specified callback is executed.
+     * Undefines the complex attribute at the specified index. After the attribute has been undefined a standard success message
+     * is fired and the specified callback is executed.
      *
-     * @param resource         the resource name
+     * @param resource the resource name
      * @param complexAttribute the name of the complex attribute
-     * @param type             the human readable name of the complex attribute
-     * @param index            the index for the list-type complex attribute
-     * @param template         the address template which is resolved against the current statement context and the
-     *                         resource name to get the resource address for the operation
-     * @param callback         the callback executed after the complex attribute has been undefined
+     * @param type the human readable name of the complex attribute
+     * @param index the index for the list-type complex attribute
+     * @param template the address template which is resolved against the current statement context and the resource name to get
+     *        the resource address for the operation
+     * @param callback the callback executed after the complex attribute has been undefined
      */
     @JsIgnore
     public void remove(String resource, String complexAttribute, String type, int index, AddressTemplate template,
@@ -550,18 +546,17 @@ public class ComplexAttributeOperations {
         remove(complexAttribute, type, index, address, callback);
     }
 
-
     // ------------------------------------------------------ (d)elete using address
 
     /**
-     * Undefines the complex attribute at the specified index. After the attribute has been undefined a standard success
-     * message is fired and the specified callback is executed.
+     * Undefines the complex attribute at the specified index. After the attribute has been undefined a standard success message
+     * is fired and the specified callback is executed.
      *
      * @param complexAttribute the name of the complex attribute
-     * @param type             the human readable name of the complex attribute
-     * @param index            the index for the list-type complex attribute
-     * @param address          the fq address for the operation
-     * @param callback         the callback executed after the complex attribute has been undefined
+     * @param type the human readable name of the complex attribute
+     * @param index the index for the list-type complex attribute
+     * @param address the fq address for the operation
+     * @param callback the callback executed after the complex attribute has been undefined
      */
     @JsIgnore
     public void remove(String complexAttribute, String type, int index, ResourceAddress address, Callback callback) {
@@ -578,7 +573,6 @@ public class ComplexAttributeOperations {
                     callback.execute();
                 }));
     }
-
 
     // ------------------------------------------------------ helper methods
 

@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.ballroom.dialog;
 
@@ -24,14 +24,6 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import com.google.common.collect.Iterables;
-import com.google.gwt.core.client.GWT;
-import elemental2.dom.HTMLButtonElement;
-import elemental2.dom.HTMLElement;
-import jsinterop.annotations.JsFunction;
-import jsinterop.annotations.JsIgnore;
-import jsinterop.annotations.JsMethod;
-import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
@@ -43,6 +35,16 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Callback;
 
+import com.google.common.collect.Iterables;
+import com.google.gwt.core.client.GWT;
+
+import elemental2.dom.HTMLButtonElement;
+import elemental2.dom.HTMLElement;
+import jsinterop.annotations.JsFunction;
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsType;
+
 import static elemental2.dom.DomGlobal.document;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.bind;
@@ -52,15 +54,15 @@ import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.UIConstants.*;
 
 /**
- * A modal dialog with optional secondary and primary buttons. Only one dialog can be open at a time. The buttons can
- * be placed on the left or the right side. Each button has a callback. The callback is either a {@link Callback}
- * which always closes the dialog or a {@link ResultCallback} with a boolean return value. A value of {@code true}
- * indicates that the dialog should be closed whereas {@code false} keeps the dialog open. You can add as many buttons
- * as you like, but only one of them should be the primary button.
+ * A modal dialog with optional secondary and primary buttons. Only one dialog can be open at a time. The buttons can be placed
+ * on the left or the right side. Each button has a callback. The callback is either a {@link Callback} which always closes the
+ * dialog or a {@link ResultCallback} with a boolean return value. A value of {@code true} indicates that the dialog should be
+ * closed whereas {@code false} keeps the dialog open. You can add as many buttons as you like, but only one of them should be
+ * the primary button.
  * <p>
- * There are convenience methods to add primary and secondary buttons which come with pre-defined placements. If
- * you want to define the placement by yourself use negative numbers to place the buttons on the left side and positive
- * numbers for the right side. On each side the buttons are ordered according to the placement.
+ * There are convenience methods to add primary and secondary buttons which come with pre-defined placements. If you want to
+ * define the placement by yourself use negative numbers to place the buttons on the left side and positive numbers for the
+ * right side. On each side the buttons are ordered according to the placement.
  */
 @JsType(namespace = "hal.ui")
 public class Dialog implements IsElement {
@@ -85,14 +87,16 @@ public class Dialog implements IsElement {
                 .attr(ROLE, DIALOG)
                 .attr(TABINDEX, "-1")
                 .aria(LABELLED_BY, Ids.HAL_MODAL_TITLE)
-                .add(dialog = div().css(modalDialog).attr(ROLE, "document") //NON-NLS
+                .add(dialog = div().css(modalDialog).attr(ROLE, "document") // NON-NLS
                         .add(div().css(modalContent)
                                 .add(div().css(modalHeader)
                                         .add(closeIcon = button().css(close).aria(LABEL, CONSTANTS.close())
                                                 .add(span().css(pfIcon("close"))).element())
                                         .add(title = h(4).css(modalTitle).id(Ids.HAL_MODAL_TITLE).element()))
                                 .add(body = div().css(modalBody).element())
-                                .add(footer = div().css(modalFooter).element())).element()).element();
+                                .add(footer = div().css(modalFooter).element()))
+                        .element())
+                .element();
 
         document.body.appendChild(root);
         initEventHandler();
@@ -116,7 +120,6 @@ public class Dialog implements IsElement {
         Elements.removeChildrenFrom(body);
         Elements.removeChildrenFrom(footer);
     }
-
 
     // ------------------------------------------------------ dialog instance
 
@@ -206,7 +209,6 @@ public class Dialog implements IsElement {
         }
     }
 
-
     // ------------------------------------------------------ properties
 
     @JsIgnore
@@ -219,9 +221,7 @@ public class Dialog implements IsElement {
         return buttons.get(position);
     }
 
-
     // ------------------------------------------------------ inner classes
-
 
     public enum Size {
         SMALL(modelSm), MEDIUM(modalMd), LARGE(modalLg), MAX(modalMx);
@@ -232,7 +232,6 @@ public class Dialog implements IsElement {
             this.css = css;
         }
     }
-
 
     /**
      * A button callback which returns a boolean to indicate whether the dialog should be closed or stay open.
@@ -246,7 +245,6 @@ public class Dialog implements IsElement {
          */
         boolean eval();
     }
-
 
     private static class Button {
 
@@ -264,9 +262,7 @@ public class Dialog implements IsElement {
         }
     }
 
-
     // ------------------------------------------------------ dialog builder
-
 
     @JsType(namespace = "hal.ui", name = "DialogBuilder")
     public static class Builder {
@@ -306,8 +302,7 @@ public class Dialog implements IsElement {
         }
 
         /**
-         * Shortcut for a dialog with a 'Save' and 'Cancel' button. Clicking on save will execute the specified
-         * callback.
+         * Shortcut for a dialog with a 'Save' and 'Cancel' button. Clicking on save will execute the specified callback.
          */
         public Builder saveCancel(ResultCallback saveCallback) {
             buttons.clear();
@@ -317,8 +312,7 @@ public class Dialog implements IsElement {
         }
 
         /**
-         * Shortcut for a dialog with a 'Yes' and 'No' button. Clicking on yes will execute the specified
-         * callback.
+         * Shortcut for a dialog with a 'Yes' and 'No' button. Clicking on yes will execute the specified callback.
          */
         @JsIgnore
         @SuppressWarnings("WeakerAccess")
@@ -330,8 +324,7 @@ public class Dialog implements IsElement {
         }
 
         /**
-         * Shortcut for a dialog with a 'Ok' and 'Cancel' button. Clicking on ok will execute the specified
-         * callback.
+         * Shortcut for a dialog with a 'Ok' and 'Cancel' button. Clicking on ok will execute the specified callback.
          */
         @JsIgnore
         @SuppressWarnings("WeakerAccess")
@@ -433,7 +426,6 @@ public class Dialog implements IsElement {
         public Dialog build() {
             return new Dialog(this);
         }
-
 
         // ------------------------------------------------------ JS methods
 

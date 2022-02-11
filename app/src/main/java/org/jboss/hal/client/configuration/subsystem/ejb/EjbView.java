@@ -1,23 +1,22 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.ejb;
 
 import javax.annotation.PostConstruct;
 
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
@@ -39,6 +38,8 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
+import elemental2.dom.HTMLElement;
+
 import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.gwt.elemento.core.Elements.section;
@@ -50,7 +51,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
 @MbuiView
-@SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "WeakerAccess"})
+@SuppressWarnings({ "DuplicateStringLiteralInspection", "HardCodedStringLiteral", "WeakerAccess" })
 public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbPresenter.MyView {
 
     // ------------------------------------------------------ initialization
@@ -106,27 +107,27 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
 
             appSecurityDomainTable = new ModelNodeTable.Builder<NamedNode>(Ids.EJB3_APPLICATION_SECURITY_DOMAIN_TABLE,
                     metadata)
-                    .button(mbuiContext.tableButtonFactory()
-                            .add(Ids.EJB3_APPLICATION_SECURITY_DOMAIN_ADD, Names.APPLICATION_SECURITY_DOMAIN, template,
-                                    (name, address) -> presenter.reload()))
-                    .button(mbuiContext.tableButtonFactory().remove(Names.APPLICATION_SECURITY_DOMAIN, template,
-                            (api) -> api.selectedRow().getName(), () -> presenter.reload()))
-                    .column(NAME, (cell, type, row, meta) -> row.getName())
-                    .build();
+                            .button(mbuiContext.tableButtonFactory()
+                                    .add(Ids.EJB3_APPLICATION_SECURITY_DOMAIN_ADD, Names.APPLICATION_SECURITY_DOMAIN, template,
+                                            (name, address) -> presenter.reload()))
+                            .button(mbuiContext.tableButtonFactory().remove(Names.APPLICATION_SECURITY_DOMAIN, template,
+                                    (api) -> api.selectedRow().getName(), () -> presenter.reload()))
+                            .column(NAME, (cell, type, row, meta) -> row.getName())
+                            .build();
 
             appSecurityDomainForm = new ModelNodeForm.Builder<NamedNode>(Ids.EJB3_APPLICATION_SECURITY_DOMAIN_FORM,
                     metadata)
-                    .onSave((form, changedValues) -> {
-                        String name = form.getModel().getName();
-                        saveForm(Names.APPLICATION_SECURITY_DOMAIN, name,
-                                template.resolve(statementContext, name), changedValues, metadata);
-                    })
-                    .prepareReset(form -> {
-                        String name = form.getModel().getName();
-                        resetForm(Names.APPLICATION_SECURITY_DOMAIN, name,
-                                template.resolve(statementContext, name), form, metadata);
-                    })
-                    .build();
+                            .onSave((form, changedValues) -> {
+                                String name = form.getModel().getName();
+                                saveForm(Names.APPLICATION_SECURITY_DOMAIN, name,
+                                        template.resolve(statementContext, name), changedValues, metadata);
+                            })
+                            .prepareReset(form -> {
+                                String name = form.getModel().getName();
+                                resetForm(Names.APPLICATION_SECURITY_DOMAIN, name,
+                                        template.resolve(statementContext, name), form, metadata);
+                            })
+                            .build();
 
             HTMLElement section = section()
                     .add(h(1).textContent(Names.APPLICATION_SECURITY_DOMAIN))
@@ -165,7 +166,6 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
         appSecurityDomainForm.detach();
         appSecurityDomainTable.detach();
     }
-
 
     // ------------------------------------------------------ update from DMR
 

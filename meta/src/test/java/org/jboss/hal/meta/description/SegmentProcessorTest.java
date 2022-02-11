@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.meta.description;
 
@@ -25,21 +25,22 @@ import org.junit.Test;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
-@SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
+@SuppressWarnings({ "HardCodedStringLiteral", "DuplicateStringLiteralInspection" })
 public class SegmentProcessorTest {
 
     static class AsListConsumer implements Consumer<String[]> {
 
         final List<String[]> result;
 
-        AsListConsumer() {result = new ArrayList<>();}
+        AsListConsumer() {
+            result = new ArrayList<>();
+        }
 
         @Override
         public void accept(String[] strings) {
             result.add(strings);
         }
     }
-
 
     static class Fixture {
 
@@ -58,7 +59,7 @@ public class SegmentProcessorTest {
             Builder segments(String... segments) {
                 if (segments != null) {
                     for (int i = 0; i < segments.length; i++) {
-                        this.segments.add(new String[]{segments[i], segments[i + 1]});
+                        this.segments.add(new String[] { segments[i], segments[i + 1] });
                         i++;
                     }
                 }
@@ -68,7 +69,7 @@ public class SegmentProcessorTest {
             Builder expected(String... expected) {
                 if (expected != null) {
                     for (int i = 0; i < expected.length; i++) {
-                        this.expected.add(new String[]{expected[i], expected[i + 1]});
+                        this.expected.add(new String[] { expected[i], expected[i + 1] });
                         i++;
                     }
                 }
@@ -80,7 +81,6 @@ public class SegmentProcessorTest {
             }
         }
 
-
         final String message;
         final List<String[]> segments;
         final List<String[]> expected;
@@ -91,7 +91,6 @@ public class SegmentProcessorTest {
             this.expected = builder.expected;
         }
     }
-
 
     private AsListConsumer consumer;
 

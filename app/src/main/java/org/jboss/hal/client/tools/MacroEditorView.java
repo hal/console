@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.tools;
 
@@ -19,8 +19,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import elemental2.dom.HTMLButtonElement;
-import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Clipboard;
 import org.jboss.hal.ballroom.EmptyState;
@@ -40,6 +38,9 @@ import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
+
+import elemental2.dom.HTMLButtonElement;
+import elemental2.dom.HTMLElement;
 
 import static elemental2.dom.DomGlobal.setTimeout;
 import static elemental2.dom.DomGlobal.window;
@@ -108,7 +109,7 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
                         new ItemAction<>(PLAY_ACTION, resources.constants().play(),
                                 macro -> presenter.play(macro)),
                         // new ItemAction<Macro>(RENAME_ACTION, resources.constants().rename(),
-                        //         macro -> presenter.rename(macro)),
+                        // macro -> presenter.rename(macro)),
                         new ItemAction<>(REMOVE_ACTION, resources.constants().remove(),
                                 macro -> DialogFactory.showConfirmation(
                                         resources.messages().removeConfirmationTitle(macro.getName()),
@@ -130,7 +131,7 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
         HTMLElement editorContainer = div().css(macroEditor)
                 .add(copyToClipboard = button().css(btn, btnDefault, copy)
                         .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
-                        .data(UIConstants.PLACEMENT, "left") //NON-NLS
+                        .data(UIConstants.PLACEMENT, "left") // NON-NLS
                         .title(resources.constants().copyToClipboard())
                         .add(span().css(fontAwesome("clipboard"))).element())
                 .add(editor).element();
@@ -141,7 +142,8 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
                 .add(column(4)
                         .add(macroList))
                 .add(column(8)
-                        .add(editorContainer)).element();
+                        .add(editorContainer))
+                .element();
 
         registerAttachable(editor);
         initElements(asList(empty.element(), row));

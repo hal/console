@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.core;
 
@@ -20,7 +20,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.configuration.ProfileSelectionEvent;
 import org.jboss.hal.core.configuration.ProfileSelectionEvent.ProfileSelectionHandler;
@@ -34,6 +33,8 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.web.bindery.event.shared.EventBus;
 
 import static org.jboss.hal.meta.StatementContext.Expression.*;
 
@@ -74,11 +75,11 @@ public class CoreStatementContext implements StatementContext,
             Expression validExpression = Expression.from(placeholder);
             if (validExpression != null) {
                 if (validExpression == DOMAIN_CONTROLLER) {
-                    return new String[]{validExpression.resource(), environment.getDomainController()};
+                    return new String[] { validExpression.resource(), environment.getDomainController() };
                 } else if (context.containsKey(validExpression)) {
                     String value = context.get(validExpression);
                     if (value != null) {
-                        return new String[]{validExpression.resource(), value};
+                        return new String[] { validExpression.resource(), value };
                     }
                 }
             }

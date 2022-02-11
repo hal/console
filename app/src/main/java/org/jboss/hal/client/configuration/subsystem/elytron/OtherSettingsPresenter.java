@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.elytron;
 
@@ -22,12 +22,6 @@ import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.autocomplete.SuggestCapabilitiesAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
@@ -63,6 +57,13 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
+
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.annotations.NameToken;
+import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
 import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.*;
@@ -246,7 +247,6 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
             return result;
         });
 
-
         new AddResourceDialog(resources.messages().addResourceTitle(Names.CREDENTIAL_STORE), form, (name, model) -> {
             if (model != null) {
                 move(model, STORE, CREDENTIAL_REFERENCE + "/" + STORE);
@@ -258,9 +258,8 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                 model.get(TYPE).set(typeItem.getValue());
             }
             ResourceAddress address = CREDENTIAL_STORE_TEMPLATE.resolve(statementContext, nameItem.getValue());
-            crud.add(Names.CREDENTIAL_STORE, name, address, model, (n, a) ->
-                    reload(CREDENTIAL_STORE, nodes ->
-                            getView().updateResourceElement(CREDENTIAL_STORE, nodes)));
+            crud.add(Names.CREDENTIAL_STORE, name, address, model,
+                    (n, a) -> reload(CREDENTIAL_STORE, nodes -> getView().updateResourceElement(CREDENTIAL_STORE, nodes)));
         }).show();
     }
 
@@ -297,9 +296,8 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                 model.get(REALMS).add(realm);
             }
             ResourceAddress address = SECURITY_DOMAIN_TEMPLATE.resolve(statementContext, nameItem.getValue());
-            crud.add(Names.SECURITY_DOMAIN, name, address, model, (n, a) ->
-                    reload(SECURITY_DOMAIN, nodes ->
-                            getView().updateResourceElement(SECURITY_DOMAIN, nodes)));
+            crud.add(Names.SECURITY_DOMAIN, name, address, model,
+                    (n, a) -> reload(SECURITY_DOMAIN, nodes -> getView().updateResourceElement(SECURITY_DOMAIN, nodes)));
         }).show();
     }
 
@@ -346,12 +344,10 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                 }
             }
             ResourceAddress address = KEY_STORE_TEMPLATE.resolve(statementContext, nameItem.getValue());
-            crud.add(Names.KEY_STORE, name, address, model, (n, a) ->
-                    reload(KEY_STORE, nodes ->
-                            getView().updateResourceElement(KEY_STORE, nodes)));
+            crud.add(Names.KEY_STORE, name, address, model,
+                    (n, a) -> reload(KEY_STORE, nodes -> getView().updateResourceElement(KEY_STORE, nodes)));
         }).show();
     }
-
 
     // ------------------------------------------------------ key manager
 
@@ -378,9 +374,8 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                 move(model, CLEAR_TEXT, CREDENTIAL_REFERENCE + "/" + CLEAR_TEXT);
             }
             ResourceAddress address = KEY_MANAGER_TEMPLATE.resolve(statementContext, nameItem.getValue());
-            crud.add(Names.KEY_MANAGER, name, address, model, (n, a) ->
-                    reload(KEY_MANAGER, nodes ->
-                            getView().updateResourceElement(KEY_MANAGER, nodes)));
+            crud.add(Names.KEY_MANAGER, name, address, model,
+                    (n, a) -> reload(KEY_MANAGER, nodes -> getView().updateResourceElement(KEY_MANAGER, nodes)));
         }).show();
     }
 
@@ -408,8 +403,8 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                 .addOnly()
                 .build();
         String type = new LabelBuilder().label(NEW_ITEM_TEMPLATE);
-        new AddResourceDialog(resources.messages().addResourceTitle(type), form, (name, model) ->
-                ca.add(ldapKeyStore, NEW_ITEM_TEMPLATE, Names.NEW_ITEM_TEMPLATE,
+        new AddResourceDialog(resources.messages().addResourceTitle(type), form,
+                (name, model) -> ca.add(ldapKeyStore, NEW_ITEM_TEMPLATE, Names.NEW_ITEM_TEMPLATE,
                         AddressTemplates.LDAP_KEY_STORE_TEMPLATE, model, this::reloadLdapKeyStores)).show();
     }
 
@@ -428,7 +423,6 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
         ca.save(ldapKeyStore, NEW_ITEM_TEMPLATE, Names.NEW_ITEM_TEMPLATE, AddressTemplates.LDAP_KEY_STORE_TEMPLATE,
                 changedValues, this::reloadLdapKeyStores);
     }
-
 
     void removeNewItemTemplate(String ldapKeyStore, Form<ModelNode> form) {
         ca.remove(ldapKeyStore, NEW_ITEM_TEMPLATE, Names.NEW_ITEM_TEMPLATE, AddressTemplates.LDAP_KEY_STORE_TEMPLATE,
@@ -465,12 +459,12 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                         serverAuthModule.get(FLAG).set(model.remove(FLAG));
                     }
                     model.get(SERVER_AUTH_MODULES).add(serverAuthModule);
-                    crud.add(type, name, AddressTemplates.JASPI_CONFIGURATION_TEMPLATE, model,  (name1, address) -> {
-                                reload(JASPI_CONFIGURATION,
-                                        nodes -> getView().updateResourceElement(JASPI_CONFIGURATION, nodes));
-                            });
+                    crud.add(type, name, AddressTemplates.JASPI_CONFIGURATION_TEMPLATE, model, (name1, address) -> {
+                        reload(JASPI_CONFIGURATION,
+                                nodes -> getView().updateResourceElement(JASPI_CONFIGURATION, nodes));
+                    });
                 })
-                .show();
+                        .show();
     }
 
     // -------------------------------------------- server ssl sni context
@@ -493,7 +487,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                             (name1, address) -> reload(SERVER_SSL_SNI_CONTEXT,
                                     nodes -> getView().updateResourceElement(SERVER_SSL_SNI_CONTEXT, nodes)));
                 })
-                .show();
+                        .show();
     }
 
     // -------------------------------------------- Policy
@@ -548,9 +542,8 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                 });
     }
 
-
     @ProxyCodeSplit
-    @Requires(value = {AGGREGATE_PROVIDERS_ADDRESS,
+    @Requires(value = { AGGREGATE_PROVIDERS_ADDRESS,
             AGGREGATE_SECURITY_EVENT_LISTENER_ADDRESS,
             CUSTOM_SECURITY_EVENT_LISTENER_ADDRESS,
             AUTHENTICATION_CONFIGURATION_ADDRESS,
@@ -574,16 +567,17 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
             SIZE_ROTATING_FILE_AUDIT_LOG_ADDRESS,
             SYSLOG_AUDIT_LOG_ADDRESS,
             TRUST_MANAGER_ADDRESS,
-            PERMISSION_SET_ADDRESS})
+            PERMISSION_SET_ADDRESS })
     @NameToken(NameTokens.ELYTRON_OTHER)
     public interface MyProxy extends ProxyPlace<OtherSettingsPresenter> {
     }
 
-
     // @formatter:off
     public interface MyView extends MbuiView<OtherSettingsPresenter> {
         void updateResourceElement(String resource, List<NamedNode> nodes);
+
         void updateLdapKeyStore(List<NamedNode> model);
+
         void updatePolicy(NamedNode policy);
     }
     // @formatter:on

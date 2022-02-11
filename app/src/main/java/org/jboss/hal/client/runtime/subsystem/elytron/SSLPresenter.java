@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.runtime.subsystem.elytron;
 
@@ -20,10 +20,6 @@ import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.form.Form;
@@ -54,9 +50,34 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.annotations.NameToken;
+import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+
 import static org.jboss.gwt.elemento.core.Elements.p;
-import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.CERTIFICATE_AUTHORITY_ACCOUNT_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.ELYTRON_SUBSYSTEM_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.KEY_MANAGER_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.KEY_MANAGER_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.SECURITY_DOMAIN_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.SECURITY_DOMAIN_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.TRUST_MANAGER_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.TRUST_MANAGER_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CERTIFICATE_AUTHORITY_ACCOUNT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHANGE_ACCOUNT_KEY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CREATE_ACCOUNT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEACTIVATE_ACCOUNT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.GET_METADATA;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INIT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RELOAD_CERTIFICATE_REVOCATION_LIST;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURITY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.UPDATE_ACCOUNT;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.resources.Ids.FORM;
 
@@ -236,10 +257,10 @@ public class SSLPresenter extends ApplicationFinderPresenter<SSLPresenter.MyView
         Operation operation = new Operation.Builder(address, GET_METADATA)
                 .build();
         dispatcher.execute(operation, result -> {
-                    callback.accept(result.toString());
-                    MessageEvent.fire(getEventBus(),
-                            Message.success(resources.messages().getMetadataSuccess(name)));
-                },
+            callback.accept(result.toString());
+            MessageEvent.fire(getEventBus(),
+                    Message.success(resources.messages().getMetadataSuccess(name)));
+        },
                 (operation1, failure) -> MessageEvent.fire(getEventBus(),
                         Message.error(resources.messages().getMetadataError(name, failure))),
                 (operation1, exception) -> MessageEvent.fire(getEventBus(),
@@ -286,9 +307,9 @@ public class SSLPresenter extends ApplicationFinderPresenter<SSLPresenter.MyView
         Operation operation = new Operation.Builder(KEY_MANAGER_TEMPLATE.resolve(statementContext, name), INIT)
                 .build();
         dispatcher.execute(operation, result -> {
-                    MessageEvent.fire(getEventBus(), Message.success(resources.messages().initKeyManagerSuccess(name)));
-                    reload();
-                },
+            MessageEvent.fire(getEventBus(), Message.success(resources.messages().initKeyManagerSuccess(name)));
+            reload();
+        },
                 (operation1, failure) -> MessageEvent.fire(getEventBus(),
                         Message.error(resources.messages().initKeyManagerError(name, failure))),
                 (operation1, exception) -> MessageEvent.fire(getEventBus(),
@@ -299,23 +320,21 @@ public class SSLPresenter extends ApplicationFinderPresenter<SSLPresenter.MyView
         Operation operation = new Operation.Builder(TRUST_MANAGER_TEMPLATE.resolve(statementContext, name), INIT)
                 .build();
         dispatcher.execute(operation, result -> {
-                    MessageEvent.fire(getEventBus(), Message.success(resources.messages().initTrustManagerSuccess(name)));
-                    reload();
-                },
+            MessageEvent.fire(getEventBus(), Message.success(resources.messages().initTrustManagerSuccess(name)));
+            reload();
+        },
                 (operation1, failure) -> MessageEvent.fire(getEventBus(),
                         Message.error(resources.messages().initTrustManagerError(name, failure))),
                 (operation1, exception) -> MessageEvent.fire(getEventBus(),
                         Message.error(resources.messages().initTrustManagerError(name, exception.getMessage()))));
     }
 
-
-
     void reloadCRL(String name) {
         Operation operation = new Operation.Builder(TRUST_MANAGER_TEMPLATE.resolve(statementContext, name),
                 RELOAD_CERTIFICATE_REVOCATION_LIST)
-                .build();
+                        .build();
         dispatcher.execute(operation, result -> MessageEvent.fire(getEventBus(),
-                        Message.success(resources.messages().reloadCRLSuccess(name))),
+                Message.success(resources.messages().reloadCRLSuccess(name))),
                 (operation1, failure) -> MessageEvent.fire(getEventBus(),
                         Message.error(resources.messages().reloadCRLError(name, failure))),
                 (operation1, exception) -> MessageEvent.fire(getEventBus(),
@@ -324,35 +343,32 @@ public class SSLPresenter extends ApplicationFinderPresenter<SSLPresenter.MyView
 
     void readIdentity(Metadata metadata, String name) {
         /*
-        AddressTemplate template = metadata.getTemplate();
-        LabelBuilder labelBuilder = new LabelBuilder();
-        String resource = labelBuilder.label(template.lastName()) + SPACE + name;
-        ResourceAddress address = template.resolve(statementContext, name);
-        Operation addOp = new Operation.Builder(address, READ_IDENTITY)
-                .param(IDENTITY, name)
-                .build();
-        dispatcher.execute(addOp, result -> {
-
-                },
-                (operation, failure) -> MessageEvent.fire(getEventBus(),
-                        Message.error(resources.messages().readAliasError(name, resource, failure))),
-                (operation, ex) -> MessageEvent.fire(getEventBus(),
-                        Message.error(resources.messages().readAliasError(name, resource, ex.getMessage()))));
-            */
+         * AddressTemplate template = metadata.getTemplate(); LabelBuilder labelBuilder = new LabelBuilder(); String resource =
+         * labelBuilder.label(template.lastName()) + SPACE + name; ResourceAddress address = template.resolve(statementContext,
+         * name); Operation addOp = new Operation.Builder(address, READ_IDENTITY) .param(IDENTITY, name) .build();
+         * dispatcher.execute(addOp, result -> {
+         *
+         * }, (operation, failure) -> MessageEvent.fire(getEventBus(), Message.error(resources.messages().readAliasError(name,
+         * resource, failure))), (operation, ex) -> MessageEvent.fire(getEventBus(),
+         * Message.error(resources.messages().readAliasError(name, resource, ex.getMessage()))));
+         */
 
     }
 
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(NameTokens.ELYTRON_RUNTIME_SSL)
-    @Requires({CERTIFICATE_AUTHORITY_ACCOUNT_ADDRESS, KEY_MANAGER_ADDRESS, SECURITY_DOMAIN_ADDRESS, TRUST_MANAGER_ADDRESS})
+    @Requires({ CERTIFICATE_AUTHORITY_ACCOUNT_ADDRESS, KEY_MANAGER_ADDRESS, SECURITY_DOMAIN_ADDRESS, TRUST_MANAGER_ADDRESS })
     public interface MyProxy extends ProxyPlace<SSLPresenter> {
     }
 
     public interface MyView extends HalView, HasPresenter<SSLPresenter> {
         void updateCertificateAuthorityAccount(List<NamedNode> items);
+
         void updateKeyManager(List<NamedNode> items);
+
         void updateSecurityDomain(List<NamedNode> items);
+
         void updateTrustManager(List<NamedNode> items);
 
     }

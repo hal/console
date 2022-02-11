@@ -1,26 +1,23 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.gwt.user.client.ui.IsWidget;
-import com.gwtplatform.mvp.client.ViewImpl;
-import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.elemento.core.Widgets;
@@ -28,6 +25,11 @@ import org.jboss.hal.core.mvp.Slots;
 import org.jboss.hal.resources.Ids;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.gwt.user.client.ui.IsWidget;
+import com.gwtplatform.mvp.client.ViewImpl;
+
+import elemental2.dom.HTMLElement;
 
 import static elemental2.dom.DomGlobal.document;
 import static org.jboss.gwt.elemento.core.Elements.div;
@@ -53,9 +55,7 @@ public class RootView extends ViewImpl implements RootPresenter.MyView {
     public void setInSlot(Object slot, IsWidget content) {
         if (slot == SLOT_HEADER_CONTENT || slot == SLOT_FOOTER_CONTENT) {
             // single elements only!
-            HTMLElement element = content instanceof IsElement ?
-                    ((IsElement) content).element() :
-                    Widgets.element(content);
+            HTMLElement element = content instanceof IsElement ? ((IsElement) content).element() : Widgets.element(content);
             slots.put(slot, element);
             if (!initialized && slots.containsKey(SLOT_HEADER_CONTENT) && slots.containsKey(SLOT_FOOTER_CONTENT)) {
                 // append all three building blocks to the document body

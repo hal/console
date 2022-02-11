@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.core.runtime.host;
 
@@ -22,8 +22,6 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.hal.ballroom.dialog.BlockingDialog;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
@@ -53,6 +51,10 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.web.bindery.event.shared.EventBus;
+
 import rx.CompletableSubscriber;
 import rx.Subscription;
 
@@ -97,7 +99,6 @@ public class HostActions implements Timeouts {
         this.pendingHosts = new HashMap<>();
     }
 
-
     // ------------------------------------------------------ reload
 
     public void reload(Host host) {
@@ -106,8 +107,8 @@ public class HostActions implements Timeouts {
             public void onMetadata(Metadata metadata) {
                 Form<ModelNode> form = new OperationFormBuilder<>(
                         Ids.build(RELOAD_HOST, host.getName(), Ids.FORM), metadata, RELOAD)
-                        .include(RESTART_SERVERS)
-                        .build();
+                                .include(RESTART_SERVERS)
+                                .build();
 
                 SafeHtml question;
                 if (host.isDomainController()) {
@@ -164,7 +165,6 @@ public class HostActions implements Timeouts {
         });
     }
 
-
     // ------------------------------------------------------ restart
 
     public void restart(Host host) {
@@ -202,7 +202,6 @@ public class HostActions implements Timeouts {
         });
     }
 
-
     // ------------------------------------------------------ helper methods
 
     private void domainControllerOperation(Host host, Operation operation, int timeout, List<Server> servers,
@@ -212,27 +211,27 @@ public class HostActions implements Timeouts {
         pendingDialog.show();
 
         dispatcher.execute(operation, result -> repeatUntilTimeout(dispatcher, timeout, ping(host))
-                        .subscribe(new CompletableSubscriber() {
-                            @Override
-                            public void onSubscribe(Subscription d) {
-                            }
+                .subscribe(new CompletableSubscriber() {
+                    @Override
+                    public void onSubscribe(Subscription d) {
+                    }
 
-                            @Override
-                            public void onCompleted() {
-                                // wait a little bit before event handlers try to use the reloaded / restarted domain controller
-                                setTimeout((o) -> {
-                                    pendingDialog.close();
-                                    finish(host, servers, Result.SUCCESS, Message.success(successMessage));
-                                }, LONG_TIMEOUT);
-                            }
+                    @Override
+                    public void onCompleted() {
+                        // wait a little bit before event handlers try to use the reloaded / restarted domain controller
+                        setTimeout((o) -> {
+                            pendingDialog.close();
+                            finish(host, servers, Result.SUCCESS, Message.success(successMessage));
+                        }, LONG_TIMEOUT);
+                    }
 
-                            @Override
-                            public void onError(Throwable e) {
-                                pendingDialog.close();
-                                DialogFactory.buildBlocking(title, timeoutMessage).show();
-                                finish(host, servers, Result.TIMEOUT, null);
-                            }
-                        }),
+                    @Override
+                    public void onError(Throwable e) {
+                        pendingDialog.close();
+                        DialogFactory.buildBlocking(title, timeoutMessage).show();
+                        finish(host, servers, Result.TIMEOUT, null);
+                    }
+                }),
                 new HostFailedCallback(host, servers, errorMessage, pendingDialog::close),
                 new HostExceptionCallback(host, servers, errorMessage, pendingDialog::close));
     }
@@ -240,21 +239,21 @@ public class HostActions implements Timeouts {
     private void hostControllerOperation(Host host, Operation operation, int timeout, List<Server> servers,
             SafeHtml successMessage, SafeHtml errorMessage, SafeHtml timeoutMessage) {
         dispatcher.execute(operation, result -> repeatUntilTimeout(dispatcher, timeout, ping(host))
-                        .subscribe(new CompletableSubscriber() {
-                            @Override
-                            public void onSubscribe(Subscription d) {
-                            }
+                .subscribe(new CompletableSubscriber() {
+                    @Override
+                    public void onSubscribe(Subscription d) {
+                    }
 
-                            @Override
-                            public void onCompleted() {
-                                finish(host, servers, Result.SUCCESS, Message.success(successMessage));
-                            }
+                    @Override
+                    public void onCompleted() {
+                        finish(host, servers, Result.SUCCESS, Message.success(successMessage));
+                    }
 
-                            @Override
-                            public void onError(Throwable e) {
-                                finish(host, servers, Result.TIMEOUT, Message.error(timeoutMessage));
-                            }
-                        }),
+                    @Override
+                    public void onError(Throwable e) {
+                        finish(host, servers, Result.TIMEOUT, Message.error(timeoutMessage));
+                    }
+                }),
                 new HostFailedCallback(host, servers, errorMessage, null),
                 new HostExceptionCallback(host, servers, errorMessage, null));
     }
@@ -308,7 +307,6 @@ public class HostActions implements Timeouts {
         return operation;
     }
 
-
     private class HostFailedCallback implements Dispatcher.OnFail {
 
         private final Host host;
@@ -331,7 +329,6 @@ public class HostActions implements Timeouts {
             }
         }
     }
-
 
     private class HostExceptionCallback implements Dispatcher.OnError {
 

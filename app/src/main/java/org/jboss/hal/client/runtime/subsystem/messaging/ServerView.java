@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.runtime.subsystem.messaging;
 
@@ -20,7 +20,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Pages;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.table.InlineAction;
@@ -39,6 +38,8 @@ import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+
+import elemental2.dom.HTMLElement;
 
 import static java.util.Arrays.asList;
 import static org.jboss.gwt.elemento.core.Elements.h;
@@ -122,15 +123,15 @@ public class ServerView extends HalViewImpl implements MyView {
 
         connectionConsumerTable = new ModelNodeTable.Builder<>(Ids.MESSAGING_SERVER_CONNECTION_CONSUMER_TABLE,
                 CONSUMER_METADATA)
-                .columns(asList(SESSION_ID, DESTINATION_NAME))
-                .build();
+                        .columns(asList(SESSION_ID, DESTINATION_NAME))
+                        .build();
         connectionConsumerForm = new ModelNodeForm.Builder<>(Ids.MESSAGING_SERVER_CONNECTION_CONSUMER_FORM,
                 CONSUMER_METADATA)
-                .include(asList(CONSUMER_ID, CONNECTION_ID, SESSION_ID, QUEUE_NAME, DESTINATION_NAME, DESTINATION_TYPE,
-                        CREATION_TIME, DELIVERING_COUNT, DURABLE, BROWSE_ONLY))
-                .unsorted()
-                .readOnly()
-                .build();
+                        .include(asList(CONSUMER_ID, CONNECTION_ID, SESSION_ID, QUEUE_NAME, DESTINATION_NAME, DESTINATION_TYPE,
+                                CREATION_TIME, DELIVERING_COUNT, DURABLE, BROWSE_ONLY))
+                        .unsorted()
+                        .readOnly()
+                        .build();
         HTMLElement connectionConsumerSection = section()
                 .add(h(1).textContent(Names.CONSUMERS))
                 .add(connectionConsumerTable)

@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.accesscontrol;
 
@@ -21,9 +21,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.web.bindery.event.shared.EventBus;
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
@@ -70,6 +67,11 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.web.bindery.event.shared.EventBus;
+
+import elemental2.dom.HTMLElement;
+
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.small;
@@ -83,18 +85,18 @@ import static org.jboss.hal.resources.CSS.pfIcon;
 import static org.jboss.hal.resources.CSS.subtitle;
 
 @AsyncColumn(Ids.ROLE)
-@Requires({ROLE_MAPPING_ADDRESS, HOST_SCOPED_ROLE_ADDRESS, SERVER_GROUP_SCOPED_ROLE_ADDRESS})
+@Requires({ ROLE_MAPPING_ADDRESS, HOST_SCOPED_ROLE_ADDRESS, SERVER_GROUP_SCOPED_ROLE_ADDRESS })
 public class RoleColumn extends FinderColumn<Role> {
 
     static List<String> filterData(Role role) {
         List<String> data = new ArrayList<>();
         data.add(role.getName());
         if (role.isScoped()) {
-            data.add("scoped"); //NON-NLS
+            data.add("scoped"); // NON-NLS
             data.add(role.getType().name().toLowerCase());
             data.add(String.join(" ", role.getScope()));
         } else {
-            data.add("standard"); //NON-NLS
+            data.add("standard"); // NON-NLS
         }
         return data;
     }
@@ -138,8 +140,7 @@ public class RoleColumn extends FinderColumn<Role> {
                 .onPreview(item -> new RolePreview(accessControl, tokens, item, resources))
                 .showCount()
                 .filterDescription(resources.messages().roleColumnFilterDescription())
-                .withFilter()
-        );
+                .withFilter());
 
         this.metadataRegistry = metadataRegistry;
         this.statementContext = statementContext;
@@ -194,9 +195,10 @@ public class RoleColumn extends FinderColumn<Role> {
                                     .title(scopedInfo)
                                     .innerHtml(new SafeHtmlBuilder()
                                             .appendEscaped(resources.constants().includesAll())
-                                            .appendHtmlConstant("<br/>") //NON-NLS
+                                            .appendHtmlConstant("<br/>") // NON-NLS
                                             .appendEscaped(scopedInfo)
-                                            .toSafeHtml())).element();
+                                            .toSafeHtml()))
+                            .element();
 
                 } else if (item.isIncludeAll()) {
                     return ItemDisplay.withSubtitle(item.getName(), resources.constants().includesAll());
@@ -267,7 +269,6 @@ public class RoleColumn extends FinderColumn<Role> {
         });
     }
 
-
     // ------------------------------------------------------ add roles
 
     @SuppressWarnings("ConstantConditions")
@@ -294,34 +295,33 @@ public class RoleColumn extends FinderColumn<Role> {
 
         AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(typeName),
                 form, (name, model) -> {
-            List<Task<FlowContext>> tasks = new ArrayList<>();
-            tasks.add(new AddScopedRole(dispatcher, type, name, model));
-            Boolean includeAll = form.<Boolean>getFormItem(INCLUDE_ALL).getValue();
-            Role transientRole = new Role(name, null, type, null);
-            // We only need the role name in the functions,
-            // so it's ok to setup a transient role w/o the other attributes.
-            tasks.add(new CheckRoleMapping(dispatcher, transientRole));
-            tasks.add(new AddRoleMapping(dispatcher, transientRole, status -> status == 404));
-            if (includeAll != null && includeAll) {
-                tasks.add(new ModifyIncludeAll(dispatcher, transientRole, includeAll));
-            }
-            series(new FlowContext(progress.get()), tasks)
-                    .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
-                        @Override
-                        public void onSuccess(FlowContext context) {
-                            MessageEvent.fire(eventBus,
-                                    Message.success(resources.messages().addResourceSuccess(typeName, name)));
-                            accessControl.reload(() -> {
-                                refresh(Ids.role(name));
-                                eventBus.fireEvent(new RolesChangedEvent());
+                    List<Task<FlowContext>> tasks = new ArrayList<>();
+                    tasks.add(new AddScopedRole(dispatcher, type, name, model));
+                    Boolean includeAll = form.<Boolean> getFormItem(INCLUDE_ALL).getValue();
+                    Role transientRole = new Role(name, null, type, null);
+                    // We only need the role name in the functions,
+                    // so it's ok to setup a transient role w/o the other attributes.
+                    tasks.add(new CheckRoleMapping(dispatcher, transientRole));
+                    tasks.add(new AddRoleMapping(dispatcher, transientRole, status -> status == 404));
+                    if (includeAll != null && includeAll) {
+                        tasks.add(new ModifyIncludeAll(dispatcher, transientRole, includeAll));
+                    }
+                    series(new FlowContext(progress.get()), tasks)
+                            .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
+                                @Override
+                                public void onSuccess(FlowContext context) {
+                                    MessageEvent.fire(eventBus,
+                                            Message.success(resources.messages().addResourceSuccess(typeName, name)));
+                                    accessControl.reload(() -> {
+                                        refresh(Ids.role(name));
+                                        eventBus.fireEvent(new RolesChangedEvent());
+                                    });
+                                }
                             });
-                        }
-                    });
-        });
-        dialog.getForm().<String>getFormItem(NAME).addValidationHandler(createUniqueValidation());
+                });
+        dialog.getForm().<String> getFormItem(NAME).addValidationHandler(createUniqueValidation());
         dialog.show();
     }
-
 
     // ------------------------------------------------------ modify roles
 
@@ -337,23 +337,22 @@ public class RoleColumn extends FinderColumn<Role> {
         ModelNode modelNode = new ModelNode();
         modelNode.get(INCLUDE_ALL).set(role.isIncludeAll());
         new ModifyResourceDialog(resources.messages().modifyResourceTitle(resources.constants().role()),
-                form, (frm, changedValues) ->
-                series(new FlowContext(progress.get()),
+                form, (frm, changedValues) -> series(new FlowContext(progress.get()),
                         new CheckRoleMapping(dispatcher, role),
                         new AddRoleMapping(dispatcher, role, status -> status == 404),
                         new ModifyIncludeAll(dispatcher, role, frm.getModel().get(INCLUDE_ALL).asBoolean()))
-                        .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
-                            @Override
-                            public void onSuccess(FlowContext context) {
-                                MessageEvent.fire(eventBus, Message.success(resources.messages()
-                                        .modifyResourceSuccess(resources.constants().role(), role.getName())));
-                                accessControl.reload(() -> {
-                                    refresh(role.getId());
-                                    eventBus.fireEvent(new RolesChangedEvent());
-                                });
-                            }
-                        }))
-                .show(modelNode);
+                                .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
+                                    @Override
+                                    public void onSuccess(FlowContext context) {
+                                        MessageEvent.fire(eventBus, Message.success(resources.messages()
+                                                .modifyResourceSuccess(resources.constants().role(), role.getName())));
+                                        accessControl.reload(() -> {
+                                            refresh(role.getId());
+                                            eventBus.fireEvent(new RolesChangedEvent());
+                                        });
+                                    }
+                                }))
+                                        .show(modelNode);
         form.getFormItem(NAME).setValue(role.getName());
     }
 
@@ -380,7 +379,7 @@ public class RoleColumn extends FinderColumn<Role> {
         modelNode.get(BASE_ROLE).set(role.getBaseRole().getName());
         role.getScope().forEach(scope -> modelNode.get(scopeAttribute).add(scope));
         new ModifyResourceDialog(resources.messages().modifyResourceTitle(type), form, (frm, changedValues) -> {
-            boolean includeAll = frm.<Boolean>getFormItem(INCLUDE_ALL).getValue();
+            boolean includeAll = frm.<Boolean> getFormItem(INCLUDE_ALL).getValue();
             boolean includeAllChanged = includeAll != role.isIncludeAll();
 
             List<Task<FlowContext>> tasks = new ArrayList<>();
@@ -404,7 +403,6 @@ public class RoleColumn extends FinderColumn<Role> {
                     });
         }).show(modelNode);
     }
-
 
     // ------------------------------------------------------ remove roles
 

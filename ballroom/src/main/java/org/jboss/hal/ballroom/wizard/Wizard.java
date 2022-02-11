@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.ballroom.wizard;
 
@@ -20,16 +20,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.google.common.collect.Iterables;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.web.bindery.event.shared.HandlerRegistration;
-import com.google.web.bindery.event.shared.HandlerRegistrations;
-import elemental2.dom.HTMLButtonElement;
-import elemental2.dom.HTMLDivElement;
-import elemental2.dom.HTMLElement;
-import elemental2.dom.HTMLLIElement;
-import elemental2.dom.HTMLParagraphElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.PatternFly;
@@ -37,6 +27,18 @@ import org.jboss.hal.ballroom.dialog.Modal.ModalOptions;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
+
+import com.google.common.collect.Iterables;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.web.bindery.event.shared.HandlerRegistration;
+import com.google.web.bindery.event.shared.HandlerRegistrations;
+
+import elemental2.dom.HTMLButtonElement;
+import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLLIElement;
+import elemental2.dom.HTMLParagraphElement;
 
 import static elemental2.dom.DomGlobal.document;
 import static org.jboss.gwt.elemento.core.Elements.*;
@@ -47,8 +49,7 @@ import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.UIConstants.*;
 
 /**
- * General purpose wizard relying on a context for the common data and an enum representing the states of the different
- * steps.
+ * General purpose wizard relying on a context for the common data and an enum representing the states of the different steps.
  *
  * @param <C> The context
  * @param <S> The state enum
@@ -75,7 +76,7 @@ public class Wizard<C, S extends Enum<S>> {
     static {
         root = div().css(modal)
                 .id(Ids.HAL_WIZARD)
-                .attr(ROLE, "wizard") //NON-NLS
+                .attr(ROLE, "wizard") // NON-NLS
                 .attr(TABINDEX, "-1")
                 .aria("labeledby", Ids.HAL_WIZARD_TITLE)
                 .add(div().css(modalDialog, modalLg, wizardPf)
@@ -102,7 +103,8 @@ public class Wizard<C, S extends Enum<S>> {
                                         .add(nextButton = button().css(btn, btnPrimary)
                                                 .add(nextText = span().textContent(CONSTANTS.next()).element())
                                                 .add(nextIcon = span().css(fontAwesome("angle-right")).element())
-                                                .element())))).element();
+                                                .element()))))
+                .element();
 
         document.body.appendChild(root);
         initEventHandler();
@@ -124,7 +126,6 @@ public class Wizard<C, S extends Enum<S>> {
         Elements.stream(contents).forEach(mainContainer::removeChild);
         Elements.setVisible(blankSlate, false);
     }
-
 
     // ------------------------------------------------------ wizard instance
 
@@ -169,7 +170,6 @@ public class Wizard<C, S extends Enum<S>> {
                 bind(backButton, click, event -> onBack()),
                 bind(nextButton, click, event -> onNext()));
     }
-
 
     // ------------------------------------------------------ public API
 
@@ -331,7 +331,6 @@ public class Wizard<C, S extends Enum<S>> {
         return context;
     }
 
-
     // ------------------------------------------------------ workflow
 
     @SuppressWarnings("unchecked")
@@ -440,7 +439,6 @@ public class Wizard<C, S extends Enum<S>> {
         return steps.get(state);
     }
 
-
     // ------------------------------------------------------ private methods
 
     private void initSteps() {
@@ -452,7 +450,8 @@ public class Wizard<C, S extends Enum<S>> {
             HTMLLIElement li = li().css(wizardPfStep)
                     .add(a()
                             .add(span().css(wizardPfStepNumber).textContent(String.valueOf(index)))
-                            .add(span().css(wizardPfStepTitle).textContent(step.title))).element();
+                            .add(span().css(wizardPfStepTitle).textContent(step.title)))
+                    .element();
             stepIndicators.put(status, li);
             stepsNames.appendChild(li);
 
@@ -472,9 +471,7 @@ public class Wizard<C, S extends Enum<S>> {
         $(SELECTOR_ID).modal("hide");
     }
 
-
     // ------------------------------------------------------ inner classes
-
 
     @FunctionalInterface
     public interface BackFunction<C, S extends Enum<S>> {
@@ -482,13 +479,11 @@ public class Wizard<C, S extends Enum<S>> {
         S back(C context, S currentState);
     }
 
-
     @FunctionalInterface
     public interface NextFunction<C, S extends Enum<S>> {
 
         S next(C context, S currentState);
     }
-
 
     /**
      * An action executed when the user clicks on the success button of the success page.
@@ -499,7 +494,6 @@ public class Wizard<C, S extends Enum<S>> {
         void execute(C context);
     }
 
-
     /**
      * An action executed when the user clicks on the close button of the success page.
      */
@@ -508,7 +502,6 @@ public class Wizard<C, S extends Enum<S>> {
 
         void execute(C context);
     }
-
 
     /**
      * A callback executed when the user finishes last step.
@@ -521,7 +514,6 @@ public class Wizard<C, S extends Enum<S>> {
         void onFinish(Wizard<C, S> wizard, C context);
     }
 
-
     /**
      * A callback executed whenever the user cancels the wizard.
      *
@@ -533,9 +525,7 @@ public class Wizard<C, S extends Enum<S>> {
         void onCancel(C context);
     }
 
-
     // ------------------------------------------------------ wizard builder
-
 
     public static class Builder<C, S extends Enum<S>> {
 

@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.deployment;
 
@@ -19,15 +19,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import com.google.common.collect.Sets;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.web.bindery.event.shared.EventBus;
-import elemental2.core.JsArray;
-import elemental2.dom.File;
-import elemental2.dom.File.ConstructorContentsArrayUnionType;
-import elemental2.dom.HTMLButtonElement;
-import elemental2.dom.HTMLElement;
-import elemental2.dom.HTMLImageElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
@@ -68,6 +59,17 @@ import org.jboss.hal.resources.Strings;
 import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
+
+import com.google.common.collect.Sets;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.web.bindery.event.shared.EventBus;
+
+import elemental2.core.JsArray;
+import elemental2.dom.File;
+import elemental2.dom.File.ConstructorContentsArrayUnionType;
+import elemental2.dom.HTMLButtonElement;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLImageElement;
 import rx.Completable;
 import rx.Single;
 
@@ -75,8 +77,8 @@ import static com.google.common.base.Strings.nullToEmpty;
 import static elemental2.dom.DomGlobal.window;
 import static java.lang.Math.max;
 import static java.util.Collections.emptyList;
-import static org.jboss.gwt.elemento.core.Elements.i;
 import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.gwt.elemento.core.Elements.i;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
@@ -93,8 +95,7 @@ import static org.jboss.hal.resources.CSS.*;
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 class BrowseContentElement implements IsElement, Attachable {
 
-    @SuppressWarnings("HardCodedStringLiteral")
-    private static final Set<String> EDITOR_FILE_TYPES = Sets.newHashSet(
+    @SuppressWarnings("HardCodedStringLiteral") private static final Set<String> EDITOR_FILE_TYPES = Sets.newHashSet(
             "bash",
             "css",
             "htm",
@@ -132,8 +133,7 @@ class BrowseContentElement implements IsElement, Attachable {
             "xhtml",
             "xml");
 
-    @SuppressWarnings("HardCodedStringLiteral")
-    private static final Set<String> IMAGE_FILE_TYPES = Sets.newHashSet(
+    @SuppressWarnings("HardCodedStringLiteral") private static final Set<String> IMAGE_FILE_TYPES = Sets.newHashSet(
             "bmp",
             "gif",
             "ico",
@@ -178,7 +178,6 @@ class BrowseContentElement implements IsElement, Attachable {
     private Content content;
     private int surroundingHeight;
 
-
     // ------------------------------------------------------ ui setup
 
     @SuppressWarnings("ConstantConditions")
@@ -202,9 +201,9 @@ class BrowseContentElement implements IsElement, Attachable {
 
         Search contentSearch = new Search.Builder(Ids.CONTENT_SEARCH,
                 query -> editor.getEditor().find(query))
-                .onPrevious(query -> editor.getEditor().findPrevious())
-                .onNext(query -> editor.getEditor().findNext())
-                .build();
+                        .onPrevious(query -> editor.getEditor().findPrevious())
+                        .onNext(query -> editor.getEditor().findNext())
+                        .build();
         contentSearch.element().classList.add(marginRightSmall);
 
         pleaseSelect = new EmptyState.Builder(Ids.BROWSE_CONTENT_SELECT_EMPTY, resources.constants().nothingSelected())
@@ -224,13 +223,13 @@ class BrowseContentElement implements IsElement, Attachable {
 
         unsupportedFileType = new EmptyState.Builder(Ids.BROWSE_CONTENT_UNSUPPORTED_EMPTY,
                 resources.constants().unsupportedFileType())
-                .icon(Icons.UNKNOWN)
-                .description(resources.messages().unsupportedFileTypeDescription())
-                .primaryAction(resources.constants().download(),
-                        () -> window.location.assign(downloadUrl((tree.getSelected().data))))
-                .secondaryAction(resources.constants().viewInEditor(),
-                        () -> viewInEditor(tree.getSelected().data))
-                .build();
+                        .icon(Icons.UNKNOWN)
+                        .description(resources.messages().unsupportedFileTypeDescription())
+                        .primaryAction(resources.constants().download(),
+                                () -> window.location.assign(downloadUrl((tree.getSelected().data))))
+                        .secondaryAction(resources.constants().viewInEditor(),
+                                () -> viewInEditor(tree.getSelected().data))
+                        .build();
 
         HTMLElement crudContainer;
         root = row()
@@ -254,9 +253,10 @@ class BrowseContentElement implements IsElement, Attachable {
                                         .add(crudContainer = div().css(btnGroup)
                                                 .add(downloadContentLink = a().css(btn, btnDefault)
                                                         .title(resources.constants().download())
-                                                        .attr(UIConstants.TARGET, "_blank") //NON-NLS
+                                                        .attr(UIConstants.TARGET, "_blank") // NON-NLS
                                                         .attr(UIConstants.ROLE, UIConstants.BUTTON)
-                                                        .add(span().css(fontAwesome("download"))).element()).element()))
+                                                        .add(span().css(fontAwesome("download"))).element())
+                                                .element()))
                                 .add(treeSearch))
                         .add(treeContainer = div().css(CSS.treeContainer).element()))
                 .add(column(8)
@@ -265,9 +265,10 @@ class BrowseContentElement implements IsElement, Attachable {
                                         .add(previewHeader = h(1)
                                                 .textContent(resources.constants().preview()).element())
                                         .add(previewImageContainer = div()
-                                                .style("overflow: scroll") //NON-NLS
+                                                .style("overflow: scroll") // NON-NLS
                                                 .add(previewImage = img().css(imgResponsive, imgThumbnail).element())
-                                                .element()).element())
+                                                .element())
+                                        .element())
                                 .add(editorControls = div().css(CSS.editorControls, marginBottomSmall)
                                         .add(contentSearch)
                                         .add(div().add(editorStatus = span()
@@ -277,7 +278,8 @@ class BrowseContentElement implements IsElement, Attachable {
                                 .add(pleaseSelect)
                                 .add(deploymentPreview)
                                 .add(explodedPreview)
-                                .add(unsupportedFileType))).element();
+                                .add(unsupportedFileType)))
+                .element();
 
         boolean supported = !(Browser.isEdge() || Browser.isIE());
         AuthorisationDecision ad = AuthorisationDecision.from(environment, metadata.getSecurityContext());
@@ -374,7 +376,6 @@ class BrowseContentElement implements IsElement, Attachable {
         }
     }
 
-
     // ------------------------------------------------------ deployment methods
 
     private String downloadUrl(ContentEntry contentEntry) {
@@ -396,7 +397,6 @@ class BrowseContentElement implements IsElement, Attachable {
                     }
                 });
     }
-
 
     // ------------------------------------------------------ CRUD content methods
 
@@ -448,12 +448,12 @@ class BrowseContentElement implements IsElement, Attachable {
         targetPathItem.setRequired(true);
 
         FileItem fileItem = new FileItem(FILE, labelBuilder.label(FILE));
-        fileItem.addValueChangeHandler(event ->
-                targetPathItem.setValue(appendFilename(targetPathItem.getValue(), event.getValue().name)));
+        fileItem.addValueChangeHandler(
+                event -> targetPathItem.setValue(appendFilename(targetPathItem.getValue(), event.getValue().name)));
 
         TextBoxItem urlItem = new TextBoxItem(URL, labelBuilder.label(URL));
-        urlItem.addValueChangeHandler(event ->
-                targetPathItem.setValue(appendFilename(targetPathItem.getValue(), filename(event.getValue()))));
+        urlItem.addValueChangeHandler(
+                event -> targetPathItem.setValue(appendFilename(targetPathItem.getValue(), filename(event.getValue()))));
 
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.CONTENT_NEW, Metadata.empty())
                 .unboundFormItem(fileItem)
@@ -515,10 +515,10 @@ class BrowseContentElement implements IsElement, Attachable {
                     String contentName = SafeHtmlUtils.htmlEscapeAllowEntities(content.getName());
                     Node<ContentEntry> root = new Node.Builder<>(Ids.CONTENT_TREE_ROOT, contentName,
                             new ContentEntry())
-                            .root()
-                            .folder()
-                            .open()
-                            .build();
+                                    .root()
+                                    .folder()
+                                    .open()
+                                    .build();
                     JsArray<Node<ContentEntry>> nodes = new JsArray<>();
                     new ContentParser().parse(root, nodes, result.isDefined() ? result.asList() : emptyList());
 
@@ -531,7 +531,7 @@ class BrowseContentElement implements IsElement, Attachable {
                     treeContainer.appendChild(tree.element());
                     tree.attach();
                     tree.onSelectionChange((event, selectionContext) -> {
-                        if (!"ready".equals(selectionContext.action)) { //NON-NLS
+                        if (!"ready".equals(selectionContext.action)) { // NON-NLS
                             onNodeSelected(selectionContext);
                         }
                     });
@@ -602,7 +602,6 @@ class BrowseContentElement implements IsElement, Attachable {
         }
     }
 
-
     // ------------------------------------------------------ UI state
 
     private void onNodeSelected(SelectionContext<ContentEntry> selection) {
@@ -619,7 +618,8 @@ class BrowseContentElement implements IsElement, Attachable {
                 } else {
                     int index = contentEntry.name.lastIndexOf('.');
                     String extension = index != -1 && index < contentEntry.name.length() - 1
-                            ? contentEntry.name.substring(index + 1) : "";
+                            ? contentEntry.name.substring(index + 1)
+                            : "";
 
                     if (EDITOR_FILE_TYPES.contains(extension)) {
                         viewInEditor(contentEntry);
@@ -711,7 +711,7 @@ class BrowseContentElement implements IsElement, Attachable {
         loadContent(contentEntry, result -> {
             editor.setModeFromPath(contentEntry.name);
             editor.getEditor().getSession().setValue(result);
-            editor.getEditor().getSession().on("change", //NON-NLS
+            editor.getEditor().getSession().on("change", // NON-NLS
                     delta -> saveContentButton.ifPresent(button -> button.disabled = false));
             saveContentButton.ifPresent(button -> button.disabled = true);
         });
@@ -747,7 +747,6 @@ class BrowseContentElement implements IsElement, Attachable {
         setVisible(unsupportedFileType.element(), true);
         setVisible(previewContainer, false);
     }
-
 
     // ------------------------------------------------------ helper methods
 
@@ -798,7 +797,7 @@ class BrowseContentElement implements IsElement, Attachable {
 
     private File file(String name, String content) {
         ConstructorContentsArrayUnionType contents = ConstructorContentsArrayUnionType.of(content);
-        return new File(new ConstructorContentsArrayUnionType[]{contents}, name);
+        return new File(new ConstructorContentsArrayUnionType[] { contents }, name);
     }
 
     private Completable awaitTreeReady() {

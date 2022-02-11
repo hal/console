@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.runtime.subsystem.logging;
 
@@ -19,10 +19,6 @@ import java.util.Date;
 
 import javax.inject.Inject;
 
-import com.google.common.base.Strings;
-import elemental2.dom.HTMLDivElement;
-import elemental2.dom.HTMLElement;
-import elemental2.dom.HTMLInputElement;
 import org.jboss.hal.ballroom.Clipboard;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.Search;
@@ -40,13 +36,19 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
 
+import com.google.common.base.Strings;
+
+import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLInputElement;
+
 import static elemental2.dom.DomGlobal.document;
 import static elemental2.dom.DomGlobal.setTimeout;
 import static elemental2.dom.DomGlobal.window;
 import static java.lang.Math.max;
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.Elements.i;
 import static org.jboss.gwt.elemento.core.Elements.label;
-import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.gwt.elemento.core.InputType.checkbox;
 import static org.jboss.hal.ballroom.Skeleton.MARGIN_BIG;
@@ -163,8 +165,8 @@ public class LogFileView extends HalViewImpl implements LogFilePresenter.MyView 
         SwitchBridge.Api.element(tailMode).onChange((event, state) -> presenter.toggleTailMode(state));
 
         editor.getEditor().$blockScrolling = 1;
-        editor.getEditor().setTheme("ace/theme/logfile"); //NON-NLS
-        editor.getEditor().getSession().setMode("ace/mode/logfile"); //NON-NLS
+        editor.getEditor().setTheme("ace/theme/logfile"); // NON-NLS
+        editor.getEditor().getSession().setMode("ace/mode/logfile"); // NON-NLS
 
         adjustEditorHeight();
         window.onresize = event -> {
@@ -195,7 +197,6 @@ public class LogFileView extends HalViewImpl implements LogFilePresenter.MyView 
         this.presenter = presenter;
     }
 
-
     // ------------------------------------------------------ API
 
     @Override
@@ -203,7 +204,7 @@ public class LogFileView extends HalViewImpl implements LogFilePresenter.MyView 
         status.textContent = resources.constants().loadingPleaseWait();
         status.title = resources.constants().loadingPleaseWait();
         int top = (int) (loading.offsetHeight + editor.element().offsetHeight / 2);
-        loading.style.top = -1 * top + "px"; //NON-NLS
+        loading.style.top = -1 * top + "px"; // NON-NLS
         editorContainer.classList.add(logFileLoading);
     }
 
@@ -247,7 +248,7 @@ public class LogFileView extends HalViewImpl implements LogFilePresenter.MyView 
     public int visibleLines() {
         int lineHeight = 15;
         HTMLElement lineElement = (HTMLElement) document.querySelector(
-                HASH + Ids.LOG_FILE_EDITOR + " .ace_text-layer .ace_line"); //NON-NLS
+                HASH + Ids.LOG_FILE_EDITOR + " .ace_text-layer .ace_line"); // NON-NLS
         if (lineElement != null) {
             lineHeight = (int) lineElement.offsetHeight;
         }

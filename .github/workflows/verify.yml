@@ -1,0 +1,20 @@
+name: Verify Codebase
+
+on: [ push, pull_request ]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      MVN: mvn --show-version --batch-mode
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: maven
+      - name: Verify
+        run: $MVN -P skip-gwt verify

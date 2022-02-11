@@ -1,25 +1,27 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.runtime.subsystem.undertow;
 
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.core.SuccessfulOutcome;
 import org.jboss.hal.core.finder.Finder;
@@ -29,7 +31,13 @@ import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
-import org.jboss.hal.dmr.*;
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.NamedNode;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.Property;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Progress;
@@ -43,17 +51,37 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
+
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.annotations.NameToken;
+import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+
 import rx.Completable;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_DEPLOYMENT_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_DEPLOYMENT_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_SUBDEPLOYMENT_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_SUBDEPLOYMENT_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CREATION_TIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.GET_SESSION_CREATION_TIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.GET_SESSION_LAST_ACCESSED_TIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INVALIDATE_SESSION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LAST_ACCESSED_TIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LIST_SESSIONS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LIST_SESSION_ATTRIBUTES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVLET;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SESSION_ID;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBDEPLOYMENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDERTOW;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.WEBSOCKET;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 import static org.jboss.hal.flow.Flow.series;
@@ -236,18 +264,20 @@ public class DeploymentPresenter
         return address;
     }
 
-
     // @formatter:off
     @ProxyCodeSplit
-    @Requires({WEB_DEPLOYMENT_ADDRESS, WEB_SUBDEPLOYMENT_ADDRESS})
+    @Requires({ WEB_DEPLOYMENT_ADDRESS, WEB_SUBDEPLOYMENT_ADDRESS })
     @NameToken(NameTokens.UNDERTOW_RUNTIME_DEPLOYMENT_VIEW)
     public interface MyProxy extends ProxyPlace<DeploymentPresenter> {
     }
 
     public interface MyView extends HalView, HasPresenter<DeploymentPresenter> {
         void updateSessions(List<Session> sessions);
+
         void updateSessionAttributes(List<Property> attributes);
+
         void updateServlets(List<NamedNode> model);
+
         void updateWebsockets(List<NamedNode> model);
     }
     // @formatter:on

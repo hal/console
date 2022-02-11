@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.infinispan;
 
@@ -39,7 +39,8 @@ interface AddressTemplates {
 
     // remote cache container and sub resources
     String REMOTE_CACHE_CONTAINER_ADDRESS = INFINISPAN_SUBSYSTEM_ADDRESS + "/remote-cache-container=*";
-    String SELECTED_REMOTE_CACHE_CONTAINER_ADDRESS = INFINISPAN_SUBSYSTEM_ADDRESS + "/remote-cache-container=" + SELECTION_EXPRESSION;
+    String SELECTED_REMOTE_CACHE_CONTAINER_ADDRESS = INFINISPAN_SUBSYSTEM_ADDRESS + "/remote-cache-container="
+            + SELECTION_EXPRESSION;
     String REMOTE_CLUSTER_ADDRESS = REMOTE_CACHE_CONTAINER_ADDRESS + "/remote-cluster=*";
     String COMPONENT_CONNECTION_POOL_ADDRESS = REMOTE_CACHE_CONTAINER_ADDRESS + "/component=connection-pool";
     String COMPONENT_SECURITY_ADDRESS = REMOTE_CACHE_CONTAINER_ADDRESS + "/component=security";
@@ -51,7 +52,6 @@ interface AddressTemplates {
     String LOCAL_CACHE_ADDRESS = CACHE_CONTAINER_ADDRESS + "/local-cache=*";
     String REPLICATED_CACHE_ADDRESS = CACHE_CONTAINER_ADDRESS + "/replicated-cache=*";
     String SCATTERED_CACHE_ADDRESS = CACHE_CONTAINER_ADDRESS + "/scattered-cache=*";
-
 
     // ------------------------------------------------------ template
 

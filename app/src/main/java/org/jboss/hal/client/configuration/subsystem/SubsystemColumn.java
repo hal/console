@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem;
 
@@ -20,9 +20,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -45,6 +42,11 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+
+import elemental2.dom.HTMLElement;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -94,8 +96,9 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
 
                     @Override
                     public String getFilterData() {
-                        return item.getSubtitle() != null ? item.getTitle() + " " + item.getSubtitle() : item
-                                .getTitle();
+                        return item.getSubtitle() != null ? item.getTitle() + " " + item.getSubtitle()
+                                : item
+                                        .getTitle();
                     }
 
                     @Override
@@ -136,8 +139,7 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                 .showCount()
                 .withFilter()
                 .pinnable()
-                .filterDescription(resources.messages().susbsystemFilterDescription())
-        );
+                .filterDescription(resources.messages().susbsystemFilterDescription()));
 
         ItemsProvider<SubsystemMetadata> itemsProvider = (context, callback) -> {
             ResourceAddress address = SUBSYSTEM_TEMPLATE.resolve(statementContext).getParent();
@@ -165,8 +167,8 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
         setItemsProvider(itemsProvider);
 
         // reuse the items provider to filter breadcrumb items
-        setBreadcrumbItemsProvider((context, callback) ->
-                itemsProvider.get(context, new AsyncCallback<List<SubsystemMetadata>>() {
+        setBreadcrumbItemsProvider(
+                (context, callback) -> itemsProvider.get(context, new AsyncCallback<List<SubsystemMetadata>>() {
                     @Override
                     public void onFailure(Throwable caught) {
                         callback.onFailure(caught);

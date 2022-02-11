@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.core.finder;
 
@@ -21,13 +21,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import elemental2.dom.Element;
-import elemental2.dom.HTMLAnchorElement;
-import elemental2.dom.HTMLElement;
-import elemental2.dom.HTMLLIElement;
-import elemental2.dom.HTMLUListElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
 import org.jboss.hal.ballroom.LabelBuilder;
@@ -38,6 +31,15 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtml;
+
+import elemental2.dom.Element;
+import elemental2.dom.HTMLAnchorElement;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLLIElement;
+import elemental2.dom.HTMLUListElement;
 
 import static elemental2.dom.DomGlobal.document;
 import static org.jboss.gwt.elemento.core.Elements.*;
@@ -146,7 +148,8 @@ public class PreviewAttributes<T extends ModelNode> implements Iterable<HTMLElem
                     HTMLElement resolveExpression = span().css(fontAwesome("link"), clickable, marginLeft5)
                             .title(CONSTANTS.resolveExpression())
                             .on(click, event -> Core.INSTANCE.eventBus()
-                                    .fireEvent(new ResolveExpressionEvent(previewAttribute.value))).element();
+                                    .fireEvent(new ResolveExpressionEvent(previewAttribute.value)))
+                            .element();
                     HTMLElement nextValueContainer = span().element();
                     valueContainer.appendChild(nextValueContainer);
                     valueContainer.appendChild(resolveExpression);
@@ -241,7 +244,6 @@ public class PreviewAttributes<T extends ModelNode> implements Iterable<HTMLElem
         return elements.iterator();
     }
 
-
     public static class PreviewAttribute {
 
         final String label;
@@ -299,7 +301,6 @@ public class PreviewAttributes<T extends ModelNode> implements Iterable<HTMLElem
             return Expression.isExpression(value);
         }
     }
-
 
     @FunctionalInterface
     public interface PreviewAttributeFunction<T> {

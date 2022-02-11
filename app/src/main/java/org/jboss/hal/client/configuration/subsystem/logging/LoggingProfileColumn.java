@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.logging;
 
@@ -20,7 +20,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
@@ -39,6 +38,8 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Requires;
+
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.LOGGING_PROFILE_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.LOGGING_PROFILE_TEMPLATE;
@@ -67,14 +68,12 @@ public class LoggingProfileColumn extends FinderColumn<NamedNode> {
                 .itemsProvider((context, callback) -> crud.readChildren(LOGGING_SUBSYSTEM_TEMPLATE, LOGGING_PROFILE, 1,
                         children -> callback.onSuccess(asNamedNodes(children))))
 
-                .onPreview(item ->
-                        new LoggingPreview<>(dispatcher, resources, item.getName(),
-                                resources.previews().configurationLoggingProfiles(),
-                                () -> new Operation.Builder(LOGGING_PROFILE_TEMPLATE.append("root-logger=ROOT")
-                                        .resolve(statementContext, item.getName()), READ_RESOURCE_OPERATION).build()))
+                .onPreview(item -> new LoggingPreview<>(dispatcher, resources, item.getName(),
+                        resources.previews().configurationLoggingProfiles(),
+                        () -> new Operation.Builder(LOGGING_PROFILE_TEMPLATE.append("root-logger=ROOT")
+                                .resolve(statementContext, item.getName()), READ_RESOURCE_OPERATION).build()))
 
-                .useFirstActionAsBreadcrumbHandler()
-        );
+                .useFirstActionAsBreadcrumbHandler());
 
         setItemRenderer(item -> new ItemDisplay<NamedNode>() {
             @Override

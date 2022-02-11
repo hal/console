@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.runtime.subsystem.elytron;
 
@@ -24,13 +24,6 @@ import java.util.function.Consumer;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.user.datepicker.client.CalendarUtil;
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.LabelBuilder;
@@ -71,6 +64,15 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
+
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.user.datepicker.client.CalendarUtil;
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.annotations.NameToken;
+import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+
+import elemental2.dom.HTMLElement;
 
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.gwt.elemento.core.Elements.p;
@@ -159,9 +161,9 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
                 .build();
         String resource = Names.CREDENTIAL_STORE + " " + name;
         dispatcher.execute(operation, result -> {
-                    MessageEvent.fire(getEventBus(), Message.success(resources.messages().reloadSuccess(resource)));
-                    reload();
-                },
+            MessageEvent.fire(getEventBus(), Message.success(resources.messages().reloadSuccess(resource)));
+            reload();
+        },
                 (operation1, failure) -> MessageEvent.fire(getEventBus(),
                         Message.error(resources.messages().reloadError(resource, failure))),
                 (operation1, exception) -> MessageEvent.fire(getEventBus(),
@@ -188,15 +190,15 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
             String alias = model.get(ALIAS).asString();
             String resource = Names.CREDENTIAL_STORE + SPACE + name;
             dispatcher.execute(composite, (CompositeResult result) -> {
-                        MessageEvent.fire(getEventBus(),
-                                Message.success(resources.messages().addSuccess(ALIAS, alias, resource)));
-                        ModelNode aliases = result.step(1).get(RESULT);
-                        if (aliases.isDefined()) {
-                            callback.accept(aliases.asList());
-                        } else {
-                            callback.accept(Collections.emptyList());
-                        }
-                    },
+                MessageEvent.fire(getEventBus(),
+                        Message.success(resources.messages().addSuccess(ALIAS, alias, resource)));
+                ModelNode aliases = result.step(1).get(RESULT);
+                if (aliases.isDefined()) {
+                    callback.accept(aliases.asList());
+                } else {
+                    callback.accept(Collections.emptyList());
+                }
+            },
                     (op, failure) -> MessageEvent.fire(getEventBus(),
                             Message.error(resources.messages().addError(ALIAS, alias, resource, failure))),
                     (op, ex) -> MessageEvent.fire(getEventBus(),
@@ -205,7 +207,6 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
         });
         dialog.show();
     }
-
 
     // ----------------- key store
 
@@ -218,18 +219,18 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
         form.attach();
         form.getFormItem(ALIAS).setEnabled(false);
         form.setSaveCallback((f, changedValues) -> {
-                ResourceAddress address = template.resolve(statementContext, name);
-                Operation op = new Operation.Builder(address, SET_SECRET)
-                        .payload(f.getModel())
-                        .build();
-                dispatcher.execute(op, result -> MessageEvent.fire(getEventBus(),
-                        Message.success(resources.messages().setSecretPasswordSuccess(alias, resource))),
-                        (operation, failure) -> MessageEvent.fire(getEventBus(),
-                                Message.error(
-                                        resources.messages().setSecretPasswordError(alias, resource, failure))),
-                        (operation, ex) -> MessageEvent.fire(getEventBus(),
-                                Message.error(resources.messages()
-                                        .setSecretPasswordError(alias, resource, ex.getMessage()))));
+            ResourceAddress address = template.resolve(statementContext, name);
+            Operation op = new Operation.Builder(address, SET_SECRET)
+                    .payload(f.getModel())
+                    .build();
+            dispatcher.execute(op, result -> MessageEvent.fire(getEventBus(),
+                    Message.success(resources.messages().setSecretPasswordSuccess(alias, resource))),
+                    (operation, failure) -> MessageEvent.fire(getEventBus(),
+                            Message.error(
+                                    resources.messages().setSecretPasswordError(alias, resource, failure))),
+                    (operation, ex) -> MessageEvent.fire(getEventBus(),
+                            Message.error(resources.messages()
+                                    .setSecretPasswordError(alias, resource, ex.getMessage()))));
         });
         Dialog dialog = new Dialog.Builder(resources.constants().setSecret())
                 .add(p().textContent(opMetadata.getDescription().getDescription()).element())
@@ -251,9 +252,9 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
                 .build();
         String resource = Names.KEY_STORE + " " + name;
         dispatcher.execute(operation, result -> {
-                    MessageEvent.fire(getEventBus(), Message.success(resources.messages().reloadSuccess(resource)));
-                    reload();
-                },
+            MessageEvent.fire(getEventBus(), Message.success(resources.messages().reloadSuccess(resource)));
+            reload();
+        },
                 (operation1, failure) -> MessageEvent.fire(getEventBus(),
                         Message.error(resources.messages().reloadError(resource, failure))),
                 (operation1, exception) -> MessageEvent.fire(getEventBus(),
@@ -388,7 +389,7 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
         Metadata opMetadata = metadata.forOperation(GENERATE_CERTIFICATE_SIGNING_REQUEST);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(
                 Ids.build(template.lastName(), GENERATE_CERTIFICATE_SIGNING_REQUEST), opMetadata)
-                .build();
+                        .build();
         form.setSaveCallback((form1, changedValues) -> {
             ResourceAddress address = template.resolve(statementContext, name);
             Operation operation = new Operation.Builder(address, GENERATE_CERTIFICATE_SIGNING_REQUEST)
@@ -663,29 +664,28 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
                     .payload(form.getModel())
                     .build();
             dispatcher.execute(operation, result -> {
-                        int days = result.get("days-to-expiry").asInt();
-                        Date dueDate = new Date();
-                        CalendarUtil.addDaysToDate(dueDate, days);
+                int days = result.get("days-to-expiry").asInt();
+                Date dueDate = new Date();
+                CalendarUtil.addDaysToDate(dueDate, days);
 
-                        HTMLElement content;
-                        if (days < 1) {
-                            Alert warning = new Alert(Icons.WARNING, resources.messages().certificateExpired(alias));
-                            content = div().add(warning).element();
-                        } else {
-                            SafeHtml description = resources.messages()
-                                    .certificateShouldRenew(days, alias, Format.mediumDateTime(dueDate));
-                            content = p().innerHtml(description).element();
-                        }
+                HTMLElement content;
+                if (days < 1) {
+                    Alert warning = new Alert(Icons.WARNING, resources.messages().certificateExpired(alias));
+                    content = div().add(warning).element();
+                } else {
+                    SafeHtml description = resources.messages()
+                            .certificateShouldRenew(days, alias, Format.mediumDateTime(dueDate));
+                    content = p().innerHtml(description).element();
+                }
 
-                        new Dialog.Builder(resources.constants().verifyRenewCertificate())
-                                .primary(resources.constants().ok(), null)
-                                .size(Dialog.Size.MEDIUM)
-                                .add(content)
-                                .build()
-                                .show();
+                new Dialog.Builder(resources.constants().verifyRenewCertificate())
+                        .primary(resources.constants().ok(), null)
+                        .size(Dialog.Size.MEDIUM)
+                        .add(content)
+                        .build()
+                        .show();
 
-
-                    },
+            },
                     (operation1, failure) -> MessageEvent.fire(getEventBus(),
                             Message.error(resources.messages().verifyRenewError(alias, name, failure))),
                     (operation1, ex) -> MessageEvent.fire(getEventBus(),
@@ -716,12 +716,12 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
         LabelBuilder labelBuilder = new LabelBuilder();
         String resourceName = labelBuilder.label(template.lastName()) + SPACE + resource;
         dispatcher.execute(operation, result -> {
-                    if (result.isDefined()) {
-                        viewCallback.accept(result.asList());
-                    } else {
-                        viewCallback.accept(Collections.emptyList());
-                    }
-                },
+            if (result.isDefined()) {
+                viewCallback.accept(result.asList());
+            } else {
+                viewCallback.accept(Collections.emptyList());
+            }
+        },
                 (operation1, failure) -> MessageEvent.fire(getEventBus(),
                         Message.error(resources.messages().readAliasesError(resourceName, failure))),
                 (operation1, exception) -> MessageEvent.fire(getEventBus(),
@@ -803,14 +803,17 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(NameTokens.ELYTRON_RUNTIME_STORES)
-    @Requires({CREDENTIAL_STORE_ADDRESS, FILTERING_KEY_STORE_ADDRESS, KEY_STORE_ADDRESS, LDAP_KEY_STORE_ADDRESS})
+    @Requires({ CREDENTIAL_STORE_ADDRESS, FILTERING_KEY_STORE_ADDRESS, KEY_STORE_ADDRESS, LDAP_KEY_STORE_ADDRESS })
     public interface MyProxy extends ProxyPlace<StoresPresenter> {
     }
 
     public interface MyView extends HalView, HasPresenter<StoresPresenter> {
         void updateCredentialStore(List<NamedNode> items);
+
         void updateFilteringKeystore(List<NamedNode> items);
+
         void updateKeystore(List<NamedNode> items);
+
         void updateLdapKeystore(List<NamedNode> items);
 
     }

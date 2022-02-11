@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.messaging;
 
@@ -20,7 +20,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -43,6 +42,8 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
+
+import com.google.web.bindery.event.shared.EventBus;
 
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_SERVER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HA_POLICY;
@@ -82,8 +83,7 @@ public class ServerSettingsColumn
                     } else {
                         item.getActions().get(0).getHandler().execute(item);
                     }
-                })
-        );
+                }));
 
         this.eventBus = eventBus;
         this.dispatcher = dispatcher;
@@ -161,12 +161,11 @@ public class ServerSettingsColumn
     }
 
     private void addHaPolicy(StatementContext statementContext) {
-        new HaPolicyWizard(resources, (wizard, context) ->
-                context.haPolicy.add(dispatcher, statementContext, () -> {
-                    MessageEvent.fire(eventBus,
-                            Message.success(resources.messages().addSingleResourceSuccess(context.haPolicy.type)));
-                    refresh(RefreshMode.RESTORE_SELECTION);
-                })).show();
+        new HaPolicyWizard(resources, (wizard, context) -> context.haPolicy.add(dispatcher, statementContext, () -> {
+            MessageEvent.fire(eventBus,
+                    Message.success(resources.messages().addSingleResourceSuccess(context.haPolicy.type)));
+            refresh(RefreshMode.RESTORE_SELECTION);
+        })).show();
     }
 
     private void removeHaPolicy(StatementContext statementContext, HaPolicy haPolicy) {

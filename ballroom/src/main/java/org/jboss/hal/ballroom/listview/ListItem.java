@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.ballroom.listview;
 
@@ -19,13 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.base.Splitter;
-import com.google.gwt.core.client.GWT;
-import elemental2.dom.HTMLDivElement;
-import elemental2.dom.HTMLElement;
-import elemental2.dom.HTMLInputElement;
-import elemental2.dom.HTMLUListElement;
-import elemental2.dom.MouseEvent;
 import org.jboss.gwt.elemento.core.EventCallbackFn;
 import org.jboss.gwt.elemento.core.InputType;
 import org.jboss.gwt.elemento.core.IsElement;
@@ -33,6 +26,15 @@ import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.UIConstants;
+
+import com.google.common.base.Splitter;
+import com.google.gwt.core.client.GWT;
+
+import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLInputElement;
+import elemental2.dom.HTMLUListElement;
+import elemental2.dom.MouseEvent;
 
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.bind;
@@ -52,7 +54,6 @@ class ListItem<T> implements IsElement {
     private final Map<String, HTMLElement> actions;
     private final Constants CONSTANTS = GWT.create(Constants.class);
 
-
     ListItem(ListView<T> listView, T item, boolean checkbox, ItemDisplay<T> display, String[] contentWidths) {
         this.id = display.getId();
         this.item = item;
@@ -68,7 +69,8 @@ class ListItem<T> implements IsElement {
                             .data("parent", HASH + this.id)
                             .aria(UIConstants.CONTROLS, idLongPanel)
                             .attr(UIConstants.ROLE, UIConstants.BUTTON)
-                            .add(container = div().css(listPfContainer).element())).element();
+                            .add(container = div().css(listPfContainer).element()))
+                    .element();
         } else {
             root = div().id(id).css(listPfItem)
                     .add(container = div().css(listPfContainer).element()).element();
@@ -80,7 +82,8 @@ class ListItem<T> implements IsElement {
                             .on(click, event -> {
                                 HTMLInputElement element = (HTMLInputElement) event.target;
                                 listView.selectListItem(ListItem.this, element.checked);
-                            }).element()).element());
+                            }).element())
+                    .element());
         } else {
             this.checkbox = null;
             bind(root, click, event -> listView.selectListItem(this, true));
@@ -99,7 +102,7 @@ class ListItem<T> implements IsElement {
             HTMLElement status;
             content.appendChild(div().css(listPfLeft)
                     .add(status = span().css(listPfIcon, listPfIconBordered, listPfIconSmall).element()).element());
-            //noinspection UnstableApiUsage
+            // noinspection UnstableApiUsage
             List<String> classes = Splitter.on(' ')
                     .omitEmptyStrings()
                     .trimResults()
@@ -108,8 +111,9 @@ class ListItem<T> implements IsElement {
         }
         content.appendChild(contentWrapper = div().css(listPfContentWrapper)
                 .add(mainContent = div().css(listPfMainContent, listHalMainContent)
-                        .style("flex-basis:" + contentWidths[0]) //NON-NLS
-                        .add(title = div().css(listPfTitle).element()).element()).element());
+                        .style("flex-basis:" + contentWidths[0]) // NON-NLS
+                        .add(title = div().css(listPfTitle).element()).element())
+                .element());
         if (display.getTitleElements() != null) {
             for (HTMLElement element : display.getTitleElements()) {
                 title.appendChild(element);
@@ -217,13 +221,15 @@ class ListItem<T> implements IsElement {
                                                 .aria(UIConstants.EXPANDED, UIConstants.TRUE)
                                                 .add(span().css(fontAwesome("ellipsis-v"))))
                                         .add(ul = ul().css(dropdownMenu, dropdownMenuRight)
-                                                .aria(UIConstants.LABELLED_BY, id).element()).element());
+                                                .aria(UIConstants.LABELLED_BY, id).element())
+                                        .element());
                     }
-                    //noinspection ConstantConditions
+                    // noinspection ConstantConditions
                     ul.appendChild(actionElement = li()
                             .add(a().css(clickable)
                                     .textContent(action.title)
-                                    .on(click, eventHandler)).element());
+                                    .on(click, eventHandler))
+                            .element());
                 }
 
                 this.actions.put(action.id, actionElement);

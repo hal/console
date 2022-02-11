@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.runtime.subsystem.messaging;
 
@@ -20,13 +20,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.gwt.core.client.GWT;
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.core.Json;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
@@ -51,6 +44,14 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.gwt.core.client.GWT;
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.annotations.NameToken;
+import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import static org.jboss.hal.ballroom.Format.mediumDateTime;
 import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_SERVER_ADDRESS;
@@ -185,7 +186,6 @@ public class ServerPresenter extends ApplicationFinderPresenter<ServerPresenter.
         });
     }
 
-
     // ------------------------------------------------------ connection
 
     void openCloseConnectionsDialog() {
@@ -216,7 +216,6 @@ public class ServerPresenter extends ApplicationFinderPresenter<ServerPresenter.
         return connectionId != null ? Names.CONNECTION + ": " + connectionId : Names.NOT_AVAILABLE;
     }
 
-
     // ------------------------------------------------------ connection / sessions
 
     void showSessions(ModelNode connection) {
@@ -228,13 +227,11 @@ public class ServerPresenter extends ApplicationFinderPresenter<ServerPresenter.
             List<ModelNode> sessions = Json.parseArray(result.asString(), SESSION_METADATA, ImmutableMap.of(
                     "sessionID", SESSION_ID,
                     "creationTime", CREATION_TIMESTAMP,
-                    "consumerCount", CONSUMER_COUNT
-            ));
+                    "consumerCount", CONSUMER_COUNT));
             setCreationTime(sessions);
             getView().updateSessions(sessions);
         });
     }
-
 
     // ------------------------------------------------------ connection / consumers
 
@@ -250,7 +247,6 @@ public class ServerPresenter extends ApplicationFinderPresenter<ServerPresenter.
         });
     }
 
-
     // ------------------------------------------------------ role
 
     void getRoles(String addressMatch) {
@@ -259,7 +255,6 @@ public class ServerPresenter extends ApplicationFinderPresenter<ServerPresenter.
                 .build();
         dispatcher.execute(operation, result -> getView().updateRoles(result.asList()));
     }
-
 
     // ------------------------------------------------------ transaction
 
@@ -285,7 +280,6 @@ public class ServerPresenter extends ApplicationFinderPresenter<ServerPresenter.
         }
     }
 
-
     // ------------------------------------------------------ helper methods
 
     private void setCreationTime(List<ModelNode> nodes) {
@@ -297,7 +291,6 @@ public class ServerPresenter extends ApplicationFinderPresenter<ServerPresenter.
         }
     }
 
-
     // @formatter:off
     @ProxyCodeSplit
     @Requires(MESSAGING_SERVER_ADDRESS)
@@ -307,12 +300,19 @@ public class ServerPresenter extends ApplicationFinderPresenter<ServerPresenter.
 
     public interface MyView extends HalView, HasPresenter<ServerPresenter> {
         void updateConnections(List<ModelNode> connections);
+
         void updateRoles(List<ModelNode> roles);
+
         void updateConnectionConsumers(List<ModelNode> consumers);
+
         void updateConsumers(List<ModelNode> consumers);
+
         void updateProducers(List<ModelNode> producers);
+
         void updateConnectors(List<ModelNode> connectors);
+
         void updateSessions(List<ModelNode> sessions);
+
         void updateTransactions(List<ModelNode> transactions);
     }
     // @formatter:on

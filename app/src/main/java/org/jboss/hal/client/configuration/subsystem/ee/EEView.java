@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.ee;
 
@@ -21,7 +21,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Table;
@@ -38,6 +37,8 @@ import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+
+import elemental2.dom.HTMLElement;
 
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.gwt.elemento.core.Elements.h;
@@ -130,12 +131,12 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
 
         ModelNodeForm<ModelNode> defaultBindingsForm = new ModelNodeForm.Builder<>(EE_DEFAULT_BINDINGS_FORM,
                 defaultBindingsMetadata)
-                .onSave((form, changedValues) -> presenter.save(AddressTemplates.SERVICE_DEFAULT_BINDINGS_TEMPLATE,
-                        changedValues, defaultBindingsMetadata,
-                        resources.messages().modifyResourceSuccess(Names.EE, DEFAULT_BINDINGS_NAME)))
-                .prepareReset(f -> presenter.resetSingleton(DEFAULT_BINDINGS_NAME,
-                        AddressTemplates.SERVICE_DEFAULT_BINDINGS_TEMPLATE, f, defaultBindingsMetadata))
-                .build();
+                        .onSave((form, changedValues) -> presenter.save(AddressTemplates.SERVICE_DEFAULT_BINDINGS_TEMPLATE,
+                                changedValues, defaultBindingsMetadata,
+                                resources.messages().modifyResourceSuccess(Names.EE, DEFAULT_BINDINGS_NAME)))
+                        .prepareReset(f -> presenter.resetSingleton(DEFAULT_BINDINGS_NAME,
+                                AddressTemplates.SERVICE_DEFAULT_BINDINGS_TEMPLATE, f, defaultBindingsMetadata))
+                        .build();
         forms.put(EE_DEFAULT_BINDINGS_FORM, defaultBindingsForm);
         registerAttachable(defaultBindingsForm);
 
@@ -237,30 +238,30 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
 
         Table<NamedNode> table = new ModelNodeTable.Builder<NamedNode>(Ids.build(baseId, Ids.TABLE),
                 metadata)
-                .column(NAME, (cell, t, row, meta) -> row.getName())
-                .button(tableButtonFactory.add(Ids.build(baseId, Ids.ADD), type, template,
-                        (name, address) -> presenter.reload()))
-                .button(tableButtonFactory.remove(type, template, (api) -> api.selectedRow().getName(),
-                        () -> presenter.reload()))
+                        .column(NAME, (cell, t, row, meta) -> row.getName())
+                        .button(tableButtonFactory.add(Ids.build(baseId, Ids.ADD), type, template,
+                                (name, address) -> presenter.reload()))
+                        .button(tableButtonFactory.remove(type, template, (api) -> api.selectedRow().getName(),
+                                () -> presenter.reload()))
 
-                .build();
+                        .build();
         registerAttachable(table);
         tables.put(template.lastName(), table);
 
         ModelNodeForm<NamedNode> form = new ModelNodeForm.Builder<NamedNode>(Ids.build(baseId, Ids.FORM),
                 metadata)
-                .onSave((f, changedValues) -> {
-                    AddressTemplate fullyQualified = template.replaceWildcards(table.selectedRow().getName());
-                    presenter.save(fullyQualified, changedValues, metadata,
-                            resources.messages().modifyResourceSuccess(Names.EE, template.lastName()));
-                })
-                .prepareReset(f -> {
-                    String name = table.selectedRow().getName();
-                    AddressTemplate fullyQualified = template.replaceWildcards(name);
-                    presenter.reset(type, name, fullyQualified, f, metadata,
-                            resources.messages().modifyResourceSuccess(Names.EE, template.lastName()));
-                })
-                .build();
+                        .onSave((f, changedValues) -> {
+                            AddressTemplate fullyQualified = template.replaceWildcards(table.selectedRow().getName());
+                            presenter.save(fullyQualified, changedValues, metadata,
+                                    resources.messages().modifyResourceSuccess(Names.EE, template.lastName()));
+                        })
+                        .prepareReset(f -> {
+                            String name = table.selectedRow().getName();
+                            AddressTemplate fullyQualified = template.replaceWildcards(name);
+                            presenter.reset(type, name, fullyQualified, f, metadata,
+                                    resources.messages().modifyResourceSuccess(Names.EE, template.lastName()));
+                        })
+                        .build();
 
         forms.put(template.lastName(), form);
         registerAttachable(form);

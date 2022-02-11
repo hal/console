@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.core.runtime.server;
 
@@ -23,6 +23,7 @@ import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Task;
+
 import rx.Completable;
 
 import static java.util.Comparator.comparing;
@@ -34,14 +35,13 @@ class ServerUrlTasks {
     private static final String SOCKET_BINDING_GROUP_KEY = "socket-binding-group";
     static final String URL_KEY = "url";
 
-
     /**
-     * Reads the socket binding group which is used to look for a {@code http} or {@code https} socket binding
-     * resource.
+     * Reads the socket binding group which is used to look for a {@code http} or {@code https} socket binding resource.
      *
-     * <p>In standalone mode it uses the first {@code socket-binding-group} child resource of the root resource. In
-     * domain mode it reads the {@code socket-binding-group} attribute of the selected group in the statement
-     * context.</p>
+     * <p>
+     * In standalone mode it uses the first {@code socket-binding-group} child resource of the root resource. In domain mode it
+     * reads the {@code socket-binding-group} attribute of the selected group in the statement context.
+     * </p>
      */
     static class ReadSocketBindingGroup implements Task<FlowContext> {
 
@@ -65,7 +65,7 @@ class ServerUrlTasks {
                         .doOnSuccess(result -> {
                             if (result.asList().isEmpty()) {
                                 throw new RuntimeException(
-                                        "ReadSocketBindingGroup: No socket binding groups defined"); //NON-NLS
+                                        "ReadSocketBindingGroup: No socket binding groups defined"); // NON-NLS
                             } else {
                                 String sbg = result.asList().get(0).asString();
                                 context.set(SOCKET_BINDING_GROUP_KEY, sbg);
@@ -84,10 +84,9 @@ class ServerUrlTasks {
         }
     }
 
-
     /**
-     * Checks whether there's a {@code http} or {@code https} socket binding and puts the name of that socket binding
-     * into the context. Aborts otherwise. Expects the name of the socket binding group in the context.
+     * Checks whether there's a {@code http} or {@code https} socket binding and puts the name of that socket binding into the
+     * context. Aborts otherwise. Expects the name of the socket binding group in the context.
      */
     static class ReadSocketBinding implements Task<FlowContext> {
 

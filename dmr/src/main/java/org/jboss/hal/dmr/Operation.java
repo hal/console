@@ -1,30 +1,31 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.dmr;
+
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
+import org.jboss.hal.spi.EsParam;
+import org.jboss.hal.spi.EsReturn;
 
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
-import org.jboss.hal.spi.EsParam;
-import org.jboss.hal.spi.EsReturn;
-
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.stream.Collectors.toSet;
@@ -162,7 +163,7 @@ public class Operation extends ModelNode {
         builder.append(":").append(name);
         if (hasParameter()) {
             builder.append("(");
-            for (Iterator<Property> iterator = parameter.asPropertyList().iterator(); iterator.hasNext(); ) {
+            for (Iterator<Property> iterator = parameter.asPropertyList().iterator(); iterator.hasNext();) {
                 Property p = iterator.next();
                 builder.append(p.getName()).append("=").append(p.getValue().asString());
                 if (iterator.hasNext()) {
@@ -173,7 +174,7 @@ public class Operation extends ModelNode {
         }
         if (header.isDefined() && !header.asList().isEmpty()) {
             builder.append("{");
-            for (Iterator<Property> iterator = header.asPropertyList().iterator(); iterator.hasNext(); ) {
+            for (Iterator<Property> iterator = header.asPropertyList().iterator(); iterator.hasNext();) {
                 Property p = iterator.next();
                 builder.append(p.getName()).append("=").append(p.getValue().asString());
                 if (iterator.hasNext()) {
@@ -184,7 +185,6 @@ public class Operation extends ModelNode {
         }
         return builder.toString();
     }
-
 
     /**
      * A builder for operations.
@@ -290,13 +290,12 @@ public class Operation extends ModelNode {
             return new Operation(name, address, parameter, header, roles);
         }
 
-
         // ------------------------------------------------------ JS methods
 
         /**
          * Add a parameter to the operation
          *
-         * @param name  The name of the parameter.
+         * @param name The name of the parameter.
          * @param value The value of the parameter.
          * @return this builder
          */
@@ -318,7 +317,7 @@ public class Operation extends ModelNode {
         /**
          * Add a header to the operation
          *
-         * @param name  The name of the header.
+         * @param name The name of the header.
          * @param value The value of the header.
          * @return this builder
          */

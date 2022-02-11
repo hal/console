@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.ballroom.form;
 
@@ -19,13 +19,14 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
-import elemental2.dom.HTMLButtonElement;
-import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.dmr.Deprecation;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
+
+import elemental2.dom.HTMLButtonElement;
+import elemental2.dom.HTMLElement;
 
 import static org.jboss.gwt.elemento.core.Elements.button;
 import static org.jboss.gwt.elemento.core.Elements.div;
@@ -63,7 +64,6 @@ public class NumberSelectItem extends AbstractFormItem<Long> {
         return false;
     }
 
-
     private static class NumberSelectReadOnlyAppearance extends ReadOnlyAppearance<Long> {
 
         NumberSelectReadOnlyAppearance() {
@@ -75,7 +75,6 @@ public class NumberSelectItem extends AbstractFormItem<Long> {
             return "NumberSelectReadOnlyAppearance";
         }
     }
-
 
     private class NumberSelectEditingAppearance extends AbstractAppearance<Long> {
 
@@ -95,7 +94,9 @@ public class NumberSelectItem extends AbstractFormItem<Long> {
                     .add(labelElement = label().css(controlLabel, halFormLabel).element())
                     .add(inputContainer = div().css(halFormInput)
                             .add(buttonGroup = div().css(btnGroup)
-                                    .attr(UIConstants.ROLE, UIConstants.GROUP).element()).element()).element();
+                                    .attr(UIConstants.ROLE, UIConstants.GROUP).element())
+                            .element())
+                    .element();
             for (long number : numbers) {
                 String value = String.valueOf(number);
                 HTMLButtonElement button = button().css(btn, btnDefault)

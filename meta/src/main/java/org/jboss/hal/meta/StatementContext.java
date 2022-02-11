@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.meta;
 
@@ -22,8 +22,7 @@ import jsinterop.annotations.JsType;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
- * Contains global state which is updated as you navigate in the console. In standalone mode most of the methods return
- * null.
+ * Contains global state which is updated as you navigate in the console. In standalone mode most of the methods return null.
  */
 @JsType
 public interface StatementContext {
@@ -31,19 +30,15 @@ public interface StatementContext {
     @SuppressWarnings("HardCodedStringLiteral")
     enum Expression {
         /**
-         * Please note that this tuple might not always resolve to the domain controller. For some edge cases (e.g. when
-         * the current user is assigned to a host scoped role which is scoped to a slave host), this tuple is resolved
-         * to the first host which was read during bootstrap. In any case it is resolved to an existing host.
+         * Please note that this tuple might not always resolve to the domain controller. For some edge cases (e.g. when the
+         * current user is assigned to a host scoped role which is scoped to a slave host), this tuple is resolved to the first
+         * host which was read during bootstrap. In any case it is resolved to an existing host.
          * <p>
-         * Address templates which use this tuple must be prepared that it does not always resolve to the domain
-         * controller.
+         * Address templates which use this tuple must be prepared that it does not always resolve to the domain controller.
          */
-        DOMAIN_CONTROLLER("domain.controller", HOST),
-        SELECTED_PROFILE("selected.profile", PROFILE),
-        SELECTED_GROUP("selected.group", SERVER_GROUP),
-        SELECTED_HOST("selected.host", HOST),
-        SELECTED_SERVER_CONFIG("selected.server-config", SERVER_CONFIG),
-        SELECTED_SERVER("selected.server", SERVER);
+        DOMAIN_CONTROLLER("domain.controller", HOST), SELECTED_PROFILE("selected.profile", PROFILE), SELECTED_GROUP(
+                "selected.group", SERVER_GROUP), SELECTED_HOST("selected.host", HOST), SELECTED_SERVER_CONFIG(
+                        "selected.server-config", SERVER_CONFIG), SELECTED_SERVER("selected.server", SERVER);
 
         private final String name;
         private final String resource;
@@ -72,9 +67,7 @@ public interface StatementContext {
         }
     }
 
-
-    @JsIgnore
-    StatementContext NOOP = new StatementContext() {
+    @JsIgnore StatementContext NOOP = new StatementContext() {
 
         @Override
         public String resolve(String placeholder, AddressTemplate template) {
@@ -83,7 +76,7 @@ public interface StatementContext {
 
         @Override
         public String[] resolveTuple(String placeholder, AddressTemplate template) {
-            return new String[]{placeholder, placeholder};
+            return new String[] { placeholder, placeholder };
         }
 
         @Override
@@ -116,7 +109,6 @@ public interface StatementContext {
             return null;
         }
     };
-
 
     /** Resolves a single value. */
     @JsIgnore

@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2018 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.shared.sslwizard;
 
@@ -21,8 +21,6 @@ import java.util.Map;
 
 import javax.inject.Provider;
 
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.hal.ballroom.wizard.Wizard;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.SuccessfulOutcome;
@@ -44,6 +42,9 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
+
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.web.bindery.event.shared.EventBus;
 
 import static elemental2.dom.DomGlobal.window;
 import static org.jboss.hal.client.shared.sslwizard.AbstractConfiguration.*;
@@ -90,13 +91,15 @@ public class EnableSSLWizard {
 
     public void show() {
         Constants constants = resources.constants();
-        AddressTemplate template = undertowHttps ?  UNDERTOW_HTTPS_LISTENER_TEMPLATE : HTTP_INTERFACE_TEMPLATE;
+        AddressTemplate template = undertowHttps ? UNDERTOW_HTTPS_LISTENER_TEMPLATE : HTTP_INTERFACE_TEMPLATE;
         Wizard.Builder<EnableSSLContext, EnableSSLState> wb = new Wizard.Builder<>(constants.enableSSLManagementTitle(),
                 new EnableSSLContext());
 
         wb.addStep(EnableSSLState.DEFINE_STRATEGY, new DefineStrategyStep(resources, environment.isStandalone(), undertowHttps))
-                .addStep(EnableSSLState.CONFIGURATION, new ConfigurationStep(existingResources, resources, environment, undertowHttps, template))
-                .addStep(EnableSSLState.REVIEW, new ReviewStep(dispatcher, statementContext, resources, environment, undertowHttps, template))
+                .addStep(EnableSSLState.CONFIGURATION,
+                        new ConfigurationStep(existingResources, resources, environment, undertowHttps, template))
+                .addStep(EnableSSLState.REVIEW,
+                        new ReviewStep(dispatcher, statementContext, resources, environment, undertowHttps, template))
 
                 .onBack((context, currentState) -> {
                     EnableSSLState previous = null;
@@ -147,8 +150,9 @@ public class EnableSSLWizard {
                     boolean createKeyStore = !context.strategy.equals(
                             EnableSSLContext.Strategy.KEYSTORE_RESOURCE_EXISTS);
                     String keyStoreName = createKeyStore ? asString(model,
-                            AbstractConfiguration.KEY_STORE_NAME) : asString(model,
-                            KEY_STORE);
+                            AbstractConfiguration.KEY_STORE_NAME)
+                            : asString(model,
+                                    KEY_STORE);
                     if (createKeyStore) {
                         if (context.strategy.equals(EnableSSLContext.Strategy.KEYSTORE_CREATE)) {
 
@@ -185,7 +189,8 @@ public class EnableSSLWizard {
                                         .param(ALIAS, asString(model, AbstractConfiguration.PRIVATE_KEY_ALIAS))
                                         .param(DISTINGUISHED_NAME, dn)
                                         .param(VALIDITY, asString(model, AbstractConfiguration.PRIVATE_KEY_VALIDITY))
-                                        .param(ModelDescriptionConstants.ALGORITHM, asString(model, AbstractConfiguration.PRIVATE_KEY_ALGORITHM))
+                                        .param(ModelDescriptionConstants.ALGORITHM,
+                                                asString(model, AbstractConfiguration.PRIVATE_KEY_ALGORITHM))
                                         .build();
                                 composite.add(genKeyOp);
 
@@ -239,13 +244,13 @@ public class EnableSSLWizard {
                             });
 
                             String caaName = asString(model, CAA_NAME);
-                            ResourceAddress caaAddress = certificateAuthorityAccountTemplate().resolve(statementContext, caaName);
+                            ResourceAddress caaAddress = certificateAuthorityAccountTemplate().resolve(statementContext,
+                                    caaName);
                             tasks.add(flowContext -> {
                                 Operation caaOp = new Operation.Builder(caaAddress, ADD)
                                         .param(KEY_STORE, keyStoreName)
                                         .param(ALIAS, asString(model, CAA_ALIAS))
                                         .build();
-
 
                                 return dispatcher.execute(caaOp)
                                         .doOnError(exception -> wizard.showError(constants.failed(),
@@ -269,7 +274,6 @@ public class EnableSSLWizard {
                                 Operation storeOp = new Operation.Builder(ksAddress, STORE)
                                         .build();
                                 composite.add(storeOp);
-
 
                                 return dispatcher.execute(composite)
                                         .doOnError(ex -> wizard.showError(constants.failed(),
@@ -385,16 +389,16 @@ public class EnableSSLWizard {
                         if (environment.isStandalone()) {
                             Operation writeSecureSocketBinding = new Operation.Builder(httpInterfaceAddress,
                                     WRITE_ATTRIBUTE_OPERATION)
-                                    .param(NAME, SECURE_SOCKET_BINDING)
-                                    .param(VALUE, asString(model, SECURE_SOCKET_BINDING))
-                                    .build();
+                                            .param(NAME, SECURE_SOCKET_BINDING)
+                                            .param(VALUE, asString(model, SECURE_SOCKET_BINDING))
+                                            .build();
                             composite.add(writeSecureSocketBinding);
                         } else {
                             Operation writeSecurePortOp = new Operation.Builder(httpInterfaceAddress,
                                     WRITE_ATTRIBUTE_OPERATION)
-                                    .param(NAME, SECURE_PORT)
-                                    .param(VALUE, asString(model, SECURE_PORT))
-                                    .build();
+                                            .param(NAME, SECURE_PORT)
+                                            .param(VALUE, asString(model, SECURE_PORT))
+                                            .build();
                             composite.add(writeSecurePortOp);
                         }
                     }
@@ -407,7 +411,8 @@ public class EnableSSLWizard {
                                 public void onSuccess(FlowContext flowContext) {
                                     if (undertowHttps) {
                                         wizard.showSuccess(resources.constants().success(),
-                                                resources.messages().enableSSLResultsSuccessUndertow(httpsListener, serverSslContext),
+                                                resources.messages().enableSSLResultsSuccessUndertow(httpsListener,
+                                                        serverSslContext),
                                                 context1 -> presenter.reloadView(), true);
                                     } else {
                                         // constructs the http management console url
@@ -450,7 +455,6 @@ public class EnableSSLWizard {
                                             false);
                                 }
                             });
-
 
                 });
         Wizard<EnableSSLContext, EnableSSLState> wizard = wb.build();
@@ -541,7 +545,8 @@ public class EnableSSLWizard {
         }
 
         public EnableSSLWizard build() {
-            EnableSSLWizard enableSSLWizard = new EnableSSLWizard(existingResources, resources, environment, statementContext, dispatcher,
+            EnableSSLWizard enableSSLWizard = new EnableSSLWizard(existingResources, resources, environment, statementContext,
+                    dispatcher,
                     host, presenter, progress, eventBus);
             enableSSLWizard.undertowHttps = undertowHttps;
             enableSSLWizard.undertowServer = undertowServer;

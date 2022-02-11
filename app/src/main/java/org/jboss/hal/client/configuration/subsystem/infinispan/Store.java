@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.infinispan;
 
@@ -25,18 +25,18 @@ import static org.jboss.hal.client.configuration.subsystem.infinispan.Table.STRI
 /** Represents the different store singletons of a specific cache resource. */
 public enum Store {
 
-    BINARY_JDBC(Ids.CACHE_STORE_BINARY_JDBC, Names.BINARY_JDBC, ModelDescriptionConstants.BINARY_JDBC, true, BINARY),
-    CUSTOM(Ids.CACHE_STORE_CUSTOM, Names.CUSTOM, ModelDescriptionConstants.CUSTOM, true),
-    FILE(Ids.CACHE_STORE_FILE, Names.FILE, ModelDescriptionConstants.FILE, false),
-    HOT_ROD(Ids.CACHE_STORE_HOT_ROD, Names.HOT_ROD, ModelDescriptionConstants.HOTROD, true),
-    JDBC(Ids.CACHE_STORE_JDBC, Names.JDBC, ModelDescriptionConstants.JDBC, true, STRING),
-    MIXED_JDBC(Ids.CACHE_STORE_MIXED_JDBC, Names.MIXED_JDBC, ModelDescriptionConstants.MIXED_JDBC, true,
-            BINARY, STRING);
+    BINARY_JDBC(Ids.CACHE_STORE_BINARY_JDBC, Names.BINARY_JDBC, ModelDescriptionConstants.BINARY_JDBC, true, BINARY), CUSTOM(
+            Ids.CACHE_STORE_CUSTOM, Names.CUSTOM, ModelDescriptionConstants.CUSTOM,
+            true), FILE(Ids.CACHE_STORE_FILE, Names.FILE, ModelDescriptionConstants.FILE, false), HOT_ROD(
+                    Ids.CACHE_STORE_HOT_ROD, Names.HOT_ROD, ModelDescriptionConstants.HOTROD,
+                    true), JDBC(Ids.CACHE_STORE_JDBC, Names.JDBC, ModelDescriptionConstants.JDBC, true, STRING), MIXED_JDBC(
+                            Ids.CACHE_STORE_MIXED_JDBC, Names.MIXED_JDBC, ModelDescriptionConstants.MIXED_JDBC, true,
+                            BINARY, STRING);
 
     static Store fromResource(String resource) {
         if (resource != null) {
             // STORE is an alias for custom
-            if (resource.equalsIgnoreCase("STORE")) { //NON-NLS
+            if (resource.equalsIgnoreCase("STORE")) { // NON-NLS
                 return CUSTOM;
             } else {
                 for (Store store : Store.values()) {

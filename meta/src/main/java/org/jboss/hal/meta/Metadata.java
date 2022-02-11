@@ -1,26 +1,22 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.meta;
 
 import java.util.function.Supplier;
 
-import com.google.gwt.resources.client.TextResource;
-import jsinterop.annotations.JsIgnore;
-import jsinterop.annotations.JsProperty;
-import jsinterop.annotations.JsType;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
@@ -30,6 +26,12 @@ import org.jboss.hal.meta.description.StaticResourceDescription;
 import org.jboss.hal.meta.security.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.gwt.resources.client.TextResource;
+
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsProperty;
+import jsinterop.annotations.JsType;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
@@ -62,8 +64,8 @@ public class Metadata {
     }
 
     /**
-     * Constructs a Metadata with read-write-execution permissions and a working Capabilities object based on the
-     * environment object.
+     * Constructs a Metadata with read-write-execution permissions and a working Capabilities object based on the environment
+     * object.
      */
     @JsIgnore
     public static Metadata staticDescription(ResourceDescription description, Environment environment) {
@@ -94,8 +96,8 @@ public class Metadata {
     }
 
     /**
-     * Makes the specified attribute writable. This is necessary if you copy attributes from a complex attribute to
-     * another metadata. Without adjustment the copied attributes are read-only in the destination metadata.
+     * Makes the specified attribute writable. This is necessary if you copy attributes from a complex attribute to another
+     * metadata. Without adjustment the copied attributes are read-only in the destination metadata.
      */
     @JsIgnore
     public void makeWritable(String attribute) {
@@ -113,8 +115,8 @@ public class Metadata {
     }
 
     /**
-     * Creates a new metadata instance based on this metadata with the attributes taken from the specified complex
-     * attribute. The resource description will only include the attributes but no operations!
+     * Creates a new metadata instance based on this metadata with the attributes taken from the specified complex attribute.
+     * The resource description will only include the attributes but no operations!
      */
     @JsIgnore
     public Metadata forComplexAttribute(String name) {
@@ -122,11 +124,11 @@ public class Metadata {
     }
 
     /**
-     * Creates a new metadata instance based on this metadata with the attributes taken from the specified complex
-     * attribute. The resource description will only include the attributes but no operations!
+     * Creates a new metadata instance based on this metadata with the attributes taken from the specified complex attribute.
+     * The resource description will only include the attributes but no operations!
      *
-     * @param prefixLabel if {@code true} the labels of the attributes of the complex attribute are prefixed with name
-     *                    of the complex attribute.
+     * @param prefixLabel if {@code true} the labels of the attributes of the complex attribute are prefixed with name of the
+     *        complex attribute.
      */
     @JsIgnore
     public Metadata forComplexAttribute(String name, boolean prefixLabel) {

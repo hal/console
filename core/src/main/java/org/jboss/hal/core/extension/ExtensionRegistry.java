@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.core.extension;
 
@@ -23,18 +23,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import com.google.common.base.Strings;
-import com.google.gwt.safehtml.shared.SafeUri;
-import com.google.gwt.safehtml.shared.UriUtils;
-import com.google.web.bindery.event.shared.EventBus;
-import elemental2.dom.HTMLElement;
-import elemental2.dom.HTMLHeadElement;
-import elemental2.dom.HTMLLinkElement;
-import elemental2.dom.HTMLScriptElement;
-import elemental2.dom.XMLHttpRequest;
-import jsinterop.annotations.JsIgnore;
-import jsinterop.annotations.JsMethod;
-import jsinterop.annotations.JsType;
 import org.jboss.hal.core.ApplicationReadyEvent;
 import org.jboss.hal.core.ApplicationReadyEvent.ApplicationReadyHandler;
 import org.jboss.hal.core.extension.Extension.Point;
@@ -44,6 +32,20 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.spi.EsParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
+import com.google.gwt.safehtml.shared.SafeUri;
+import com.google.gwt.safehtml.shared.UriUtils;
+import com.google.web.bindery.event.shared.EventBus;
+
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLHeadElement;
+import elemental2.dom.HTMLLinkElement;
+import elemental2.dom.HTMLScriptElement;
+import elemental2.dom.XMLHttpRequest;
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsType;
 
 import static elemental2.dom.DomGlobal.document;
 import static org.jboss.gwt.elemento.core.Elements.a;
@@ -93,14 +95,14 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
                 metadataCallback.result(status, null);
             }
         };
-        xhr.addEventListener("error", event -> metadataCallback.result(503, null), false); //NON-NLS
+        xhr.addEventListener("error", event -> metadataCallback.result(503, null), false); // NON-NLS
         xhr.open(GET.name(), safeUrl.asString(), true);
         xhr.send();
     }
 
     @JsIgnore
     public boolean verifyScript(String script) {
-        return document.head.querySelector("script[src='" + script + "']") != null; //NON-NLS
+        return document.head.querySelector("script[src='" + script + "']") != null; // NON-NLS
     }
 
     @JsIgnore
@@ -158,7 +160,8 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
                     .add(a().id(extension.name)
                             .css(clickable)
                             .textContent(extension.title)
-                            .on(click, event -> extension.entryPoint.execute()).element()).element();
+                            .on(click, event -> extension.entryPoint.execute()).element())
+                    .element();
 
             elemental2.dom.Element ul;
             elemental2.dom.Element dropdown;
@@ -177,18 +180,17 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
         }
     }
 
-
     // ------------------------------------------------------ JS methods
 
     /**
-     * Injects the script and stylesheets of an extension. This method is used during development. Normally you don't
-     * have to call this method.
+     * Injects the script and stylesheets of an extension. This method is used during development. Normally you don't have to
+     * call this method.
      *
-     * @param script      the extension's script.
+     * @param script the extension's script.
      * @param stylesheets an optional list of stylesheets.
      */
     @JsMethod(name = "inject")
-    @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
+    @SuppressWarnings({ "HardCodedStringLiteral", "DuplicateStringLiteralInspection" })
     public void jsInject(String script, @EsParam("string[]") String[] stylesheets) {
         HTMLHeadElement head = document.head;
 
@@ -205,7 +207,6 @@ public class ExtensionRegistry implements ApplicationReadyHandler {
         scriptElement.setAttribute("async", true);
         head.appendChild(scriptElement);
     }
-
 
     @FunctionalInterface
     public interface MetadataCallback {

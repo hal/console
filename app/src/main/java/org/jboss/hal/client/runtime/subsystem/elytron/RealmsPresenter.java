@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.runtime.subsystem.elytron;
 
@@ -23,11 +23,6 @@ import java.util.function.Consumer;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
@@ -64,6 +59,12 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
+
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.annotations.NameToken;
+import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
 import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -147,9 +148,9 @@ public class RealmsPresenter extends ApplicationFinderPresenter<RealmsPresenter.
         Operation operation = new Operation.Builder(CACHING_REALM_TEMPLATE.resolve(statementContext, name), CLEAR_CACHE)
                 .build();
         dispatcher.execute(operation, result -> {
-                    MessageEvent.fire(getEventBus(), Message.success(resources.messages().clearCacheSuccess(name)));
-                    reload();
-                },
+            MessageEvent.fire(getEventBus(), Message.success(resources.messages().clearCacheSuccess(name)));
+            reload();
+        },
                 (operation1, failure) -> MessageEvent.fire(getEventBus(),
                         Message.error(resources.messages().clearCacheError(name, failure))),
                 (operation1, exception) -> MessageEvent.fire(getEventBus(),
@@ -160,9 +161,9 @@ public class RealmsPresenter extends ApplicationFinderPresenter<RealmsPresenter.
         Operation operation = new Operation.Builder(PROPERTIES_REALM_TEMPLATE.resolve(statementContext, name), LOAD)
                 .build();
         dispatcher.execute(operation, result -> {
-                    MessageEvent.fire(getEventBus(), Message.success(resources.messages().loadPropertiesRealmSuccess(name)));
-                    reload();
-                },
+            MessageEvent.fire(getEventBus(), Message.success(resources.messages().loadPropertiesRealmSuccess(name)));
+            reload();
+        },
                 (operation1, failure) -> MessageEvent.fire(getEventBus(),
                         Message.error(resources.messages().loadPropertiesRealmError(name, failure))),
                 (operation1, exception) -> MessageEvent.fire(getEventBus(),
@@ -217,7 +218,6 @@ public class RealmsPresenter extends ApplicationFinderPresenter<RealmsPresenter.
                                                         ex.getMessage()))))
                                 .toCompletable();
 
-
                     };
                     tasks.add(addAttribute);
                 });
@@ -266,11 +266,12 @@ public class RealmsPresenter extends ApplicationFinderPresenter<RealmsPresenter.
                     .build();
             LabelBuilder labelBuilder = new LabelBuilder();
             String resourceName = labelBuilder.label(template.lastName()) + SPACE + resource;
-            dispatcher.execute(operation,  callback::accept,
+            dispatcher.execute(operation, callback::accept,
                     (operation1, failure) -> MessageEvent.fire(getEventBus(),
                             Message.error(resources.messages().readIdentityError(identity, resourceName, failure))),
                     (operation1, exception) -> MessageEvent.fire(getEventBus(),
-                            Message.error(resources.messages().readIdentityError(identity, resourceName, exception.getMessage()))));
+                            Message.error(
+                                    resources.messages().readIdentityError(identity, resourceName, exception.getMessage()))));
         });
         form.edit(new ModelNode());
         dialog.show();
@@ -363,15 +364,15 @@ public class RealmsPresenter extends ApplicationFinderPresenter<RealmsPresenter.
                     .param(IDENTITY, identity)
                     .build();
             dispatcher.execute(operation, result -> {
-                        MessageEvent.fire(getEventBus(),
-                                Message.success(resources.messages().removeIdentitySuccess(identity, resourceName)));
-                        consumer.accept(true);
-                    },
+                MessageEvent.fire(getEventBus(),
+                        Message.success(resources.messages().removeIdentitySuccess(identity, resourceName)));
+                consumer.accept(true);
+            },
                     (operation1, failure) -> MessageEvent.fire(getEventBus(),
                             Message.error(resources.messages().removeIdentityError(identity, resourceName, failure))),
                     (operation1, exception) -> MessageEvent.fire(getEventBus(),
-                            Message.error(resources.messages().removeIdentityError(identity, resourceName, exception.getMessage()))));
-
+                            Message.error(
+                                    resources.messages().removeIdentityError(identity, resourceName, exception.getMessage()))));
 
         });
     }
@@ -379,16 +380,20 @@ public class RealmsPresenter extends ApplicationFinderPresenter<RealmsPresenter.
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(NameTokens.ELYTRON_RUNTIME_SECURITY_REALMS)
-    @Requires({CACHING_REALM_ADDRESS, CUSTOM_MODIFIABLE_REALM_ADDRESS, FILESYSTEM_REALM_ADDRESS, LDAP_REALM_ADDRESS,
-            PROPERTIES_REALM_ADDRESS})
+    @Requires({ CACHING_REALM_ADDRESS, CUSTOM_MODIFIABLE_REALM_ADDRESS, FILESYSTEM_REALM_ADDRESS, LDAP_REALM_ADDRESS,
+            PROPERTIES_REALM_ADDRESS })
     public interface MyProxy extends ProxyPlace<RealmsPresenter> {
     }
 
     public interface MyView extends HalView, HasPresenter<RealmsPresenter> {
         void updateCachingRealm(List<NamedNode> items);
+
         void updateCustomModifiableRealm(List<NamedNode> items);
+
         void updateFilesystemRealm(List<NamedNode> items);
+
         void updateLdapRealm(List<NamedNode> items);
+
         void updatePropertiesRealm(List<NamedNode> items);
 
     }

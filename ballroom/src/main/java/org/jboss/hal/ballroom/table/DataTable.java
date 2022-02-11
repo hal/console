@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.ballroom.table;
 
@@ -19,10 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import elemental2.dom.Element;
-import elemental2.dom.HTMLElement;
-import elemental2.dom.HTMLTableElement;
-import elemental2.dom.NodeList;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.JQuery;
 import org.jboss.hal.ballroom.form.Form;
@@ -32,6 +28,11 @@ import org.jboss.hal.ballroom.table.Api.SelectCallback;
 import org.jboss.hal.meta.security.AuthorisationDecision;
 import org.jboss.hal.meta.security.ElementGuard;
 import org.jboss.hal.resources.UIConstants;
+
+import elemental2.dom.Element;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLTableElement;
+import elemental2.dom.NodeList;
 
 import static elemental2.dom.DomGlobal.document;
 import static java.util.Arrays.asList;
@@ -59,6 +60,7 @@ import static org.jboss.hal.resources.UIConstants.data;
  * </ol>
  * <p>
  * Sample which uses a {@code FooBar} as the row type:
+ *
  * <pre>
  * class FooBar {
  *     final String foo;
@@ -71,10 +73,10 @@ import static org.jboss.hal.resources.UIConstants.data;
  * }
  *
  * Options&lt;FooBar&gt; options = new OptionsBuilder&lt;FooBar&gt;()
- *     .button("Click Me", (table) -> Window.alert("Hello"))
- *     .column("foo", "Foo", (cell, type, row, meta) -> row.foo)
- *     .column("bar", "Bar", (cell, type, row, meta) -> row.baz)
- *     .options();
+ *         .button("Click Me", (table) -> Window.alert("Hello"))
+ *         .column("foo", "Foo", (cell, type, row, meta) -> row.foo)
+ *         .column("bar", "Bar", (cell, type, row, meta) -> row.baz)
+ *         .options();
  * DataTable&lt;FooBar&gt; dataTable = new DataTable&lt;&gt;("sample", options);
  * </pre>
  *
@@ -112,15 +114,15 @@ public class DataTable<T> implements Table<T> {
     }
 
     /**
-     * Initialized the {@link Api} instance using the {@link Options} given at constructor argument. Make sure to call
-     * this method before using any of the API methods. It's safe to call the methods multiple times (the
-     * initialization will happen only once).
+     * Initialized the {@link Api} instance using the {@link Options} given at constructor argument. Make sure to call this
+     * method before using any of the API methods. It's safe to call the methods multiple times (the initialization will happen
+     * only once).
      */
     @Override
     public void attach() {
         if (api == null) {
             options.id = id;
-            api = Api.<T>select(HASH + id).dataTable(options);
+            api = Api.<T> select(HASH + id).dataTable(options);
             api.on(DRAW, CallbackUnionType.of((DrawCallback) (evt, settings) -> {
                 Map<String, InlineActionHandler<T>> columnActionHandler = options.columnActionHandler;
                 elemental2.dom.Element table = document.getElementById(options.id);
@@ -152,7 +154,6 @@ public class DataTable<T> implements Table<T> {
         }
     }
 
-
     // ------------------------------------------------------ DataTable API access
 
     /**
@@ -173,7 +174,6 @@ public class DataTable<T> implements Table<T> {
     protected JQuery buttonElement(int index) {
         return api().button(index).node();
     }
-
 
     // ------------------------------------------------------ 'higher' level API
 
@@ -267,7 +267,7 @@ public class DataTable<T> implements Table<T> {
     /**
      * Selects the row with the specified data.
      *
-     * @param data       the data
+     * @param data the data
      * @param identifier a function which must return an unique identifier for a given row.
      */
     @Override
@@ -309,9 +309,9 @@ public class DataTable<T> implements Table<T> {
      * Replaces the existing data with the new one. If necessary, restores the current selection based on the specified
      * function.
      *
-     * @param data       the new data
-     * @param identifier a function which must return an unique identifier for a given row. Used to restore the
-     *                   selection after replacing the data.
+     * @param data the new data
+     * @param identifier a function which must return an unique identifier for a given row. Used to restore the selection after
+     *        replacing the data.
      */
     @Override
     public void update(Iterable<T> data, RefreshMode mode, Function<T, String> identifier) {

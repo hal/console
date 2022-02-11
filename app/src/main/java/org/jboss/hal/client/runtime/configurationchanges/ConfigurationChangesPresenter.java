@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.runtime.configurationchanges;
 
@@ -20,14 +20,6 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental2.dom.CSSProperties;
-import elemental2.dom.HTMLElement;
-import elemental2.dom.HTMLPreElement;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
@@ -57,6 +49,16 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Requires;
 
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.annotations.NameToken;
+import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+
+import elemental2.dom.CSSProperties;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLPreElement;
+
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.gwt.elemento.core.Elements.pre;
 import static org.jboss.hal.ballroom.Skeleton.MARGIN_BIG;
@@ -77,11 +79,13 @@ public class ConfigurationChangesPresenter extends
     public static final String HOST_CONFIGURATION_CHANGES_ADDRESS = "{selected.host}" + CONFIGURATION_CHANGES_ADDRESS;
     public static final AddressTemplate HOST_CONFIGURATION_CHANGES_TEMPLATE = AddressTemplate.of(
             HOST_CONFIGURATION_CHANGES_ADDRESS);
-    private static final String SERVER_CONFIGURATION_CHANGES_ADDRESS = "/{selected.host}/{selected.server}" + CONFIGURATION_CHANGES_ADDRESS;
+    private static final String SERVER_CONFIGURATION_CHANGES_ADDRESS = "/{selected.host}/{selected.server}"
+            + CONFIGURATION_CHANGES_ADDRESS;
     public static final AddressTemplate SERVER_CONFIGURATION_CHANGES_TEMPLATE = AddressTemplate.of(
             SERVER_CONFIGURATION_CHANGES_ADDRESS);
     private static final String PROFILE_CONFIGURATION_CHANGES_ADDRESS = "/profile=*/subsystem=core-management/service=configuration-changes";
-    private static final AddressTemplate PROFILE_CONFIGURATION_CHANGES_TEMPLATE = AddressTemplate.of(PROFILE_CONFIGURATION_CHANGES_ADDRESS);
+    private static final AddressTemplate PROFILE_CONFIGURATION_CHANGES_TEMPLATE = AddressTemplate
+            .of(PROFILE_CONFIGURATION_CHANGES_ADDRESS);
     private static final AddressTemplate CORE_MANAGEMENT_TEMPLATE = AddressTemplate.of(
             "{selected.host}/subsystem=core-management");
 
@@ -184,34 +188,33 @@ public class ConfigurationChangesPresenter extends
             }
         }
         metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback(getEventBus(), resources) {
-                    @Override
-                    public void onMetadata(Metadata metadata) {
-                        String id = Ids.build(Ids.CONFIGURATION_CHANGES, Ids.ADD);
-                        Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, ADD)
-                                .build();
-                        ModelNode changeModel = new ModelNode();
-                        Dialog dialog = new Dialog.Builder(resources.constants().configurationChanges())
-                                .add(form.element())
-                                .primary(resources.constants().yes(), () -> {
-                                    boolean valid = form.save();
-                                    // if the form contains validation error, don't close the dialog
-                                    if (valid) {
-                                        crud.addSingleton(Names.CONFIGURATION_CHANGES, template, form.getModel(),
-                                                address -> reload());
-                                    }
-                                    return valid;
-                                })
-                                .secondary(resources.constants().cancel(), () -> true)
-                                .closeIcon(true)
-                                .closeOnEsc(true)
-                                .build();
+            @Override
+            public void onMetadata(Metadata metadata) {
+                String id = Ids.build(Ids.CONFIGURATION_CHANGES, Ids.ADD);
+                Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, ADD)
+                        .build();
+                ModelNode changeModel = new ModelNode();
+                Dialog dialog = new Dialog.Builder(resources.constants().configurationChanges())
+                        .add(form.element())
+                        .primary(resources.constants().yes(), () -> {
+                            boolean valid = form.save();
+                            // if the form contains validation error, don't close the dialog
+                            if (valid) {
+                                crud.addSingleton(Names.CONFIGURATION_CHANGES, template, form.getModel(),
+                                        address -> reload());
+                            }
+                            return valid;
+                        })
+                        .secondary(resources.constants().cancel(), () -> true)
+                        .closeIcon(true)
+                        .closeOnEsc(true)
+                        .build();
 
-                        dialog.registerAttachable(form);
-                        dialog.show();
-                        form.edit(changeModel);
-                    }
-                }
-        );
+                dialog.registerAttachable(form);
+                dialog.show();
+                form.edit(changeModel);
+            }
+        });
     }
 
     void disable() {
@@ -273,16 +276,14 @@ public class ConfigurationChangesPresenter extends
         dialog.show();
     }
 
-
     public StatementContext getStatementContext() {
         return statementContext;
     }
 
-
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(CONFIGURATION_CHANGES)
-    @Requires({HOST_CONFIGURATION_CHANGES_ADDRESS, OPTIONAL + SERVER_CONFIGURATION_CHANGES_ADDRESS})
+    @Requires({ HOST_CONFIGURATION_CHANGES_ADDRESS, OPTIONAL + SERVER_CONFIGURATION_CHANGES_ADDRESS })
     public interface MyProxy extends ProxyPlace<ConfigurationChangesPresenter> {
 
     }

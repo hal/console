@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.core.modelbrowser;
 
@@ -24,11 +24,6 @@ import java.util.Stack;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.common.collect.Sets;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.web.bindery.event.shared.EventBus;
-import elemental2.dom.HTMLButtonElement;
-import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.LabelBuilder;
@@ -66,6 +61,13 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Sets;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.web.bindery.event.shared.EventBus;
+
+import elemental2.dom.HTMLButtonElement;
+import elemental2.dom.HTMLElement;
 import rx.Completable;
 
 import static java.util.Arrays.asList;
@@ -83,11 +85,31 @@ import static org.jboss.hal.ballroom.Skeleton.MARGIN_SMALL;
 import static org.jboss.hal.ballroom.Skeleton.applicationOffset;
 import static org.jboss.hal.core.modelbrowser.SingletonState.CHOOSE;
 import static org.jboss.hal.core.modelbrowser.SingletonState.CREATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.OBJECT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.OPERATIONS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUEST_PROPERTIES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STRING;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE_TYPE;
 import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_GROUP;
 import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_PROFILE;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.btn;
+import static org.jboss.hal.resources.CSS.btnDefault;
+import static org.jboss.hal.resources.CSS.btnGroup;
+import static org.jboss.hal.resources.CSS.clickable;
+import static org.jboss.hal.resources.CSS.fontAwesome;
+import static org.jboss.hal.resources.CSS.modelBrowserButtons;
+import static org.jboss.hal.resources.CSS.modelBrowserContent;
+import static org.jboss.hal.resources.CSS.tagManagerContainer;
+import static org.jboss.hal.resources.CSS.tagManagerTag;
+import static org.jboss.hal.resources.CSS.tmTag;
+import static org.jboss.hal.resources.CSS.tmTagRemove;
+import static org.jboss.hal.resources.CSS.vh;
 import static org.jboss.hal.resources.Ids.MODEL_BROWSER_ROOT;
 
 /** Model browser element which can be embedded in other elements. */
@@ -118,7 +140,6 @@ public class ModelBrowser implements IsElement<HTMLElement> {
 
     private boolean updateBreadcrumb;
     private int surroundingHeight;
-
 
     // ------------------------------------------------------ ui setup
 
@@ -152,7 +173,8 @@ public class ModelBrowser implements IsElement<HTMLElement> {
                 .add(collapse = button().css(btn, btnDefault)
                         .on(click, event -> collapse(tree.getSelected()))
                         .title(resources.constants().collapse())
-                        .add(Elements.i().css(fontAwesome("minus"))).element()).element();
+                        .add(Elements.i().css(fontAwesome("minus"))).element())
+                .element();
 
         treeContainer = div().css(CSS.treeContainer).element();
         content = div().css(modelBrowserContent).element();
@@ -173,7 +195,8 @@ public class ModelBrowser implements IsElement<HTMLElement> {
                 .add(column(4)
                         .addAll(buttonGroup, treeContainer))
                 .add(column(8)
-                        .add(content)).element();
+                        .add(content))
+                .element();
     }
 
     private void adjustHeight() {
@@ -199,6 +222,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
         childrenPanel.attach();
     }
 
+    @SuppressWarnings("unchecked")
     private void emptyTree() {
         Context context = new Context(ResourceAddress.root(), Collections.emptySet());
         Node<Context> rootNode = new Node.Builder<>(MODEL_BROWSER_ROOT, Names.NOT_AVAILABLE, context)
@@ -212,7 +236,6 @@ public class ModelBrowser implements IsElement<HTMLElement> {
         childrenPanel.hide();
         resourcePanel.hide();
     }
-
 
     // ------------------------------------------------------ event handler & co
 
@@ -233,7 +256,8 @@ public class ModelBrowser implements IsElement<HTMLElement> {
                     .add(span().css(tmTag, tagManagerTag)
                             .add(span().textContent(filter.filterText))
                             .add(a().css(clickable, tmTagRemove)
-                                    .on(click, event -> clearFilter()).textContent("x"))).element();
+                                    .on(click, event -> clearFilter()).textContent("x")))
+                    .element();
 
             if (oldFilterElement != null) {
                 buttonGroup.replaceChild(filterElement, oldFilterElement);
@@ -290,7 +314,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
     }
 
     private void onTreeSelection(SelectionContext<Context> context) {
-        if ("ready".equals(context.action)) { //NON-NLS
+        if ("ready".equals(context.action)) { // NON-NLS
             // only (de)selection events please
             return;
         }
@@ -364,27 +388,27 @@ public class ModelBrowser implements IsElement<HTMLElement> {
                         resources.messages().addResourceTitle(parent.text),
                         new SingletonContext(parent, children))
 
-                        .addStep(CHOOSE, new ChooseSingletonStep(parent, children, resources))
-                        .addStep(CREATE, new CreateSingletonStep(parent, metadataProcessor, progress,
-                                eventBus, resources))
+                                .addStep(CHOOSE, new ChooseSingletonStep(parent, children, resources))
+                                .addStep(CREATE, new CreateSingletonStep(parent, metadataProcessor, progress,
+                                        eventBus, resources))
 
-                        .onBack((context, currentState) -> currentState == CREATE ? CHOOSE : null)
-                        .onNext((context, currentState) -> currentState == CHOOSE ? CREATE : null)
+                                .onBack((context, currentState) -> currentState == CREATE ? CHOOSE : null)
+                                .onNext((context, currentState) -> currentState == CHOOSE ? CREATE : null)
 
-                        .onFinish((wzrd, context) -> {
-                            Operation.Builder builder = new Operation.Builder(fqAddress(parent, context.singleton), ADD
-                            );
-                            if (context.modelNode != null) {
-                                builder.payload(context.modelNode);
-                            }
-                            dispatcher.execute(builder.build(),
-                                    result -> {
-                                        MessageEvent.fire(eventBus, Message.success(resources.messages()
-                                                .addResourceSuccess(parent.text, context.singleton)));
-                                        refresh(parent);
-                                    });
-                        })
-                        .build();
+                                .onFinish((wzrd, context) -> {
+                                    Operation.Builder builder = new Operation.Builder(fqAddress(parent, context.singleton),
+                                            ADD);
+                                    if (context.modelNode != null) {
+                                        builder.payload(context.modelNode);
+                                    }
+                                    dispatcher.execute(builder.build(),
+                                            result -> {
+                                                MessageEvent.fire(eventBus, Message.success(resources.messages()
+                                                        .addResourceSuccess(parent.text, context.singleton)));
+                                                refresh(parent);
+                                            });
+                                })
+                                .build();
                 wizard.show();
             }
 
@@ -408,7 +432,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
                             form, (name1, model) -> {
                                 unflattenModel(model);
                                 crud.add(title, nameItem.getValue(), fqAddress(parent, nameItem.getValue()),
-                                    model, (n, a) -> refresh(parent));
+                                        model, (n, a) -> refresh(parent));
                             });
                     dialog.show();
                 }
@@ -418,7 +442,8 @@ public class ModelBrowser implements IsElement<HTMLElement> {
 
     private void flattenDescription(ModelNode model) {
         for (Property p : model.asPropertyList()) {
-            if (p.getValue().get(TYPE).asString().equalsIgnoreCase(OBJECT) && !p.getValue().get(VALUE_TYPE).asString().equalsIgnoreCase(STRING)) {
+            if (p.getValue().get(TYPE).asString().equalsIgnoreCase(OBJECT)
+                    && !p.getValue().get(VALUE_TYPE).asString().equalsIgnoreCase(STRING)) {
 
                 model.remove(p.getName());
 
@@ -486,12 +511,11 @@ public class ModelBrowser implements IsElement<HTMLElement> {
                 });
     }
 
-
     // ------------------------------------------------------ public API
 
     /**
-     * Use this method if you embed the model browser into an application view and if you have additional elements
-     * before or after the model browser. This method should be called when the application view is attached or before
+     * Use this method if you embed the model browser into an application view and if you have additional elements before or
+     * after the model browser. This method should be called when the application view is attached or before
      * {@link #setRoot(ResourceAddress, boolean)} is called.
      *
      * @param surroundingHeight the sum of the height of all surrounding elements
@@ -504,7 +528,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
     /**
      * Entry point to show the specified address.
      *
-     * @param root             the root address for this model browser
+     * @param root the root address for this model browser
      * @param updateBreadcrumb {@code true} if this model browser should fire {@link ModelBrowserPathEvent}s
      */
     public void setRoot(ResourceAddress root, boolean updateBreadcrumb) {
@@ -555,7 +579,6 @@ public class ModelBrowser implements IsElement<HTMLElement> {
         return root;
     }
 
-
     private static class FilterInfo {
 
         static final FilterInfo ROOT = new FilterInfo(null, null);
@@ -578,7 +601,6 @@ public class ModelBrowser implements IsElement<HTMLElement> {
             }
         }
     }
-
 
     private class OpenNodeTask implements Task<FlowContext> {
 

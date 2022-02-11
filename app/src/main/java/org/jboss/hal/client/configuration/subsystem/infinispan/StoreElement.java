@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.infinispan;
 
@@ -19,8 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import elemental2.dom.HTMLElement;
-import elemental2.dom.HTMLSelectElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
@@ -40,6 +38,9 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLSelectElement;
+
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.hal.ballroom.JQuery.$;
@@ -51,8 +52,8 @@ import static org.jboss.hal.resources.CSS.selectpicker;
 import static org.jboss.hal.resources.CSS.width;
 
 /**
- * Element to view and modify the {@code store=*} singletons of a cache. Kind of a fail safe form with the difference
- * that we need to take care of {@code store=none}.
+ * Element to view and modify the {@code store=*} singletons of a cache. Kind of a fail safe form with the difference that we
+ * need to take care of {@code store=none}.
  */
 class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<CachePresenter<?, ?>> {
 
@@ -77,13 +78,13 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
         HTMLSelectElement emptyStoreSelect = storeSelect();
         emptyState = new EmptyState.Builder(Ids.build(cacheType.baseId, STORE, Ids.EMPTY),
                 resources.constants().noStore())
-                .description(resources.messages().noStore())
-                .add(emptyStoreSelect)
-                .primaryAction(resources.constants().add(), () -> {
-                    String value = SelectBoxBridge.Single.element(emptyStoreSelect).getValue();
-                    presenter.addStore(Store.fromResource(value));
-                })
-                .build();
+                        .description(resources.messages().noStore())
+                        .add(emptyStoreSelect)
+                        .primaryAction(resources.constants().add(), () -> {
+                            String value = SelectBoxBridge.Single.element(emptyStoreSelect).getValue();
+                            presenter.addStore(Store.fromResource(value));
+                        })
+                        .build();
 
         selectStoreId = Ids.build(cacheType.baseId, STORE, "select");
         selectStore = storeSelect();
@@ -96,9 +97,9 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
             Metadata metadata = metadataRegistry.lookup(cacheType.template.append(STORE + "=" + store.resource));
             Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(cacheType.baseId, store.baseId, Ids.FORM),
                     metadata)
-                    .onSave((f, changedValues) -> presenter.saveStore(store, changedValues))
-                    .prepareReset(f -> presenter.resetStore(store, f))
-                    .build();
+                            .onSave((f, changedValues) -> presenter.saveStore(store, changedValues))
+                            .prepareReset(f -> presenter.resetStore(store, f))
+                            .build();
             storeForms.put(store, form);
             storeTabs.add(Ids.build(cacheType.baseId, store.baseId, ATTRIBUTES, Ids.TAB),
                     resources.constants().attributes(), form.element());
@@ -197,7 +198,7 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
     private void autoWidth(HTMLElement element) {
         HTMLElement select = (HTMLElement) element.querySelector("." + btnGroup + "." + bootstrapSelect);
         if (select != null) {
-            select.style.width = width("auto"); //NON-NLS
+            select.style.width = width("auto"); // NON-NLS
         }
     }
 
@@ -257,7 +258,6 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
         tabs.forEach((s, t) -> Elements.setVisible(t.element(), s == store));
     }
 
-
     private static final class StoreTable {
 
         final Store store;
@@ -278,7 +278,7 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
             }
 
             StoreTable that = (StoreTable) o;
-            //noinspection SimplifiableIfStatement
+            // noinspection SimplifiableIfStatement
             if (store != that.store) {
                 return false;
             }

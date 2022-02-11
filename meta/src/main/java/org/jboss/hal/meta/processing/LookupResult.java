@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.meta.processing;
 
@@ -26,8 +26,8 @@ import org.jboss.hal.meta.MissingMetadataException;
 class LookupResult {
 
     /**
-     * Bit mask for missing / present metadata. 0 means metadata missing, 1 means metadata present.
-     * First bit stands for resource description second one for security context.
+     * Bit mask for missing / present metadata. 0 means metadata missing, 1 means metadata present. First bit stands for
+     * resource description second one for security context.
      */
     static final int NOTHING_PRESENT = 0b00;
     static final int RESOURCE_DESCRIPTION_PRESENT = 0b10;
@@ -76,8 +76,7 @@ class LookupResult {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("LookupResult(");
-        for (Iterator<Map.Entry<AddressTemplate, Integer>> iterator = templates.entrySet().iterator();
-                iterator.hasNext(); ) {
+        for (Iterator<Map.Entry<AddressTemplate, Integer>> iterator = templates.entrySet().iterator(); iterator.hasNext();) {
             Map.Entry<AddressTemplate, Integer> entry = iterator.next();
             builder.append(entry.getKey()).append(" -> ");
             switch (entry.getValue()) {

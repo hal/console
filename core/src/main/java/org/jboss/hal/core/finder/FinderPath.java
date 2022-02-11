@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.core.finder;
 
@@ -29,8 +29,8 @@ import com.google.common.collect.Lists;
 import static com.google.common.base.Strings.nullToEmpty;
 
 /**
- * The finder path holds the current selection in the finder. It's a collection of segments with each segment holding
- * four values:
+ * The finder path holds the current selection in the finder. It's a collection of segments with each segment holding four
+ * values:
  * <ol>
  * <li>{@code columnId} The column id. Used to lookup columns from the column registry</li>
  * <li>{@code itemId} The selected item id</li>
@@ -43,7 +43,6 @@ public class FinderPath implements Iterable<FinderSegment> {
 
     /** Separator used in URL tokens. Must be securely encodable in URLs. */
     static final String SEPARATOR = "!";
-
 
     // ------------------------------------------------------ static methods
 
@@ -62,7 +61,6 @@ public class FinderPath implements Iterable<FinderSegment> {
 
         return new FinderPath(segments);
     }
-
 
     // ------------------------------------------------------ instance section
 

@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.jmx;
 
@@ -19,9 +19,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
@@ -42,6 +39,11 @@ import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
+
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+
+import elemental2.dom.HTMLElement;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
@@ -122,8 +124,7 @@ public class JmxView extends HalViewImpl implements JmxPresenter.MyView {
         this.alForm = new ModelNodeForm.Builder<>(Ids.JMX_AUDIT_LOG_FORM, alMetadata)
                 .singleton(
                         () -> new Operation.Builder(AUDIT_LOG_TEMPLATE.resolve(statementContext),
-                                READ_RESOURCE_OPERATION
-                        ).build(),
+                                READ_RESOURCE_OPERATION).build(),
                         () -> crud.addSingleton(Names.AUDIT_LOG, AUDIT_LOG_TEMPLATE, address -> presenter.reload()))
                 .unboundFormItem(handlerItem, Integer.MAX_VALUE, handlerDescription)
                 .onSave((form, changedValues) -> presenter
@@ -159,8 +160,7 @@ public class JmxView extends HalViewImpl implements JmxPresenter.MyView {
         this.rcForm = new ModelNodeForm.Builder<>(Ids.JMX_REMOTING_CONNECTOR_FORM, rcMetadata)
                 .singleton(
                         () -> new Operation.Builder(REMOTING_CONNECTOR_TEMPLATE.resolve(statementContext),
-                                READ_RESOURCE_OPERATION
-                        ).build(),
+                                READ_RESOURCE_OPERATION).build(),
                         () -> crud.addSingleton(type, REMOTING_CONNECTOR_TEMPLATE, address -> presenter.reload()))
                 .onSave((form, changedValues) -> crud.saveSingleton(type, REMOTING_CONNECTOR_TEMPLATE,
                         changedValues, () -> presenter.reload()))

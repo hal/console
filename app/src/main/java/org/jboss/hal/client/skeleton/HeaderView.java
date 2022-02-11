@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.skeleton;
 
@@ -24,13 +24,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import com.google.common.base.Strings;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.web.bindery.event.shared.HandlerRegistration;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental2.dom.Element;
-import elemental2.dom.HTMLElement;
-import elemental2.dom.HTMLLIElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
 import org.jboss.hal.ballroom.Tooltip;
@@ -61,20 +54,29 @@ import org.jboss.hal.spi.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.web.bindery.event.shared.HandlerRegistration;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+
+import elemental2.dom.Element;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLLIElement;
+
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.StreamSupport.stream;
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.Elements.i;
 import static org.jboss.gwt.elemento.core.Elements.nav;
-import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.client.skeleton.HeaderPresenter.MAX_BREADCRUMB_VALUE_LENGTH;
 import static org.jboss.hal.config.AccessControlProvider.RBAC;
 import static org.jboss.hal.config.Settings.Key.RUN_AS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
-import static org.jboss.hal.resources.CSS.nav;
 import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.nav;
 import static org.jboss.hal.resources.FontAwesomeSize.large;
 import static org.jboss.hal.resources.Strings.abbreviateMiddle;
 import static org.jboss.hal.resources.UIConstants.*;
@@ -286,17 +288,17 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
 
         // @formatter:off
         tlcPlaceRequests = new HashMap<>();
-        tlcPlaceRequests.put(NameTokens.HOMEPAGE,       new PlaceRequest.Builder().nameToken(NameTokens.HOMEPAGE).build());
-        tlcPlaceRequests.put(NameTokens.DEPLOYMENTS,    new PlaceRequest.Builder().nameToken(NameTokens.DEPLOYMENTS).build());
-        tlcPlaceRequests.put(NameTokens.CONFIGURATION,  new PlaceRequest.Builder().nameToken(NameTokens.CONFIGURATION).build());
-        tlcPlaceRequests.put(NameTokens.RUNTIME,        new PlaceRequest.Builder().nameToken(NameTokens.RUNTIME).build());
-        tlcPlaceRequests.put(NameTokens.PATCHING,       new PlaceRequest.Builder().nameToken(NameTokens.PATCHING).build());
-        tlcPlaceRequests.put(accessControlNameToken,    new PlaceRequest.Builder().nameToken(accessControlNameToken).build());
+        tlcPlaceRequests.put(NameTokens.HOMEPAGE, new PlaceRequest.Builder().nameToken(NameTokens.HOMEPAGE).build());
+        tlcPlaceRequests.put(NameTokens.DEPLOYMENTS, new PlaceRequest.Builder().nameToken(NameTokens.DEPLOYMENTS).build());
+        tlcPlaceRequests.put(NameTokens.CONFIGURATION, new PlaceRequest.Builder().nameToken(NameTokens.CONFIGURATION).build());
+        tlcPlaceRequests.put(NameTokens.RUNTIME, new PlaceRequest.Builder().nameToken(NameTokens.RUNTIME).build());
+        tlcPlaceRequests.put(NameTokens.PATCHING, new PlaceRequest.Builder().nameToken(NameTokens.PATCHING).build());
+        tlcPlaceRequests.put(accessControlNameToken, new PlaceRequest.Builder().nameToken(accessControlNameToken).build());
         // @formatter:on
 
         tlc = new HashMap<>();
         initTlc(root,
-                new String[]{
+                new String[] {
                         NameTokens.HOMEPAGE,
                         NameTokens.DEPLOYMENTS,
                         NameTokens.CONFIGURATION,
@@ -304,7 +306,7 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
                         NameTokens.PATCHING,
                         accessControlNameToken,
                 },
-                new String[]{
+                new String[] {
                         Ids.TLC_HOMEPAGE,
                         Ids.TLC_DEPLOYMENTS,
                         Ids.TLC_CONFIGURATION,
@@ -377,7 +379,7 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
 
     @Override
     public void updateRoles(Environment environment, Settings settings, User user) {
-        for (Iterator<HTMLElement> iterator = Elements.iterator(userDropdown); iterator.hasNext(); ) {
+        for (Iterator<HTMLElement> iterator = Elements.iterator(userDropdown); iterator.hasNext();) {
             HTMLElement element = iterator.next();
             if (element == logoutItem) {
                 continue;
@@ -416,7 +418,7 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
                                                     .element()))
                                     .element();
                             if (!runAsRoleSetting.contains(role.getName())) {
-                                check.style.visibility = "hidden"; //NON-NLS
+                                check.style.visibility = "hidden"; // NON-NLS
                             }
                             if (role.isScoped()) {
                                 name.title = role.getBaseRole().getName() + " / " + String.join(", ",
@@ -446,7 +448,6 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
         logoFirst.textContent = first;
         logoLast.textContent = Strings.nullToEmpty(last);
     }
-
 
     // ------------------------------------------------------ logo, reload, messages & global state
 
@@ -521,7 +522,6 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
         setVisible(breadcrumb, true);
     }
 
-
     // ------------------------------------------------------ links & tlc
 
     @Override
@@ -546,7 +546,6 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
         }
     }
 
-
     // ------------------------------------------------------ breadcrumb
 
     @Override
@@ -557,7 +556,7 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
     }
 
     @Override
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public void updateBreadcrumb(FinderContext finderContext) {
         clearBreadcrumb();
         FinderPath currentPath = new FinderPath();
@@ -567,7 +566,7 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
         }
         breadcrumbHandlers.clear();
 
-        for (Iterator<FinderSegment> iterator = finderContext.getPath().iterator(); iterator.hasNext(); ) {
+        for (Iterator<FinderSegment> iterator = finderContext.getPath().iterator(); iterator.hasNext();) {
             FinderSegment<Object> segment = iterator.next();
             if (segment.getColumnId() == null || segment.getItemId() == null) {
                 // we need to ignore half filled segments which occur when removing items from a column
@@ -670,7 +669,7 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
 
         } else {
             ModelBrowser modelBrowser = path.getModelBrowser();
-            for (Iterator<Segment[]> iterator = path.iterator(); iterator.hasNext(); ) {
+            for (Iterator<Segment[]> iterator = path.iterator(); iterator.hasNext();) {
                 Segment[] segments = iterator.next();
                 Segment key = segments[0];
                 Segment value = segments[1];
@@ -697,7 +696,7 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
     }
 
     private void clearBreadcrumb() {
-        for (Iterator<HTMLElement> iterator = Elements.iterator(breadcrumb); iterator.hasNext(); ) {
+        for (Iterator<HTMLElement> iterator = Elements.iterator(breadcrumb); iterator.hasNext();) {
             HTMLElement element = iterator.next();
             if (element == backItem || element == breadcrumbToolsItem) {
                 continue;
@@ -705,7 +704,6 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
             iterator.remove();
         }
     }
-
 
     // ------------------------------------------------------ breadcrumb tools
 

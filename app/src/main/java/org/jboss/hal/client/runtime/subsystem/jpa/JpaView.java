@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.runtime.subsystem.jpa;
 
@@ -22,9 +22,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import com.google.common.collect.LinkedListMultimap;
-import com.google.gwt.core.client.GWT;
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
@@ -41,6 +38,11 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
+import com.google.common.collect.LinkedListMultimap;
+import com.google.gwt.core.client.GWT;
+
+import elemental2.dom.HTMLElement;
+
 import static java.util.Arrays.asList;
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
@@ -50,7 +52,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.resources.CSS.*;
 
-@SuppressWarnings({"HardCodedStringLiteral", "ResultOfMethodCallIgnored"})
+@SuppressWarnings({ "HardCodedStringLiteral", "ResultOfMethodCallIgnored" })
 public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
@@ -60,8 +62,7 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
         mainAttributes.putAll(CONSTANTS.attributes(), asList(
                 "hibernate-persistence-unit",
                 "enabled",
-                "statistics-enabled"
-        ));
+                "statistics-enabled"));
 
         mainAttributes.putAll(CONSTANTS.counter(), asList(
                 "session-open-count",
@@ -72,24 +73,21 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
                 "close-statement-count",
                 "flush-count",
                 "connect-count",
-                "optimistic-failure-count"
-        ));
+                "optimistic-failure-count"));
 
         mainAttributes.putAll(Names.ENTITY, asList(
                 "entity-delete-count",
                 "entity-fetch-count",
                 "entity-insert-count",
                 "entity-load-count",
-                "entity-update-count"
-        ));
+                "entity-update-count"));
 
         mainAttributes.putAll(Names.CONNECTION, asList(
                 "collection-fetch-count",
                 "collection-load-count",
                 "collection-recreated-count",
                 "collection-remove-count",
-                "collection-update-count"
-        ));
+                "collection-update-count"));
 
         mainAttributes.putAll(Names.QUERY, asList(
                 "query-cache-hit-count",
@@ -97,14 +95,12 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
                 "query-cache-put-count",
                 "query-execution-count",
                 "query-execution-max-time",
-                "query-execution-max-time-query-string"
-        ));
+                "query-execution-max-time-query-string"));
 
         mainAttributes.putAll(Names.SECOND_LEVEL_CACHE, asList(
                 "second-level-cache-hit-count",
                 "second-level-cache-miss-count",
-                "second-level-cache-put-count"
-        ));
+                "second-level-cache-put-count"));
     }
 
     private final MetadataRegistry metadataRegistry;
@@ -134,11 +130,11 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
             List<String> sectionAttributes = mainAttributes.get(section);
             Form<JpaStatistic> form = new ModelNodeForm.Builder<JpaStatistic>(
                     Ids.build(baseId, Ids.FORM, sectionId), metadata)
-                    .readOnly()
-                    .includeRuntime()
-                    .include(sectionAttributes)
-                    .unsorted()
-                    .build();
+                            .readOnly()
+                            .includeRuntime()
+                            .include(sectionAttributes)
+                            .unsorted()
+                            .build();
             registerAttachable(form);
             mainForms.add(form);
             mainAttributesTabs.add(Ids.build(baseId, Ids.TAB, sectionId), section, form.element());
@@ -182,14 +178,14 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
 
         Table<NamedNode> table = new ModelNodeTable.Builder<NamedNode>(
                 Ids.build(baseId, resource, Ids.TABLE), metadata)
-                .column(NAME, (cell, type, row, meta) -> row.getName())
-                .build();
+                        .column(NAME, (cell, type, row, meta) -> row.getName())
+                        .build();
 
         Form<NamedNode> form = new ModelNodeForm.Builder<NamedNode>(Ids.build(baseId, resource, Ids.FORM),
                 metadata)
-                .readOnly()
-                .includeRuntime()
-                .build();
+                        .readOnly()
+                        .includeRuntime()
+                        .build();
 
         registerAttachable(table);
         registerAttachable(form);

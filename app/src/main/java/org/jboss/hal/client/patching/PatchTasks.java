@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.patching;
 
@@ -27,6 +27,7 @@ import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Task;
+
 import rx.Completable;
 import rx.Single;
 
@@ -38,10 +39,11 @@ final class PatchTasks {
     /**
      * Reads the hosts and its patches.
      *
-     * <p>The context is populated with the following keys:
+     * <p>
+     * The context is populated with the following keys:
      * <ul>
-     * <li>{@link TopologyTasks#HOSTS}: The ordered list of hosts with the domain controller as first element.
-     * Each host contains its patches.</li>
+     * <li>{@link TopologyTasks#HOSTS}: The ordered list of hosts with the domain controller as first element. Each host
+     * contains its patches.</li>
      * </ul>
      */
     static List<Task<FlowContext>> patches(Environment environment, Dispatcher dispatcher) {
@@ -49,7 +51,6 @@ final class PatchTasks {
         tasks.add(new Patches(dispatcher));
         return tasks;
     }
-
 
     private static class Patches implements Task<FlowContext> {
 
@@ -84,7 +85,6 @@ final class PatchTasks {
             return completable;
         }
     }
-
 
     private PatchTasks() {
     }

@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.accesscontrol;
 
@@ -21,7 +21,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.config.AccessControlProvider;
 import org.jboss.hal.config.Environment;
@@ -43,13 +42,15 @@ import org.jboss.hal.spi.MessageEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.web.bindery.event.shared.EventBus;
+
 import static java.util.stream.Collectors.toSet;
 import static org.jboss.hal.config.AccessControlProvider.RBAC;
 import static org.jboss.hal.config.AccessControlProvider.SIMPLE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
- * Kind of presenter which holds code to read and parse  the RBAC related management model.
+ * Kind of presenter which holds code to read and parse the RBAC related management model.
  * <p>
  * TODO Sync roles with environment and header
  */
@@ -159,7 +160,7 @@ public class AccessControl {
                         .forEach(roles::add);
             }
 
-            //noinspection UnusedAssignment
+            // noinspection UnusedAssignment
             result.step(step++).get(RESULT).asPropertyList().forEach(p1 -> {
                 Role role = roles.get(Ids.role(p1.getName()));
                 if (role != null) {

@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.infinispan;
 
@@ -22,8 +22,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.web.bindery.event.shared.EventBus;
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.SuccessfulOutcome;
 import org.jboss.hal.core.finder.ColumnAction;
@@ -58,6 +56,10 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
+
+import com.google.web.bindery.event.shared.EventBus;
+
+import elemental2.dom.HTMLElement;
 import rx.Completable;
 
 import static java.util.Arrays.stream;
@@ -70,11 +72,11 @@ import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
 @AsyncColumn(Ids.CACHE)
-@Requires(value = {DISTRIBUTED_CACHE_ADDRESS,
+@Requires(value = { DISTRIBUTED_CACHE_ADDRESS,
         INVALIDATION_CACHE_ADDRESS,
         LOCAL_CACHE_ADDRESS,
         REPLICATED_CACHE_ADDRESS,
-        SCATTERED_CACHE_ADDRESS}, recursive = false)
+        SCATTERED_CACHE_ADDRESS }, recursive = false)
 public class CacheColumn extends FinderColumn<Cache> {
 
     private static String findCacheContainer(FinderPath path) {
@@ -134,8 +136,7 @@ public class CacheColumn extends FinderColumn<Cache> {
                 .pinnable()
                 .showCount()
                 .useFirstActionAsBreadcrumbHandler()
-                .withFilter()
-        );
+                .withFilter());
         this.crud = crud;
         this.metadataRegistry = metadataRegistry;
         this.statementContext = statementContext;
@@ -224,7 +225,8 @@ public class CacheColumn extends FinderColumn<Cache> {
                         crud.add(cacheType.type, name, address, model,
                                 (n, a) -> refresh(Ids.build(cacheType.baseId, name)));
                     } else {
-                        ResourceAddress jgroupsAddress = AddressTemplates.TRANSPORT_JGROUPS_TEMPLATE.resolve(statementContext, cacheContainer);
+                        ResourceAddress jgroupsAddress = AddressTemplates.TRANSPORT_JGROUPS_TEMPLATE.resolve(statementContext,
+                                cacheContainer);
                         ResourceCheck check = new ResourceCheck(dispatcher, jgroupsAddress);
                         Task<FlowContext> add = context -> {
                             Operation addJgroups = new Operation.Builder(jgroupsAddress, ADD).build();
@@ -254,7 +256,7 @@ public class CacheColumn extends FinderColumn<Cache> {
                     }
 
                 });
-        dialog.getForm().<String>getFormItem(NAME).addValidationHandler(createUniqueValidation());
+        dialog.getForm().<String> getFormItem(NAME).addValidationHandler(createUniqueValidation());
         dialog.show();
     }
 }

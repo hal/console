@@ -1,28 +1,23 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.deployment;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.config.Environment;
@@ -36,6 +31,13 @@ import org.jboss.hal.core.runtime.server.ServerUrl;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
+
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
+import elemental2.dom.HTMLElement;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.*;
@@ -77,7 +79,8 @@ abstract class DeploymentPreview<T extends ModelNode> extends PreviewContent<T> 
                                 .css(flag(failSafeBoolean(model, MANAGED)), marginRight5))
                         .add(span()
                                 .title(labelBuilder.label(EXPLODED))
-                                .css(flag(failSafeBoolean(model, EXPLODED)))).elements();
+                                .css(flag(failSafeBoolean(model, EXPLODED))))
+                        .elements();
                 return new PreviewAttribute(label, elements);
             });
         } else {
@@ -90,7 +93,8 @@ abstract class DeploymentPreview<T extends ModelNode> extends PreviewContent<T> 
                                 .css(flag(failSafeBoolean(model, ENABLED)), marginRight5))
                         .add(span()
                                 .title(labelBuilder.label(MANAGED))
-                                .css(flag(failSafeBoolean(model, MANAGED)))).elements();
+                                .css(flag(failSafeBoolean(model, MANAGED))))
+                        .elements();
                 return new PreviewAttribute(label, elements);
             });
         }
@@ -147,7 +151,7 @@ abstract class DeploymentPreview<T extends ModelNode> extends PreviewContent<T> 
                             .fromTrustedString(" <span data-link>" + contextRoot.asString() + "</span>");
                     SafeHtml safeHtml = new SafeHtmlBuilder()
                             .appendEscaped(subdeployment.getName() + " ")
-                            .appendHtmlConstant("&rarr;") //NON-NLS
+                            .appendHtmlConstant("&rarr;") // NON-NLS
                             .append(contextHtml)
                             .toSafeHtml();
                     ul.appendChild(li().innerHtml(safeHtml).element());
@@ -166,7 +170,7 @@ abstract class DeploymentPreview<T extends ModelNode> extends PreviewContent<T> 
     private void injectUrls() {
         List<HTMLElement> linkContainers = new ArrayList<>();
         forEach(e -> {
-            List<HTMLElement> elements = stream(e.querySelectorAll("[data-" + LINK + "]")) //NON-NLS
+            List<HTMLElement> elements = stream(e.querySelectorAll("[data-" + LINK + "]")) // NON-NLS
                     .filter(htmlElements())
                     .map(asHtmlElement())
                     .collect(toList());
@@ -176,7 +180,7 @@ abstract class DeploymentPreview<T extends ModelNode> extends PreviewContent<T> 
             String host = deployment.getReferenceServer().getHost();
             String serverGroup = deployment.getReferenceServer().getServerGroup();
             String server = deployment.getReferenceServer().getName();
-            //noinspection Duplicates
+            // noinspection Duplicates
             serverActions.readUrl(environment.isStandalone(), host, serverGroup, server,
                     new AsyncCallback<ServerUrl>() {
                         @Override

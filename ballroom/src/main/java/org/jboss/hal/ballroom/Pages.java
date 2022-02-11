@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.ballroom;
 
@@ -22,12 +22,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.resources.Ids;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+
+import elemental2.dom.HTMLElement;
 
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.hal.resources.CSS.page;
@@ -36,8 +38,8 @@ import static org.jboss.hal.resources.CSS.page;
  * A structural element to manage a main and a number of nested page elements. The nested page elements provide a
  * {@linkplain Breadcrumb breadcrumb} to navigate back and forth.
  * <p>
- * Use this element when you need additional levels of navigation which cannot be provided by a {@linkplain
- * VerticalNavigation vertical navigation}.
+ * Use this element when you need additional levels of navigation which cannot be provided by a {@linkplain VerticalNavigation
+ * vertical navigation}.
  */
 public class Pages implements IsElement {
 
@@ -82,11 +84,11 @@ public class Pages implements IsElement {
     /**
      * Adds a nested page.
      *
-     * @param parentId    the parent id
-     * @param id          the id of the page being added
+     * @param parentId the parent id
+     * @param id the id of the page being added
      * @param parentTitle the title of the parent or main page
-     * @param title       the title of the page being added
-     * @param element     the page element
+     * @param title the title of the page being added
+     * @param element the page element
      */
     public void addPage(String parentId, String id, Supplier<String> parentTitle, Supplier<String> title,
             IsElement element) {
@@ -96,11 +98,11 @@ public class Pages implements IsElement {
     /**
      * Adds a nested page.
      *
-     * @param parentId    the parent id
-     * @param id          the id of the page being added
+     * @param parentId the parent id
+     * @param id the id of the page being added
      * @param parentTitle the title of the parent or main page
-     * @param title       the title of the page being added
-     * @param element     the page element
+     * @param title the title of the page being added
+     * @param element the page element
      */
     public void addPage(String parentId, String id, Supplier<String> parentTitle, Supplier<String> title,
             HTMLElement element) {
@@ -131,7 +133,7 @@ public class Pages implements IsElement {
                 } while (page1 != null);
 
                 List<Page> topDown = Lists.reverse(bottomUp);
-                for (Iterator<Page> iterator = topDown.iterator(); iterator.hasNext(); ) {
+                for (Iterator<Page> iterator = topDown.iterator(); iterator.hasNext();) {
                     Page page2 = iterator.next();
                     breadcrumb.append(page2.parentTitle.get(), () -> {
                         if (mainId.equals(page2.parentId)) {
@@ -169,7 +171,6 @@ public class Pages implements IsElement {
     public HTMLElement element() {
         return root;
     }
-
 
     private static class Page implements IsElement {
 

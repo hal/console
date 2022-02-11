@@ -1,30 +1,23 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.ballroom.form;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import elemental2.dom.HTMLDivElement;
-import elemental2.dom.HTMLElement;
-import elemental2.dom.HTMLLIElement;
-import elemental2.dom.HTMLUListElement;
-import elemental2.dom.MouseEvent;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.EventCallbackFn;
 import org.jboss.gwt.elemento.core.IsElement;
@@ -34,9 +27,18 @@ import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtml;
+
+import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLLIElement;
+import elemental2.dom.HTMLUListElement;
+import elemental2.dom.MouseEvent;
+
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.Elements.i;
 import static org.jboss.gwt.elemento.core.Elements.label;
-import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.form.Form.Operation.EDIT;
 import static org.jboss.hal.ballroom.form.Form.Operation.REMOVE;
@@ -50,16 +52,16 @@ import static org.jboss.hal.resources.UIConstants.HASH;
  * <p>
  * The following links are part of this element:
  * <ol>
- * <li>Edit: Visible in the {@linkplain Form.State#READONLY read-only} state. Switches to the {@linkplain
- * Form.State#EDITING editing} state</li>
- * <li>Reset: Visible in the {@linkplain Form.State#READONLY read-only} state. Resets the form's model. If a {@link
- * org.jboss.hal.ballroom.form.Form.PrepareReset} callback is defined, the callback is called. Otherwise {@link
- * Form#reset()} is called.</li>
- * <li>Remove: Visible in the {@linkplain Form.State#READONLY read-only} state. Removes the form's model. If a {@link
- * org.jboss.hal.ballroom.form.Form.PrepareRemove} callback is defined, the callback is called, otherwise {@link
- * Form#remove()} is called.</li>
- * <li>Help: Visible in the {@linkplain Form.State#READONLY read-only} and the {@linkplain Form.State#EDITING editing}
- * states. Provides access to the help texts.</li>
+ * <li>Edit: Visible in the {@linkplain Form.State#READONLY read-only} state. Switches to the {@linkplain Form.State#EDITING
+ * editing} state</li>
+ * <li>Reset: Visible in the {@linkplain Form.State#READONLY read-only} state. Resets the form's model. If a
+ * {@link org.jboss.hal.ballroom.form.Form.PrepareReset} callback is defined, the callback is called. Otherwise
+ * {@link Form#reset()} is called.</li>
+ * <li>Remove: Visible in the {@linkplain Form.State#READONLY read-only} state. Removes the form's model. If a
+ * {@link org.jboss.hal.ballroom.form.Form.PrepareRemove} callback is defined, the callback is called, otherwise
+ * {@link Form#remove()} is called.</li>
+ * <li>Help: Visible in the {@linkplain Form.State#READONLY read-only} and the {@linkplain Form.State#EDITING editing} states.
+ * Provides access to the help texts.</li>
  * </ol>
  */
 public class FormLinks<T> implements IsElement {
@@ -98,7 +100,7 @@ public class FormLinks<T> implements IsElement {
         if (stateMachine.supports(RESET)) {
             resetLink = link(RESET, CONSTANTS.reset(), fontAwesome("undo"), onReset);
             resetLink.dataset.set(UIConstants.TOGGLE, UIConstants.TOOLTIP);
-            resetLink.dataset.set(UIConstants.PLACEMENT, "right"); //NON-NLS
+            resetLink.dataset.set(UIConstants.PLACEMENT, "right"); // NON-NLS
             resetLink.title = CONSTANTS.formResetDesc();
             links.appendChild(resetLink);
         }
@@ -113,7 +115,8 @@ public class FormLinks<T> implements IsElement {
                             .aria(UIConstants.EXPANDED, UIConstants.FALSE)
                             .aria(UIConstants.CONTROLS, helpId)
                             .add(i().css(pfIcon("help")))
-                            .add(span().css(formLinkLabel).textContent(CONSTANTS.help()))).element();
+                            .add(span().css(formLinkLabel).textContent(CONSTANTS.help())))
+                    .element();
             for (Map.Entry<String, SafeHtml> entry : helpTexts.entrySet()) {
                 helpContent.appendChild(help(entry.getKey(), entry.getValue()));
             }
@@ -128,7 +131,8 @@ public class FormLinks<T> implements IsElement {
                         .data("operation", operation.name().toLowerCase())
                         .on(click, onclick)
                         .add(i().css(css))
-                        .add(span().css(formLinkLabel).textContent(text))).element();
+                        .add(span().css(formLinkLabel).textContent(text)))
+                .element();
     }
 
     private HTMLDivElement help(String label, SafeHtml description) {
@@ -137,7 +141,8 @@ public class FormLinks<T> implements IsElement {
                         .css(controlLabel, halFormLabel)
                         .textContent(label))
                 .add(div().css(halFormInput)
-                        .add(p().css(formControlStatic).innerHtml(description))).element();
+                        .add(p().css(formControlStatic).innerHtml(description)))
+                .element();
     }
 
     @Override

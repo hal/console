@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.runtime.subsystem.undertow;
 
@@ -70,14 +70,17 @@ public class DeploymentColumn extends FinderColumn<DeploymentResource> {
                 .columnAction(columnActionFactory.refresh(Ids.UNDERTOW_RUNTIME_REFRESH))
                 .itemsProvider((context, callback) -> {
                     // workaround for HAL-1750 before WFCORE-4839 is fixed
-                    ResourceAddress baseAddress = AddressTemplate.of("{selected.host}/{selected.server}").resolve(statementContext);
+                    ResourceAddress baseAddress = AddressTemplate.of("{selected.host}/{selected.server}")
+                            .resolve(statementContext);
                     Composite composite = new Composite(baseAddress);
 
-                    ResourceAddress addressDeploy = WEB_DEPLOYMENT_TEMPLATE.subTemplate(2, WEB_DEPLOYMENT_TEMPLATE.size()).resolve(statementContext);
+                    ResourceAddress addressDeploy = WEB_DEPLOYMENT_TEMPLATE.subTemplate(2, WEB_DEPLOYMENT_TEMPLATE.size())
+                            .resolve(statementContext);
                     Operation operationDeploy = new Operation.Builder(addressDeploy, READ_RESOURCE_OPERATION)
                             .param(INCLUDE_RUNTIME, true)
                             .build();
-                    ResourceAddress addressSubdeploy = WEB_SUBDEPLOYMENT_TEMPLATE.subTemplate(2, WEB_SUBDEPLOYMENT_TEMPLATE.size()).resolve(statementContext);
+                    ResourceAddress addressSubdeploy = WEB_SUBDEPLOYMENT_TEMPLATE
+                            .subTemplate(2, WEB_SUBDEPLOYMENT_TEMPLATE.size()).resolve(statementContext);
                     Operation operationSubDeploy = new Operation.Builder(addressSubdeploy, READ_RESOURCE_OPERATION)
                             .param(INCLUDE_RUNTIME, true)
                             .build();
@@ -85,12 +88,16 @@ public class DeploymentColumn extends FinderColumn<DeploymentResource> {
                     dispatcher.execute(composite, (CompositeResult result) -> {
                         List<DeploymentResource> deployments = new ArrayList<>();
                         result.step(0).get(RESULT).asList().forEach(r -> {
-                            ResourceAddress _address = baseAddress.isDefined() ?  new ResourceAddress().add(baseAddress).add(new ResourceAddress(r.get(ADDRESS))) : new ResourceAddress(r.get(ADDRESS));
+                            ResourceAddress _address = baseAddress.isDefined()
+                                    ? new ResourceAddress().add(baseAddress).add(new ResourceAddress(r.get(ADDRESS)))
+                                    : new ResourceAddress(r.get(ADDRESS));
 
                             deployments.add(new DeploymentResource(_address, r.get(RESULT)));
                         });
                         result.step(1).get(RESULT).asList().forEach(r -> {
-                            ResourceAddress _address = baseAddress.isDefined() ? new ResourceAddress().add(baseAddress).add(new ResourceAddress(r.get(ADDRESS))) : new ResourceAddress(r.get(ADDRESS));
+                            ResourceAddress _address = baseAddress.isDefined()
+                                    ? new ResourceAddress().add(baseAddress).add(new ResourceAddress(r.get(ADDRESS)))
+                                    : new ResourceAddress(r.get(ADDRESS));
 
                             deployments.add(new DeploymentResource(_address, r.get(RESULT)));
                         });
@@ -123,7 +130,6 @@ public class DeploymentColumn extends FinderColumn<DeploymentResource> {
                         dispatcher, statementContext, serverActions))
                 .useFirstActionAsBreadcrumbHandler()
                 .withFilter()
-                .showCount()
-        );
+                .showCount());
     }
 }

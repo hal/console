@@ -1,44 +1,62 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.ballroom.form;
 
 import java.util.Set;
 
-import com.google.web.bindery.event.shared.HandlerRegistration;
-import elemental2.dom.CSSProperties.MarginLeftUnionType;
-import elemental2.dom.CSSProperties.MarginRightUnionType;
-import elemental2.dom.HTMLElement;
-import elemental2.dom.HTMLInputElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.form.AbstractFormItem.ExpressionContext;
 import org.jboss.hal.dmr.Deprecation;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
 
+import com.google.web.bindery.event.shared.HandlerRegistration;
+
+import elemental2.dom.CSSProperties.MarginLeftUnionType;
+import elemental2.dom.CSSProperties.MarginRightUnionType;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLInputElement;
+
+import static org.jboss.gwt.elemento.core.Elements.button;
+import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.gwt.elemento.core.Elements.i;
 import static org.jboss.gwt.elemento.core.Elements.label;
-import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.hal.ballroom.form.Decoration.*;
+import static org.jboss.hal.ballroom.form.Decoration.EXPRESSION;
+import static org.jboss.hal.ballroom.form.Decoration.HINT;
+import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
+import static org.jboss.hal.ballroom.form.Decoration.SENSITIVE;
+import static org.jboss.hal.ballroom.form.Decoration.SUGGESTIONS;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.btn;
+import static org.jboss.hal.resources.CSS.btnDefault;
+import static org.jboss.hal.resources.CSS.controlLabel;
+import static org.jboss.hal.resources.CSS.fontAwesome;
+import static org.jboss.hal.resources.CSS.formGroup;
+import static org.jboss.hal.resources.CSS.halFormInput;
+import static org.jboss.hal.resources.CSS.halFormLabel;
+import static org.jboss.hal.resources.CSS.hasError;
+import static org.jboss.hal.resources.CSS.inputGroupBtn;
+import static org.jboss.hal.resources.CSS.restricted;
 
 /**
  * Abstract editing appearance which builds the following DOM tree:
+ *
  * <pre>
  * &lt;div class="form-group"&gt;
  *     &lt;label class="control-label hal-form-label"&gt;&lt;/label&gt;
@@ -77,7 +95,8 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
         this.root = div().css(formGroup)
                 .add(labelElement = label().css(controlLabel, halFormLabel).element())
                 .add(inputContainer = div().css(halFormInput)
-                        .add(inputElement).element()).element();
+                        .add(inputElement).element())
+                .element();
         this.inputGroup = Appearance.inputGroup();
         this.helpBlock = Appearance.helpBlock();
     }
@@ -129,7 +148,6 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
         peekIcon.classList.remove("fa-eye");
         masked = false;
     }
-
 
     // ------------------------------------------------------ apply decoration
 
@@ -187,7 +205,8 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
         if (expressionContainer == null) {
             expressionContainer = span().css(inputGroupBtn)
                     .add(expressionButton = button().css(btn, btnDefault).title(CONSTANTS.resolveExpression())
-                            .add(i().css(fontAwesome("link"))).element()).element();
+                            .add(i().css(fontAwesome("link"))).element())
+                    .element();
         }
 
         if (!hasInputGroup()) {
@@ -195,8 +214,8 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
         }
         if (isApplied(HINT)) {
             inputGroup.insertBefore(expressionContainer, hintMarker);
-            expressionButton.style.marginLeft = MarginLeftUnionType.of("-1px"); //NON-NLS
-            expressionButton.style.marginRight = MarginRightUnionType.of("-1px"); //NON-NLS
+            expressionButton.style.marginLeft = MarginLeftUnionType.of("-1px"); // NON-NLS
+            expressionButton.style.marginRight = MarginRightUnionType.of("-1px"); // NON-NLS
         } else {
             inputGroup.appendChild(expressionContainer);
             expressionButton.style.marginLeft = MarginLeftUnionType.of(0);
@@ -259,7 +278,8 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
                                     mask();
                                 }
                             })
-                            .add(peekIcon = i().css(fontAwesome("eye")).element()).element()).element();
+                            .add(peekIcon = i().css(fontAwesome("eye")).element()).element())
+                    .element();
         }
 
         if (!hasInputGroup()) {
@@ -276,18 +296,18 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
                             .css(btn, btnDefault)
                             .title(CONSTANTS.showAll())
                             .on(click, event -> suggestHandler.showAll())
-                            .add(i().css(fontAwesome("angle-down"))).element()).element();
+                            .add(i().css(fontAwesome("angle-down"))).element())
+                    .element();
 
             if (!hasInputGroup()) {
                 wrapInputElement();
             }
             if (isApplied(SENSITIVE)) {
-                peekButton.style.marginLeft = MarginLeftUnionType.of("-1px"); //NON-NLS
+                peekButton.style.marginLeft = MarginLeftUnionType.of("-1px"); // NON-NLS
             }
             inputGroup.appendChild(suggestContainer);
         }
     }
-
 
     // ------------------------------------------------------ unapply decoration
 
@@ -394,7 +414,6 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
             unwrapInputElement();
         }
     }
-
 
     // ------------------------------------------------------ properties & delegates
 

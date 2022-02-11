@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.bootstrap.endpoint;
 
@@ -20,10 +20,6 @@ import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
-import com.google.common.base.Strings;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import elemental2.dom.HTMLScriptElement;
-import elemental2.dom.XMLHttpRequest;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.client.bootstrap.BootstrapFailed;
 import org.jboss.hal.client.bootstrap.tasks.BootstrapTask;
@@ -38,6 +34,12 @@ import org.jboss.hal.spi.Callback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
+import elemental2.dom.HTMLScriptElement;
+import elemental2.dom.XMLHttpRequest;
+
 import static elemental2.dom.DomGlobal.document;
 import static elemental2.dom.DomGlobal.setInterval;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.AUTH_SERVER_URL;
@@ -49,9 +51,9 @@ import static org.jboss.hal.js.JsHelper.requestParameter;
 import static org.jboss.hal.resources.Urls.MANAGEMENT;
 
 /**
- * Class which connects to a running management endpoint or triggers the selection of an arbitrary management endpoint.
- * By default this class first tries to connect to the management endpoint the console was loaded from. If no endpoint
- * was found, the selection is triggered by {@link EndpointDialog}.
+ * Class which connects to a running management endpoint or triggers the selection of an arbitrary management endpoint. By
+ * default this class first tries to connect to the management endpoint the console was loaded from. If no endpoint was found,
+ * the selection is triggered by {@link EndpointDialog}.
  * <p>
  * Please note: This class must run <em>before</em> any {@linkplain BootstrapTask bootstrap function}!
  */
@@ -143,7 +145,7 @@ public class EndpointManager {
                     break;
                 // TODO Show an error page!
                 // case 500:
-                //     break;
+                // break;
                 default:
                     logger.info("Unable to serve HAL from '{}'. Please select a management interface.",
                             managementEndpoint);

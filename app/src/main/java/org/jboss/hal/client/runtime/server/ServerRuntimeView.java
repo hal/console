@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.runtime.server;
 
@@ -20,8 +20,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import com.google.common.base.Splitter;
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.VerticalNavigation;
@@ -43,6 +41,10 @@ import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+
+import com.google.common.base.Splitter;
+
+import elemental2.dom.HTMLElement;
 
 import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.gwt.elemento.core.Elements.p;
@@ -106,10 +108,10 @@ public class ServerRuntimeView extends HalViewImpl implements ServerRuntimePrese
                 .column(NAME, resources.constants().name(), (cell, t, row, meta) -> row.getName())
                 .column(new ColumnBuilder<Property>(VALUE, Names.VALUE,
                         (cell, t, row, meta) -> row.getValue().asString())
-                        .width("66%")
-                        .searchable(false)
-                        .orderable(false)
-                        .build())
+                                .width("66%")
+                                .searchable(false)
+                                .orderable(false)
+                                .build())
                 .options();
         systemProperties = new DataTable<>(Ids.SERVER_RUNTIME_PROPERTIES_TABLE, options);
 
@@ -148,7 +150,7 @@ public class ServerRuntimeView extends HalViewImpl implements ServerRuntimePrese
     public void update(ModelNode modelNode) {
         List<Property> sp = modelNode.get(SYSTEM_PROPERTIES).asPropertyList();
         String pathSeparator = sp.stream()
-                .filter(p -> "path.separator".equals(p.getName())) //NON-NLS
+                .filter(p -> "path.separator".equals(p.getName())) // NON-NLS
                 .findAny()
                 .map(p -> p.getValue().asString())
                 .orElse(":");
@@ -156,17 +158,17 @@ public class ServerRuntimeView extends HalViewImpl implements ServerRuntimePrese
         headerElement.textContent = modelNode.get(NAME).asString();
 
         mainAttributes.view(modelNode);
-        mainAttributes.<String>getFormItem(START_TIME)
+        mainAttributes.<String> getFormItem(START_TIME)
                 .setValue(Format.shortDateTime(new Date(modelNode.get(START_TIME).asLong())));
-        mainAttributes.<String>getFormItem(UPTIME)
+        mainAttributes.<String> getFormItem(UPTIME)
                 .setValue(Format.humanReadableDuration(modelNode.get(UPTIME).asLong()));
 
         bootstrapAttributes.view(modelNode);
-        bootstrapAttributes.<String>getFormItem(BOOT_CLASS_PATH)
+        bootstrapAttributes.<String> getFormItem(BOOT_CLASS_PATH)
                 .setValue(pathWithNewLines(modelNode.get(BOOT_CLASS_PATH).asString(), pathSeparator));
-        bootstrapAttributes.<String>getFormItem(CLASS_PATH)
+        bootstrapAttributes.<String> getFormItem(CLASS_PATH)
                 .setValue(pathWithNewLines(modelNode.get(CLASS_PATH).asString(), pathSeparator));
-        bootstrapAttributes.<String>getFormItem(LIBRARY_PATH)
+        bootstrapAttributes.<String> getFormItem(LIBRARY_PATH)
                 .setValue(pathWithNewLines(modelNode.get(LIBRARY_PATH).asString(), pathSeparator));
 
         systemProperties.update(sp, Property::getName);

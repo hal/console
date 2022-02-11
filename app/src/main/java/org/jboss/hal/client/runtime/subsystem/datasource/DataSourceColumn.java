@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.runtime.subsystem.datasource;
 
@@ -20,10 +20,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.finder.Finder;
@@ -55,6 +51,12 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+
+import elemental2.dom.HTMLElement;
+
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.span;
@@ -68,8 +70,8 @@ import static org.jboss.hal.resources.CSS.fontAwesome;
 
 // TODO Add data sources from deployments
 @AsyncColumn(Ids.DATA_SOURCE_RUNTIME)
-@Requires({DATA_SOURCE_ADDRESS, XA_DATA_SOURCE_ADDRESS, DATA_SOURCE_DEPLOYMENT_ADDRESS,
-        XA_DATA_SOURCE_DEPLOYMENT_ADDRESS})
+@Requires({ DATA_SOURCE_ADDRESS, XA_DATA_SOURCE_ADDRESS, DATA_SOURCE_DEPLOYMENT_ADDRESS,
+        XA_DATA_SOURCE_DEPLOYMENT_ADDRESS })
 public class DataSourceColumn extends FinderColumn<DataSource> {
 
     private static final String EQ_WILDCARD = "=*";
@@ -125,26 +127,26 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             // deployment
             operations.add(new Operation.Builder(DATA_SOURCE_DEPLOYMENT_TEMPLATE.resolve(statementContext),
                     READ_RESOURCE_OPERATION)
-                    .param(INCLUDE_RUNTIME, true)
-                    .param(RECURSIVE, true)
-                    .build());
+                            .param(INCLUDE_RUNTIME, true)
+                            .param(RECURSIVE, true)
+                            .build());
             operations.add(new Operation.Builder(XA_DATA_SOURCE_DEPLOYMENT_TEMPLATE.resolve(statementContext),
                     READ_RESOURCE_OPERATION)
-                    .param(INCLUDE_RUNTIME, true)
-                    .param(RECURSIVE, true)
-                    .build());
+                            .param(INCLUDE_RUNTIME, true)
+                            .param(RECURSIVE, true)
+                            .build());
 
             // subdeployment
             operations.add(new Operation.Builder(DATA_SOURCE_SUBDEPLOYMENT_TEMPLATE.resolve(statementContext),
                     READ_RESOURCE_OPERATION)
-                    .param(INCLUDE_RUNTIME, true)
-                    .param(RECURSIVE, true)
-                    .build());
+                            .param(INCLUDE_RUNTIME, true)
+                            .param(RECURSIVE, true)
+                            .build());
             operations.add(new Operation.Builder(XA_DATA_SOURCE_SUBDEPLOYMENT_TEMPLATE.resolve(statementContext),
                     READ_RESOURCE_OPERATION)
-                    .param(INCLUDE_RUNTIME, true)
-                    .param(RECURSIVE, true)
-                    .build());
+                            .param(INCLUDE_RUNTIME, true)
+                            .param(RECURSIVE, true)
+                            .build());
 
             if (!environment.isStandalone()) {
                 ResourceAddress serverAddress = AddressTemplate.of(SELECTED_HOST, SELECTED_SERVER)
@@ -194,23 +196,22 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
         setItemsProvider(itemsProvider);
 
         // reuse the items provider to filter breadcrumb items
-        setBreadcrumbItemsProvider((context, callback) ->
-                itemsProvider.get(context, new AsyncCallback<List<DataSource>>() {
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        callback.onFailure(caught);
-                    }
+        setBreadcrumbItemsProvider((context, callback) -> itemsProvider.get(context, new AsyncCallback<List<DataSource>>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
 
-                    @Override
-                    public void onSuccess(List<DataSource> result) {
-                        // only datasources defined in configuration w/ enabled statistics
-                        // will show up in the breadcrumb dropdown
-                        List<DataSource> dataSourceWithStatistics = result.stream()
-                                .filter(ds -> !ds.fromDeployment() && ds.isStatisticsEnabled())
-                                .collect(toList());
-                        callback.onSuccess(dataSourceWithStatistics);
-                    }
-                }));
+            @Override
+            public void onSuccess(List<DataSource> result) {
+                // only datasources defined in configuration w/ enabled statistics
+                // will show up in the breadcrumb dropdown
+                List<DataSource> dataSourceWithStatistics = result.stream()
+                        .filter(ds -> !ds.fromDeployment() && ds.isStatisticsEnabled())
+                        .collect(toList());
+                callback.onSuccess(dataSourceWithStatistics);
+            }
+        }));
 
         setItemRenderer(dataSource -> new ItemDisplay<DataSource>() {
             @Override
@@ -264,7 +265,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
 
             @Override
             public String getFilterData() {
-                //noinspection HardCodedStringLiteral
+                // noinspection HardCodedStringLiteral
                 return getTitle() + " " +
                         (dataSource.isXa() ? "xa" : "normal") + " " +
                         (dataSource.isEnabled() ? ENABLED : DISABLED) + " " +

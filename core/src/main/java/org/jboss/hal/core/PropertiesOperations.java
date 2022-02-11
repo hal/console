@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.core;
 
@@ -25,8 +25,6 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.common.collect.Sets;
-import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
@@ -45,13 +43,24 @@ import org.jboss.hal.spi.Callback;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
+
+import com.google.common.collect.Sets;
+import com.google.web.bindery.event.shared.EventBus;
+
 import rx.Completable;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION;
 import static org.jboss.hal.flow.Flow.series;
 
 /**
  * Many resources store properties in form of a sub resource similar to:
+ *
  * <pre>
  * {
  *     "top-level-attribute" => undefined,
@@ -61,11 +70,12 @@ import static org.jboss.hal.flow.Flow.series;
  *     }
  * }
  * </pre>
- * where {@code "property"} is the properties sub resource (PSR). Each property has its onw resource with the name as
- * key and the {@code "value"} string node as value.
+ *
+ * where {@code "property"} is the properties sub resource (PSR). Each property has its onw resource with the name as key and
+ * the {@code "value"} string node as value.
  * <p>
- * This class mirrors some of the methods from {@link CrudOperations} to save these resources together with its
- * properties (if modified):
+ * This class mirrors some of the methods from {@link CrudOperations} to save these resources together with its properties (if
+ * modified):
  * <ol>
  * <li>New properties are added as children of the PSR</li>
  * <li>Modified properties are modified in the PSRs</li>
@@ -98,30 +108,28 @@ public class PropertiesOperations {
         this.operationFactory = new OperationFactory();
     }
 
-
     // ------------------------------------------------------ save methods
     // please add additional save() or saveSingleton() methods from CrudOperations if necessary
 
     /**
-     * Saves the changed values and its properties (if modified) to the specified resource. After the resource has been
-     * saved a standard success message is fired and the specified callback is executed.
+     * Saves the changed values and its properties (if modified) to the specified resource. After the resource has been saved a
+     * standard success message is fired and the specified callback is executed.
      * <p>
-     * This is the properties-extended version of {@link CrudOperations#save(String, String, AddressTemplate, Map,
-     * Callback)}:
+     * This is the properties-extended version of {@link CrudOperations#save(String, String, AddressTemplate, Map, Callback)}:
      * <ol>
      * <li>New properties are added as children of the PSR</li>
      * <li>Modified properties are modified in the PSRs</li>
      * <li>Removed properties are removed from the PSR</li>
      * </ol>
      *
-     * @param type          the human readable resource type used in the success message
-     * @param name          the resource name
-     * @param template      the address template which is resolved against the current statement context and the
-     *                      resource name to get the resource address for the operation
+     * @param type the human readable resource type used in the success message
+     * @param name the resource name
+     * @param template the address template which is resolved against the current statement context and the resource name to get
+     *        the resource address for the operation
      * @param changedValues the changed values / payload for the operation
-     * @param psr           the name of the properties sub resource (PSR) - most often this is "property"
-     * @param properties    the properties to save
-     * @param callback      the callback executed after saving the resource
+     * @param psr the name of the properties sub resource (PSR) - most often this is "property"
+     * @param properties the properties to save
+     * @param callback the callback executed after saving the resource
      */
     public void saveWithProperties(String type, String name, AddressTemplate template,
             Map<String, Object> changedValues, String psr, Map<String, String> properties,
@@ -139,25 +147,24 @@ public class PropertiesOperations {
     }
 
     /**
-     * Saves the changed values and its properties (if modified) to the specified resource. After the resource has been
-     * saved a standard success message is fired and the specified callback is executed.
+     * Saves the changed values and its properties (if modified) to the specified resource. After the resource has been saved a
+     * standard success message is fired and the specified callback is executed.
      * <p>
-     * This is the properties-extended version of {@link CrudOperations#save(String, String, AddressTemplate, Map,
-     * Callback)}:
+     * This is the properties-extended version of {@link CrudOperations#save(String, String, AddressTemplate, Map, Callback)}:
      * <ol>
      * <li>New properties are added as children of the PSR</li>
      * <li>Modified properties are modified in the PSRs</li>
      * <li>Removed properties are removed from the PSR</li>
      * </ol>
      *
-     * @param type          the human readable resource type used in the success message
-     * @param name          the resource name
-     * @param address       the fq address for the operation
+     * @param type the human readable resource type used in the success message
+     * @param name the resource name
+     * @param address the fq address for the operation
      * @param changedValues the changed values / payload for the operation
-     * @param metadata      the metadata for the of the attributes in the change set
-     * @param psr           the name of the properties sub resource (PSR) - most often this is "property"
-     * @param properties    the properties to save
-     * @param callback      the callback executed after saving the resource
+     * @param metadata the metadata for the of the attributes in the change set
+     * @param psr the name of the properties sub resource (PSR) - most often this is "property"
+     * @param properties the properties to save
+     * @param callback the callback executed after saving the resource
      */
     public void saveWithProperties(String type, String name, ResourceAddress address,
             Map<String, Object> changedValues, Metadata metadata, String psr,
@@ -169,8 +176,8 @@ public class PropertiesOperations {
     }
 
     /**
-     * Saves the changed values and its properties (if modified) to the specified resource. After the resource has been
-     * saved a standard success message is fired and the specified callback is executed.
+     * Saves the changed values and its properties (if modified) to the specified resource. After the resource has been saved a
+     * standard success message is fired and the specified callback is executed.
      * <p>
      * This is the properties-extended version of {@link CrudOperations#save(String, String, Composite, Callback)}:
      * <ol>
@@ -179,13 +186,13 @@ public class PropertiesOperations {
      * <li>Removed properties are removed from the PSR</li>
      * </ol>
      *
-     * @param type       the human readable resource type used in the success message
-     * @param name       the resource name
-     * @param address    the fq address for the operation
+     * @param type the human readable resource type used in the success message
+     * @param name the resource name
+     * @param address the fq address for the operation
      * @param operations the composite operation to persist the changed values
-     * @param psr        the name of the properties sub resource (PSR) - most often this is "property"
+     * @param psr the name of the properties sub resource (PSR) - most often this is "property"
      * @param properties the properties to save
-     * @param callback   the callback executed after saving the resource
+     * @param callback the callback executed after saving the resource
      */
     public void saveWithProperties(String type, String name, ResourceAddress address,
             Composite operations, String psr, Map<String, String> properties,
@@ -195,24 +202,23 @@ public class PropertiesOperations {
     }
 
     /**
-     * Saves the changed values and its properties (if modified) to the specified resource. After the resource has been
-     * saved a standard success message is fired and the specified callback is executed.
+     * Saves the changed values and its properties (if modified) to the specified resource. After the resource has been saved a
+     * standard success message is fired and the specified callback is executed.
      * <p>
-     * This is the properties-extended version of {@link CrudOperations#saveSingleton(String, AddressTemplate, Map,
-     * Callback)}:
+     * This is the properties-extended version of {@link CrudOperations#saveSingleton(String, AddressTemplate, Map, Callback)}:
      * <ol>
      * <li>New properties are added as children of the PSR</li>
      * <li>Modified properties are modified in the PSRs</li>
      * <li>Removed properties are removed from the PSR</li>
      * </ol>
      *
-     * @param type          the human readable resource type used in the success message
-     * @param address       the fq address for the operation
+     * @param type the human readable resource type used in the success message
+     * @param address the fq address for the operation
      * @param changedValues the changed values / payload for the operation
-     * @param metadata      the metadata for the of the attributes in the change set
-     * @param psr           the name of the properties sub resource (PSR) - most often this is "property"
-     * @param properties    the properties to save
-     * @param callback      the callback executed after saving the resource
+     * @param metadata the metadata for the of the attributes in the change set
+     * @param psr the name of the properties sub resource (PSR) - most often this is "property"
+     * @param properties the properties to save
+     * @param callback the callback executed after saving the resource
      */
     public void saveSingletonWithProperties(String type, ResourceAddress address,
             Map<String, Object> changedValues, Metadata metadata, String psr,
@@ -233,21 +239,20 @@ public class PropertiesOperations {
                         : dispatcher.execute(operations).toCompletable(),
                 new ReadProperties(dispatcher, address, psr),
                 new MergeProperties(dispatcher, address, psr, properties))
-                .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
-                    @Override
-                    public void onSuccess(FlowContext context) {
-                        if (name == null) {
-                            MessageEvent.fire(eventBus,
-                                    Message.success(resources.messages().modifySingleResourceSuccess(type)));
-                        } else {
-                            MessageEvent.fire(eventBus,
-                                    Message.success(resources.messages().modifyResourceSuccess(type, name)));
-                        }
-                        callback.execute();
-                    }
-                });
+                        .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
+                            @Override
+                            public void onSuccess(FlowContext context) {
+                                if (name == null) {
+                                    MessageEvent.fire(eventBus,
+                                            Message.success(resources.messages().modifySingleResourceSuccess(type)));
+                                } else {
+                                    MessageEvent.fire(eventBus,
+                                            Message.success(resources.messages().modifyResourceSuccess(type, name)));
+                                }
+                                callback.execute();
+                            }
+                        });
     }
-
 
     private static class ReadProperties implements Task<FlowContext> {
 
@@ -274,7 +279,6 @@ public class PropertiesOperations {
                     .toCompletable();
         }
     }
-
 
     private static class MergeProperties implements Task<FlowContext> {
 
@@ -322,7 +326,7 @@ public class PropertiesOperations {
             remove.stream()
                     .map(property -> new Operation.Builder(
                             new ResourceAddress(address).add(propertiesResource, property), REMOVE)
-                            .build())
+                                    .build())
                     .forEach(operations::add);
 
             Composite composite = new Composite(operations);

@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.runtime.host;
 
@@ -21,9 +21,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.CrudOperations;
@@ -66,6 +63,10 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.CONFIGURATION_CHANGES_ADDRESS;
@@ -78,13 +79,11 @@ import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.meta.AddressTemplate.OPTIONAL;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
-
-
 @Column(Ids.HOST)
 @Requires(value = {
         "/core-service=management/host-connection=*",
         OPTIONAL + "host=*" + CONFIGURATION_CHANGES_ADDRESS,
-        "host=*" + MANAGEMENT_OPERATIONS_ADDRESS}, recursive = false)
+        "host=*" + MANAGEMENT_OPERATIONS_ADDRESS }, recursive = false)
 public class HostColumn extends FinderColumn<Host> implements HostActionHandler, HostResultHandler {
 
     static AddressTemplate hostTemplate(Host host) {
@@ -121,8 +120,7 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                 // "host => master / server => server-one / subsystem => logging / log-file => server.log"
                 .useFirstActionAsBreadcrumbHandler()
                 .withFilter()
-                .filterDescription(resources.messages().hostColumnFilterDescription())
-        );
+                .filterDescription(resources.messages().hostColumnFilterDescription()));
         this.dispatcher = dispatcher;
         this.crud = crud;
         this.eventBus = eventBus;
@@ -145,23 +143,23 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
 
         ItemsProvider<Host> itemsProvider = (context, callback) -> series(new FlowContext(progress.get()),
                 hosts(environment, dispatcher))
-                .subscribe(new Outcome<FlowContext>() {
-                    @Override
-                    public void onError(FlowContext context, Throwable error) {
-                        callback.onFailure(error);
-                    }
+                        .subscribe(new Outcome<FlowContext>() {
+                            @Override
+                            public void onError(FlowContext context, Throwable error) {
+                                callback.onFailure(error);
+                            }
 
-                    @Override
-                    public void onSuccess(FlowContext context) {
-                        List<Host> hosts = context.get(TopologyTasks.HOSTS);
-                        callback.onSuccess(hosts);
+                            @Override
+                            public void onSuccess(FlowContext context) {
+                                List<Host> hosts = context.get(TopologyTasks.HOSTS);
+                                callback.onSuccess(hosts);
 
-                        // Restore pending visualization
-                        hosts.stream()
-                                .filter(hostActions::isPending)
-                                .forEach(host -> ItemMonitor.startProgress(Ids.host(host.getAddressName())));
-                    }
-                });
+                                // Restore pending visualization
+                                hosts.stream()
+                                        .filter(hostActions::isPending)
+                                        .forEach(host -> ItemMonitor.startProgress(Ids.host(host.getAddressName())));
+                            }
+                        });
         setItemsProvider(itemsProvider);
 
         setBreadcrumbItemsProvider((context, callback) -> itemsProvider.get(context, new AsyncCallback<List<Host>>() {
@@ -195,7 +193,7 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                     actions.add(itemActionFactory.viewAndMonitor(Ids.host(item.getAddressName()), placeRequest));
                     if (!hostActions.isPending(item)) {
                         if (ManagementModel.supportsConfigurationChanges(item.getManagementVersion())
-                            && metadataRegistry.contains(hostTemplate(item).append(CONFIGURATION_CHANGES_ADDRESS))) {
+                                && metadataRegistry.contains(hostTemplate(item).append(CONFIGURATION_CHANGES_ADDRESS))) {
                             PlaceRequest ccPlaceRequest = new PlaceRequest.Builder()
                                     .nameToken(NameTokens.CONFIGURATION_CHANGES)
                                     .with(HOST, item.getAddressName())
@@ -206,7 +204,8 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                                             ADD)));
                             actions.add(ItemAction.separator());
                         }
-                        // TODO Add additional operations like :reload(admin-mode=true), :clean-obsolete-content or :take-snapshot
+                        // TODO Add additional operations like :reload(admin-mode=true), :clean-obsolete-content or
+                        // :take-snapshot
                         actions.add(new ItemAction.Builder<Host>()
                                 .title(resources.constants().reload())
                                 .handler(hostActions::reload)

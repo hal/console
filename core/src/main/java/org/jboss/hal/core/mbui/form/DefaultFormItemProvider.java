@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.core.mbui.form;
 
@@ -31,11 +31,11 @@ import org.jboss.hal.ballroom.form.NumberDoubleItem;
 import org.jboss.hal.ballroom.form.NumberItem;
 import org.jboss.hal.ballroom.form.PropertiesItem;
 import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
-import org.jboss.hal.core.ui.TuplesListItem;
 import org.jboss.hal.ballroom.form.SuggestHandler;
 import org.jboss.hal.ballroom.form.SwitchItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.core.Core;
+import org.jboss.hal.core.ui.TuplesListItem;
 import org.jboss.hal.dmr.Deprecation;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
@@ -59,7 +59,8 @@ class DefaultFormItemProvider implements FormItemProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultFormItemProvider.class);
 
-    private static final List<String> allowedTupleTypes = Arrays.asList("BIG_INTEGER","BOOLEAN","DOUBLE","INT","LONG","STRING");
+    private static final List<String> allowedTupleTypes = Arrays.asList("BIG_INTEGER", "BOOLEAN", "DOUBLE", "INT", "LONG",
+            "STRING");
 
     private final Metadata metadata;
     private final LabelBuilder labelBuilder;
@@ -91,7 +92,8 @@ class DefaultFormItemProvider implements FormItemProvider {
             ModelType type = attributeDescription.get(TYPE).asType();
             ModelType valueType = (attributeDescription.has(VALUE_TYPE) && attributeDescription.get(VALUE_TYPE)
                     .getType() != ModelType.OBJECT)
-                    ? ModelType.valueOf(attributeDescription.get(VALUE_TYPE).asString()) : null;
+                            ? ModelType.valueOf(attributeDescription.get(VALUE_TYPE).asString())
+                            : null;
 
             switch (type) {
                 case BOOLEAN: {

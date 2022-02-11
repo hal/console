@@ -1,22 +1,20 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.runtime.subsystem.logging;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
 import org.jboss.hal.core.finder.PreviewContent;
@@ -24,6 +22,10 @@ import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
+import elemental2.dom.HTMLElement;
 
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.hal.client.runtime.subsystem.logging.LogFiles.LOG_FILE_SIZE_THRESHOLD;
@@ -50,7 +52,8 @@ class LogFilePreview extends PreviewContent<LogFile> {
                         .add(" ")
                         .add(a(logFiles.downloadUrl(logFile.getFilename(), logFile.getLoggingProfile())).css(alertLink)
                                 .apply(a -> a.download = logFile.getFilename())
-                                .textContent(resources.constants().download())).element());
+                                .textContent(resources.constants().download()))
+                        .element());
         if (logFile.getSize() > LOG_FILE_SIZE_THRESHOLD) {
             container.classList.add(CSS.alert, alertWarning);
             icon.className = Icons.WARNING;
@@ -62,11 +65,9 @@ class LogFilePreview extends PreviewContent<LogFile> {
         }
 
         PreviewAttributes<LogFile> previewAttributes = new PreviewAttributes<>(logFile)
-                .append(model ->
-                        new PreviewAttribute(resources.constants().lastModified(),
-                                logFile.getFormattedLastModifiedDate()))
-                .append(model ->
-                        new PreviewAttribute(resources.constants().size(), logFile.getFormattedSize()));
+                .append(model -> new PreviewAttribute(resources.constants().lastModified(),
+                        logFile.getFormattedLastModifiedDate()))
+                .append(model -> new PreviewAttribute(resources.constants().size(), logFile.getFormattedSize()));
         if (logFile.getLoggingProfile() != null) {
             previewAttributes.append(mode -> new PreviewAttribute(Names.LOGGING_PROFILE,
                     logFile.getLoggingProfile()));

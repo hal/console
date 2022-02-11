@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.meta.description;
 
@@ -23,9 +23,9 @@ import org.jboss.hal.dmr.ResourceAddress;
 import static java.util.stream.Collectors.toList;
 
 /**
- * Function which takes a resource address and replaces specific values with "*". Applied to addresses from
- * the r-r-d result before they are {@linkplain ResourceDescriptionRegistry#add(ResourceAddress, ResourceDescription,
- * boolean)} added} to the resource description registry.
+ * Function which takes a resource address and replaces specific values with "*". Applied to addresses from the r-r-d result
+ * before they are {@linkplain ResourceDescriptionRegistry#add(ResourceAddress, ResourceDescription, boolean)} added} to the
+ * resource description registry.
  * <p>
  * The following parts of a resource address are modified by this function:
  * <ul>
@@ -36,6 +36,7 @@ import static java.util.stream.Collectors.toList;
  * </ul>
  * <p>
  * Examples:
+ *
  * <pre>
  * /host=master/server-config=server-one &rarr; /host=&#42;/server-config=&#42;
  * /host=master/server=server-one/subsystem=data-sources &rarr; /host=&#42;/server=&#42;/subsystem=data-sources
@@ -51,7 +52,7 @@ public class ResourceDescriptionAddressProcessor implements Function<ResourceAdd
 
         if (address != null && !address.isEmpty()) {
             List<String[]> segments = address.asPropertyList().stream()
-                    .map(property -> new String[]{property.getName(), property.getValue().asString()})
+                    .map(property -> new String[] { property.getName(), property.getValue().asString() })
                     .collect(toList());
             SegmentProcessor.process(segments, segment -> modified.add(segment[0], segment[1]));
         }

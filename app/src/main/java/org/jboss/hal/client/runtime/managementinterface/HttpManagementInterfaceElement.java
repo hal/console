@@ -1,7 +1,20 @@
+/*
+ *  Copyright 2022 Red Hat
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.jboss.hal.client.runtime.managementinterface;
 
-import elemental2.dom.HTMLButtonElement;
-import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
@@ -16,7 +29,14 @@ import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
-import static org.jboss.gwt.elemento.core.Elements.*;
+import elemental2.dom.HTMLButtonElement;
+import elemental2.dom.HTMLElement;
+
+import static org.jboss.gwt.elemento.core.Elements.button;
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HTTP_INTERFACE;
@@ -47,23 +67,23 @@ public class HttpManagementInterfaceElement
         enableSslButton = button().id(ENABLE_SSL)
                 .textContent(resources.constants().enableSSL())
                 .css(Button.DEFAULT_CSS, pullRight)
-                .get();
+                .element();
         bind(enableSslButton, click, ev -> presenter.enableSslForManagementInterface());
 
         disableSslButton = button().id(DISABLE_SSL)
                 .textContent(resources.constants().disableSSL())
                 .css(Button.DEFAULT_CSS, pullRight)
-                .get();
+                .element();
         bind(disableSslButton, click, ev -> presenter.disableSslForManagementInterface());
 
         root = section()
                 .add(div()
-                        .add(h(1).textContent(resources.constants().httpManagementInterface()).get())
-                        .add(p().textContent(metadata.getDescription().getDescription()).get())
+                        .add(h(1).textContent(resources.constants().httpManagementInterface()).element())
+                        .add(p().textContent(metadata.getDescription().getDescription()).element())
                         .add(enableSslButton)
                         .add(disableSslButton))
                 .add(form)
-                .get();
+                .element();
     }
 
     @Override

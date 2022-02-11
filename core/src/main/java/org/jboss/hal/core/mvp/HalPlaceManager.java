@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.core.mvp;
 
@@ -22,15 +22,6 @@ import java.util.function.Consumer;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.gwt.place.shared.PlaceHistoryHandler;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.annotations.DefaultPlace;
-import com.gwtplatform.mvp.client.annotations.ErrorPlace;
-import com.gwtplatform.mvp.client.annotations.UnauthorizedPlace;
-import com.gwtplatform.mvp.client.proxy.DefaultPlaceManager;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
 import org.jboss.hal.core.configuration.ProfileSelectionEvent;
 import org.jboss.hal.core.runtime.group.ServerGroupSelectionEvent;
 import org.jboss.hal.core.runtime.host.HostSelectionEvent;
@@ -43,21 +34,30 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
+import com.google.gwt.place.shared.PlaceHistoryHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.annotations.DefaultPlace;
+import com.gwtplatform.mvp.client.annotations.ErrorPlace;
+import com.gwtplatform.mvp.client.annotations.UnauthorizedPlace;
+import com.gwtplatform.mvp.client.proxy.DefaultPlaceManager;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
+
 import static org.jboss.hal.meta.StatementContext.Expression.*;
 
 /**
- * Custom place manager for HAL. The most important task of this place manager is to extract well-known place request
- * parameters and to process required resources associated with the name token.
+ * Custom place manager for HAL. The most important task of this place manager is to extract well-known place request parameters
+ * and to process required resources associated with the name token.
  * <p>
- * It's crucial that this happens <strong>before</strong> the place is revealed. Therefore this place manager intercepts
- * the {@link #doRevealPlace(PlaceRequest, boolean)} method and
+ * It's crucial that this happens <strong>before</strong> the place is revealed. Therefore this place manager intercepts the
+ * {@link #doRevealPlace(PlaceRequest, boolean)} method and
  * <ol>
- * <li>looks for place request parameters which match the the {@linkplain Expression#resource() resource names} in the
- * statement context tuple enum. </li>
+ * <li>looks for place request parameters which match the the {@linkplain Expression#resource() resource names} in the statement
+ * context tuple enum.</li>
  * <li>if found, fires the related selection events ({@link ProfileSelectionEvent}, {@link ServerGroupSelectionEvent},
  * {@link HostSelectionEvent} or {@link ServerSelectionEvent})</li>
- * <li>processes the required resources according to the value of the {@code @Requires} annotation on the proxy
- * place</li>
+ * <li>processes the required resources according to the value of the {@code @Requires} annotation on the proxy place</li>
  * <li>finally calls {@code super.doRevealPlace(request, updateBrowserUrl)}</li>
  * </ol>
  */

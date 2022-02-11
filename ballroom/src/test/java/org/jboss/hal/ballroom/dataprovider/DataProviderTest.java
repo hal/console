@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.ballroom.dataprovider;
 
@@ -23,11 +23,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import com.google.common.collect.Lists;
-import com.google.common.primitives.Ints;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
+
+import com.google.common.collect.Lists;
+import com.google.common.primitives.Ints;
 
 import static com.google.common.primitives.Ints.asList;
 import static java.lang.Integer.parseInt;
@@ -43,14 +44,16 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 
-@SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection", "unchecked"})
+@SuppressWarnings({ "HardCodedStringLiteral", "DuplicateStringLiteralInspection", "unchecked" })
 public class DataProviderTest {
 
     private static class ItemsMatcher implements ArgumentMatcher<Iterable<Integer>> {
 
         private final int[] expected;
 
-        private ItemsMatcher(int[] expected) {this.expected = expected;}
+        private ItemsMatcher(int[] expected) {
+            this.expected = expected;
+        }
 
         @Override
         public String toString() {
@@ -62,7 +65,6 @@ public class DataProviderTest {
             return Arrays.equals(expected, toArray(argument));
         }
     }
-
 
     private static Iterable<Integer> itemsMatcher(int[] items) {
         return argThat(new ItemsMatcher(items));
@@ -77,12 +79,11 @@ public class DataProviderTest {
     }
 
     private static final int PAGE_SIZE = 10;
-    private static final int[] EVEN = new int[]{0, 2, 4, 6, 8};
-    private static final int[] BY_THREE = new int[]{0, 3, 6, 9};
-    private static final int[] COMBINED = new int[]{0, 6};
+    private static final int[] EVEN = new int[] { 0, 2, 4, 6, 8 };
+    private static final int[] BY_THREE = new int[] { 0, 3, 6, 9 };
+    private static final int[] COMBINED = new int[] { 0, 6 };
     private static final Function<Integer, String> IDENTIFIER = String::valueOf;
     private static final Filter<Integer> DIVISIBLE = (number, filter) -> number % parseInt(filter) == 0;
-
 
     private DataProvider<Integer> single;
     private DataProvider<Integer> multi;
@@ -102,7 +103,6 @@ public class DataProviderTest {
         single.onSelect(selectHandler);
         multi.onSelect(selectHandler);
     }
-
 
     // ------------------------------------------------------ items
 
@@ -135,7 +135,6 @@ public class DataProviderTest {
         assertFalse(single.isVisible(23));
     }
 
-
     // ------------------------------------------------------ page size
 
     @Test
@@ -161,7 +160,6 @@ public class DataProviderTest {
         single.update(asList(items(PAGE_SIZE + 1)));
         assertEquals(2, single.getPageInfo().getPages());
     }
-
 
     // ------------------------------------------------------ paging
 
@@ -206,7 +204,6 @@ public class DataProviderTest {
         verify(display, never()).showItems(any(), any());
     }
 
-
     // ------------------------------------------------------ select
 
     @Test
@@ -215,8 +212,8 @@ public class DataProviderTest {
 
         reset(display, selectHandler);
         single.select(2, true);
-        assertSelection(single, new int[]{2});
-        verify(display).updateSelection(new SelectionInfo<>(IDENTIFIER, false, selection(new int[]{2})));
+        assertSelection(single, new int[] { 2 });
+        verify(display).updateSelection(new SelectionInfo<>(IDENTIFIER, false, selection(new int[] { 2 })));
         verify(selectHandler).onSelect(2);
 
         reset(display, selectHandler);
@@ -232,32 +229,32 @@ public class DataProviderTest {
 
         reset(display, selectHandler);
         multi.select(1, true);
-        assertSelection(multi, new int[]{1});
-        verify(display).updateSelection(new SelectionInfo<>(IDENTIFIER, true, selection(new int[]{1})));
+        assertSelection(multi, new int[] { 1 });
+        verify(display).updateSelection(new SelectionInfo<>(IDENTIFIER, true, selection(new int[] { 1 })));
         verify(selectHandler).onSelect(1);
 
         reset(display, selectHandler);
         multi.select(3, true);
-        assertSelection(multi, new int[]{1, 3});
-        verify(display).updateSelection(new SelectionInfo<>(IDENTIFIER, true, selection(new int[]{1, 3})));
+        assertSelection(multi, new int[] { 1, 3 });
+        verify(display).updateSelection(new SelectionInfo<>(IDENTIFIER, true, selection(new int[] { 1, 3 })));
         verify(selectHandler).onSelect(3);
 
         reset(display, selectHandler);
         multi.select(5, true);
-        assertSelection(multi, new int[]{1, 3, 5});
-        verify(display).updateSelection(new SelectionInfo<>(IDENTIFIER, true, selection(new int[]{1, 3, 5})));
+        assertSelection(multi, new int[] { 1, 3, 5 });
+        verify(display).updateSelection(new SelectionInfo<>(IDENTIFIER, true, selection(new int[] { 1, 3, 5 })));
         verify(selectHandler).onSelect(5);
 
         reset(display, selectHandler);
         multi.select(5, false);
-        assertSelection(multi, new int[]{1, 3});
-        verify(display).updateSelection(new SelectionInfo<>(IDENTIFIER, true, selection(new int[]{1, 3})));
+        assertSelection(multi, new int[] { 1, 3 });
+        verify(display).updateSelection(new SelectionInfo<>(IDENTIFIER, true, selection(new int[] { 1, 3 })));
         verify(selectHandler, never()).onSelect(anyInt());
 
         reset(display, selectHandler);
         multi.select(3, false);
-        assertSelection(multi, new int[]{1});
-        verify(display).updateSelection(new SelectionInfo<>(IDENTIFIER, true, selection(new int[]{1})));
+        assertSelection(multi, new int[] { 1 });
+        verify(display).updateSelection(new SelectionInfo<>(IDENTIFIER, true, selection(new int[] { 1 })));
         verify(selectHandler, never()).onSelect(anyInt());
 
         reset(display, selectHandler);
@@ -360,7 +357,6 @@ public class DataProviderTest {
         verify(selectHandler, never()).onSelect(anyInt());
     }
 
-
     // ------------------------------------------------------ filter
 
     @Test
@@ -425,8 +421,8 @@ public class DataProviderTest {
 
     @Test
     public void sortAsc() throws Exception {
-        int[] items = {0, 8, 1, 5};
-        int[] sorted = {0, 1, 5, 8};
+        int[] items = { 0, 8, 1, 5 };
+        int[] sorted = { 0, 1, 5, 8 };
 
         single.update(asList(items));
         verify(display).showItems(itemsMatcher(items), eq(new PageInfo(PAGE_SIZE, 0, 4, 4)));
@@ -436,15 +432,14 @@ public class DataProviderTest {
 
     @Test
     public void sortDesc() throws Exception {
-        int[] items = {0, 8, 1, 5};
-        int[] sorted = {8, 5, 1, 0};
+        int[] items = { 0, 8, 1, 5 };
+        int[] sorted = { 8, 5, 1, 0 };
 
         single.update(asList(items));
         verify(display).showItems(itemsMatcher(items), eq(new PageInfo(PAGE_SIZE, 0, 4, 4)));
-        single.setComparator(Comparator.<Integer>naturalOrder().reversed());
+        single.setComparator(Comparator.<Integer> naturalOrder().reversed());
         verify(display).showItems(itemsMatcher(sorted), eq(new PageInfo(PAGE_SIZE, 0, 4, 4)));
     }
-
 
     // ------------------------------------------------------ helper methods
 

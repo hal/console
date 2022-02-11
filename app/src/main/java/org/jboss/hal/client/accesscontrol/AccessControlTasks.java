@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.accesscontrol;
 
@@ -30,6 +30,7 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.Metadata;
+
 import rx.Completable;
 
 import static java.util.stream.Collectors.toList;
@@ -49,10 +50,9 @@ final class AccessControlTasks {
         }
     }
 
-
     /**
-     * Adds a role mapping for a given role if the predicate returns {@code true}, proceeds otherwise.
-     * Expects an integer status code at the top of the context stack which is used to call the predicate.
+     * Adds a role mapping for a given role if the predicate returns {@code true}, proceeds otherwise. Expects an integer status
+     * code at the top of the context stack which is used to call the predicate.
      */
     static class AddRoleMapping implements Task<FlowContext> {
 
@@ -80,7 +80,6 @@ final class AccessControlTasks {
         }
     }
 
-
     /**
      * Modifies the include-all flag of a role-mapping. Please make sure that the role-mapping exists before using this
      * function. Use a combination of {@link CheckRoleMapping} and {@link AddRoleMapping} to do so.
@@ -107,10 +106,9 @@ final class AccessControlTasks {
         }
     }
 
-
     /**
-     * Removes a role mapping for a given role if the predicate returns {@code true}, proceeds otherwise.
-     * Expects an integer status code at the top of the context stack which is used to call the predicate.
+     * Removes a role mapping for a given role if the predicate returns {@code true}, proceeds otherwise. Expects an integer
+     * status code at the top of the context stack which is used to call the predicate.
      */
     static class RemoveRoleMapping implements Task<FlowContext> {
 
@@ -137,10 +135,9 @@ final class AccessControlTasks {
         }
     }
 
-
     /**
-     * Adds an assignment to a role-mapping. Please make sure that the role-mapping exists before using this task.
-     * Use a combination of {@link CheckRoleMapping} and {@link AddRoleMapping} to do so.
+     * Adds an assignment to a role-mapping. Please make sure that the role-mapping exists before using this task. Use a
+     * combination of {@link CheckRoleMapping} and {@link AddRoleMapping} to do so.
      */
     static class AddAssignment implements Task<FlowContext> {
 
@@ -170,10 +167,9 @@ final class AccessControlTasks {
         }
     }
 
-
     /**
-     * Removes assignments from a role-mapping. Please make sure that the role-mapping exists before using this
-     * function. Use a combination of {@link CheckRoleMapping} and {@link AddRoleMapping} to do so.
+     * Removes assignments from a role-mapping. Please make sure that the role-mapping exists before using this function. Use a
+     * combination of {@link CheckRoleMapping} and {@link AddRoleMapping} to do so.
      */
     static class RemoveAssignments implements Task<FlowContext> {
 
@@ -208,7 +204,6 @@ final class AccessControlTasks {
         }
     }
 
-
     /** Adds a scoped role. */
     static class AddScopedRole implements Task<FlowContext> {
 
@@ -234,7 +229,6 @@ final class AccessControlTasks {
         }
     }
 
-
     /** Modifies a scoped role. */
     static class ModifyScopedRole implements Task<FlowContext> {
 
@@ -259,7 +253,6 @@ final class AccessControlTasks {
         }
     }
 
-
     /**
      * Removes a scoped role.
      */
@@ -280,7 +273,6 @@ final class AccessControlTasks {
             return dispatcher.execute(operation).toCompletable();
         }
     }
-
 
     private AccessControlTasks() {
     }

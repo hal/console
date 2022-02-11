@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.runtime.subsystem.jaxrs;
 
@@ -19,13 +19,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental2.core.JsRegExp;
-import elemental2.dom.CSSProperties.MarginBottomUnionType;
-import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
 import org.jboss.hal.ballroom.PatternFly;
@@ -51,6 +44,15 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+
+import elemental2.core.JsRegExp;
+import elemental2.dom.CSSProperties.MarginBottomUnionType;
+import elemental2.dom.HTMLElement;
+
 import static com.google.gwt.safehtml.shared.SafeHtmlUtils.fromSafeConstant;
 import static elemental2.dom.DomGlobal.document;
 import static elemental2.dom.DomGlobal.window;
@@ -68,7 +70,7 @@ import static org.jboss.hal.resources.Strings.abbreviateFqClassName;
 class RestResourcePreview extends PreviewContent<RestResource> {
 
     private static final String LINK = "link";
-    private static final JsRegExp REGEX = new JsRegExp("\\{(.+)\\}", "g"); //NON-NLS
+    private static final JsRegExp REGEX = new JsRegExp("\\{(.+)\\}", "g"); // NON-NLS
 
     private final Environment environment;
     private final ServerActions serverActions;
@@ -99,7 +101,6 @@ class RestResourcePreview extends PreviewContent<RestResource> {
                 .title(r.messages().goTo(Names.DEPLOYMENTS)).element());
         getLeadElement().style.marginBottom = MarginBottomUnionType.of(0);
 
-
         List<ModelNode> resourcePaths = failSafeList(restResource, REST_RESOURCE_PATHS);
         if (!resourcePaths.isEmpty()) {
             previewBuilder().add(h(2, Names.RESOURCE_PATHS));
@@ -112,7 +113,7 @@ class RestResourcePreview extends PreviewContent<RestResource> {
                                         .add(div().css(panelHeading)
                                                 .add(h(3, resourcePath).css(panelTitle)))
                                         .add(body = div().css(panelBody, restResources).element()));
-                        for (Iterator<ModelNode> iterator = resources.iterator(); iterator.hasNext(); ) {
+                        for (Iterator<ModelNode> iterator = resources.iterator(); iterator.hasNext();) {
                             ModelNode resource = iterator.next();
                             if (resource.hasDefined(CONSUMES)) {
                                 appendMediaTypes(body, resource, CONSUMES, "&rarr;");
@@ -126,10 +127,10 @@ class RestResourcePreview extends PreviewContent<RestResource> {
                                         .collect(toList());
                                 HTMLElement p;
                                 body.appendChild(p = p().element());
-                                for (Iterator<String> rmIterator = resourceMethods.iterator(); rmIterator.hasNext(); ) {
+                                for (Iterator<String> rmIterator = resourceMethods.iterator(); rmIterator.hasNext();) {
                                     String resourceMethod = rmIterator.next();
                                     if (resourceMethod.contains(" ")) {
-                                        //noinspection UnstableApiUsage
+                                        // noinspection UnstableApiUsage
                                         List<String> parts = Splitter.on(' ').limit(2).splitToList(resourceMethod);
                                         if (parts.size() == 2) {
                                             String method = parts.get(0);
@@ -154,7 +155,7 @@ class RestResourcePreview extends PreviewContent<RestResource> {
                             }
                             if (resource.hasDefined(JAVA_METHOD)) {
                                 body.appendChild(pre().css(prettyPrint, langJava)
-                                        .style("white-space:pre-wrap") //NON-NLS
+                                        .style("white-space:pre-wrap") // NON-NLS
                                         .textContent(resource.get(JAVA_METHOD).asString()).element());
                             }
                             if (iterator.hasNext()) {
@@ -201,7 +202,7 @@ class RestResourcePreview extends PreviewContent<RestResource> {
         PatternFly.prettyPrint();
         List<HTMLElement> linkContainers = new ArrayList<>();
         forEach(e -> {
-            List<HTMLElement> elements = stream(e.querySelectorAll("[data-" + LINK + "]")) //NON-NLS
+            List<HTMLElement> elements = stream(e.querySelectorAll("[data-" + LINK + "]")) // NON-NLS
                     .filter(htmlElements())
                     .map(asHtmlElement())
                     .collect(toList());
@@ -232,7 +233,7 @@ class RestResourcePreview extends PreviewContent<RestResource> {
 
                                 } else {
                                     Elements.removeChildrenFrom(linkContainer);
-                                    //noinspection UnstableApiUsage
+                                    // noinspection UnstableApiUsage
                                     linkContainer.appendChild(a().css(clickable)
                                             .on(click, e -> specifyParameters(url.getUrl(), link, Splitter.on(',')
                                                     .splitToList(linkContainer.dataset.get(LINK))))
@@ -247,15 +248,15 @@ class RestResourcePreview extends PreviewContent<RestResource> {
     private void specifyParameters(String serverUrl, String link, List<String> params) {
         ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(Ids.REST_RESOURCE_PATH_PARAM_FORM,
                 Metadata.empty())
-                .addOnly()
-                .onSave((form, changedValues) -> {
-                    String withValues = link;
-                    for (String param : params) {
-                        String value = form.<String>getFormItem(param).getValue();
-                        withValues = withValues.replace("{" + param + "}", value);
-                    }
-                    window.open(serverUrl + withValues, serverId());
-                });
+                        .addOnly()
+                        .onSave((form, changedValues) -> {
+                            String withValues = link;
+                            for (String param : params) {
+                                String value = form.<String> getFormItem(param).getValue();
+                                withValues = withValues.replace("{" + param + "}", value);
+                            }
+                            window.open(serverUrl + withValues, serverId());
+                        });
         int i = 0;
         for (String param : params) {
             FormItem<String> formItem = new TextBoxItem(param, param);

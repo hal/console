@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.core.finder;
 
@@ -26,13 +26,6 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.common.collect.Iterables;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental2.dom.HTMLDivElement;
-import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
@@ -48,6 +41,15 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.spi.Footer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Iterables;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+
+import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLElement;
 import rx.Completable;
 import rx.CompletableEmitter;
 
@@ -61,9 +63,8 @@ import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Ids.FINDER;
 
 /**
- * The one and only finder which is shared across all different top level categories in HAL. The very same finder
- * instance gets injected into the different top level presenters. Only the columns will change when navigating between
- * the different places
+ * The one and only finder which is shared across all different top level categories in HAL. The very same finder instance gets
+ * injected into the different top level presenters. Only the columns will change when navigating between the different places
  */
 @SuppressWarnings("rawtypes")
 public class Finder implements IsElement<HTMLDivElement>, Attachable {
@@ -71,8 +72,8 @@ public class Finder implements IsElement<HTMLDivElement>, Attachable {
     static final String DATA_BREADCRUMB = "breadcrumb";
     static final String DATA_FILTER = "filter";
     /**
-     * The maximum number of simultaneously visible columns. If there are more columns, the left-most column is hidden.
-     * TODO Reduce the number of visible columns if the viewport gets smaller and change col-??-2 to col-??-3
+     * The maximum number of simultaneously visible columns. If there are more columns, the left-most column is hidden. TODO
+     * Reduce the number of visible columns if the viewport gets smaller and change col-??-2 to col-??-3
      */
     private static final int MAX_VISIBLE_COLUMNS = 4;
 
@@ -92,7 +93,6 @@ public class Finder implements IsElement<HTMLDivElement>, Attachable {
     private final HTMLDivElement root;
     private final HTMLElement previewColumn;
     private PreviewContent currentPreview;
-
 
     // ------------------------------------------------------ ui
 
@@ -119,7 +119,8 @@ public class Finder implements IsElement<HTMLDivElement>, Attachable {
         this.root = div().id(FINDER).css(row, finder)
                 .add(previewColumn = div()
                         .id(Ids.PREVIEW_ID)
-                        .css(finderPreview, column(12)).element()).element();
+                        .css(finderPreview, column(12)).element())
+                .element();
     }
 
     @Override
@@ -150,7 +151,6 @@ public class Finder implements IsElement<HTMLDivElement>, Attachable {
         int previewSize = MAX_COLUMNS - 2 * min((int) visibleColumns, MAX_VISIBLE_COLUMNS);
         previewColumn.className = finderPreview + " " + column(previewSize);
     }
-
 
     // ------------------------------------------------------ internal API
 
@@ -230,7 +230,7 @@ public class Finder implements IsElement<HTMLDivElement>, Attachable {
     }
 
     private void reduceAll() {
-        for (Iterator<HTMLElement> iterator = Elements.children(root).iterator(); iterator.hasNext(); ) {
+        for (Iterator<HTMLElement> iterator = Elements.children(root).iterator(); iterator.hasNext();) {
             HTMLElement element = iterator.next();
             if (element == previewColumn) {
                 break;
@@ -243,7 +243,7 @@ public class Finder implements IsElement<HTMLDivElement>, Attachable {
 
     void reduceTo(FinderColumn<?> column) {
         boolean removeFromHere = false;
-        for (Iterator<HTMLElement> iterator = Elements.children(root).iterator(); iterator.hasNext(); ) {
+        for (Iterator<HTMLElement> iterator = Elements.children(root).iterator(); iterator.hasNext();) {
             HTMLElement element = iterator.next();
             if (element == column.element()) {
                 removeFromHere = true;
@@ -355,7 +355,6 @@ public class Finder implements IsElement<HTMLDivElement>, Attachable {
         return securityContextRegistry;
     }
 
-
     // ------------------------------------------------------ public API
 
     /**
@@ -394,8 +393,8 @@ public class Finder implements IsElement<HTMLDivElement>, Attachable {
     /**
      * Refreshes the specified path.
      * <p>
-     * Please note that this might be a complex and long running operation since each segment in the path is turned into
-     * a function which reloads and re-selects the items.
+     * Please note that this might be a complex and long running operation since each segment in the path is turned into a
+     * function which reloads and re-selects the items.
      */
     public void refresh(FinderPath path) {
         if (!path.isEmpty()) {
@@ -424,11 +423,11 @@ public class Finder implements IsElement<HTMLDivElement>, Attachable {
     }
 
     /**
-     * Shows the finder associated with the specified token and selects the columns and items according to the given
-     * finder path.
+     * Shows the finder associated with the specified token and selects the columns and items according to the given finder
+     * path.
      * <p>
-     * Please note that this might be a complex and long running operation since each segment in the path is turned into
-     * a function. The function will load and initialize the column and select the item as specified in the segment.
+     * Please note that this might be a complex and long running operation since each segment in the path is turned into a
+     * function. The function will load and initialize the column and select the item as specified in the segment.
      * <p>
      * If the path is empty, the fallback operation is executed.
      */
@@ -507,7 +506,6 @@ public class Finder implements IsElement<HTMLDivElement>, Attachable {
         return context;
     }
 
-
     private class SelectTask implements Task<FlowContext> {
 
         private final FinderSegment segment;
@@ -547,7 +545,6 @@ public class Finder implements IsElement<HTMLDivElement>, Attachable {
         }
     }
 
-
     private class RefreshTask implements Task<FlowContext> {
 
         private final FinderSegment segment;
@@ -586,7 +583,7 @@ public class Finder implements IsElement<HTMLDivElement>, Attachable {
                 context.push(column);
                 emitter.onCompleted();
             } else {
-                //noinspection HardCodedStringLiteral
+                // noinspection HardCodedStringLiteral
                 emitter.onError(new RuntimeException("Error in Finder.RefreshTask: Unable to select item '" +
                         segment.getItemId() + "' in column '" + segment.getColumnId() + "'"));
             }

@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.dmr;
 
@@ -23,17 +23,19 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import org.jboss.hal.spi.EsParam;
+import org.jboss.hal.spi.EsReturn;
+
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.shared.DateTimeFormat;
+
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
-import org.jboss.hal.spi.EsParam;
-import org.jboss.hal.spi.EsReturn;
 
 import static com.google.common.base.CaseFormat.LOWER_HYPHEN;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
@@ -41,8 +43,8 @@ import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HAL_INDEX;
 
 /**
- * Static helper methods for dealing with {@link ModelNode}s and {@link NamedNode}s. Some methods accept a path
- * parameter separated by "/" to get a deeply nested data.
+ * Static helper methods for dealing with {@link ModelNode}s and {@link NamedNode}s. Some methods accept a path parameter
+ * separated by "/" to get a deeply nested data.
  */
 @JsType
 public class ModelNodeHelper {
@@ -65,7 +67,7 @@ public class ModelNodeHelper {
      * Tries to get a deeply nested model node from the specified model node. Nested paths must be separated with "/".
      *
      * @param modelNode The model node to read from
-     * @param path      A path separated with "/"
+     * @param path A path separated with "/"
      *
      * @return The nested node or an empty / undefined model node
      */
@@ -93,11 +95,10 @@ public class ModelNodeHelper {
     }
 
     /**
-     * Tries to get a deeply nested boolean value from the specified model node. Nested paths must be separated with
-     * "/".
+     * Tries to get a deeply nested boolean value from the specified model node. Nested paths must be separated with "/".
      *
      * @param modelNode The model node to read from
-     * @param path      A path separated with "/"
+     * @param path A path separated with "/"
      *
      * @return the boolean value or false.
      */
@@ -120,7 +121,8 @@ public class ModelNodeHelper {
                     date = date.substring(0, date.indexOf('['));
                 }
                 return ISO_8601.parse(date);
-            } catch (IllegalArgumentException ignore) { }
+            } catch (IllegalArgumentException ignore) {
+            }
         }
         return null;
     }
@@ -160,8 +162,8 @@ public class ModelNodeHelper {
     }
 
     /**
-     * Turns a list of properties into a list of named model nodes which contains a {@link
-     * ModelDescriptionConstants#NAME} key with the properties name.
+     * Turns a list of properties into a list of named model nodes which contains a {@link ModelDescriptionConstants#NAME} key
+     * with the properties name.
      */
     @JsIgnore
     public static List<NamedNode> asNamedNodes(List<Property> properties) {
@@ -210,7 +212,7 @@ public class ModelNodeHelper {
                     .trimResults()
                     .splitToList(source);
             if (!sourceNames.isEmpty()) {
-                for (Iterator<String> iterator = sourceNames.iterator(); iterator.hasNext(); ) {
+                for (Iterator<String> iterator = sourceNames.iterator(); iterator.hasNext();) {
                     String name = iterator.next();
                     String safeName = decodeValue(name);
                     if (context.hasDefined(safeName)) {
@@ -229,7 +231,7 @@ public class ModelNodeHelper {
                         .omitEmptyStrings()
                         .trimResults()
                         .splitToList(destination);
-                for (Iterator<String> iterator = destinationNames.iterator(); iterator.hasNext(); ) {
+                for (Iterator<String> iterator = destinationNames.iterator(); iterator.hasNext();) {
                     String name = iterator.next();
                     String safeName = decodeValue(name);
                     if (iterator.hasNext()) {
@@ -254,7 +256,7 @@ public class ModelNodeHelper {
         ModelNode modelNode = new ModelNode();
         if (properties != null) {
             List<String> p = Lists.newArrayList(properties);
-            for (Iterator<String> iterator = p.iterator(); iterator.hasNext(); ) {
+            for (Iterator<String> iterator = p.iterator(); iterator.hasNext();) {
                 String key = iterator.next();
                 if (iterator.hasNext()) {
                     String value = iterator.next();
@@ -270,14 +272,13 @@ public class ModelNodeHelper {
     private ModelNodeHelper() {
     }
 
-
     // ------------------------------------------------------ JS methods
 
     /**
      * Tries to get a deeply nested node array from the specified model node. Nested paths must be separated with "/".
      *
      * @param modelNode The model node to read from
-     * @param path      A path separated with "/"
+     * @param path A path separated with "/"
      *
      * @return the model nodes or an empty array
      */
@@ -289,11 +290,10 @@ public class ModelNodeHelper {
     }
 
     /**
-     * Tries to get a deeply nested property array from the specified model node. Nested paths must be separated with
-     * "/".
+     * Tries to get a deeply nested property array from the specified model node. Nested paths must be separated with "/".
      *
      * @param modelNode The model node to read from
-     * @param path      A path separated with "/"
+     * @param path A path separated with "/"
      *
      * @return the properties or an empty array
      */

@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.core.finder;
 
@@ -21,7 +21,6 @@ import java.util.function.Supplier;
 
 import javax.inject.Inject;
 
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.form.FormItemValidation;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.meta.AddressTemplate;
@@ -30,6 +29,8 @@ import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
+
+import elemental2.dom.HTMLElement;
 
 import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
@@ -50,11 +51,11 @@ public class ColumnActionFactory {
     }
 
     /**
-     * Returns a column action which opens an add-resource-dialog for the given resource type. The dialog contains
-     * fields for all required request properties.
+     * Returns a column action which opens an add-resource-dialog for the given resource type. The dialog contains fields for
+     * all required request properties.
      * <p>
-     * When clicking "Add", a new resource is added using the specified address template and the newly added resource
-     * is selected using the name as identifier in {@link FinderColumn#refresh(String)}.
+     * When clicking "Add", a new resource is added using the specified address template and the newly added resource is
+     * selected using the name as identifier in {@link FinderColumn#refresh(String)}.
      */
     public <T> ColumnAction<T> add(String id, String type, AddressTemplate template) {
         return add(id, type, template, Collections.emptyList(), Ids::asId, null);
@@ -66,11 +67,11 @@ public class ColumnActionFactory {
     }
 
     /**
-     * Returns a column action which opens an add-resource-dialog for the given resource type. The dialog contains
-     * fields for all required request properties plus the ones specified by {@code attributes}.
+     * Returns a column action which opens an add-resource-dialog for the given resource type. The dialog contains fields for
+     * all required request properties plus the ones specified by {@code attributes}.
      * <p>
-     * When clicking "Add", a new resource is added using the specified address template and the newly added resource
-     * is selected using the name as identifier in {@link FinderColumn#refresh(String)}.
+     * When clicking "Add", a new resource is added using the specified address template and the newly added resource is
+     * selected using the name as identifier in {@link FinderColumn#refresh(String)}.
      */
     public <T> ColumnAction<T> add(String id, String type, AddressTemplate template, Iterable<String> attributes) {
         return add(id, type, template, attributes, Ids::asId, null);
@@ -88,7 +89,7 @@ public class ColumnActionFactory {
 
     public <T> ColumnAction<T> add(String id, String type, AddressTemplate template, Iterable<String> attributes,
             Function<String, String> identifier, Supplier<FormItemValidation<String>> createValidator) {
-        //noinspection Convert2Lambda
+        // noinspection Convert2Lambda
         return add(id, type, template, new ColumnActionHandler<T>() {
             @Override
             public void execute(FinderColumn<T> column) {

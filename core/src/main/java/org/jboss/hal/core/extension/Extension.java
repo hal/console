@@ -1,24 +1,25 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.core.extension;
 
-import jsinterop.annotations.JsMethod;
-import jsinterop.annotations.JsType;
 import org.jboss.hal.ballroom.JsCallback;
 import org.jboss.hal.spi.EsParam;
+
+import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsType;
 
 /** Represents an extension written in JavaScript. */
 @JsType(namespace = "hal.core")
@@ -41,8 +42,8 @@ public class Extension {
     /**
      * Creates a header extension.
      *
-     * @param name       A unique name of the extension.
-     * @param title      The title of the menu item in the header.
+     * @param name A unique name of the extension.
+     * @param title The title of the menu item in the header.
      * @param entryPoint The entrypoint of the header extension.
      * @return the extension which can be registered using the {@link ExtensionRegistry}.
      */
@@ -54,8 +55,8 @@ public class Extension {
     /**
      * Creates a footer extension.
      *
-     * @param name       A unique name of the extension.
-     * @param title      The title of the menu item in the footer.
+     * @param name A unique name of the extension.
+     * @param title The title of the menu item in the footer.
      * @param entryPoint The entrypoint of the footer extension.
      * @return the extension which can be registered using the {@link ExtensionRegistry}.
      */

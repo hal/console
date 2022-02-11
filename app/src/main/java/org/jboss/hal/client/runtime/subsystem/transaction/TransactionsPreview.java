@@ -1,24 +1,23 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.runtime.subsystem.transaction;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.Format;
@@ -39,6 +38,8 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
+import elemental2.dom.HTMLElement;
+
 import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.client.runtime.subsystem.transaction.AddressTemplates.TRANSACTION_CONFIGURATION_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.transaction.AddressTemplates.TRANSACTION_RUNTIME_TEMPLATE;
@@ -50,7 +51,6 @@ public class TransactionsPreview extends PreviewContent<SubsystemMetadata> {
     enum TransactionStatus {
         COMMITTED, ABORTED, HEURISTICS, TIMEDOUT_ROLLBACK, SYSTEM_ROLLBACK, RESOURCE_ROLLBACK, APPLICATION_ROLLBACK
     }
-
 
     private Donut transactions;
     private EmptyState noStatistics;
@@ -92,7 +92,7 @@ public class TransactionsPreview extends PreviewContent<SubsystemMetadata> {
         transactions = new Donut.Builder(Names.TRANSACTIONS)
                 .add(TransactionStatus.COMMITTED.name(), cons.committed(), PatternFly.colors.green)
                 .add(TransactionStatus.ABORTED.name(), cons.aborted(), PatternFly.colors.red)
-                //.add(TransactionStatus.HEURISTICS.name(), cons.heuristics(), PatternFly.colors.orange)
+                // .add(TransactionStatus.HEURISTICS.name(), cons.heuristics(), PatternFly.colors.orange)
                 .add(TransactionStatus.TIMEDOUT_ROLLBACK.name(), cons.timedOut(), PatternFly.colors.red300)
                 .add(TransactionStatus.SYSTEM_ROLLBACK.name(), cons.systemRollback(), PatternFly.colors.purple)
                 .add(TransactionStatus.RESOURCE_ROLLBACK.name(), cons.resourceRollback(),
@@ -136,7 +136,7 @@ public class TransactionsPreview extends PreviewContent<SubsystemMetadata> {
                 Map<String, Long> txUpdates = new HashMap<>(7);
                 txUpdates.put(TransactionStatus.COMMITTED.name(), committed);
                 txUpdates.put(TransactionStatus.ABORTED.name(), aborted);
-                //txUpdates.put(TransactionStatus.HEURISTICS.name(), heuristics);
+                // txUpdates.put(TransactionStatus.HEURISTICS.name(), heuristics);
                 txUpdates.put(TransactionStatus.TIMEDOUT_ROLLBACK.name(), timedout);
                 txUpdates.put(TransactionStatus.SYSTEM_ROLLBACK.name(), systemRollbacks);
                 txUpdates.put(TransactionStatus.RESOURCE_ROLLBACK.name(), resourceRollbacks);

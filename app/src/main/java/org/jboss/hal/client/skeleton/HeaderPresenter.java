@@ -1,27 +1,22 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.skeleton;
 
 import javax.inject.Inject;
 
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.PresenterWidget;
-import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
@@ -73,21 +68,27 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.MessageEvent.MessageHandler;
 
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.PresenterWidget;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+
+import elemental2.dom.HTMLElement;
+
 import static elemental2.dom.DomGlobal.location;
 import static elemental2.dom.DomGlobal.window;
 import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.hal.config.Settings.Key.RUN_AS;
 
 /**
- * Presenter which controls the header. The header is a central UI element in HAL showing global state such as
- * reload state, notifications or the current user. Additionally it contains the navigation which is either the
- * top level categories (tlc) or the breadcrumb.
+ * Presenter which controls the header. The header is a central UI element in HAL showing global state such as reload state,
+ * notifications or the current user. Additionally it contains the navigation which is either the top level categories (tlc) or
+ * the breadcrumb.
  * <p>
- * The breadcrumb shows path like information such as the selected finder path or the selected address in the model
- * browser. The breadcrumb consists of these parts:
+ * The breadcrumb shows path like information such as the selected finder path or the selected address in the model browser. The
+ * breadcrumb consists of these parts:
  * <ol>
- * <li>The back link which <em>always</em> brings you back to the last finder selection (unlike the browser's back
- * button)</li>
+ * <li>The back link which <em>always</em> brings you back to the last finder selection (unlike the browser's back button)</li>
  * <li>The main part which is either
  * <ul>
  * <li>a title</li>
@@ -96,15 +97,15 @@ import static org.jboss.hal.config.Settings.Key.RUN_AS;
  * </ul>
  * <li>A collection of tools / icons. Currently the following tools are available:
  * <ul>
- * <li>Switch between normal and expert mode. If supported by the current presenter, the user can switch between the
- * normal and an expert mode which uses the model browser to show a generic view of the current resource.</li>
+ * <li>Switch between normal and expert mode. If supported by the current presenter, the user can switch between the normal and
+ * an expert mode which uses the model browser to show a generic view of the current resource.</li>
  * <li>Open the current presenter in external tab / window w/o the header and footer.</li>
- * </ul></li>
- * </li>
+ * </ul>
+ * </li></li>
  * </ol>
  * <p>
- * The header presenter is not part of the actual presenters such as finder or application presenters, its content can
- * only be controlled by sending events. A direct modification using methods is not allowed.
+ * The header presenter is not part of the actual presenters such as finder or application presenters, its content can only be
+ * controlled by sending events. A direct modification using methods is not allowed.
  */
 public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> implements IsElement,
         // handlers (a-z)
@@ -196,7 +197,6 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
         }
     }
 
-
     // ------------------------------------------------------ reload / restart
 
     @Override
@@ -260,7 +260,6 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
         serverState = null;
         getView().hideReload();
     }
-
 
     // ------------------------------------------------------ messages & global state
 
@@ -328,7 +327,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
             }
             if (event.isSupportsExternal()) {
                 PlaceRequest placeRequest = new PlaceRequest.Builder(placeManager.getCurrentPlaceRequest())
-                        .with(Places.EXTERNAL_PARAM, "true") //NON-NLS
+                        .with(Places.EXTERNAL_PARAM, "true") // NON-NLS
                         .build();
                 getView().showExternal(placeRequest);
             } else {
@@ -364,7 +363,6 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
         return lastFinderContext;
     }
 
-
     // ------------------------------------------------------ user & roles
 
     @Override
@@ -393,7 +391,6 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
                 });
     }
 
-
     // ------------------------------------------------------ place management
 
     void switchToExpertMode(ResourceAddress address) {
@@ -421,39 +418,50 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
         placeManager.revealPlace(placeRequest);
     }
 
-
     // ------------------------------------------------------ inner classes
-
 
     // @formatter:off
     public interface MyView extends HalView, HasPresenter<HeaderPresenter> {
         void init(Environment environment, Endpoints endpoints, Settings settings, User user);
+
         void updateRoles(Environment environment, Settings settings, User user);
 
         void topLevelCategoryMode();
+
         void applicationMode();
 
         void showReload(String text, String tooltip);
+
         void hideReload();
+
         void hideReconnect();
 
         void onNonProgressingOperation(boolean display);
+
         void onMessage(Message message);
+
         void onMarkAllAsRead();
+
         void onClearMessage();
 
         void selectTopLevelCategory(String nameToken);
+
         void updateLinks(FinderContext finderContext);
 
         void updateBreadcrumb(String title);
+
         void updateBreadcrumb(FinderContext finderContext);
+
         void updateBreadcrumb(ModelBrowserPath modelBrowserPath);
 
         void showBackToNormalMode();
+
         void showExpertMode(ResourceAddress address);
+
         void hideSwitchMode();
 
         void showExternal(PlaceRequest placeRequest);
+
         void hideExternal();
     }
     // @formatter:on

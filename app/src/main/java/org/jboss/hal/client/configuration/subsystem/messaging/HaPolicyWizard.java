@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.messaging;
 
@@ -30,46 +30,44 @@ class HaPolicyWizard {
         wizard = new Wizard.Builder<Context, State>(resources.messages().addResourceTitle(Names.HA_POLICY),
                 new Context())
 
-                .onBack((context, currentState) -> {
-                    State state = null;
-                    switch (currentState) {
-                        case CHOOSE_POLICY:
-                            state = CHOOSE_STRATEGY;
-                            break;
-                        default:
-                            break;
-                    }
-                    return state;
-                })
+                        .onBack((context, currentState) -> {
+                            State state = null;
+                            switch (currentState) {
+                                case CHOOSE_POLICY:
+                                    state = CHOOSE_STRATEGY;
+                                    break;
+                                default:
+                                    break;
+                            }
+                            return state;
+                        })
 
-                .onNext((context, currentState) -> {
-                    State state = null;
-                    switch (currentState) {
-                        case CHOOSE_STRATEGY:
-                            state = CHOOSE_POLICY;
-                            break;
-                        default:
-                            break;
-                    }
-                    return state;
-                })
+                        .onNext((context, currentState) -> {
+                            State state = null;
+                            switch (currentState) {
+                                case CHOOSE_STRATEGY:
+                                    state = CHOOSE_POLICY;
+                                    break;
+                                default:
+                                    break;
+                            }
+                            return state;
+                        })
 
-                .onFinish(callback)
+                        .onFinish(callback)
 
-                .addStep(CHOOSE_STRATEGY, new ChooseStrategyStep(resources))
-                .addStep(CHOOSE_POLICY, new ChoosePolicyStep(resources))
-                .build();
+                        .addStep(CHOOSE_STRATEGY, new ChooseStrategyStep(resources))
+                        .addStep(CHOOSE_POLICY, new ChoosePolicyStep(resources))
+                        .build();
     }
 
     void show() {
         wizard.show();
     }
 
-
     enum State {
         CHOOSE_STRATEGY, CHOOSE_POLICY
     }
-
 
     static class Context {
 

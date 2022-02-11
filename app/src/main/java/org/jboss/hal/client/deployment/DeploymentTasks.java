@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.deployment;
 
@@ -24,10 +24,6 @@ import java.util.Set;
 
 import javax.inject.Provider;
 
-import com.google.common.collect.Lists;
-import com.google.web.bindery.event.shared.EventBus;
-import elemental2.dom.File;
-import elemental2.dom.FileList;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.deployment.Content;
 import org.jboss.hal.core.deployment.Deployment;
@@ -51,6 +47,12 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
+import com.google.web.bindery.event.shared.EventBus;
+
+import elemental2.dom.File;
+import elemental2.dom.FileList;
 import rx.Completable;
 
 import static java.util.function.Function.identity;
@@ -117,7 +119,6 @@ class DeploymentTasks {
     private DeploymentTasks() {
     }
 
-
     /** Loads the contents form the content repository and pushes a {@code List<Content>} onto the context stack. */
     static class LoadContent implements Task<FlowContext> {
 
@@ -129,7 +130,7 @@ class DeploymentTasks {
         }
 
         /**
-         * @param dispatcher  the dispatcher
+         * @param dispatcher the dispatcher
          * @param serverGroup use "*" to find deployments on any server group
          */
         LoadContent(Dispatcher dispatcher, String serverGroup) {
@@ -173,10 +174,9 @@ class DeploymentTasks {
         }
     }
 
-
     /**
-     * Reads the deployments of the specified server group. Stores the list in the context under the key {@link
-     * DeploymentTasks#SERVER_GROUP_DEPLOYMENTS}. Stores an empty list if there are no deployments or if running in
+     * Reads the deployments of the specified server group. Stores the list in the context under the key
+     * {@link DeploymentTasks#SERVER_GROUP_DEPLOYMENTS}. Stores an empty list if there are no deployments or if running in
      * standalone mode.
      */
     static class ReadServerGroupDeployments implements Task<FlowContext> {
@@ -240,7 +240,6 @@ class DeploymentTasks {
         }
     }
 
-
     /** Deploys the specified content to the specified server group. The deployment is not enable on the server group. */
     static class AddServerGroupDeployment implements Task<FlowContext> {
 
@@ -279,11 +278,10 @@ class DeploymentTasks {
         }
     }
 
-
     /**
      * Loads the deployments of the first running server from the list of running servers in the context under the key
-     * {@link TopologyTasks#SERVERS}. Expects the list of deployments under the key {@link #SERVER_GROUP_DEPLOYMENTS} in
-     * the context. Updates all matching deployments with the deployments from the running server.
+     * {@link TopologyTasks#SERVERS}. Expects the list of deployments under the key {@link #SERVER_GROUP_DEPLOYMENTS} in the
+     * context. Updates all matching deployments with the deployments from the running server.
      */
     static class LoadDeploymentsFromRunningServer implements Task<FlowContext> {
 
@@ -308,10 +306,10 @@ class DeploymentTasks {
                     Server referenceServer = runningServers.get(0);
                     Operation operation = new Operation.Builder(referenceServer.getServerAddress(),
                             READ_CHILDREN_RESOURCES_OPERATION)
-                            .param(CHILD_TYPE, DEPLOYMENT)
-                            .param(INCLUDE_RUNTIME, true)
-                            .param(RECURSIVE_DEPTH, 1)
-                            .build();
+                                    .param(CHILD_TYPE, DEPLOYMENT)
+                                    .param(INCLUDE_RUNTIME, true)
+                                    .param(RECURSIVE_DEPTH, 1)
+                                    .build();
                     completable = dispatcher.execute(operation).doOnSuccess(result -> {
                         Map<String, Deployment> deploymentsByName = result.asPropertyList().stream()
                                 .map(property -> new Deployment(referenceServer, property.getValue()))
@@ -324,7 +322,6 @@ class DeploymentTasks {
             return completable;
         }
     }
-
 
     /**
      * Checks whether a deployment with the given name exists and pushes {@code 200} to the context stack if it exists,
@@ -358,14 +355,11 @@ class DeploymentTasks {
         }
     }
 
-
     /**
-     * Creates a new deployment or replaces an existing deployment. The function looks for a status code in the context.
-     * If no status context or {@code 404} is found, a new deployment is created, if {@code 200} is found the deployment
-     * is replaced.
+     * Creates a new deployment or replaces an existing deployment. The function looks for a status code in the context. If no
+     * status context or {@code 404} is found, a new deployment is created, if {@code 200} is found the deployment is replaced.
      * <p>
-     * The function puts an {@link UploadStatistics} under the key {@link DeploymentTasks#UPLOAD_STATISTICS} into the
-     * context.
+     * The function puts an {@link UploadStatistics} under the key {@link DeploymentTasks#UPLOAD_STATISTICS} into the context.
      */
     static class UploadOrReplace implements Task<FlowContext> {
 
@@ -399,7 +393,7 @@ class DeploymentTasks {
             }
 
             if (replace) {
-                builder = new Operation.Builder(ResourceAddress.root(), FULL_REPLACE_DEPLOYMENT) //NON-NLS
+                builder = new Operation.Builder(ResourceAddress.root(), FULL_REPLACE_DEPLOYMENT) // NON-NLS
                         .param(NAME, name)
                         .param(RUNTIME_NAME, runtimeName);
                 // leave "enabled" as undefined to indicate that the state of the existing deployment should be retained
@@ -410,7 +404,7 @@ class DeploymentTasks {
 
             }
             Operation operation = builder.build();
-            operation.get(CONTENT).add().get(INPUT_STREAM_INDEX).set(0); //NON-NLS
+            operation.get(CONTENT).add().get(INPUT_STREAM_INDEX).set(0); // NON-NLS
 
             return dispatcher.upload(file, operation)
                     .doOnSuccess(result -> {
@@ -437,7 +431,6 @@ class DeploymentTasks {
         }
     }
 
-
     /** Adds an unmanaged deployment. */
     static class AddUnmanagedDeployment implements Task<FlowContext> {
 
@@ -459,7 +452,6 @@ class DeploymentTasks {
             return dispatcher.execute(operation).toCompletable();
         }
     }
-
 
     private static class UploadOutcome<T> extends Outcome<FlowContext> {
 

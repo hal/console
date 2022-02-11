@@ -1,22 +1,24 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.ballroom.table;
 
 import java.util.Collections;
 import java.util.List;
+
+import org.jboss.hal.ballroom.JQuery;
 
 import elemental2.dom.HTMLElement;
 import jsinterop.annotations.JsFunction;
@@ -25,7 +27,6 @@ import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 import jsinterop.base.Js;
-import org.jboss.hal.ballroom.JQuery;
 
 import static java.util.Arrays.asList;
 import static jsinterop.annotations.JsPackage.GLOBAL;
@@ -34,13 +35,13 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
 /**
  * Subset of the DataTables API.
  * <p>
- * This class and every member of this class is considered to be an internal API and should not be used outside of
- * package {@code org.jboss.hal.ballroom.table}.
+ * This class and every member of this class is considered to be an internal API and should not be used outside of package
+ * {@code org.jboss.hal.ballroom.table}.
  *
  * @see <a href="https://datatables.net/reference/api/">https://datatables.net/reference/api/</a>
  */
 @JsType(isNative = true)
-@SuppressWarnings({"UnusedReturnValue", "WeakerAccess"})
+@SuppressWarnings({ "UnusedReturnValue", "WeakerAccess" })
 class Api<T> {
 
     // ------------------------------------------------------ initialization
@@ -51,13 +52,11 @@ class Api<T> {
     @JsMethod(name = "DataTable")
     native Api<T> dataTable(Options options);
 
-
     // ------------------------------------------------------ properties
 
     // We cannot have both a property and a method named equally.
     // That's why the API defines the property "row" and the method "rows"
     @JsProperty Row<T> row;
-
 
     // ------------------------------------------------------ API a-z
 
@@ -82,14 +81,14 @@ class Api<T> {
     /**
      * Adds a callback. Currently restricted to the "select", "deselect" and "draw" event.
      *
-     * @param event    must be "select", "deselect" or "draw"
+     * @param event must be "select", "deselect" or "draw"
      * @param callback the callback
      */
     native Api<T> on(String event, CallbackUnionType<T> callback);
 
     /**
-     * Select all rows, but apply the specified modifier (e.g. to return only selected rows). Chain the {@link #data()}
-     * to get the actual data.
+     * Select all rows, but apply the specified modifier (e.g. to return only selected rows). Chain the {@link #data()} to get
+     * the actual data.
      */
     native Api<T> rows(SelectorModifier selectorModifier);
 
@@ -104,13 +103,12 @@ class Api<T> {
     native Api<T> rows(RowSelection<T> selection);
 
     /**
-     * Selects the row(s) that have been found by the {@link #rows(RowSelection)}, {@link #rows(HTMLElement)} or {@link
-     * #rows(SelectorModifier)} selector methods.
+     * Selects the row(s) that have been found by the {@link #rows(RowSelection)}, {@link #rows(HTMLElement)} or
+     * {@link #rows(SelectorModifier)} selector methods.
      */
     native Api<T> select();
 
     native T[] toArray();
-
 
     // ------------------------------------------------------ overlay methods
 
@@ -143,9 +141,7 @@ class Api<T> {
         return asList(selection);
     }
 
-
     // ------------------------------------------------------ button(s)
-
 
     /**
      * Custom data tables button.
@@ -164,11 +160,11 @@ class Api<T> {
         // not part of the DataTables API, but used to have a reference back to the table in ActionHandler
         Table<T> table;
 
-
         /**
          * Action handler for a custom button.
          *
-         * @see <a href="https://datatables.net/reference/option/buttons.buttons.action">https://datatables.net/reference/option/buttons.buttons.action</a>
+         * @see <a href=
+         *      "https://datatables.net/reference/option/buttons.buttons.action">https://datatables.net/reference/option/buttons.buttons.action</a>
          */
         @JsFunction
         interface ActionHandler<T> {
@@ -176,7 +172,6 @@ class Api<T> {
             void action(Object event, Object api, Object node, Button<T> btn);
         }
     }
-
 
     /**
      * Buttons options.
@@ -191,13 +186,11 @@ class Api<T> {
         Button<T>[] buttons;
         Dom dom;
 
-
         @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
         static class Dom {
 
             Factory container;
             Factory button;
-
 
             @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
             static class Factory {
@@ -208,9 +201,7 @@ class Api<T> {
         }
     }
 
-
     // ------------------------------------------------------ rows
-
 
     /**
      * Represents the {@code row} property in a data table.
@@ -227,12 +218,12 @@ class Api<T> {
         native Api<T> add(T data);
     }
 
-
     /**
      * Function to be used as a row selector in {@link Api#rows(RowSelection)}.
      *
      * @author Harald Pehl
-     * @see <a href="https://datatables.net/reference/type/row-selector#Function">https://datatables.net/reference/type/row-selector#Function</a>
+     * @see <a href=
+     *      "https://datatables.net/reference/type/row-selector#Function">https://datatables.net/reference/type/row-selector#Function</a>
      */
     @JsFunction
     interface RowSelection<T> {
@@ -240,9 +231,7 @@ class Api<T> {
         boolean select(int index, T data, HTMLElement tr);
     }
 
-
     // ------------------------------------------------------ selection
-
 
     /**
      * Select options.
@@ -268,7 +257,6 @@ class Api<T> {
         String style;
     }
 
-
     /**
      * Callback used for all kind of "select" and "deselect" events.
      *
@@ -282,9 +270,7 @@ class Api<T> {
         void onSelect(Object event, Api<T> api, String type);
     }
 
-
     // ------------------------------------------------------ draw
-
 
     @JsFunction
     interface DrawCallback {
@@ -292,9 +278,7 @@ class Api<T> {
         void afterDraw(Object event, Object settings);
     }
 
-
     // ------------------------------------------------------ callback union type
-
 
     @JsType(isNative = true, namespace = GLOBAL, name = "?")
     interface CallbackUnionType<T> {

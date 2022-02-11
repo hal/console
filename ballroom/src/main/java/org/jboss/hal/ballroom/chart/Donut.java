@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.ballroom.chart;
 
@@ -20,14 +20,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import elemental2.core.JsArray;
-import elemental2.dom.HTMLElement;
-import jsinterop.base.JsPropertyMap;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.js.JsHelper;
 import org.jboss.hal.resources.Strings;
 import org.jboss.hal.resources.UIConstants;
+
+import elemental2.core.JsArray;
+import elemental2.dom.HTMLElement;
+import jsinterop.base.JsPropertyMap;
 
 import static elemental2.dom.DomGlobal.window;
 import static org.jboss.gwt.elemento.core.Elements.div;
@@ -39,7 +40,8 @@ import static org.jboss.hal.resources.UIConstants.HASH;
 /**
  * Chart to show the relationship of a set of values to a whole.
  *
- * @see <a href="https://www.patternfly.org/pattern-library/data-visualization/donut-chart/">https://www.patternfly.org/pattern-library/data-visualization/donut-chart/</a>
+ * @see <a href=
+ *      "https://www.patternfly.org/pattern-library/data-visualization/donut-chart/">https://www.patternfly.org/pattern-library/data-visualization/donut-chart/</a>
  */
 public class Donut implements IsElement<HTMLElement>, Attachable {
 
@@ -123,8 +125,8 @@ public class Donut implements IsElement<HTMLElement>, Attachable {
         }
 
         Charts.setDonutChartTitle(HASH + root.id, String.valueOf(total), builder.unit);
-        dataMap.set("columns", columns); //NON-NLS
-        dataMap.set("names", names); //NON-NLS
+        dataMap.set("columns", columns); // NON-NLS
+        dataMap.set("names", names); // NON-NLS
         api().load(dataMap);
     }
 
@@ -142,9 +144,9 @@ public class Donut implements IsElement<HTMLElement>, Attachable {
 
     private String nameAndCount(String name, long count) {
         String[] parts = name.split("[-_]");
-        return Arrays.stream(parts).map(String::toLowerCase).map(Strings::capitalize).collect(Collectors.joining(" ")) + ": " + count;
+        return Arrays.stream(parts).map(String::toLowerCase).map(Strings::capitalize).collect(Collectors.joining(" ")) + ": "
+                + count;
     }
-
 
     public enum Legend {
         NONE(200, 171), RIGHT(291, 161), BOTTOM(271, 191);
@@ -159,7 +161,6 @@ public class Donut implements IsElement<HTMLElement>, Attachable {
             this.ratio = (double) width / height;
         }
     }
-
 
     public static class Builder {
 

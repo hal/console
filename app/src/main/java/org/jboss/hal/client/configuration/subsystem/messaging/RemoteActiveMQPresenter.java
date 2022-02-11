@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.messaging;
 
@@ -20,10 +20,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.CrudOperations;
@@ -49,6 +45,11 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
+
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.annotations.NameToken;
+import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
 import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.*;
@@ -183,7 +184,6 @@ public class RemoteActiveMQPresenter
         return resource != null ? POOLED_CONNECTION_FACTORY_REMOTE_TEMPLATE.resolve(statementContext, resource) : null;
     }
 
-
     void add(RemoteActiveMQSubResource ssr) {
         ssr.add(metadataRegistry, statementContext, crud, resources, (n, a) -> reload());
     }
@@ -204,9 +204,10 @@ public class RemoteActiveMQPresenter
     void remove(RemoteActiveMQSubResource ssr, NamedNode item) {
         ssr.remove(item, statementContext, crud, this::reload);
     }
+
     // @formatter:off
     @ProxyCodeSplit
-    @Requires({CONNECTOR_REMOTE_ADDRESS, IN_VM_CONNECTOR_REMOTE_ADDRESS, HTTP_CONNECTOR_REMOTE_ADDRESS,
+    @Requires({ CONNECTOR_REMOTE_ADDRESS, IN_VM_CONNECTOR_REMOTE_ADDRESS, HTTP_CONNECTOR_REMOTE_ADDRESS,
             REMOTE_CONNECTOR_REMOTE_ADDRESS, DISCOVERY_GROUP_REMOTE_ADDRESS, CONNECTION_FACTORY_REMOTE_ADDRESS,
             POOLED_CONNECTION_FACTORY_REMOTE_ADDRESS, EXTERNAL_JMS_QUEUE_ADDRESS, EXTERNAL_JMS_TOPIC_ADDRESS
     })
@@ -216,13 +217,21 @@ public class RemoteActiveMQPresenter
 
     public interface MyView extends MbuiView<RemoteActiveMQPresenter> {
         void updateConnector(List<NamedNode> connectors);
+
         void updateInVmConnector(List<NamedNode> inVmConnectors);
+
         void updateHttpConnector(List<NamedNode> httpConnectors);
+
         void updateRemoteConnector(List<NamedNode> remoteConnectors);
+
         void updateDiscoveryGroup(List<NamedNode> connectorServices);
+
         void updateConnectionFactory(List<NamedNode> connectionFactories);
+
         void updatePooledConnectionFactory(List<NamedNode> pooledConnectionFactories);
+
         void updateExternalQueue(List<NamedNode> nodes);
+
         void updateExternalTopic(List<NamedNode> nodes);
     }
     // @formatter:on

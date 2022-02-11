@@ -1,29 +1,30 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.ballroom;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import org.jboss.hal.resources.Constants;
+import org.jboss.hal.resources.Names;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.i18n.shared.DateTimeFormat;
 import com.google.gwt.i18n.shared.DateTimeFormat.PredefinedFormat;
-import org.jboss.hal.resources.Constants;
-import org.jboss.hal.resources.Names;
 
 public final class Format {
 
@@ -34,7 +35,6 @@ public final class Format {
     private static final NumberFormat SIZE_FORMAT = NumberFormat.getFormat("#,##0.#");
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final String SPACE = " ";
-
 
     public static String timestamp(Date date) {
         return date != null ? TIMESTAMP.format(date) : Names.NOT_AVAILABLE;
@@ -56,7 +56,7 @@ public final class Format {
         if (size <= 0) {
             return "0";
         }
-        String[] units = new String[]{"Bytes", "KB", "MB", "GB", "TB"}; //NON-NLS
+        String[] units = new String[] { "Bytes", "KB", "MB", "GB", "TB" }; // NON-NLS
         int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
         return SIZE_FORMAT.format(size / Math.pow(1024, digitGroups)) + SPACE + units[digitGroups];
     }
@@ -70,7 +70,7 @@ public final class Format {
      */
     public static String humanReadableDuration(long duration) {
         if (duration < 1000) {
-            return duration + " ms"; //NON-NLS
+            return duration + " ms"; // NON-NLS
         }
 
         duration = Math.round(duration / 1000.0);
@@ -134,7 +134,6 @@ public final class Format {
             return duration + " ns ";
         }
     }
-
 
     private Format() {
     }

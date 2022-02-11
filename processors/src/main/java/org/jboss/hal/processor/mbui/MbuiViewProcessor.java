@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.processor.mbui;
 
@@ -41,10 +41,6 @@ import javax.lang.model.util.ElementFilter;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 
-import com.google.auto.common.MoreElements;
-import com.google.auto.service.AutoService;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
 import org.jboss.auto.AbstractProcessor;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
@@ -61,6 +57,11 @@ import org.jdom2.input.SAXBuilder;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 
+import com.google.auto.common.MoreElements;
+import com.google.auto.service.AutoService;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+
 import static org.jboss.hal.processor.mbui.ElementType.Form;
 import static org.jboss.hal.processor.mbui.ElementType.Table;
 import static org.jboss.hal.processor.mbui.ElementType.VerticalNavigation;
@@ -76,8 +77,8 @@ public class MbuiViewProcessor extends AbstractProcessor {
     private static final String SLASH_SLASH = "//";
 
     /**
-     * Method to reset the various counters to generate unique variables names. Used to simplify unit testing - do not
-     * use in production code!
+     * Method to reset the various counters to generate unique variables names. Used to simplify unit testing - do not use in
+     * production code!
      */
     static void resetCounter() {
         Content.counter = 0;
@@ -106,7 +107,6 @@ public class MbuiViewProcessor extends AbstractProcessor {
         }
         return false;
     }
-
 
     // ------------------------------------------------------ general validation
 
@@ -162,11 +162,10 @@ public class MbuiViewProcessor extends AbstractProcessor {
         return processingEnv.getElementUtils().getTypeElement(c.getName()).asType();
     }
 
-
     // ------------------------------------------------------ processing
 
     protected void processType(TypeElement type, MbuiView mbuiView) {
-        String subclass = TypeSimplifier.simpleNameOf(generatedClassName(type, "")); //NON-NLS
+        String subclass = TypeSimplifier.simpleNameOf(generatedClassName(type, "")); // NON-NLS
         String createMethod = verifyCreateMethod(type);
         MbuiViewContext context = new MbuiViewContext(TypeSimplifier.packageNameOf(type),
                 TypeSimplifier.classNameOf(type), subclass, createMethod);
@@ -195,8 +194,8 @@ public class MbuiViewProcessor extends AbstractProcessor {
 
         // generate code
         code(TEMPLATE, context.getPackage(), context.getSubclass(),
-                () -> ImmutableMap.of("context", context)); //NON-NLS
-        info("Generated MBUI view implementation [%s] for [%s]", context.getSubclass(), context.getBase()); //NON-NLS
+                () -> ImmutableMap.of("context", context)); // NON-NLS
+        info("Generated MBUI view implementation [%s] for [%s]", context.getSubclass(), context.getBase()); // NON-NLS
     }
 
     String generatedClassName(TypeElement type, String suffix) {
@@ -219,12 +218,11 @@ public class MbuiViewProcessor extends AbstractProcessor {
         if (createMethod.isPresent()) {
             return createMethod.get().getSimpleName().toString();
         } else {
-            error(type, "@%s needs to define one static method which returns an %s instance", //NON-NLS
+            error(type, "@%s needs to define one static method which returns an %s instance", // NON-NLS
                     MbuiView.class.getSimpleName(), type.getSimpleName());
             return null;
         }
     }
-
 
     // ------------------------------------------------------ XML processing
 
@@ -280,13 +278,12 @@ public class MbuiViewProcessor extends AbstractProcessor {
         for (org.jdom2.Element element : expression.evaluate(document)) {
             String template = element.getAttributeValue(XmlTags.ADDRESS);
             if (template == null) {
-                error(type, "Missing address attribute in metadata element \"%s\"", xmlAsString(element)); //NON-NLS
+                error(type, "Missing address attribute in metadata element \"%s\"", xmlAsString(element)); // NON-NLS
             } else {
                 context.addMetadata(template);
             }
         }
     }
-
 
     // ------------------------------------------------------ process @MbuiElement
 
@@ -337,7 +334,7 @@ public class MbuiViewProcessor extends AbstractProcessor {
     private String getSelector(Element element) {
         String selector = null;
 
-        //noinspection Guava
+        // noinspection Guava
         com.google.common.base.Optional<AnnotationMirror> annotationMirror = MoreElements
                 .getAnnotationMirror(element, MbuiElement.class);
         if (annotationMirror.isPresent()) {
@@ -356,10 +353,10 @@ public class MbuiViewProcessor extends AbstractProcessor {
         List<org.jdom2.Element> elements = expression.evaluate(document);
         if (elements.isEmpty()) {
             error(element,
-                    "Cannot find a matching element in the MBUI XML with id \"%s\".", selector); //NON-NLS
+                    "Cannot find a matching element in the MBUI XML with id \"%s\".", selector); // NON-NLS
         } else if (elements.size() > 1) {
             error(element,
-                    "Found %d matching elements in the MBUI XML with id \"%s\". Id must be unique.", //NON-NLS
+                    "Found %d matching elements in the MBUI XML with id \"%s\". Id must be unique.", // NON-NLS
                     elements.size(), selector);
         }
         return elements.get(0);
@@ -377,7 +374,6 @@ public class MbuiViewProcessor extends AbstractProcessor {
         }
     }
 
-
     // ------------------------------------------------------ process root
 
     private void processRoot(Document document, MbuiViewContext context) {
@@ -386,7 +382,6 @@ public class MbuiViewProcessor extends AbstractProcessor {
             Content.parse(document.getRootElement(), context).forEach(context::addContent);
         }
     }
-
 
     // ------------------------------------------------------ process references
 
@@ -432,12 +427,12 @@ public class MbuiViewProcessor extends AbstractProcessor {
             if (elementInfo != null) {
                 // find parent (sub)item
                 XPathExpression<org.jdom2.Element> parentItemExpression = xPathFactory
-                        .compile("ancestor::" + XmlTags.SUB_ITEM, //NON-NLS
+                        .compile("ancestor::" + XmlTags.SUB_ITEM, // NON-NLS
                                 Filters.element());
                 org.jdom2.Element parentItemElement = parentItemExpression.evaluateFirst(element);
                 if (parentItemElement == null) {
                     parentItemExpression = xPathFactory
-                            .compile("ancestor::" + XmlTags.ITEM, Filters.element()); //NON-NLS
+                            .compile("ancestor::" + XmlTags.ITEM, Filters.element()); // NON-NLS
                     parentItemElement = parentItemExpression.evaluateFirst(element);
                 }
                 VerticalNavigationInfo.Item parentItem = navigation.getItem(parentItemElement.getAttributeValue("id"));
@@ -449,7 +444,6 @@ public class MbuiViewProcessor extends AbstractProcessor {
         }
     }
 
-
     // ------------------------------------------------------ abstract properties
 
     void processAbstractProperties(TypeElement type, MbuiViewContext context) {
@@ -459,11 +453,11 @@ public class MbuiViewProcessor extends AbstractProcessor {
 
                     // verify method
                     if (method.getReturnType().getKind() == TypeKind.VOID) {
-                        error(method, "Abstract propertiers in a @%s class must not return void", //NON-NLS
+                        error(method, "Abstract propertiers in a @%s class must not return void", // NON-NLS
                                 MbuiView.class.getSimpleName());
                     }
                     if (!method.getParameters().isEmpty()) {
-                        error(method, "Abstract properties in a @%s class must not have parameters", //NON-NLS
+                        error(method, "Abstract properties in a @%s class must not have parameters", // NON-NLS
                                 MbuiView.class.getSimpleName());
                     }
 
@@ -498,13 +492,12 @@ public class MbuiViewProcessor extends AbstractProcessor {
         String modifier = null;
         Set<Modifier> modifiers = method.getModifiers();
         if (modifiers.contains(Modifier.PUBLIC)) {
-            modifier = "public"; //NON-NLS
+            modifier = "public"; // NON-NLS
         } else if (modifiers.contains(Modifier.PROTECTED)) {
-            modifier = "protected"; //NON-NLS
+            modifier = "protected"; // NON-NLS
         }
         return modifier;
     }
-
 
     // ------------------------------------------------------ process @PostConstruct
 

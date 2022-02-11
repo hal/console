@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.jca;
 
@@ -20,11 +20,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.Form.FinishRemove;
@@ -61,6 +56,12 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
+
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.annotations.NameToken;
+import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
 import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.jca.AddressTemplates.*;
@@ -121,7 +122,6 @@ public class JcaPresenter
         crud.read(JCA_TEMPLATE, 1, result -> getView().update(result));
     }
 
-
     // ------------------------------------------------------ generic crud
 
     void add(String type, String name, AddressTemplate template, ModelNode payload) {
@@ -164,7 +164,6 @@ public class JcaPresenter
         });
     }
 
-
     // ------------------------------------------------------ distributed work manager
 
     void addDistributedWorkManager(String type, String name, ModelNode payload) {
@@ -186,16 +185,15 @@ public class JcaPresenter
                 .build();
         composite.add(addSrt);
         dispatcher.execute(composite, (CompositeResult compositeResult) -> {
-                    MessageEvent.fire(getEventBus(), Message.success(
-                            resources.messages().addResourceSuccess(type, name)));
-                    reload();
-                },
+            MessageEvent.fire(getEventBus(), Message.success(
+                    resources.messages().addResourceSuccess(type, name)));
+            reload();
+        },
                 (operation, failure) -> MessageEvent.fire(getEventBus(), Message.error(
                         resources.messages().addResourceError(type, failure))),
                 (operation, e) -> MessageEvent.fire(getEventBus(), Message.error(
                         resources.messages().addResourceError(type, e.getMessage()))));
     }
-
 
     // ------------------------------------------------------ tracer
 
@@ -203,15 +201,14 @@ public class JcaPresenter
         crud.addSingleton(new LabelBuilder().label(TRACER_TEMPLATE.lastName()), TRACER_TEMPLATE, address -> reload());
     }
 
-
     // ------------------------------------------------------ thread pools (for normal and distributed work managers)
 
     /**
      * Used to bring up the dialog to add thread pools for the normal and the distributed work managers.
      * <p>
-     * Only one long and one short running thread pool is allowed per (distributed) work manager. This method takes
-     * care of showing the right attributes in the dialog. If there are already long and short running thread pools
-     * attached to the work manager an error message is shown.
+     * Only one long and one short running thread pool is allowed per (distributed) work manager. This method takes care of
+     * showing the right attributes in the dialog. If there are already long and short running thread pools attached to the work
+     * manager an error message is shown.
      */
     void launchAddThreadPool(AddressTemplate workmanagerTemplate, String workmanager) {
         dispatcher.execute(threadPoolsOperation(workmanagerTemplate, workmanager), (CompositeResult cr) -> {
@@ -304,15 +301,13 @@ public class JcaPresenter
 
     private Composite threadPoolsOperation(AddressTemplate template, String name) {
         Operation lrtOp = new Operation.Builder(template.resolve(statementContext, name),
-                READ_CHILDREN_RESOURCES_OPERATION
-        )
-                .param(CHILD_TYPE, WORKMANAGER_LRT_TEMPLATE.lastName())
-                .build();
+                READ_CHILDREN_RESOURCES_OPERATION)
+                        .param(CHILD_TYPE, WORKMANAGER_LRT_TEMPLATE.lastName())
+                        .build();
         Operation srtOp = new Operation.Builder(template.resolve(statementContext, name),
-                READ_CHILDREN_RESOURCES_OPERATION
-        )
-                .param(CHILD_TYPE, WORKMANAGER_SRT_TEMPLATE.lastName())
-                .build();
+                READ_CHILDREN_RESOURCES_OPERATION)
+                        .param(CHILD_TYPE, WORKMANAGER_SRT_TEMPLATE.lastName())
+                        .build();
         return new Composite(lrtOp, srtOp);
     }
 
@@ -324,7 +319,6 @@ public class JcaPresenter
         return template.resolve(statementContext, workmanager);
     }
 
-
     // @formatter:off
     @ProxyCodeSplit
     @Requires(JCA_ADDRESS)
@@ -334,6 +328,7 @@ public class JcaPresenter
 
     public interface MyView extends HalView, HasPresenter<JcaPresenter> {
         void update(ModelNode payload);
+
         void updateThreadPools(AddressTemplate workmanagerTemplate, String workmanager,
                 List<Property> lrt, List<Property> srt);
     }

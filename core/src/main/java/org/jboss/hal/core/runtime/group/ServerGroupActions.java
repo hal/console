@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.core.runtime.group;
 
@@ -25,8 +25,6 @@ import java.util.function.Predicate;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
@@ -63,6 +61,10 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.web.bindery.event.shared.EventBus;
+
 import rx.CompletableSubscriber;
 import rx.Subscription;
 
@@ -143,7 +145,7 @@ public class ServerGroupActions {
                         result -> repeatCompositeUntil(dispatcher, serverGroupTimeout(serverGroup, action),
                                 readServerConfigStatus(startedServers),
                                 checkServerConfigStatus(startedServers.size(), STARTED))
-                                .subscribe(new ServerGroupTimeoutCallback(serverGroup, startedServers, successMessage)),
+                                        .subscribe(new ServerGroupTimeoutCallback(serverGroup, startedServers, successMessage)),
                         new ServerGroupFailedCallback(serverGroup, startedServers, errorMessage),
                         new ServerGroupExceptionCallback(serverGroup, startedServers, errorMessage));
             });
@@ -217,8 +219,8 @@ public class ServerGroupActions {
             dispatcher.execute(operation,
                     result -> repeatCompositeUntil(dispatcher, serverGroupTimeout(serverGroup, RESUME),
                             readSuspendState(suspendedServers), checkSuspendState(suspendedServers.size(), RUNNING))
-                            .subscribe(new ServerGroupTimeoutCallback(serverGroup, suspendedServers,
-                                    resources.messages().resumeServerGroupSuccess(serverGroup.getName()))),
+                                    .subscribe(new ServerGroupTimeoutCallback(serverGroup, suspendedServers,
+                                            resources.messages().resumeServerGroupSuccess(serverGroup.getName()))),
                     new ServerGroupFailedCallback(serverGroup, suspendedServers,
                             resources.messages().resumeServerGroupError(serverGroup.getName())),
                     new ServerGroupExceptionCallback(serverGroup, suspendedServers,
@@ -252,8 +254,7 @@ public class ServerGroupActions {
                                 int uiTimeout = timeout + serverGroupTimeout(serverGroup, Action.STOP);
 
                                 prepare(serverGroup, startedServers, Action.STOP);
-                                Operation operation = new Operation.Builder(serverGroup.getAddress(), STOP_SERVERS
-                                )
+                                Operation operation = new Operation.Builder(serverGroup.getAddress(), STOP_SERVERS)
                                         .param(TIMEOUT, timeout)
                                         .param(BLOCKING, false)
                                         .build();
@@ -298,8 +299,8 @@ public class ServerGroupActions {
             dispatcher.execute(operation,
                     result -> repeatCompositeUntil(dispatcher, serverGroupTimeout(serverGroup, Action.START),
                             readServerConfigStatus(downServers), checkServerConfigStatus(downServers.size(), STARTED))
-                            .subscribe(new ServerGroupTimeoutCallback(serverGroup, downServers,
-                                    resources.messages().startServerGroupSuccess(serverGroup.getName()))),
+                                    .subscribe(new ServerGroupTimeoutCallback(serverGroup, downServers,
+                                            resources.messages().startServerGroupSuccess(serverGroup.getName()))),
                     new ServerGroupFailedCallback(serverGroup, downServers,
                             resources.messages().startServerGroupError(serverGroup.getName())),
                     new ServerGroupExceptionCallback(serverGroup, downServers,
@@ -322,8 +323,8 @@ public class ServerGroupActions {
                             result -> repeatCompositeUntil(dispatcher, serverGroupTimeout(serverGroup, Action.DESTROY),
                                     readServerConfigStatus(startedServers),
                                     checkServerConfigStatus(startedServers.size(), STOPPED, DISABLED))
-                                    .subscribe(new ServerGroupTimeoutCallback(serverGroup, startedServers,
-                                            resources.messages().destroyServerGroupSuccess(serverGroup.getName()))),
+                                            .subscribe(new ServerGroupTimeoutCallback(serverGroup, startedServers,
+                                                    resources.messages().destroyServerGroupSuccess(serverGroup.getName()))),
                             new ServerGroupFailedCallback(serverGroup, startedServers,
                                     resources.messages().destroyServerError(serverGroup.getName())),
                             new ServerGroupExceptionCallback(serverGroup, startedServers,
@@ -342,8 +343,8 @@ public class ServerGroupActions {
                             result -> repeatCompositeUntil(dispatcher, serverGroupTimeout(serverGroup, Action.KILL),
                                     readServerConfigStatus(startedServers),
                                     checkServerConfigStatus(startedServers.size(), STOPPED, DISABLED))
-                                    .subscribe(new ServerGroupTimeoutCallback(serverGroup, startedServers,
-                                            resources.messages().killServerGroupSuccess(serverGroup.getName()))),
+                                            .subscribe(new ServerGroupTimeoutCallback(serverGroup, startedServers,
+                                                    resources.messages().killServerGroupSuccess(serverGroup.getName()))),
                             new ServerGroupFailedCallback(serverGroup, startedServers,
                                     resources.messages().killServerError(serverGroup.getName())),
                             new ServerGroupExceptionCallback(serverGroup, startedServers,
@@ -373,17 +374,16 @@ public class ServerGroupActions {
                             stoppedServers,
                             Result.SUCCESS,
                             Message.success(resources.messages()
-                                    .removeResourceSuccess(Names.SERVER_GROUP, serverGroup.getName()))
-                    ), (operation1, failure) -> finish(serverGroup,
-                            stoppedServers,
-                            Result.ERROR,
-                            Message.error(resources.messages().removeError(serverGroup.getName(), failure))
-                    ), (operation1, exception) -> finish(serverGroup,
-                            stoppedServers,
-                            Result.ERROR,
-                            Message.error(
-                                    resources.messages().removeError(serverGroup.getName(), exception.getMessage()))
-                    ));
+                                    .removeResourceSuccess(Names.SERVER_GROUP, serverGroup.getName()))),
+                            (operation1, failure) -> finish(serverGroup,
+                                    stoppedServers,
+                                    Result.ERROR,
+                                    Message.error(resources.messages().removeError(serverGroup.getName(), failure))),
+                            (operation1, exception) -> finish(serverGroup,
+                                    stoppedServers,
+                                    Result.ERROR,
+                                    Message.error(
+                                            resources.messages().removeError(serverGroup.getName(), exception.getMessage()))));
                 });
     }
 
@@ -395,46 +395,46 @@ public class ServerGroupActions {
 
         ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(COPY, serverGroup.getName(), Ids.FORM),
                 Metadata.empty())
-                .fromRequestProperties()
-                .unboundFormItem(newNameItem, 0)
-                .requiredOnly()
-                .build();
+                        .fromRequestProperties()
+                        .unboundFormItem(newNameItem, 0)
+                        .requiredOnly()
+                        .build();
 
         AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(Names.SERVER_GROUP),
                 form, (resource, payload) -> {
-            // read server-config recursively to retrieve nested resources
-            Operation opReadServerGroup = new Operation.Builder(serverGroup.getAddress(), READ_RESOURCE_OPERATION)
-                    .param(RECURSIVE, true)
-                    .build();
+                    // read server-config recursively to retrieve nested resources
+                    Operation opReadServerGroup = new Operation.Builder(serverGroup.getAddress(), READ_RESOURCE_OPERATION)
+                            .param(RECURSIVE, true)
+                            .build();
 
-            dispatcher.execute(opReadServerGroup, serverGroupModel -> {
-                ServerGroup newServerGroup = new ServerGroup(newNameItem.getValue(), serverGroupModel);
+                    dispatcher.execute(opReadServerGroup, serverGroupModel -> {
+                        ServerGroup newServerGroup = new ServerGroup(newNameItem.getValue(), serverGroupModel);
 
-                Operation opAddServer = new Operation.Builder(newServerGroup.getAddress(), ADD)
-                        .payload(serverGroupModel)
-                        .build();
+                        Operation opAddServer = new Operation.Builder(newServerGroup.getAddress(), ADD)
+                                .payload(serverGroupModel)
+                                .build();
 
-                Composite comp = new Composite();
-                comp.add(opAddServer);
-                addChildOperations(comp, newServerGroup, newServerGroup.getAddress(), 2);
+                        Composite comp = new Composite();
+                        comp.add(opAddServer);
+                        addChildOperations(comp, newServerGroup, newServerGroup.getAddress(), 2);
 
-                dispatcher.execute(comp, (CompositeResult result) -> finish(serverGroup,
-                        Collections.emptyList(),
-                        Result.SUCCESS,
-                        Message.success(
-                                resources.messages().addResourceSuccess(Names.SERVER_GROUP, newNameItem.getValue()))
-                ), (operation1, failure) -> finish(serverGroup,
-                        Collections.emptyList(),
-                        Result.ERROR,
-                        Message.error(resources.messages().addResourceError(newNameItem.getValue(), failure))
-                ), (operation1, exception) -> finish(serverGroup,
-                        Collections.emptyList(),
-                        Result.ERROR,
-                        Message.error(
-                                resources.messages().addResourceError(newNameItem.getValue(), exception.getMessage()))
-                ));
-            });
-        });
+                        dispatcher.execute(comp, (CompositeResult result) -> finish(serverGroup,
+                                Collections.emptyList(),
+                                Result.SUCCESS,
+                                Message.success(
+                                        resources.messages().addResourceSuccess(Names.SERVER_GROUP, newNameItem.getValue()))),
+                                (operation1, failure) -> finish(serverGroup,
+                                        Collections.emptyList(),
+                                        Result.ERROR,
+                                        Message.error(resources.messages().addResourceError(newNameItem.getValue(), failure))),
+                                (operation1, exception) -> finish(serverGroup,
+                                        Collections.emptyList(),
+                                        Result.ERROR,
+                                        Message.error(
+                                                resources.messages().addResourceError(newNameItem.getValue(),
+                                                        exception.getMessage()))));
+                    });
+                });
         dialog.show();
 
         ModelNode model = new ModelNode();
@@ -454,8 +454,7 @@ public class ServerGroupActions {
                     if (ModelType.OBJECT.equals(resource.getValue().getType())) {
                         ModelNode resourceAddress = baseAddress.clone().add(property.getName(), resource.getName());
 
-                        Operation operation = new Operation
-                                .Builder(new ResourceAddress(resourceAddress), ADD)
+                        Operation operation = new Operation.Builder(new ResourceAddress(resourceAddress), ADD)
                                 .payload(resource.getValue())
                                 .build();
 
@@ -533,7 +532,6 @@ public class ServerGroupActions {
         };
     }
 
-
     private class ServerGroupTimeoutCallback implements CompletableSubscriber {
 
         private final ServerGroup serverGroup;
@@ -563,7 +561,6 @@ public class ServerGroupActions {
         }
     }
 
-
     private class ServerGroupFailedCallback implements Dispatcher.OnFail {
 
         private final ServerGroup serverGroup;
@@ -582,7 +579,6 @@ public class ServerGroupActions {
             finish(serverGroup, servers, Result.ERROR, Message.error(errorMessage, failure));
         }
     }
-
 
     private class ServerGroupExceptionCallback implements Dispatcher.OnError {
 

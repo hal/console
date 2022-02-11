@@ -1,25 +1,20 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.ballroom;
 
-import com.google.gwt.core.client.GWT;
-import elemental2.dom.Event;
-import elemental2.dom.HTMLElement;
-import elemental2.dom.HTMLInputElement;
-import elemental2.dom.HTMLSelectElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.dataprovider.DataProvider;
@@ -31,20 +26,26 @@ import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 
+import com.google.gwt.core.client.GWT;
+
+import elemental2.dom.Event;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLInputElement;
+import elemental2.dom.HTMLSelectElement;
+
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.Elements.form;
 import static org.jboss.gwt.elemento.core.Elements.label;
-import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.change;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.gwt.elemento.core.EventType.submit;
 import static org.jboss.gwt.elemento.core.InputType.text;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
-import static org.jboss.hal.resources.CSS.i;
 import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.i;
 
 /**
- * PatternFly pager. Should be connected to a {@link DataProvider} (which in turn updates its displays e.g. a list
- * view):
+ * PatternFly pager. Should be connected to a {@link DataProvider} (which in turn updates its displays e.g. a list view):
  *
  * <pre>
  * DataProvider dataProvider = ...;
@@ -57,8 +58,10 @@ import static org.jboss.hal.resources.CSS.*;
  * dataProvider.update(items);
  * </pre>
  *
- * <p>Please note that the pager uses its own {@code <div class="row"/>} element. This is important if you add the
- * toolbar using the methods from {@link org.jboss.hal.ballroom.LayoutBuilder}:</p>
+ * <p>
+ * Please note that the pager uses its own {@code <div class="row"/>} element. This is important if you add the toolbar using
+ * the methods from {@link org.jboss.hal.ballroom.LayoutBuilder}:
+ * </p>
  *
  * <pre>
  * Pager pager = ...;
@@ -69,7 +72,8 @@ import static org.jboss.hal.resources.CSS.*;
  *     .add(pager)
  * </pre>
  *
- * @see <a href="https://www.patternfly.org/pattern-library/navigation/pagination/">https://www.patternfly.org/pattern-library/navigation/pagination/</a>
+ * @see <a href=
+ *      "https://www.patternfly.org/pattern-library/navigation/pagination/">https://www.patternfly.org/pattern-library/navigation/pagination/</a>
  */
 public class Pager<T> implements Display<T>, IsElement<HTMLElement> {
 
@@ -113,7 +117,8 @@ public class Pager<T> implements Display<T>, IsElement<HTMLElement> {
                                                                 .on(click, e -> firstPage())
                                                                 .title(CONSTANTS.firstPage())
                                                                 .add(span().css(CSS.i,
-                                                                        fontAwesome("angle-double-left")))).element())
+                                                                        fontAwesome("angle-double-left"))))
+                                                        .element())
                                                 .add(previousPage = li()
                                                         .add(a().css(clickable)
                                                                 .on(click, e -> previousPage())
@@ -143,7 +148,8 @@ public class Pager<T> implements Display<T>, IsElement<HTMLElement> {
                                                                 .on(click, e -> lastPage())
                                                                 .title(CONSTANTS.lastPage())
                                                                 .add(span().css(i, fontAwesome("angle-double-right"))))
-                                                        .element()))))).element();
+                                                        .element())))))
+                .element();
 
         for (int i = 0; i < Settings.PAGE_SIZE_VALUES.length; i++) {
             String pageLength = String.valueOf(Settings.PAGE_SIZE_VALUES[i]);

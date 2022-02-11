@@ -1,23 +1,24 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.config;
 
 import java.util.Iterator;
 
 import com.google.common.base.Splitter;
+
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsType;
 
@@ -30,8 +31,7 @@ import jsinterop.annotations.JsType;
  * <li>Major version. A non-negative integer.</li>
  * <li>Minor version. A non-negative integer.</li>
  * <li>Micro version. A non-negative integer.</li>
- * <li>Qualifier. A text string. See <code>Version(String)</code> for the
- * format of the qualifier string.</li>
+ * <li>Qualifier. A text string. See <code>Version(String)</code> for the format of the qualifier string.</li>
  * </ol>
  *
  * <p>
@@ -43,11 +43,9 @@ public class Version implements Comparable {
     private static final String SEPARATOR = ".";
 
     /**
-     * The empty version "0.0.0". Equivalent to calling
-     * <code>new Version(0,0,0)</code>.
+     * The empty version "0.0.0". Equivalent to calling <code>new Version(0,0,0)</code>.
      */
-    @JsIgnore
-    public static final Version EMPTY_VERSION = new Version(0, 0, 0);
+    @JsIgnore public static final Version EMPTY_VERSION = new Version(0, 0, 0);
 
     /**
      * Parses a version identifier from the specified string.
@@ -55,16 +53,12 @@ public class Version implements Comparable {
      * <p>
      * See <code>Version(String)</code> for the format of the version string.
      *
-     * @param version String representation of the version identifier. Leading
-     *                and trailing whitespace will be ignored.
+     * @param version String representation of the version identifier. Leading and trailing whitespace will be ignored.
      *
-     * @return A <code>Version</code> object representing the version
-     * identifier. If <code>version</code> is <code>null</code> or
-     * the empty string then <code>EMPTY_VERSION</code> will be
-     * returned.
+     * @return A <code>Version</code> object representing the version identifier. If <code>version</code> is <code>null</code>
+     *         or the empty string then <code>EMPTY_VERSION</code> will be returned.
      *
-     * @throws IllegalArgumentException If <code>version</code> is improperly
-     *                                  formatted.
+     * @throws IllegalArgumentException If <code>version</code> is improperly formatted.
      */
     public static Version parseVersion(String version) {
         if (version == null) {
@@ -78,7 +72,6 @@ public class Version implements Comparable {
 
         return new Version(version);
     }
-
 
     private final int major;
     private final int minor;
@@ -95,8 +88,7 @@ public class Version implements Comparable {
      * @param minor Minor component of the version identifier.
      * @param micro Micro component of the version identifier.
      *
-     * @throws IllegalArgumentException If the numerical components are
-     *                                  negative.
+     * @throws IllegalArgumentException If the numerical components are negative.
      */
     @JsIgnore
     public Version(int major, int minor, int micro) {
@@ -106,15 +98,13 @@ public class Version implements Comparable {
     /**
      * Creates a version identifier from the specifed components.
      *
-     * @param major     Major component of the version identifier.
-     * @param minor     Minor component of the version identifier.
-     * @param micro     Micro component of the version identifier.
-     * @param qualifier Qualifier component of the version identifier. If
-     *                  <code>null</code> is specified, then the qualifier will be set
-     *                  to the empty string.
+     * @param major Major component of the version identifier.
+     * @param minor Minor component of the version identifier.
+     * @param micro Micro component of the version identifier.
+     * @param qualifier Qualifier component of the version identifier. If <code>null</code> is specified, then the qualifier
+     *        will be set to the empty string.
      *
-     * @throws IllegalArgumentException If the numerical components are negative
-     *                                  or the qualifier string is invalid.
+     * @throws IllegalArgumentException If the numerical components are negative or the qualifier string is invalid.
      */
     @JsIgnore
     public Version(int major, int minor, int micro, String qualifier) {
@@ -149,8 +139,7 @@ public class Version implements Comparable {
      *
      * @param version String representation of the version identifier.
      *
-     * @throws IllegalArgumentException If <code>version</code> is improperly
-     *                                  formatted.
+     * @throws IllegalArgumentException If <code>version</code> is improperly formatted.
      */
     @JsIgnore
     public Version(String version) {
@@ -197,8 +186,7 @@ public class Version implements Comparable {
     /**
      * Called by the Version constructors to validate the version components.
      *
-     * @throws IllegalArgumentException If the numerical components are negative
-     *                                  or the qualifier string is invalid.
+     * @throws IllegalArgumentException If the numerical components are negative or the qualifier string is invalid.
      */
     private void validate() {
         if (major < 0) {
@@ -259,8 +247,7 @@ public class Version implements Comparable {
      * Returns the string representation of this version identifier.
      *
      * <p>
-     * The format of the version string will be <code>major.minor.micro</code>
-     * if qualifier is the empty string or
+     * The format of the version string will be <code>major.minor.micro</code> if qualifier is the empty string or
      * <code>major.minor.micro.qualifier</code> otherwise.
      *
      * @return The string representation of this version identifier.
@@ -289,15 +276,13 @@ public class Version implements Comparable {
      * Compares this <code>Version</code> object to another object.
      *
      * <p>
-     * A version is considered to be <b>equal to </b> another version if the
-     * major, minor and micro components are equal and the qualifier component
-     * is equal (using <code>String.equals</code>).
+     * A version is considered to be <b>equal to </b> another version if the major, minor and micro components are equal and the
+     * qualifier component is equal (using <code>String.equals</code>).
      *
      * @param object The <code>Version</code> object to be compared.
      *
-     * @return <code>true</code> if <code>object</code> is a
-     * <code>Version</code> and is equal to this object;
-     * <code>false</code> otherwise.
+     * @return <code>true</code> if <code>object</code> is a <code>Version</code> and is equal to this object;
+     *         <code>false</code> otherwise.
      */
     @JsIgnore
     public boolean equals(Object object) {
@@ -318,28 +303,22 @@ public class Version implements Comparable {
      * Compares this <code>Version</code> object to another object.
      *
      * <p>
-     * A version is considered to be <b>less than </b> another version if its
-     * major component is less than the other version's major component, or the
-     * major components are equal and its minor component is less than the other
-     * version's minor component, or the major and minor components are equal
-     * and its micro component is less than the other version's micro component,
-     * or the major, minor and micro components are equal and it's qualifier
-     * component is less than the other version's qualifier component (using
-     * <code>String.compareTo</code>).
+     * A version is considered to be <b>less than </b> another version if its major component is less than the other version's
+     * major component, or the major components are equal and its minor component is less than the other version's minor
+     * component, or the major and minor components are equal and its micro component is less than the other version's micro
+     * component, or the major, minor and micro components are equal and it's qualifier component is less than the other
+     * version's qualifier component (using <code>String.compareTo</code>).
      *
      * <p>
-     * A version is considered to be <b>equal to</b> another version if the
-     * major, minor and micro components are equal and the qualifier component
-     * is equal (using <code>String.compareTo</code>).
+     * A version is considered to be <b>equal to</b> another version if the major, minor and micro components are equal and the
+     * qualifier component is equal (using <code>String.compareTo</code>).
      *
      * @param object The <code>Version</code> object to be compared.
      *
-     * @return A negative integer, zero, or a positive integer if this object is
-     * less than, equal to, or greater than the specified
-     * <code>Version</code> object.
+     * @return A negative integer, zero, or a positive integer if this object is less than, equal to, or greater than the
+     *         specified <code>Version</code> object.
      *
-     * @throws ClassCastException If the specified object is not a
-     *                            <code>Version</code>.
+     * @throws ClassCastException If the specified object is not a <code>Version</code>.
      */
     @JsIgnore
     public int compareTo(Object object) {
@@ -372,8 +351,7 @@ public class Version implements Comparable {
      *
      * @param other the other version to compare to
      *
-     * @return {@code true} if this version is greater than the other version
-     * or {@code false} otherwise
+     * @return {@code true} if this version is greater than the other version or {@code false} otherwise
      *
      * @see #compareTo(Version other)
      */
@@ -387,8 +365,7 @@ public class Version implements Comparable {
      *
      * @param other the other version to compare to
      *
-     * @return {@code true} if this version is greater than or equal
-     * to the other version or {@code false} otherwise
+     * @return {@code true} if this version is greater than or equal to the other version or {@code false} otherwise
      *
      * @see #compareTo(Version other)
      */
@@ -402,8 +379,7 @@ public class Version implements Comparable {
      *
      * @param other the other version to compare to
      *
-     * @return {@code true} if this version is less than the other version
-     * or {@code false} otherwise
+     * @return {@code true} if this version is less than the other version or {@code false} otherwise
      *
      * @see #compareTo(Version other)
      */
@@ -417,8 +393,7 @@ public class Version implements Comparable {
      *
      * @param other the other version to compare to
      *
-     * @return {@code true} if this version is less than or equal
-     * to the other version or {@code false} otherwise
+     * @return {@code true} if this version is less than or equal to the other version or {@code false} otherwise
      *
      * @see #compareTo(Version other)
      */

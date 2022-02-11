@@ -1,28 +1,23 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.ballroom;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.collect.Iterables;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import elemental2.dom.HTMLButtonElement;
-import elemental2.dom.HTMLDivElement;
-import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
@@ -32,20 +27,27 @@ import org.jboss.hal.meta.security.ElementGuard;
 import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Callback;
 
-import static org.jboss.gwt.elemento.core.Elements.i;
+import com.google.common.collect.Iterables;
+import com.google.gwt.safehtml.shared.SafeHtml;
+
+import elemental2.dom.HTMLButtonElement;
+import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLElement;
+
 import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.gwt.elemento.core.Elements.i;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
 
 /**
- * Element to be used when a view is empty because no objects exists and you want to guide the user to perform specific
- * actions.
+ * Element to be used when a view is empty because no objects exists and you want to guide the user to perform specific actions.
  * <p>
- * {@linkplain Constraint Constraints} for the primary and secondary actions are encoded as {@code data-constraint}
- * attributes. Please make sure to call {@link ElementGuard#processElements(AuthorisationDecision,
- * String)} when the empty state element is added to the DOM.
+ * {@linkplain Constraint Constraints} for the primary and secondary actions are encoded as {@code data-constraint} attributes.
+ * Please make sure to call {@link ElementGuard#processElements(AuthorisationDecision, String)} when the empty state element is
+ * added to the DOM.
  *
- * @see <a href="https://www.patternfly.org/pattern-library/communication/empty-state/">https://www.patternfly.org/pattern-library/communication/empty-state/</a>
+ * @see <a href=
+ *      "https://www.patternfly.org/pattern-library/communication/empty-state/">https://www.patternfly.org/pattern-library/communication/empty-state/</a>
  */
 public class EmptyState implements IsElement<HTMLElement> {
 
@@ -131,7 +133,6 @@ public class EmptyState implements IsElement<HTMLElement> {
         return root;
     }
 
-
     private static class Action {
 
         public final String title;
@@ -144,7 +145,6 @@ public class EmptyState implements IsElement<HTMLElement> {
             this.constraint = constraint;
         }
     }
-
 
     public static class Builder {
 

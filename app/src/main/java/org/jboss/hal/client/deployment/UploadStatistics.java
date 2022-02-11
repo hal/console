@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.deployment;
 
@@ -20,24 +20,24 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.resources.Messages;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.Message.Level;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+
 /**
- * Holds information about added, replaced and failed uploads and provides a message which summarizes the upload of one
- * or several files.
+ * Holds information about added, replaced and failed uploads and provides a message which summarizes the upload of one or
+ * several files.
  */
 class UploadStatistics {
 
     private enum UploadStatus {
         ADDED, REPLACED, FAILED
     }
-
 
     private final Messages MESSAGES = GWT.create(Messages.class);
 
@@ -130,7 +130,7 @@ class UploadStatistics {
                 builder.append(MESSAGES.contentAdded(added.size()));
             }
             if (!replaced.isEmpty() || !failed.isEmpty()) {
-                builder.appendHtmlConstant("<br/>"); //NON-NLS
+                builder.appendHtmlConstant("<br/>"); // NON-NLS
             }
         }
         if (!replaced.isEmpty()) {
@@ -140,7 +140,7 @@ class UploadStatistics {
                 builder.append(MESSAGES.contentReplaced(replaced.size()));
             }
             if (!failed.isEmpty()) {
-                builder.appendHtmlConstant("<br/>"); //NON-NLS
+                builder.appendHtmlConstant("<br/>"); // NON-NLS
             }
         }
         if (!failed.isEmpty()) {

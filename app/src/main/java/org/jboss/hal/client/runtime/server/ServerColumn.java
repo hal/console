@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.runtime.server;
 
@@ -24,12 +24,6 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.common.collect.Iterables;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.client.runtime.BrowseByColumn;
@@ -90,6 +84,14 @@ import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Requires;
 
+import com.google.common.collect.Iterables;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+
+import elemental2.dom.HTMLElement;
+
 import static elemental2.dom.DomGlobal.document;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -104,8 +106,8 @@ import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.Ids.FORM;
 
 @Column(Ids.SERVER)
-@Requires(value = {"/host=*/server-config=*", "/host=*/server=*",
-        "opt:///host=*/server=*" + CONFIGURATION_CHANGES_ADDRESS}, recursive = false)
+@Requires(value = { "/host=*/server-config=*", "/host=*/server=*",
+        "opt:///host=*/server=*" + CONFIGURATION_CHANGES_ADDRESS }, recursive = false)
 public class ServerColumn extends FinderColumn<Server> implements ServerActionHandler, ServerResultHandler {
 
     static final String HOST_KEY = "/host=";
@@ -198,8 +200,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                 .withFilter()
                 .filterDescription(resources.messages().serverFilterDescription())
                 .onPreview(item -> new ServerPreview(serverActions, item, dispatcher, eventBus, progress,
-                        statementContext, placeManager, places, finderPathFactory, resources))
-        );
+                        statementContext, placeManager, places, finderPathFactory, resources)));
         this.finder = finder;
         this.dispatcher = dispatcher;
         this.environment = environment;
@@ -248,25 +249,24 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
         setItemsProvider(itemsProvider);
 
         // reuse the items provider to filter breadcrumb items
-        setBreadcrumbItemsProvider((context, callback) ->
-                itemsProvider.get(context, new AsyncCallback<List<Server>>() {
-                    @Override
-                    public void onFailure(Throwable throwable) {
-                        callback.onFailure(throwable);
-                    }
+        setBreadcrumbItemsProvider((context, callback) -> itemsProvider.get(context, new AsyncCallback<List<Server>>() {
+            @Override
+            public void onFailure(Throwable throwable) {
+                callback.onFailure(throwable);
+            }
 
-                    @Override
-                    public void onSuccess(List<Server> servers) {
-                        if (!serverIsLastSegment()) {
-                            // When the server is not the last segment in the finder path, we assume that
-                            // the current path is related to something which requires a running server.
-                            // In that case return only started servers.
-                            callback.onSuccess(servers.stream().filter(Server::isStarted).collect(toList()));
-                        } else {
-                            callback.onSuccess(servers);
-                        }
-                    }
-                }));
+            @Override
+            public void onSuccess(List<Server> servers) {
+                if (!serverIsLastSegment()) {
+                    // When the server is not the last segment in the finder path, we assume that
+                    // the current path is related to something which requires a running server.
+                    // In that case return only started servers.
+                    callback.onSuccess(servers.stream().filter(Server::isStarted).collect(toList()));
+                } else {
+                    callback.onSuccess(servers);
+                }
+            }
+        }));
 
         setItemRenderer(item -> new ItemDisplay<Server>() {
             @Override
@@ -348,9 +348,9 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                                 .build());
 
                         if (ManagementModel.supportsConfigurationChanges(item.getManagementVersion())
-                            && metadataRegistry.contains(AddressTemplate
-                                .of(HOST_KEY + item.getHost() + "/server=" + item.getName())
-                                .append(CONFIGURATION_CHANGES_ADDRESS))) {
+                                && metadataRegistry.contains(AddressTemplate
+                                        .of(HOST_KEY + item.getHost() + "/server=" + item.getName())
+                                        .append(CONFIGURATION_CHANGES_ADDRESS))) {
                             Map<String, String> params = new HashMap<>();
                             params.put(HOST, item.getHost());
                             params.put(SERVER, item.getName());
@@ -493,19 +493,20 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                                 AddResourceDialog dialog = new AddResourceDialog(resources.messages().addServerTitle(),
                                         form, (resource, payload) -> {
 
-                                    payload.get(GROUP).set(statementContext.selectedServerGroup());
-                                    String serverName = nameItem.getValue();
-                                    ResourceAddress address = serverConfigTemplate(hostFormItem.getValue())
-                                            .resolve(statementContext, serverName);
+                                            payload.get(GROUP).set(statementContext.selectedServerGroup());
+                                            String serverName = nameItem.getValue();
+                                            ResourceAddress address = serverConfigTemplate(hostFormItem.getValue())
+                                                    .resolve(statementContext, serverName);
 
-                                    crud.add(serverName, address, payload,
-                                            resources.messages().addResourceSuccess(Names.SERVER,
-                                                    serverName), (name, address1) -> refresh(RESTORE_SELECTION));
-                                });
-                                dialog.getForm().<String>getFormItem(NAME).addValidationHandler(
+                                            crud.add(serverName, address, payload,
+                                                    resources.messages().addResourceSuccess(Names.SERVER,
+                                                            serverName),
+                                                    (name, address1) -> refresh(RESTORE_SELECTION));
+                                        });
+                                dialog.getForm().<String> getFormItem(NAME).addValidationHandler(
                                         createUniqueValidation());
                                 dialog.show();
-                                form.<String>getFormItem(GROUP).setValue(statementContext.selectedServerGroup());
+                                form.<String> getFormItem(GROUP).setValue(statementContext.selectedServerGroup());
                             }
                         });
             });
