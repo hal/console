@@ -388,6 +388,19 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>hal-tests</id>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <phase>test</phase>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -424,13 +437,23 @@
                     <!-- Semantically ordered -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <configuration>
+                            <rules>
+                                <requireReleaseDeps>
+                                    <message>No Snapshots Allowed!</message>
+                                </requireReleaseDeps>
+                            </rules>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
+                                <id>attach-sources</id>
                                 <goals>
-                                    <goal>sign</goal>
+                                    <goal>jar-no-fork</goal>
                                 </goals>
                             </execution>
                         </executions>
@@ -458,12 +481,13 @@
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-source-plugin</artifactId>
+                        <artifactId>maven-gpg-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>attach-sources</id>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
                                 <goals>
-                                    <goal>jar-no-fork</goal>
+                                    <goal>sign</goal>
                                 </goals>
                             </execution>
                         </executions>
