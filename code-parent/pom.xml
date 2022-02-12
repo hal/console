@@ -212,14 +212,8 @@
             <plugins>
                 <!-- Ordered by artifactID -->
                 <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>${version.build.helper.plugin}</version>
-                </plugin>
-                <plugin>
                     <groupId>net.revelc.code.formatter</groupId>
                     <artifactId>formatter-maven-plugin</artifactId>
-                    <version>${version.formatter.plugin}</version>
                     <configuration>
                         <configFile>etc/eclipse-formatter-config.xml</configFile>
                     </configuration>
@@ -230,27 +224,6 @@
                             <version>${project.version}</version>
                         </dependency>
                     </dependencies>
-                </plugin>
-                <plugin>
-                    <groupId>com.github.eirslett</groupId>
-                    <artifactId>frontend-maven-plugin</artifactId>
-                    <version>${version.frontend.plugin}</version>
-                </plugin>
-                <plugin>
-                    <groupId>net.ltgt.gwt.maven</groupId>
-                    <artifactId>gwt-maven-plugin</artifactId>
-                    <version>${version.gwt.plugin}</version>
-                    <extensions>true</extensions>
-                </plugin>
-                <plugin>
-                    <groupId>net.revelc.code</groupId>
-                    <artifactId>impsort-maven-plugin</artifactId>
-                    <version>${version.impsort.plugin}</version>
-                    <configuration>
-                        <groups>java.,javax.,org.,io.,com.</groups>
-                        <removeUnused>true</removeUnused>
-                        <staticAfter>true</staticAfter>
-                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>com.mycila</groupId>
@@ -270,13 +243,7 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
                     <configuration>
-                        <configLocation>wildfly-checkstyle/checkstyle.xml</configLocation>
-                        <consoleOutput>true</consoleOutput>
-                        <failsOnError>true</failsOnError>
-                        <includeTestSourceDirectory>true</includeTestSourceDirectory>
-                        <excludes>**/*$logger.java,**/*$bundle.java</excludes>
                         <suppressionsLocation>etc/checkstyle-suppressions.xml</suppressionsLocation>
-                        <useFile/>
                     </configuration>
                     <dependencies>
                         <dependency>
@@ -284,76 +251,53 @@
                             <artifactId>hal-build-config</artifactId>
                             <version>${project.version}</version>
                         </dependency>
-                        <dependency>
-                            <groupId>org.wildfly.checkstyle</groupId>
-                            <artifactId>wildfly-checkstyle-config</artifactId>
-                            <version>${version.checkstyle.config}</version>
-                        </dependency>
                     </dependencies>
-                </plugin>
-                <plugin>
-                    <groupId>io.quarkus.platform</groupId>
-                    <artifactId>quarkus-maven-plugin</artifactId>
-                    <version>${version.quarkus}</version>
-                    <extensions>true</extensions>
                 </plugin>
             </plugins>
         </pluginManagement>
 
         <plugins>
             <!-- Ordered by artifactID -->
-            <!--
-                This will lead to massive source code changes.
-                Activate as soon as all important PRs have been merged.
-            -->
-            <!--
-                        <plugin>
-                            <groupId>net.revelc.code.formatter</groupId>
-                            <artifactId>formatter-maven-plugin</artifactId>
-                            <executions>
-                                <execution>
-                                    <id>formatter-format</id>
-                                    <phase>process-sources</phase>
-                                    <goals>
-                                        <goal>format</goal>
-                                    </goals>
-                                </execution>
-                                <execution>
-                                    <id>formatter-check</id>
-                                    <phase>verify</phase>
-                                    <goals>
-                                        <goal>validate</goal>
-                                    </goals>
-                                </execution>
-                            </executions>
-                        </plugin>
-            -->
-            <!--
-                This will lead to massive source code changes.
-                Activate as soon as all important PRs have been merged.
-            -->
-            <!--
-                        <plugin>
-                            <groupId>net.revelc.code</groupId>
-                            <artifactId>impsort-maven-plugin</artifactId>
-                            <executions>
-                                <execution>
-                                    <id>impsort-sort</id>
-                                    <phase>process-sources</phase>
-                                    <goals>
-                                        <goal>sort</goal>
-                                    </goals>
-                                </execution>
-                                <execution>
-                                    <id>impsort-check</id>
-                                    <phase>verify</phase>
-                                    <goals>
-                                        <goal>check</goal>
-                                    </goals>
-                                </execution>
-                            </executions>
-                        </plugin>
-            -->
+            <plugin>
+                <groupId>net.revelc.code.formatter</groupId>
+                <artifactId>formatter-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>formatter-format</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>formatter-check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>validate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>net.revelc.code</groupId>
+                <artifactId>impsort-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>impsort-sort</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>sort</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>impsort-check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
@@ -369,134 +313,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>prod</id>
-            <properties>
-                <gwt.draftCompile>false</gwt.draftCompile>
-                <!--
-                    Do not optimize: It will wipe out code which actually must not be erased.
-                    TODO Check if this is a bug in GWT or how much we can optimize until the code is removed.
-                -->
-                <gwt.logLevel>INFO</gwt.logLevel>
-                <gwt.optimize>0</gwt.optimize>
-                <gwt.style>OBFUSCATED</gwt.style>
-                <grunt-task>prod</grunt-task>
-            </properties>
-        </profile>
-        <profile>
-            <id>release</id>
-            <build>
-                <plugins>
-                    <!-- Ordered by artifactID -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <configuration>
-                            <additionalOptions>
-                                <additionalOption>-html5</additionalOption>
-                            </additionalOptions>
-                            <detectLinks>true</detectLinks>
-                            <doclint>none</doclint>
-                            <failOnError>false</failOnError>
-                            <show>public</show>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>attach-javadocs</id>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-source-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>attach-sources</id>
-                                <goals>
-                                    <goal>jar-no-fork</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.sonatype.plugins</groupId>
-                        <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>${version.nexus.staging.plugin}</version>
-                        <extensions>true</extensions>
-                        <configuration>
-                            <serverId>ossrh</serverId>
-                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>skip-gwt</id>
-            <properties>
-                <skip.gwt>true</skip.gwt>
-            </properties>
-        </profile>
-        <profile>
-            <id>theme-eap</id>
-            <properties>
-                <gwt.moduleTemplate>${project.basedir}/src/main/module-i18n.gwt.xml</gwt.moduleTemplate>
-                <theme.name>eap</theme.name>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>net.ltgt.gwt.maven</groupId>
-                        <artifactId>gwt-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>generate-i18n-module</id>
-                                <phase>generate-resources</phase>
-                                <goals>
-                                    <goal>generate-module</goal>
-                                </goals>
-                                <configuration>
-                                    <moduleTemplate>${project.basedir}/src/main/module-i18n.gwt.xml</moduleTemplate>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>theme-hal</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <theme.name>hal</theme.name>
-            </properties>
-        </profile>
-        <profile>
-            <id>theme-wildfly</id>
-            <properties>
-                <theme.name>wildfly</theme.name>
-            </properties>
-        </profile>
-    </profiles>
 </project>
