@@ -33,7 +33,17 @@ import static java.util.Arrays.asList;
 import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.client.runtime.subsystem.batch.AddressTemplates.BATCH_SUBSYSTEM_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ACTIVE_COUNT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CURRENT_THREAD_COUNT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT_JOB_REPOSITORY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT_THREAD_POOL;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LARGEST_THREAD_COUNT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MAX_THREADS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESTART_JOBS_ON_RESUME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.THREAD_POOL;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 
 public class BatchPreview extends PreviewContent<SubsystemMetadata> {
@@ -41,6 +51,7 @@ public class BatchPreview extends PreviewContent<SubsystemMetadata> {
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
     private final PreviewAttributes<ModelNode> attributes;
+    private final Utilization activeCount;
     private final Utilization currentThreadCount;
     private final Utilization largestThreadCount;
     private final HTMLElement details;
@@ -55,8 +66,10 @@ public class BatchPreview extends PreviewContent<SubsystemMetadata> {
 
         details = section()
                 .add(h(2, Names.THREADS))
-                .add(currentThreadCount = new Utilization(
+                .add(activeCount = new Utilization(
                         resources.constants().active(), Names.THREADS, false, true))
+                .add(currentThreadCount = new Utilization(
+                        resources.constants().current(), Names.THREADS, false, true))
                 .add(largestThreadCount = new Utilization(
                         resources.constants().largest(), Names.THREADS, false, true)).element();
 
@@ -82,8 +95,10 @@ public class BatchPreview extends PreviewContent<SubsystemMetadata> {
                 if (threadPool.isDefined()) {
                     Elements.setVisible(details, true);
                     int max = threadPool.get(MAX_THREADS).asInt();
+                    int active = threadPool.get(ACTIVE_COUNT).asInt();
                     int current = threadPool.get(CURRENT_THREAD_COUNT).asInt();
                     int largest = threadPool.get(LARGEST_THREAD_COUNT).asInt();
+                    activeCount.update(active, max);
                     currentThreadCount.update(current, max);
                     largestThreadCount.update(largest, max);
                 }

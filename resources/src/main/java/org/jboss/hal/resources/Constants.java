@@ -105,6 +105,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String create();
     String createAccount();
     String creationTime();
+    String current();
     String currentPage();
     String data();
     String day();
