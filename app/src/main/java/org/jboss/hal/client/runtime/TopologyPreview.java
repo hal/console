@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.runtime;
 
@@ -26,19 +26,6 @@ import java.util.function.Supplier;
 
 import javax.inject.Provider;
 
-import com.google.common.base.Strings;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental2.dom.Element;
-import elemental2.dom.HTMLDivElement;
-import elemental2.dom.HTMLElement;
-import elemental2.dom.HTMLTableCellElement;
-import elemental2.dom.HTMLTableColElement;
-import elemental2.dom.HTMLTableElement;
-import elemental2.dom.HTMLTableSectionElement;
-import elemental2.dom.MouseEvent;
-import elemental2.dom.NodeList;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.EventCallbackFn;
 import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
@@ -93,6 +80,21 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
+
+import com.google.common.base.Strings;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+
+import elemental2.dom.Element;
+import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLTableCellElement;
+import elemental2.dom.HTMLTableColElement;
+import elemental2.dom.HTMLTableElement;
+import elemental2.dom.HTMLTableSectionElement;
+import elemental2.dom.MouseEvent;
+import elemental2.dom.NodeList;
 
 import static com.google.common.collect.Lists.asList;
 import static elemental2.dom.DomGlobal.clearTimeout;
@@ -301,7 +303,6 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         return token;
     }
 
-
     // ------------------------------------------------------ dmr functions
 
     @Override
@@ -424,7 +425,6 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                 });
     }
 
-
     // ------------------------------------------------------ UI methods
 
     private HTMLElement buildTable(List<Host> hosts, List<ServerGroup> serverGroups, List<Server> servers) {
@@ -471,7 +471,8 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
                 } else {
                     tr.appendChild(td()
                             .add(div().css(CSS.servers)
-                                    .addAll(matchingServers)).element());
+                                    .addAll(matchingServers))
+                            .element());
                 }
             }
         }
@@ -484,11 +485,12 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     private HTMLElement hostElement(Host host) {
         HTMLElement dropdown;
         HTMLTableCellElement th = th()
-                .css(asList(rowHeader, statusCss(host)).toArray(new String[]{}))
+                .css(asList(rowHeader, statusCss(host)).toArray(new String[] {}))
                 .on(click, event -> hostDetails(host))
-                .data("host", host.getName()) //NON-NLS
+                .data("host", host.getName()) // NON-NLS
                 .add(div().css(hostContainer)
-                        .add(dropdown = div().css(CSS.dropdown).element())).element();
+                        .add(dropdown = div().css(CSS.dropdown).element()))
+                .element();
 
         HTMLElement hostNameElement;
         if (host.isAlive() && !hostActions.isPending(host) && isAllowed(host)) {
@@ -524,9 +526,10 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         HTMLElement dropdown;
         HTMLTableCellElement element = th()
                 .on(click, event -> serverGroupDetails(serverGroup))
-                .data("serverGroup", serverGroup.getName()) //NON-NLS
+                .data("serverGroup", serverGroup.getName()) // NON-NLS
                 .add(div().css(serverGroupContainer)
-                        .add(dropdown = div().css(CSS.dropdown).element())).element();
+                        .add(dropdown = div().css(CSS.dropdown).element()))
+                .element();
 
         if (!serverGroupActions.isPending(serverGroup) && isAllowed(serverGroup)) {
             String serverGroupDropDownId = Ids.serverGroup(serverGroup.getName());
@@ -555,7 +558,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         HTMLElement dropdown;
         HTMLDivElement element = div()
                 .id(Ids.build(srv.getId(), CONTAINER))
-                .css(asList(server, statusCss(srv)).toArray(new String[]{}))
+                .css(asList(server, statusCss(srv)).toArray(new String[] {}))
                 .data(SERVER, srv.getId())
                 .on(click, event -> serverDetails(srv))
                 .add(dropdown = div().css(CSS.dropdown).element()).element();
@@ -640,7 +643,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
             Element ul = link.nextElementSibling;
             if (parent != null && ul != null) {
                 HTMLElement noLink = span().css(CSS.name).title(name).textContent(name).element();
-                parent.classList.remove("opened"); //NON-NLS
+                parent.classList.remove("opened"); // NON-NLS
                 parent.replaceChild(noLink, link);
                 parent.removeChild(ul);
             }
@@ -650,7 +653,6 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     private boolean isVisible() {
         return Elements.isVisible(topologySection) && topologySection.parentNode != null;
     }
-
 
     // ------------------------------------------------------ host
 
@@ -682,7 +684,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     }
 
     private String[] statusCss(Host host) {
-        return hostActions.isPending(host) ? new String[]{withProgress} : new String[]{};
+        return hostActions.isPending(host) ? new String[] { withProgress } : new String[] {};
     }
 
     @Override
@@ -712,9 +714,8 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     }
 
     private String hostSelector(Host host) {
-        return "[data-host='" + host.getName() + "']"; //NON-NLS
+        return "[data-host='" + host.getName() + "']"; // NON-NLS
     }
-
 
     // ------------------------------------------------------ server group
 
@@ -793,9 +794,8 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     }
 
     private String serverGroupSelector(ServerGroup serverGroup) {
-        return "[data-server-group='" + serverGroup.getName() + "']"; //NON-NLS
+        return "[data-server-group='" + serverGroup.getName() + "']"; // NON-NLS
     }
-
 
     // ------------------------------------------------------ server
 
@@ -943,6 +943,6 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     }
 
     private String serverSelector(Server server) {
-        return "[data-server='" + server.getId() + "']"; //NON-NLS
+        return "[data-server='" + server.getId() + "']"; // NON-NLS
     }
 }

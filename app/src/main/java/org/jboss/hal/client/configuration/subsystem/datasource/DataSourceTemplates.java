@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.datasource;
 
@@ -22,9 +22,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import com.google.common.collect.ImmutableMap;
 import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.datasource.JdbcDriver;
+
+import com.google.common.collect.ImmutableMap;
 
 import static org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplate.Vendor.DB2;
 import static org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplate.Vendor.POSTGRE_SQL;
@@ -32,7 +33,7 @@ import static org.jboss.hal.client.configuration.subsystem.datasource.DataSource
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /** List of well known datasource templates */
-@SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
+@SuppressWarnings({ "HardCodedStringLiteral", "DuplicateStringLiteralInspection" })
 public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
 
     private static final String ADMIN = "admin";
@@ -48,7 +49,8 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
     private static final String SQLSERVER = "sqlserver";
     private static final String SYBASE = "sybase";
 
-    // For Checkstyle MultipleStringLiterals: The String "org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLValidConnectionChecker" appears 4 times in the file.
+    // For Checkstyle MultipleStringLiterals: The String
+    // "org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLValidConnectionChecker" appears 4 times in the file.
     private static final String MySQL_VALID_CONNECTION_CHECKER = "org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLValidConnectionChecker";
     private static final String MySQL_EXCEPTION_SORTER = "org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLExceptionSorter";
 
@@ -56,7 +58,6 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
 
     public DataSourceTemplates() {
         List<DataSourceTemplate> setup = new ArrayList<>();
-
 
         // ------------------------------------------------------ H2
 
@@ -91,7 +92,6 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                 },
                 h2Driver,
                 properties("URL", "jdbc:h2:mem:test")));
-
 
         // ------------------------------------------------------ PostgreSQL
 
@@ -135,7 +135,6 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                 postgresDriver,
                 properties(SERVER_NAME, "servername", "PortNumber", "5432", DATABASE_NAME, "postgresdb")));
 
-
         // ------------------------------------------------------ MySQL
 
         Supplier<JdbcDriver> mySqlDriver = () -> {
@@ -177,7 +176,6 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                 },
                 mySqlDriver,
                 properties(SERVER_NAME, LOCALHOST, DATABASE_NAME, "mysqldb")));
-
 
         // ------------------------------------------------------ MariaDB
 
@@ -267,7 +265,6 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                 oracleDriver,
                 properties("URL", "jdbc:oracle:thin:@SERVER_NAME:PORT:ORACLE_SID")));
 
-
         // ------------------------------------------------------ Microsoft SQL Server
 
         Supplier<JdbcDriver> msSqlDriver = () -> {
@@ -307,7 +304,6 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                 },
                 msSqlDriver,
                 properties(SERVER_NAME, LOCALHOST, DATABASE_NAME, "mssqldb", "SelectMethod", "cursor")));
-
 
         // ------------------------------------------------------ DB2
 
@@ -357,7 +353,6 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                 },
                 db2Driver,
                 properties(SERVER_NAME, LOCALHOST, DATABASE_NAME, "ibmdb2db", "PortNumber", "446")));
-
 
         // ------------------------------------------------------ Sybase
 

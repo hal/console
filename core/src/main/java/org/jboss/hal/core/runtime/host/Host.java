@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.core.runtime.host;
 
@@ -34,21 +34,21 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 
 /**
- * For the host we need to distinguish between the address-name (the name which is part of the host address)
- * and the model-node-name (the name which is part of the host model node).
- * When the latter is changed, the former remains unchanged until the host is reloaded.
+ * For the host we need to distinguish between the address-name (the name which is part of the host address) and the
+ * model-node-name (the name which is part of the host model node). When the latter is changed, the former remains unchanged
+ * until the host is reloaded.
  */
 public class Host extends HasServersNode {
 
     // TODO rename to booting. Booting is different from starting as it marks
-    //  an old host (mgmt model version < 10) which is starting. Unlike hosts
-    //  with mgmt model version >= 10, the host resource cannot be read
+    // an old host (mgmt model version < 10) which is starting. Unlike hosts
+    // with mgmt model version >= 10, the host resource cannot be read
 
     /**
-     * Marks a host as booting. In contrast to {@link RunningState#STARTING}, booting means that the host name is
-     * known abd returned by {@code :read-child-names(child-type=host)}, but the resource itself is not readable
-     * ({@code /host=foo:read-resource} returns {@code WFLYCTL0379}). This applies to hosts with management model
-     * {@code <} 10.0.0.
+     * Marks a host as booting. In contrast to {@link RunningState#STARTING}, booting means that the host name is known abd
+     * returned by {@code :read-child-names(child-type=host)}, but the resource itself is not readable
+     * ({@code /host=foo:read-resource} returns {@code WFLYCTL0379}). This applies to hosts with management model {@code <}
+     * 10.0.0.
      *
      * @param name the host name
      *

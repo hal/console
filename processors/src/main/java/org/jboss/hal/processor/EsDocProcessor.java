@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.processor;
 
@@ -33,20 +33,22 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.util.ElementFilter;
 
+import org.jboss.auto.AbstractProcessor;
+import org.jboss.hal.resources.Strings;
+import org.jboss.hal.spi.EsParam;
+import org.jboss.hal.spi.EsReturn;
+
 import com.google.common.base.Splitter;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+
 import jsinterop.annotations.JsConstructor;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsPackage;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
-import org.jboss.auto.AbstractProcessor;
-import org.jboss.hal.resources.Strings;
-import org.jboss.hal.spi.EsParam;
-import org.jboss.hal.spi.EsReturn;
 
 import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_CAMEL;
@@ -58,8 +60,8 @@ import static org.jboss.hal.processor.TemplateNames.TEMPLATES;
 // Do not export this processor using @AutoService(Processor.class)
 // It's executed explicitly in hal-app to process all exported js types in all maven modules.
 @SupportedAnnotationTypes("jsinterop.annotations.JsType")
-@SuppressWarnings({"HardCodedStringLiteral", "Guava", "ResultOfMethodCallIgnored", "SpellCheckingInspection",
-        "DuplicateStringLiteralInspection"})
+@SuppressWarnings({ "HardCodedStringLiteral", "Guava", "ResultOfMethodCallIgnored", "SpellCheckingInspection",
+        "DuplicateStringLiteralInspection" })
 public class EsDocProcessor extends AbstractProcessor {
 
     private static final String AUTO = "<auto>";
@@ -218,7 +220,7 @@ public class EsDocProcessor extends AbstractProcessor {
 
             // remove trailing empty lines
             List<String> reversed = Lists.reverse(lines);
-            for (Iterator<String> iterator = reversed.iterator(); iterator.hasNext(); ) {
+            for (Iterator<String> iterator = reversed.iterator(); iterator.hasNext();) {
                 String line = iterator.next();
                 if (line.equals(padding + " * ")) {
                     iterator.remove();
@@ -316,7 +318,6 @@ public class EsDocProcessor extends AbstractProcessor {
         return element.getModifiers().contains(Modifier.STATIC);
     }
 
-
     public static class Type {
 
         private final String namespace;
@@ -376,7 +377,6 @@ public class EsDocProcessor extends AbstractProcessor {
         }
     }
 
-
     public static class Constructor {
 
         private final String parameters;
@@ -400,7 +400,6 @@ public class EsDocProcessor extends AbstractProcessor {
             return comment;
         }
     }
-
 
     public static class Property {
 
@@ -445,7 +444,6 @@ public class EsDocProcessor extends AbstractProcessor {
         }
     }
 
-
     public static class Method {
 
         private final String name;
@@ -482,4 +480,3 @@ public class EsDocProcessor extends AbstractProcessor {
         }
     }
 }
-

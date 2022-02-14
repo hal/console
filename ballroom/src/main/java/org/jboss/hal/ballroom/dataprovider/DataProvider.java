@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.ballroom.dataprovider;
 
@@ -26,9 +26,10 @@ import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-import com.google.common.collect.Lists;
 import org.jboss.hal.ballroom.listview.ListView;
 import org.jboss.hal.config.Settings;
+
+import com.google.common.collect.Lists;
 
 import static java.lang.Math.min;
 import static java.util.function.Function.identity;
@@ -38,8 +39,7 @@ import static org.jboss.hal.config.Settings.DEFAULT_PAGE_SIZE;
 import static org.jboss.hal.config.Settings.Key.PAGE_SIZE;
 
 /**
- * Holds items and state for displays like {@link ListView}. Changes to the state is reflected in the connected
- * displays.
+ * Holds items and state for displays like {@link ListView}. Changes to the state is reflected in the connected displays.
  */
 public class DataProvider<T> {
 
@@ -71,7 +71,6 @@ public class DataProvider<T> {
 
         reset();
     }
-
 
     // ------------------------------------------------------ items
 
@@ -148,11 +147,10 @@ public class DataProvider<T> {
             Function<? super T, ? extends T> valueMapper) {
         return toMap(keyMapper, valueMapper,
                 (u, v) -> {
-                    throw new IllegalStateException("Duplicate key " + u); //NON-NLS
+                    throw new IllegalStateException("Duplicate key " + u); // NON-NLS
                 },
                 LinkedHashMap::new);
     }
-
 
     // ------------------------------------------------------ selection
 
@@ -219,7 +217,6 @@ public class DataProvider<T> {
         }
     }
 
-
     // ------------------------------------------------------ filter
 
     public void addFilter(String name, FilterValue<T> filter) {
@@ -256,7 +253,6 @@ public class DataProvider<T> {
         return !filterValues.isEmpty();
     }
 
-
     // ------------------------------------------------------ sort
 
     public void setComparator(Comparator<T> comparator) {
@@ -269,7 +265,6 @@ public class DataProvider<T> {
     public Comparator<T> getComparator() {
         return comparator;
     }
-
 
     // ------------------------------------------------------ paging
 
@@ -317,7 +312,6 @@ public class DataProvider<T> {
         List<List<T>> pages = Lists.partition(values, pageInfo.getPageSize());
         return pages.get(min(pageInfo.getPage(), pages.size() - 1));
     }
-
 
     // ------------------------------------------------------ displays
 

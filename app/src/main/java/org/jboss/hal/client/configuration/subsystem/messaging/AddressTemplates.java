@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.messaging;
 
@@ -59,10 +59,13 @@ interface AddressTemplates {
     AddressTemplate LARGE_MESSAGES_DIRECTORY_TEMPLATE = AddressTemplate.of(LARGE_MESSAGES_DIRECTORY_ADDRESS);
     AddressTemplate JOURNAL_DIRECTORY_TEMPLATE = AddressTemplate.of(JOURNAL_DIRECTORY_ADDRESS);
 
-    AddressTemplate SELECTED_BINDING_DIRECTORY_TEMPLATE = AddressTemplate.of(SELECTED_SERVER_ADDRESS + "/path=bindings-directory");
+    AddressTemplate SELECTED_BINDING_DIRECTORY_TEMPLATE = AddressTemplate
+            .of(SELECTED_SERVER_ADDRESS + "/path=bindings-directory");
     AddressTemplate SELECTED_PAGING_DIRECTORY_TEMPLATE = AddressTemplate.of(SELECTED_SERVER_ADDRESS + "/path=paging-directory");
-    AddressTemplate SELECTED_LARGE_MESSAGES_DIRECTORY_TEMPLATE = AddressTemplate.of(SELECTED_SERVER_ADDRESS + "/path=large-messages-directory");
-    AddressTemplate SELECTED_JOURNAL_DIRECTORY_TEMPLATE = AddressTemplate.of(SELECTED_SERVER_ADDRESS + "/path=journal-directory");
+    AddressTemplate SELECTED_LARGE_MESSAGES_DIRECTORY_TEMPLATE = AddressTemplate
+            .of(SELECTED_SERVER_ADDRESS + "/path=large-messages-directory");
+    AddressTemplate SELECTED_JOURNAL_DIRECTORY_TEMPLATE = AddressTemplate
+            .of(SELECTED_SERVER_ADDRESS + "/path=journal-directory");
 
     // destinations
     String CORE_QUEUE_ADDRESS = SERVER_ADDRESS + "/queue=*";
@@ -79,7 +82,7 @@ interface AddressTemplates {
     AddressTemplate ADDRESS_SETTING_TEMPLATE = AddressTemplate.of(ADDRESS_SETTING_ADDRESS);
     AddressTemplate DIVERT_TEMPLATE = AddressTemplate.of(DIVERT_ADDRESS);
 
-    //connections
+    // connections
     String ACCEPTOR_ADDRESS = SERVER_ADDRESS + "/acceptor=*";
     String IN_VM_ACCEPTOR_ADDRESS = SERVER_ADDRESS + "/in-vm-acceptor=*";
     String HTTP_ACCEPTOR_ADDRESS = SERVER_ADDRESS + "/http-acceptor=*";

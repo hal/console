@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.messaging;
 
@@ -19,7 +19,6 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
@@ -41,6 +40,8 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
+import elemental2.dom.HTMLElement;
+
 import static java.util.Arrays.asList;
 import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.gwt.elemento.core.Elements.p;
@@ -52,7 +53,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.resources.Ids.MESSAGING_SERVER;
 
 @MbuiView
-@SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "unused", "WeakerAccess"})
+@SuppressWarnings({ "DuplicateStringLiteralInspection", "HardCodedStringLiteral", "unused", "WeakerAccess" })
 public abstract class ClusteringView extends MbuiViewImpl<ClusteringPresenter>
         implements ClusteringPresenter.MyView {
 
@@ -86,7 +87,7 @@ public abstract class ClusteringView extends MbuiViewImpl<ClusteringPresenter>
     void init() {
         Metadata metadata = mbuiContext.metadataRegistry().lookup(BRIDGE_TEMPLATE);
         crForm = cr.form(MESSAGING_SERVER, metadata, CREDENTIAL_REFERENCE, PASSWORD,
-                () -> bridgeForm.<String>getFormItem(PASSWORD).getValue(),
+                () -> bridgeForm.<String> getFormItem(PASSWORD).getValue(),
                 () -> presenter.bridgeAddress(bridgeTable.hasSelection() ? bridgeTable.selectedRow().getName() : null),
                 () -> presenter.reload());
 

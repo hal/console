@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration;
 
@@ -22,11 +22,6 @@ import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
@@ -62,6 +57,12 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.annotations.NameToken;
+import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+
 import static java.util.Collections.emptyList;
 import static org.jboss.hal.client.configuration.SocketBinding.INBOUND;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -72,7 +73,8 @@ public class SocketBindingGroupPresenter
 
     static final String ROOT_ADDRESS = "/socket-binding-group=*";
     static final AddressTemplate ROOT_TEMPLATE = AddressTemplate.of(ROOT_ADDRESS);
-    private static final String SELECTED_ADDRESS = "/socket-binding-group=" + SelectionAwareStatementContext.SELECTION_EXPRESSION;
+    private static final String SELECTED_ADDRESS = "/socket-binding-group="
+            + SelectionAwareStatementContext.SELECTION_EXPRESSION;
     private static final AddressTemplate SELECTED_TEMPLATE = AddressTemplate.of(SELECTED_ADDRESS);
 
     private final Dispatcher dispatcher;
@@ -140,7 +142,6 @@ public class SocketBindingGroupPresenter
         crud.readRecursive(SELECTED_TEMPLATE.resolve(statementContext), consumer::accept);
     }
 
-
     // ------------------------------------------------------ socket binding group
 
     void saveSocketBindingGroup(Map<String, Object> changedValues) {
@@ -159,7 +160,6 @@ public class SocketBindingGroupPresenter
             }
         });
     }
-
 
     // ------------------------------------------------------ nested socket binding resources
 
@@ -214,26 +214,25 @@ public class SocketBindingGroupPresenter
         crud.remove(socketBinding.type, name, address, this::reload);
     }
 
-
     // ------------------------------------------------------ client mappings
 
     void addClientMapping(Metadata metadata) {
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.SOCKET_BINDING_GROUP_INBOUND_CLIENT_MAPPING_ADD,
                 metadata)
-                .addOnly()
-                .include(SOURCE_NETWORK, DESTINATION_ADDRESS, DESTINATION_PORT)
-                .unsorted()
-                .build();
+                        .addOnly()
+                        .include(SOURCE_NETWORK, DESTINATION_ADDRESS, DESTINATION_PORT)
+                        .unsorted()
+                        .build();
         AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(Names.CLIENT_MAPPINGS),
                 form, (name, modelNode) -> {
-            ResourceAddress address = SELECTED_TEMPLATE.append(INBOUND.templateSuffix())
-                    .resolve(statementContext, inbound);
-            Operation operation = new Operation.Builder(address, LIST_ADD_OPERATION)
-                    .param(NAME, CLIENT_MAPPINGS)
-                    .param(VALUE, modelNode)
-                    .build();
-            dispatcher.execute(operation, result -> reloadClientMappings());
-        });
+                    ResourceAddress address = SELECTED_TEMPLATE.append(INBOUND.templateSuffix())
+                            .resolve(statementContext, inbound);
+                    Operation operation = new Operation.Builder(address, LIST_ADD_OPERATION)
+                            .param(NAME, CLIENT_MAPPINGS)
+                            .param(VALUE, modelNode)
+                            .build();
+                    dispatcher.execute(operation, result -> reloadClientMappings());
+                });
         dialog.show();
     }
 
@@ -286,7 +285,6 @@ public class SocketBindingGroupPresenter
                 });
     }
 
-
     // @formatter:off
     @ProxyCodeSplit
     @Requires(ROOT_ADDRESS)
@@ -296,7 +294,9 @@ public class SocketBindingGroupPresenter
 
     public interface MyView extends MbuiView<SocketBindingGroupPresenter> {
         void reveal();
+
         void update(NamedNode socketBindingGroup);
+
         void showClientMappings(List<NamedNode> clientMappings);
     }
     // @formatter:on

@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.elytron;
 
@@ -21,10 +21,6 @@ import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.ComplexAttributeOperations;
 import org.jboss.hal.core.CrudOperations;
@@ -48,6 +44,11 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
+
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.annotations.NameToken;
+import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -174,7 +175,6 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
         crud.readChildren(AddressTemplates.ELYTRON_SUBSYSTEM_TEMPLATE, resource,
                 children -> callback.accept(asNamedNodes(children)));
     }
-
 
     // ------------------------------------------------------ HTTP authentication factory
 
@@ -310,7 +310,6 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
                 this::reloadSaslAuthenticationFactories);
     }
 
-
     @ProxyCodeSplit
     @Requires(value = {
             AGGREGATE_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS,
@@ -331,16 +330,17 @@ public class FactoriesPresenter extends MbuiPresenter<FactoriesPresenter.MyView,
             REGEX_VALIDATING_PRINCIPAL_TRANSFORMER_ADDRESS,
             SASL_AUTHENTICATION_FACTORY_ADDRESS,
             SERVICE_LOADER_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS,
-            SERVICE_LOADER_SASL_SERVER_FACTORY_ADDRESS})
+            SERVICE_LOADER_SASL_SERVER_FACTORY_ADDRESS })
     @NameToken(NameTokens.ELYTRON_FACTORIES_TRANSFORMERS)
     public interface MyProxy extends ProxyPlace<FactoriesPresenter> {
     }
 
-
     // @formatter:off
     public interface MyView extends MbuiView<FactoriesPresenter> {
         void updateResourceElement(String resource, List<NamedNode> nodes);
+
         void updateHttpAuthentication(List<NamedNode> nodes);
+
         void updateSaslAuthentication(List<NamedNode> nodes);
     }
     // @formatter:on

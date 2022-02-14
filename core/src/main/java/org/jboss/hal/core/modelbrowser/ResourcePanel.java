@@ -1,27 +1,24 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.core.modelbrowser;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Iterator;
+import java.util.List;
 
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.ballroom.Tabs;
@@ -37,14 +34,18 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+
+import elemental2.dom.HTMLElement;
+
 import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.hal.core.modelbrowser.ModelBrowser.PLACE_HOLDER_ELEMENT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.lead;
 
 /**
- * Panel which holds the resource description, the model node form and a detailed description of the attributes and
- * operations.
+ * Panel which holds the resource description, the model node form and a detailed description of the attributes and operations.
  */
 class ResourcePanel implements Iterable<HTMLElement> {
 
@@ -109,11 +110,11 @@ class ResourcePanel implements Iterable<HTMLElement> {
                 flattenModel(result, plainObjects);
                 ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(
                         Ids.build(Ids.MODEL_BROWSER, node.id, Ids.FORM), metadata)
-                        .includeRuntime()
-                        .showDeprecated()
-                        .onSave((f, changedValues) -> modelBrowser.save(address, changedValues, metadata))
-                        .prepareReset(f -> modelBrowser.reset(address, f, metadata))
-                        .build();
+                                .includeRuntime()
+                                .showDeprecated()
+                                .onSave((f, changedValues) -> modelBrowser.save(address, changedValues, metadata))
+                                .prepareReset(f -> modelBrowser.reset(address, f, metadata))
+                                .build();
                 tabs.setContent(dataId, form.element());
                 PatternFly.initComponents();
                 form.attach();
@@ -141,7 +142,8 @@ class ResourcePanel implements Iterable<HTMLElement> {
 
     private void flattenDescription(ModelNode model, List<String> plainObjects) {
         for (Property p : model.asPropertyList()) {
-            if (p.getValue().get(TYPE).asString().equalsIgnoreCase(OBJECT) && !p.getValue().get(VALUE_TYPE).asString().equalsIgnoreCase(STRING)) {
+            if (p.getValue().get(TYPE).asString().equalsIgnoreCase(OBJECT)
+                    && !p.getValue().get(VALUE_TYPE).asString().equalsIgnoreCase(STRING)) {
 
                 model.remove(p.getName());
 

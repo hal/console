@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.messaging;
 
@@ -20,9 +20,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.TextBoxItem;
@@ -55,6 +52,10 @@ import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
+
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.SECURITY_DOMAIN_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.BINDING_DIRECTORY_TEMPLATE;
@@ -106,8 +107,7 @@ public class ServerColumn extends FinderColumn<NamedNode> {
                 .onPreview(ServerPreview::new)
                 .useFirstActionAsBreadcrumbHandler()
                 .pinnable()
-                .withFilter()
-        );
+                .withFilter());
 
         addColumnAction(columnActionFactory.add(MESSAGING_SERVER_ADD, Names.SERVER, SERVER_TEMPLATE,
                 column -> {
@@ -135,14 +135,14 @@ public class ServerColumn extends FinderColumn<NamedNode> {
 
                                 Form<ModelNode> form = new ModelNodeForm.Builder<>(
                                         build(MESSAGING_SERVER_ADD, FORM), metadata)
-                                        .requiredOnly()
-                                        .unboundFormItem(new NameItem())
-                                        .unboundFormItem(elytronDomain)
-                                        .unboundFormItem(pathBindingDir)
-                                        .unboundFormItem(pathJournalDir)
-                                        .unboundFormItem(pathLargeMessagesDir)
-                                        .unboundFormItem(pathPagingDir)
-                                        .build();
+                                                .requiredOnly()
+                                                .unboundFormItem(new NameItem())
+                                                .unboundFormItem(elytronDomain)
+                                                .unboundFormItem(pathBindingDir)
+                                                .unboundFormItem(pathJournalDir)
+                                                .unboundFormItem(pathLargeMessagesDir)
+                                                .unboundFormItem(pathPagingDir)
+                                                .build();
 
                                 AddResourceDialog dialog = new AddResourceDialog(
                                         resources.messages().addResourceTitle(Names.SERVER), form,
@@ -161,8 +161,8 @@ public class ServerColumn extends FinderColumn<NamedNode> {
                                                             statementContext, name);
                                                     Operation pathBindDirOp = new Operation.Builder(bindDirAddress,
                                                             ADD)
-                                                            .param(PATH, pathBindingDir.getValue())
-                                                            .build();
+                                                                    .param(PATH, pathBindingDir.getValue())
+                                                                    .build();
                                                     composite.add(pathBindDirOp);
                                                 }
 
@@ -172,8 +172,8 @@ public class ServerColumn extends FinderColumn<NamedNode> {
                                                                     statementContext, name);
                                                     Operation pathJournalDirOp = new Operation.Builder(
                                                             journalDirAddress, ADD)
-                                                            .param(PATH, pathJournalDir.getValue())
-                                                            .build();
+                                                                    .param(PATH, pathJournalDir.getValue())
+                                                                    .build();
                                                     composite.add(pathJournalDirOp);
                                                 }
 
@@ -182,8 +182,8 @@ public class ServerColumn extends FinderColumn<NamedNode> {
                                                             .resolve(statementContext, name);
                                                     Operation pathLargMsgDirOp = new Operation.Builder(
                                                             largMsgDirAddress, ADD)
-                                                            .param(PATH, pathLargeMessagesDir.getValue())
-                                                            .build();
+                                                                    .param(PATH, pathLargeMessagesDir.getValue())
+                                                                    .build();
                                                     composite.add(pathLargMsgDirOp);
                                                 }
 
@@ -192,8 +192,8 @@ public class ServerColumn extends FinderColumn<NamedNode> {
                                                             statementContext, name);
                                                     Operation pathPagingDirOp = new Operation.Builder(
                                                             pagingDirAddress, ADD)
-                                                            .param(PATH, pathPagingDir.getValue())
-                                                            .build();
+                                                                    .param(PATH, pathPagingDir.getValue())
+                                                                    .build();
                                                     composite.add(pathPagingDirOp);
                                                 }
 
@@ -214,7 +214,7 @@ public class ServerColumn extends FinderColumn<NamedNode> {
                                                                                 e.getMessage()))));
                                             }
                                         });
-                                dialog.getForm().<String>getFormItem(NAME).addValidationHandler(
+                                dialog.getForm().<String> getFormItem(NAME).addValidationHandler(
                                         createUniqueValidation());
                                 dialog.show();
                             });
@@ -222,7 +222,7 @@ public class ServerColumn extends FinderColumn<NamedNode> {
                 }));
         addColumnAction(columnActionFactory.refresh(Ids.MESSAGING_SERVER_CONFIGURATION_REFRESH));
 
-        //noinspection Convert2Diamond
+        // noinspection Convert2Diamond
         setItemRenderer(item -> new ItemDisplay<NamedNode>() {
             @Override
             public String getId() {

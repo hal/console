@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.config;
 
@@ -19,12 +19,13 @@ import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import jsinterop.annotations.JsIgnore;
-import jsinterop.annotations.JsProperty;
-import jsinterop.annotations.JsType;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.spi.EsReturn;
 import org.jboss.hal.spi.NamedObject;
+
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsProperty;
+import jsinterop.annotations.JsType;
 
 /** A standard or scoped role used when RBAC is turned on. */
 @JsType
@@ -37,10 +38,9 @@ public class Role implements NamedObject {
     public static final Role AUDITOR = new Role("Auditor");
 
     /**
-     * Like a Maintainer, but with permission to modify persistent configuration constrained to resources that are
-     * considered to be "application resources". A deployment is an application resource. The messaging server is not.
-     * Items like datasources and JMS destinations are not considered to be application resources by default, but this
-     * is configurable.
+     * Like a Maintainer, but with permission to modify persistent configuration constrained to resources that are considered to
+     * be "application resources". A deployment is an application resource. The messaging server is not. Items like datasources
+     * and JMS destinations are not considered to be application resources by default, but this is configurable.
      */
     public static final Role DEPLOYER = new Role("Deployer");
 
@@ -59,11 +59,9 @@ public class Role implements NamedObject {
     /** Has all permissions. Equivalent to a JBoss AS 7 administrator. */
     public static final Role SUPER_USER = new Role("SuperUser");
 
-
     public enum Type {
         STANDARD, HOST, SERVER_GROUP
     }
-
 
     private final String name;
     private final Type type;
@@ -100,7 +98,7 @@ public class Role implements NamedObject {
         }
 
         Role role = (Role) o;
-        //noinspection RedundantIfStatement
+        // noinspection RedundantIfStatement
         if (!name.equals(role.name)) {
             return false;
         }
@@ -119,7 +117,7 @@ public class Role implements NamedObject {
         if (isStandard()) {
             return name;
         }
-        //noinspection DuplicateStringLiteralInspection
+        // noinspection DuplicateStringLiteralInspection
         return name + " extends " + baseRole.getName() + " scoped to " + type.name()
                 .toLowerCase() + scope + ", includeAll: " + includeAll;
     }
@@ -173,7 +171,6 @@ public class Role implements NamedObject {
     public void setIncludeAll(boolean includeAll) {
         this.includeAll = includeAll;
     }
-
 
     // ------------------------------------------------------ JS methods
 

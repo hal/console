@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.ballroom;
 
@@ -19,11 +19,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import com.google.common.base.Strings;
-import com.google.gwt.core.client.GWT;
-import elemental2.dom.Element;
-import elemental2.dom.HTMLElement;
-import elemental2.dom.HTMLInputElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.dataprovider.DataProvider;
@@ -40,24 +35,30 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Messages;
 import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Callback;
+
+import com.google.common.base.Strings;
+import com.google.gwt.core.client.GWT;
+
+import elemental2.dom.Element;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLInputElement;
 import rx.Subscription;
 
 import static com.intendia.rxgwt.elemento.RxElemento.fromEvent;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.stream.Collectors.toList;
+import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.Elements.form;
 import static org.jboss.gwt.elemento.core.Elements.label;
-import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.gwt.elemento.core.EventType.keyup;
 import static org.jboss.gwt.elemento.core.InputType.text;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
-import static org.jboss.hal.resources.CSS.label;
 import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.label;
 
 /**
- * PatternFly toolbar. Should be connected to a {@link DataProvider} (which in turn updates its displays e.g. a list
- * view):
+ * PatternFly toolbar. Should be connected to a {@link DataProvider} (which in turn updates its displays e.g. a list view):
  *
  * <pre>
  * DataProvider dataProvider = ...;
@@ -70,8 +71,10 @@ import static org.jboss.hal.resources.CSS.*;
  * dataProvider.update(items);
  * </pre>
  *
- * <p>Please note that the toolbar uses its own {@code <div class="row"/>} element. This is important if you add the
- * toolbar using the methods from {@link org.jboss.hal.ballroom.LayoutBuilder}:</p>
+ * <p>
+ * Please note that the toolbar uses its own {@code <div class="row"/>} element. This is important if you add the toolbar using
+ * the methods from {@link org.jboss.hal.ballroom.LayoutBuilder}:
+ * </p>
  *
  * <pre>
  * Toolbar toolbar = ...;
@@ -82,7 +85,8 @@ import static org.jboss.hal.resources.CSS.*;
  *             .add(...)))
  * </pre>
  *
- * @see <a href="https://www.patternfly.org/pattern-library/forms-and-controls/toolbar/">https://www.patternfly.org/pattern-library/forms-and-controls/toolbar/</a>
+ * @see <a href=
+ *      "https://www.patternfly.org/pattern-library/forms-and-controls/toolbar/">https://www.patternfly.org/pattern-library/forms-and-controls/toolbar/</a>
  */
 public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachable {
 
@@ -123,7 +127,8 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
         this.root = div().css(row, toolbarPf)
                 .add(column()
                         .add(controlContainer = form().css(toolbarPfActions).element())
-                        .add(resultContainer = div().css(row, toolbarPfResults).element())).element();
+                        .add(resultContainer = div().css(row, toolbarPfResults).element()))
+                .element();
 
         // filter
         List<Attribute<T>> filterAttributes = attributes.stream()
@@ -154,7 +159,8 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
                             .data(DATA_FILTER, attribute.name)
                             .add(a().css(clickable)
                                     .on(click, e -> setSelectedFilter(attribute))
-                                    .textContent(attribute.title)).element());
+                                    .textContent(attribute.title))
+                            .element());
                 }
             }
             inputGroup.appendChild(filterInput = input(text)
@@ -183,7 +189,8 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
                             .data(DATA_SORT, attribute.name)
                             .add(a().css(clickable)
                                     .on(click, e -> sort(attribute))
-                                    .textContent(attribute.title)).element());
+                                    .textContent(attribute.title))
+                            .element());
                 }
             } else {
                 formGroup.appendChild(sortStaticText = span().css(formControlStatic).element());
@@ -229,7 +236,8 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
                     ul.appendChild(li()
                             .add(a().css(clickable)
                                     .on(click, e -> action.callback.execute())
-                                    .textContent(action.text)).element());
+                                    .textContent(action.text))
+                            .element());
                 }
             }
         }
@@ -245,7 +253,9 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
                         .add(p().add(a()
                                 .css(clickable)
                                 .textContent(CONSTANTS.clearAllFilters())
-                                .on(click, e -> clearAllFilters()))).element()).element());
+                                .on(click, e -> clearAllFilters())))
+                        .element())
+                .element());
         resultContainer.appendChild(selection = column(3).css(listHalSelected).element());
 
         // initial reset
@@ -305,7 +315,6 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
         }
     }
 
-
     // ------------------------------------------------------ event handler
 
     private void setSelectedFilter(Attribute<T> attribute) {
@@ -327,7 +336,7 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
 
         } else {
             Element activeFilterValue = activeFiltersUl.querySelector(
-                    "span[data-active-filter-value=" + attribute.name + "]"); //NON-NLS
+                    "span[data-active-filter-value=" + attribute.name + "]"); // NON-NLS
             if (activeFilterValue != null) {
                 activeFilterValue.textContent = filterInput.value;
             } else {
@@ -339,7 +348,8 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
                                         .textContent(filterInput.value))
                                 .add(a().css(clickable)
                                         .on(click, e -> clearFilter(attribute))
-                                        .add(span().css(pfIcon("close"))))).element());
+                                        .add(span().css(pfIcon("close")))))
+                        .element());
             }
             Elements.setVisible(filters, dataProvider.hasFilters());
             dataProvider.addFilter(attribute.name, new FilterValue<>(attribute.filter, filterInput.value));
@@ -347,7 +357,7 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
     }
 
     private void clearFilter(Attribute<T> attribute) {
-        Element activeFilter = activeFiltersUl.querySelector("li[data-active-filter=" + attribute.name + "]"); //NON-NLS
+        Element activeFilter = activeFiltersUl.querySelector("li[data-active-filter=" + attribute.name + "]"); // NON-NLS
         Elements.failSafeRemove(activeFiltersUl, activeFilter);
         Elements.setVisible(filters, dataProvider.hasFilters());
         dataProvider.removeFilter(attribute.name);
@@ -392,12 +402,11 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
         for (HTMLElement li : Elements.children(ul)) {
             li.classList.remove(selected);
         }
-        Element li = ul.querySelector("li[data-" + data + "=" + attribute.name + "]"); //NON-NLS
+        Element li = ul.querySelector("li[data-" + data + "=" + attribute.name + "]"); // NON-NLS
         if (li != null) {
             li.classList.add(selected);
         }
     }
-
 
     public static class Attribute<T> {
 
@@ -456,7 +465,6 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
             return "Toolbar.Attribute(" + name + ")";
         }
     }
-
 
     public static class Action {
 

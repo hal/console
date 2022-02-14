@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.deployment;
 
@@ -19,10 +19,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemDisplay;
@@ -39,6 +35,12 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Requires;
+
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+
+import elemental2.dom.HTMLElement;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
@@ -105,10 +107,9 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup> {
                     .param(INCLUDE_RUNTIME, true)
                     .build();
             Operation deploymentsOp = new Operation.Builder(
-                    new ResourceAddress().add(SERVER_GROUP, "*").add(DEPLOYMENT, "*"), READ_RESOURCE_OPERATION
-            )
-                    .param(INCLUDE_RUNTIME, true)
-                    .build();
+                    new ResourceAddress().add(SERVER_GROUP, "*").add(DEPLOYMENT, "*"), READ_RESOURCE_OPERATION)
+                            .param(INCLUDE_RUNTIME, true)
+                            .build();
             dispatcher.execute(new Composite(serverGroupsOp, deploymentsOp), (CompositeResult result) -> {
                 List<ServerGroup> serverGroups = result.step(0).get(RESULT).asPropertyList().stream()
                         .map(ServerGroup::new)

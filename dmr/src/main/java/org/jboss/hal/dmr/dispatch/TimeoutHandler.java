@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.dmr.dispatch;
 
@@ -23,6 +23,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import rx.Completable;
 import rx.Observable;
 import rx.Single;
@@ -47,8 +48,8 @@ public class TimeoutHandler {
     }
 
     /**
-     * Executes the operation until the operation successfully returns and the precondition is met. The precondition
-     * receives the result of the operation.
+     * Executes the operation until the operation successfully returns and the precondition is met. The precondition receives
+     * the result of the operation.
      */
     @SuppressWarnings("HardCodedStringLiteral")
     public static Completable repeatOperationUntil(Dispatcher dispatcher, int timeout, Operation operation,
@@ -71,8 +72,8 @@ public class TimeoutHandler {
     }
 
     /**
-     * Executes the composite operation until the operation successfully returns and the precondition is met. The
-     * precondition receives the composite result of the operation.
+     * Executes the composite operation until the operation successfully returns and the precondition is met. The precondition
+     * receives the composite result of the operation.
      */
     @SuppressWarnings("HardCodedStringLiteral")
     public static Completable repeatCompositeUntil(Dispatcher dispatcher, int timeout, Composite composite,

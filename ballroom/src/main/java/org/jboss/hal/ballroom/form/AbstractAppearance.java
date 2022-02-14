@@ -1,35 +1,36 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.ballroom.form;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import com.google.gwt.core.client.GWT;
-import elemental2.dom.HTMLLabelElement;
 import org.jboss.hal.dmr.Deprecation;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Messages;
+
+import com.google.gwt.core.client.GWT;
+
+import elemental2.dom.HTMLLabelElement;
 
 import static org.jboss.hal.resources.CSS.deprecated;
 
 /**
  * Abstract appearance with a set of supported decorations. Puts guards around {@link #apply(Decoration, Object)} and
- * {@link #unapply(Decoration)}. The guards check if the decoration is supported and not already applied resp. has been
- * applied.
+ * {@link #unapply(Decoration)}. The guards check if the decoration is supported and not already applied resp. has been applied.
  */
 abstract class AbstractAppearance<T> implements Appearance<T> {
 
@@ -73,19 +74,18 @@ abstract class AbstractAppearance<T> implements Appearance<T> {
     }
 
     /**
-     * Safely applies a decoration. Only called if the appearance supports the decoration and the decoration has not
-     * been applied to the appearance.
+     * Safely applies a decoration. Only called if the appearance supports the decoration and the decoration has not been
+     * applied to the appearance.
      */
     abstract <C> void safeApply(Decoration decoration, C context);
 
     /**
-     * Safely unapplies a decoration. Only called if the appearance supports the decoration and the decoration has been
-     * applied to the appearance.
+     * Safely unapplies a decoration. Only called if the appearance supports the decoration and the decoration has been applied
+     * to the appearance.
      */
     abstract void safeUnapply(Decoration decoration);
 
     protected abstract String name();
-
 
     // ------------------------------------------------------ common behaviour
 

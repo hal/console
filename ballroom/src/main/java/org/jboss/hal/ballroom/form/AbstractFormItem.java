@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.ballroom.form;
 
@@ -21,13 +21,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.event.shared.GwtEvent;
-import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.event.shared.SimpleEventBus;
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.form.Form.State;
@@ -35,14 +28,22 @@ import org.jboss.hal.ballroom.form.ResolveExpressionEvent.ResolveExpressionHandl
 import org.jboss.hal.ballroom.wizard.Wizard;
 import org.jboss.hal.dmr.Deprecation;
 
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.event.shared.SimpleEventBus;
+
+import elemental2.dom.HTMLElement;
+
 import static java.util.Collections.singletonList;
 import static org.jboss.hal.ballroom.form.Decoration.*;
 import static org.jboss.hal.ballroom.form.FormItemValidation.ValidationRule.ALWAYS;
 
 /**
  * Base class for all form item implementations. Contains central logic for handling (default) values, various flags,
- * validation, expressions and event handling. All UI and DOM related code can be found in {@linkplain Appearance
- * appearances}.
+ * validation, expressions and event handling. All UI and DOM related code can be found in {@linkplain Appearance appearances}.
  * <p>
  * A form item carries three different values:
  * <ol>
@@ -119,7 +120,6 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         handlers.add(handler);
     }
 
-
     // ------------------------------------------------------ element and appearance
 
     @Override
@@ -132,8 +132,8 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     }
 
     /**
-     * Calls {@code SuggestHandler.attach()} in case there was one registered. If you override this method, please
-     * call {@code super.attach()} to keep this behaviour.
+     * Calls {@code SuggestHandler.attach()} in case there was one registered. If you override this method, please call
+     * {@code super.attach()} to keep this behaviour.
      */
     @Override
     public void attach() {
@@ -189,7 +189,6 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         return null;
     }
 
-
     // ------------------------------------------------------ id, value & name
 
     @Override
@@ -214,9 +213,8 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     }
 
     /**
-     * Sets the form item's value and shows the value in the appearances. Sets the expression value to {@code null}.
-     * Does not touch the {@code modified} and {@code undefined} flags. Should be called from business code like form
-     * mapping.
+     * Sets the form item's value and shows the value in the appearances. Sets the expression value to {@code null}. Does not
+     * touch the {@code modified} and {@code undefined} flags. Should be called from business code like form mapping.
      */
     @Override
     public void setValue(T value, boolean fireEvent) {
@@ -241,8 +239,8 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     }
 
     /**
-     * Assigns a new value to the internal value and adjusts the {@code modified} and {@code undefined} flags.
-     * Should be called from change handlers. Does not update any appearances nor apply / unapply decorations.
+     * Assigns a new value to the internal value and adjusts the {@code modified} and {@code undefined} flags. Should be called
+     * from change handlers. Does not update any appearances nor apply / unapply decorations.
      */
     protected void modifyValue(T newValue) {
         this.value = newValue;
@@ -254,9 +252,9 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     }
 
     /**
-     * Sets the value and expression value to {@code null}, {@linkplain #clearError() clears any error marker} and
-     * shows the default value (if any). Does not touch the {@code modified} and {@code undefined} flags. Should be
-     * called from business code like form mapping.
+     * Sets the value and expression value to {@code null}, {@linkplain #clearError() clears any error marker} and shows the
+     * default value (if any). Does not touch the {@code modified} and {@code undefined} flags. Should be called from business
+     * code like form mapping.
      */
     @Override
     public void clearValue() {
@@ -274,9 +272,8 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     }
 
     /**
-     * Stores the default value for later use. The default value will be used in {@link #setValue(Object)} (if the
-     * value is null or empty) and {@link #clearValue()}. Calling this method will <strong>not</strong> immediately
-     * show the default value.
+     * Stores the default value for later use. The default value will be used in {@link #setValue(Object)} (if the value is null
+     * or empty) and {@link #clearValue()}. Calling this method will <strong>not</strong> immediately show the default value.
      */
     @Override
     public void assignDefaultValue(T defaultValue) {
@@ -326,14 +323,13 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         appearances.values().forEach(a -> a.setName(name));
     }
 
-
     // ------------------------------------------------------ validation
 
     List<FormItemValidation<T>> defaultValidationHandlers() {
         return singletonList(new RequiredValidation<>(this));
     }
 
-    @SuppressWarnings({"SimplifiableIfStatement", "WeakerAccess"})
+    @SuppressWarnings({ "SimplifiableIfStatement", "WeakerAccess" })
     boolean requiresValidation() {
         if (isRequired()) {
             return true;
@@ -385,8 +381,8 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     }
 
     /**
-     * Clears any error markers. This method {@linkplain Appearance#unapply(Decoration) unapplies} the {@linkplain
-     * Decoration#INVALID INVALID} decoration.
+     * Clears any error markers. This method {@linkplain Appearance#unapply(Decoration) unapplies} the
+     * {@linkplain Decoration#INVALID INVALID} decoration.
      */
     @Override
     public void clearError() {
@@ -401,7 +397,6 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     public void showError(String message) {
         apply(INVALID, message);
     }
-
 
     // ------------------------------------------------------ expressions
 
@@ -426,9 +421,9 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     }
 
     /**
-     * Sets the form item's expression value, applies the {@link Decoration#EXPRESSION} decoration and shows the
-     * expression value in the appearances. Sets the value to {@code null}. Does not touch the {@code modified} and
-     * {@code undefined} flags. Should be called from business code like form mapping.
+     * Sets the form item's expression value, applies the {@link Decoration#EXPRESSION} decoration and shows the expression
+     * value in the appearances. Sets the value to {@code null}. Does not touch the {@code modified} and {@code undefined}
+     * flags. Should be called from business code like form mapping.
      */
     @Override
     public void setExpressionValue(String expressionValue) {
@@ -443,8 +438,8 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     }
 
     /**
-     * Assigns a new value to the internal expression value and adjusts the {@code modified} and {@code undefined}
-     * flags. Does not update any appearances nor apply / unapply decorations. Should be called from change handlers.
+     * Assigns a new value to the internal expression value and adjusts the {@code modified} and {@code undefined} flags. Does
+     * not update any appearances nor apply / unapply decorations. Should be called from change handlers.
      */
     protected void modifyExpressionValue(String newExpressionValue) {
         this.value = null;
@@ -488,7 +483,6 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         return Dialog.isOpen() || Wizard.isOpen();
     }
 
-
     // ------------------------------------------------------ suggestion handler
 
     @Override
@@ -505,7 +499,6 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     public void onSuggest(String suggestion) {
         // nop
     }
-
 
     // ------------------------------------------------------ flags and properties
 
@@ -639,13 +632,11 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         this.form = form;
     }
 
-
     @FunctionalInterface
     interface ExpressionCallback {
 
         void resolveExpression(String expression);
     }
-
 
     static class ExpressionContext {
 

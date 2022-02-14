@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.rhcp;
 
@@ -21,9 +21,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import com.google.common.collect.Maps;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
@@ -41,19 +38,24 @@ import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.StaticResourceDescription;
 import org.jboss.hal.resources.Ids;
 
+import com.google.common.collect.Maps;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+
+import elemental2.dom.HTMLElement;
+
 import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
 
-@SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
+@SuppressWarnings({ "HardCodedStringLiteral", "DuplicateStringLiteralInspection" })
 public class UnderTheBridgeView extends HalViewImpl implements UnderTheBridgePresenter.MyView {
 
     private static final String VIDEO = "https://youtu.be/GLvohMXgcBo";
     private static final Map<String, String[]> ATTRIBUTES = Maps.newLinkedHashMap();
 
     static {
-        ATTRIBUTES.put("string-attributes", new String[]{
+        ATTRIBUTES.put("string-attributes", new String[] {
                 "password",
                 "string-required",
                 "string-optional",
@@ -63,45 +65,45 @@ public class UnderTheBridgeView extends HalViewImpl implements UnderTheBridgePre
                 "string-sensitive-expression",
                 "string-restart",
                 "string-suggestion",
-                "string-suggestion-expression"});
-        ATTRIBUTES.put("int-attributes", new String[]{
+                "string-suggestion-expression" });
+        ATTRIBUTES.put("int-attributes", new String[] {
                 "int-required",
                 "int-optional",
                 "int-default",
                 "int-expression",
                 "int-restart",
                 "int-unit",
-                "int-unit-expression"});
-        ATTRIBUTES.put("long-attributes", new String[]{
+                "int-unit-expression" });
+        ATTRIBUTES.put("long-attributes", new String[] {
                 "long-required",
                 "long-optional",
                 "long-default",
                 "long-expression",
                 "long-restart",
                 "long-unit",
-                "long-unit-expression"});
-        ATTRIBUTES.put("boolean-attributes", new String[]{
+                "long-unit-expression" });
+        ATTRIBUTES.put("boolean-attributes", new String[] {
                 "boolean-required",
                 "boolean-optional",
                 "boolean-default",
-                "boolean-expression"});
-        ATTRIBUTES.put("single-select-attributes", new String[]{
+                "boolean-expression" });
+        ATTRIBUTES.put("single-select-attributes", new String[] {
                 "single-select-required",
                 "single-select-optional",
-                "single-select-default"});
-        ATTRIBUTES.put("multi-select-attributes", new String[]{
+                "single-select-default" });
+        ATTRIBUTES.put("multi-select-attributes", new String[] {
                 "multi-select-required",
                 "multi-select-optional",
-                "multi-select-default"});
-        ATTRIBUTES.put("list-attributes", new String[]{
+                "multi-select-default" });
+        ATTRIBUTES.put("list-attributes", new String[] {
                 "list-required",
                 "list-optional",
                 "list-default",
-                "list-suggestion"});
-        ATTRIBUTES.put("property-attributes", new String[]{
+                "list-suggestion" });
+        ATTRIBUTES.put("property-attributes", new String[] {
                 "properties-required",
                 "properties-optional",
-                "properties-default"});
+                "properties-default" });
     }
 
     private final List<ModelNodeForm<ModelNode>> forms;
@@ -118,9 +120,9 @@ public class UnderTheBridgeView extends HalViewImpl implements UnderTheBridgePre
         for (Map.Entry<String, String[]> entry : ATTRIBUTES.entrySet()) {
             ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(entry.getKey(), Ids.FORM),
                     Metadata.staticDescription(description))
-                    .include(entry.getValue())
-                    .onSave(saveCallback)
-                    .build();
+                            .include(entry.getValue())
+                            .onSave(saveCallback)
+                            .build();
             forms.add(form);
             tabs.add(Ids.build(entry.getKey(), Ids.TAB), new LabelBuilder().label(entry.getKey()),
                     form.element());
@@ -149,7 +151,8 @@ public class UnderTheBridgeView extends HalViewImpl implements UnderTheBridgePre
                                         .appendEscaped("Under The Bridge")
                                         .appendHtmlConstant("</a> by Red Hot Chili Peppers.")
                                         .toSafeHtml()))
-                        .add(tabs)).element();
+                        .add(tabs))
+                .element();
         initElement(layout);
     }
 

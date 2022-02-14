@@ -1,29 +1,30 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.ballroom;
+
+import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.UIConstants;
 
 import elemental2.dom.Element;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.hal.resources.Ids;
-import org.jboss.hal.resources.UIConstants;
 
 import static elemental2.dom.DomGlobal.document;
 import static jsinterop.annotations.JsPackage.GLOBAL;
@@ -63,7 +64,8 @@ public class Accordion implements IsElement {
                                         .attr(UIConstants.ROLE, UIConstants.BUTTON)
                                         .textContent(title))))
                 .add(div().id(id).css(panelCollapse, collapse, firstPanel ? in : null).aria("labelledby", headerId)
-                        .add(body = div().css(panelBody).element())).element();
+                        .add(body = div().css(panelBody).element()))
+                .element();
 
         fillBody(body, first, rest);
         root.appendChild(div);
@@ -84,15 +86,15 @@ public class Accordion implements IsElement {
     }
 
     public void showPanel(String id) {
-        Api.select(UIConstants.HASH + id).collapse("show"); //NON-NLS
+        Api.select(UIConstants.HASH + id).collapse("show"); // NON-NLS
     }
 
     public void hidePanel(String id) {
-        Api.select(UIConstants.HASH + id).collapse("hide"); //NON-NLS
+        Api.select(UIConstants.HASH + id).collapse("hide"); // NON-NLS
     }
 
     public void togglePanel(String id) {
-        Api.select(UIConstants.HASH + id).collapse("toggle"); //NON-NLS
+        Api.select(UIConstants.HASH + id).collapse("toggle"); // NON-NLS
     }
 
     public void setContent(String id, Element first, Element... rest) {
@@ -104,7 +106,6 @@ public class Accordion implements IsElement {
             }
         }
     }
-
 
     @JsType(isNative = true)
     static class Api {

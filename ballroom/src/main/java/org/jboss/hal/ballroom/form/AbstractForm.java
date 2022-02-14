@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.ballroom.form;
 
@@ -24,19 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.web.bindery.event.shared.HandlerRegistration;
-import elemental2.dom.HTMLDivElement;
-import elemental2.dom.HTMLElement;
-import elemental2.dom.HTMLFieldSetElement;
-import elemental2.dom.HTMLHRElement;
-import elemental2.dom.HTMLLegendElement;
-import elemental2.dom.HTMLUListElement;
-import elemental2.dom.KeyboardEvent;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.EventCallbackFn;
 import org.jboss.gwt.elemento.core.LazyElement;
@@ -47,23 +34,75 @@ import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Messages;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.web.bindery.event.shared.HandlerRegistration;
+
+import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLFieldSetElement;
+import elemental2.dom.HTMLHRElement;
+import elemental2.dom.HTMLLegendElement;
+import elemental2.dom.HTMLUListElement;
+import elemental2.dom.KeyboardEvent;
+
 import static elemental2.dom.DomGlobal.setTimeout;
 import static java.util.stream.Collectors.toList;
-import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.gwt.elemento.core.Elements.a;
+import static org.jboss.gwt.elemento.core.Elements.button;
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.fieldset;
+import static org.jboss.gwt.elemento.core.Elements.hr;
+import static org.jboss.gwt.elemento.core.Elements.legend;
+import static org.jboss.gwt.elemento.core.Elements.li;
+import static org.jboss.gwt.elemento.core.Elements.section;
+import static org.jboss.gwt.elemento.core.Elements.setVisible;
+import static org.jboss.gwt.elemento.core.Elements.span;
+import static org.jboss.gwt.elemento.core.Elements.ul;
 import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.gwt.elemento.core.EventType.keyup;
-import static org.jboss.hal.ballroom.form.Form.Operation.*;
+import static org.jboss.hal.ballroom.form.Form.Operation.CANCEL;
+import static org.jboss.hal.ballroom.form.Form.Operation.CLEAR;
+import static org.jboss.hal.ballroom.form.Form.Operation.EDIT;
+import static org.jboss.hal.ballroom.form.Form.Operation.REMOVE;
+import static org.jboss.hal.ballroom.form.Form.Operation.RESET;
+import static org.jboss.hal.ballroom.form.Form.Operation.SAVE;
+import static org.jboss.hal.ballroom.form.Form.Operation.VIEW;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.ballroom.form.Form.State.EMPTY;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
+import static org.jboss.hal.resources.CSS.alert;
+import static org.jboss.hal.resources.CSS.alertDanger;
+import static org.jboss.hal.resources.CSS.btn;
+import static org.jboss.hal.resources.CSS.btnDefault;
+import static org.jboss.hal.resources.CSS.btnHal;
+import static org.jboss.hal.resources.CSS.btnPrimary;
+import static org.jboss.hal.resources.CSS.clickable;
+import static org.jboss.hal.resources.CSS.editing;
+import static org.jboss.hal.resources.CSS.faAngleDown;
+import static org.jboss.hal.resources.CSS.fieldSectionTogglePf;
+import static org.jboss.hal.resources.CSS.fieldsSectionHeaderPf;
+import static org.jboss.hal.resources.CSS.fieldsSectionPf;
+import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.form;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.formButtons;
+import static org.jboss.hal.resources.CSS.formGroup;
+import static org.jboss.hal.resources.CSS.formHorizontal;
+import static org.jboss.hal.resources.CSS.formSection;
+import static org.jboss.hal.resources.CSS.halFormOffset;
+import static org.jboss.hal.resources.CSS.helpBlock;
+import static org.jboss.hal.resources.CSS.pullRight;
+import static org.jboss.hal.resources.CSS.readonly;
+import static org.jboss.hal.resources.CSS.separator;
 import static org.jboss.hal.resources.UIConstants.MEDIUM_TIMEOUT;
 
 /**
- * A generic form with some reasonable UI defaults. Please note that all form items and help texts must be setup
- * before this form is added {@linkplain #element() as an element} to the DOM.
+ * A generic form with some reasonable UI defaults. Please note that all form items and help texts must be setup before this
+ * form is added {@linkplain #element() as an element} to the DOM.
  * <p>
  * The form consists of {@linkplain FormLinks links} and three sections:
  * <ul>
@@ -108,7 +147,6 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
     protected PrepareReset<T> prepareReset;
     protected PrepareRemove<T> prepareRemove;
 
-
     // ------------------------------------------------------ initialization
 
     public AbstractForm(String id, StateMachine stateMachine, DataMapping<T> dataMapping,
@@ -151,7 +189,6 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
     public void addFormValidation(FormValidation<T> formValidation) {
         formValidations.add(formValidation);
     }
-
 
     // ------------------------------------------------------ ui setup
 
@@ -198,7 +235,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
 
         if (stateMachine.supports(EDIT)) {
             escCallback = (KeyboardEvent event) -> {
-                if ("Escape".equals(event.key) && //NON-NLS
+                if ("Escape".equals(event.key) && // NON-NLS
                         stateMachine.current() == EDITING &&
                         panels.get(EDITING) != null &&
                         Elements.isVisible(panels.get(EDITING))) {
@@ -221,7 +258,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
         HTMLDivElement viewPanel = div()
                 .id(Ids.build(id, READONLY.name().toLowerCase()))
                 .css(form, formHorizontal, readonly).element();
-        for (Iterator<FormItem> iterator = getFormItems().iterator(); iterator.hasNext(); ) {
+        for (Iterator<FormItem> iterator = getFormItems().iterator(); iterator.hasNext();) {
             FormItem formItem = iterator.next();
             viewPanel.appendChild(formItem.element(READONLY));
             if (iterator.hasNext()) {
@@ -249,7 +286,8 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
         if (hasRequiredField) {
             editPanel.appendChild(div().css(formGroup)
                     .add(div().css(halFormOffset)
-                            .add(span().css(helpBlock).innerHtml(MESSAGES.requiredHelp()))).element());
+                            .add(span().css(helpBlock).innerHtml(MESSAGES.requiredHelp())))
+                    .element());
         }
         // if separateOptionalFields=true and there are non-required attributes, they are placed in a collapsible
         // panel
@@ -269,7 +307,8 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
                                 expanderElement.classList.toggle(faAngleDown);
                                 optionalFields.forEach(field -> setVisible(field,
                                         expanderElement.classList.contains(faAngleDown)));
-                            })).element();
+                            }))
+                    .element();
             fieldsetElement.appendChild(legend);
             for (FormItem formItem : getFormItems()) {
                 if (!formItem.isRequired()) {
@@ -291,7 +330,8 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
                                 .add(button()
                                         .css(btn, btnHal, btnPrimary)
                                         .textContent(CONSTANTS.save())
-                                        .on(click, event -> save())))).element();
+                                        .on(click, event -> save()))))
+                .element();
         editPanel.appendChild(buttons);
 
         return editPanel;
@@ -308,12 +348,11 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
         getFormItems().forEach(Attachable::detach);
     }
 
-
     // ------------------------------------------------------ form operations
 
     /**
-     * Executes the {@link Operation#VIEW} operation and calls {@link
-     * DataMapping#populateFormItems(Object, Form)} if the form is not {@linkplain #isUndefined() undefined}.
+     * Executes the {@link Operation#VIEW} operation and calls {@link DataMapping#populateFormItems(Object, Form)} if the form
+     * is not {@linkplain #isUndefined() undefined}.
      *
      * @param model the model to view.
      */
@@ -331,8 +370,8 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
     }
 
     /**
-     * Removes the model reference, executes the {@link Operation#CLEAR} operation and
-     * calls {@link DataMapping#clearFormItems(Form)}.
+     * Removes the model reference, executes the {@link Operation#CLEAR} operation and calls
+     * {@link DataMapping#clearFormItems(Form)}.
      */
     @Override
     public void clear() {
@@ -346,8 +385,8 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
     }
 
     /**
-     * Executes the {@link Operation#EDIT} operation and calls {@link DataMapping#newModel(Object, Form)} if the model
-     * is {@linkplain #isTransient() transitive} otherwise {@link DataMapping#populateFormItems(Object, Form)}.
+     * Executes the {@link Operation#EDIT} operation and calls {@link DataMapping#newModel(Object, Form)} if the model is
+     * {@linkplain #isTransient() transitive} otherwise {@link DataMapping#populateFormItems(Object, Form)}.
      *
      * @param model the model to edit.
      */
@@ -370,9 +409,9 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
     }
 
     /**
-     * Upon successful validation, executes the {@link Operation#SAVE} operation,
-     * calls {@link DataMapping#persistModel(Object, Form)} and finally calls the registered {@linkplain
-     * SaveCallback save callback} (if any).
+     * Upon successful validation, executes the {@link Operation#SAVE} operation, calls
+     * {@link DataMapping#persistModel(Object, Form)} and finally calls the registered {@linkplain SaveCallback save callback}
+     * (if any).
      */
     @Override
     public final boolean save() {
@@ -410,8 +449,8 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
     }
 
     /**
-     * Executes the {@link Operation#CANCEL} operation and calls the registered
-     * {@linkplain CancelCallback cancel callback} (if any).
+     * Executes the {@link Operation#CANCEL} operation and calls the registered {@linkplain CancelCallback cancel callback} (if
+     * any).
      */
     @Override
     public final void cancel() {
@@ -473,9 +512,8 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
     }
 
     private String formId() {
-        return "form(" + id + ")"; //NON-NLS
+        return "form(" + id + ")"; // NON-NLS
     }
-
 
     // ------------------------------------------------------ state transition
 
@@ -512,22 +550,22 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
     }
 
     /**
-     * Gives subclasses a way to prepare the empty state. Called after the state has changed, but before the UI flips
-     * to the new state.
+     * Gives subclasses a way to prepare the empty state. Called after the state has changed, but before the UI flips to the new
+     * state.
      */
     protected void prepareEmptyState() {
     }
 
     /**
-     * Gives subclasses a way to prepare the view state. Called after the state has changed, but before the UI flips
-     * to the new state.
+     * Gives subclasses a way to prepare the view state. Called after the state has changed, but before the UI flips to the new
+     * state.
      */
     protected void prepareViewState() {
     }
 
     /**
-     * Gives subclasses a way to prepare the edit state. Called after the state has changed, but before the UI flips
-     * to the new state.
+     * Gives subclasses a way to prepare the edit state. Called after the state has changed, but before the UI flips to the new
+     * state.
      */
     protected void prepareEditState() {
     }
@@ -561,7 +599,6 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
         setVisible(panels.get(state), true);
     }
 
-
     // ------------------------------------------------------ properties
 
     @Override
@@ -580,6 +617,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <I> FormItem<I> getFormItem(String name) {
         return formItems.get(name);
     }
@@ -596,9 +634,9 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
         return ImmutableList.copyOf(formItems.values());
     }
 
-
     // ------------------------------------------------------ validation
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     protected boolean validate() {
         boolean valid = true;
         clearErrors();

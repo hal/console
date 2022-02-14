@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.logging;
 
@@ -19,7 +19,6 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.Tabs;
@@ -46,6 +45,8 @@ import org.jboss.hal.spi.MbuiView;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
+import elemental2.dom.HTMLElement;
+
 import static elemental2.dom.DomGlobal.document;
 import static java.util.Arrays.asList;
 import static org.jboss.gwt.elemento.core.Elements.h;
@@ -62,7 +63,7 @@ import static org.jboss.hal.resources.Ids.TAB;
 import static org.jboss.hal.resources.Ids.TAB_CONTAINER;
 
 @MbuiView
-@SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "WeakerAccess"})
+@SuppressWarnings({ "DuplicateStringLiteralInspection", "HardCodedStringLiteral", "WeakerAccess" })
 public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> implements LoggingPresenter.MyView {
 
     // ------------------------------------------------------ initialization
@@ -115,10 +116,10 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
     void init() {
         noRootLogger = new EmptyState.Builder("logging-root-logger-empty",
                 mbuiContext.resources().constants().noRootLogger())
-                .description(mbuiContext.resources().constants().noRootLoggerDescription())
-                .icon("fa fa-sitemap")
-                .primaryAction(mbuiContext.resources().constants().add(), this::addRootLogger)
-                .build();
+                        .description(mbuiContext.resources().constants().noRootLoggerDescription())
+                        .icon("fa fa-sitemap")
+                        .primaryAction(mbuiContext.resources().constants().add(), this::addRootLogger)
+                        .build();
         noRootLogger.element().classList.add(marginTopLarge);
 
         // hack which relies on the element hierarchy given in the template. will break if you change that hierarchy.
@@ -132,43 +133,43 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
         String jsonLabel = labelBuilder.label(JSON_FORMATTER_TEMPLATE.lastName());
         jsonFormatterTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(LOGGING, JSON, FORMATTER, TABLE),
                 jsonMetadata)
-                .button(mbuiContext.tableButtonFactory().add(Ids.build(LOGGING, JSON, FORMATTER, Ids.ADD), jsonLabel,
-                        JSON_FORMATTER_TEMPLATE, (name, address) -> presenter.reload()))
-                .button(mbuiContext.tableButtonFactory().remove(jsonLabel, JSON_FORMATTER_TEMPLATE,
-                        table -> table.selectedRow().getName(), () -> presenter.reload()))
-                .column(NAME, (cell, type, row, meta) -> row.getName())
-                .build();
+                        .button(mbuiContext.tableButtonFactory().add(Ids.build(LOGGING, JSON, FORMATTER, Ids.ADD), jsonLabel,
+                                JSON_FORMATTER_TEMPLATE, (name, address) -> presenter.reload()))
+                        .button(mbuiContext.tableButtonFactory().remove(jsonLabel, JSON_FORMATTER_TEMPLATE,
+                                table -> table.selectedRow().getName(), () -> presenter.reload()))
+                        .column(NAME, (cell, type, row, meta) -> row.getName())
+                        .build();
 
         jsonFormatterForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(LOGGING, JSON, FORMATTER, FORM),
                 jsonMetadata)
-                .onSave((form, changedValues) -> mbuiContext.crud().save(jsonLabel, form.getModel().getName(),
-                        JSON_FORMATTER_TEMPLATE, changedValues, () -> presenter.reload()))
-                .prepareReset(form -> mbuiContext.crud().reset(jsonLabel, jsonFormatterTable.selectedRow().getName(),
-                        JSON_FORMATTER_TEMPLATE, form, jsonMetadata, () -> presenter.reload()))
-                .build();
+                        .onSave((form, changedValues) -> mbuiContext.crud().save(jsonLabel, form.getModel().getName(),
+                                JSON_FORMATTER_TEMPLATE, changedValues, () -> presenter.reload()))
+                        .prepareReset(form -> mbuiContext.crud().reset(jsonLabel, jsonFormatterTable.selectedRow().getName(),
+                                JSON_FORMATTER_TEMPLATE, form, jsonMetadata, () -> presenter.reload()))
+                        .build();
 
         jsonKeyOverridesForm = new ModelNodeForm.Builder<>(Ids.build(LOGGING, FORMATTER, JSON, KEY_OVERRIDES, FORM),
                 jsonKeyOverridesMetadata)
-                .singleton(() -> {
+                        .singleton(() -> {
                             StatementContext jsonStatementContext = new SelectionAwareStatementContext(
                                     presenter.getStatementContext(), () -> jsonFormatterTable.selectedRow().getName());
                             return new Operation.Builder(JSON_FORMATTER_TEMPLATE.resolve(jsonStatementContext),
                                     READ_ATTRIBUTE_OPERATION)
-                                    .param(NAME, KEY_OVERRIDES)
-                                    .build();
+                                            .param(NAME, KEY_OVERRIDES)
+                                            .build();
                         },
-                        () -> presenter.addComplexObject(jsonLabel, jsonFormatterTable.selectedRow().getName(),
-                                KEY_OVERRIDES, JSON_FORMATTER_TEMPLATE))
-                .onSave((form, changedValues) -> presenter.saveComplexObject(jsonLabel,
-                        jsonFormatterTable.selectedRow().getName(), KEY_OVERRIDES, JSON_FORMATTER_TEMPLATE,
-                        changedValues))
-                .prepareReset(
-                        form -> presenter.resetComplexObject(jsonLabel, jsonFormatterTable.selectedRow().getName(),
-                                KEY_OVERRIDES, JSON_FORMATTER_TEMPLATE, jsonKeyOverridesMetadata, form))
-                .prepareRemove(
-                        form -> presenter.removeComplexObject(jsonLabel, jsonFormatterTable.selectedRow().getName(),
-                                KEY_OVERRIDES, JSON_FORMATTER_TEMPLATE))
-                .build();
+                                () -> presenter.addComplexObject(jsonLabel, jsonFormatterTable.selectedRow().getName(),
+                                        KEY_OVERRIDES, JSON_FORMATTER_TEMPLATE))
+                        .onSave((form, changedValues) -> presenter.saveComplexObject(jsonLabel,
+                                jsonFormatterTable.selectedRow().getName(), KEY_OVERRIDES, JSON_FORMATTER_TEMPLATE,
+                                changedValues))
+                        .prepareReset(
+                                form -> presenter.resetComplexObject(jsonLabel, jsonFormatterTable.selectedRow().getName(),
+                                        KEY_OVERRIDES, JSON_FORMATTER_TEMPLATE, jsonKeyOverridesMetadata, form))
+                        .prepareRemove(
+                                form -> presenter.removeComplexObject(jsonLabel, jsonFormatterTable.selectedRow().getName(),
+                                        KEY_OVERRIDES, JSON_FORMATTER_TEMPLATE))
+                        .build();
 
         Tabs jsonTabs = new Tabs(Ids.build(LOGGING, FORMATTER, JSON, TAB_CONTAINER));
         jsonTabs.add(Ids.build(LOGGING, FORMATTER, JSON, ATTRIBUTES, TAB),
@@ -193,12 +194,12 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
         String xmlLabel = labelBuilder.label(XML_FORMATTER_TEMPLATE.lastName());
         xmlFormatterTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(LOGGING, XML, FORMATTER, TABLE),
                 xmlMetadata)
-                .button(mbuiContext.tableButtonFactory().add(Ids.build(LOGGING, XML, FORMATTER, Ids.ADD), xmlLabel,
-                        XML_FORMATTER_TEMPLATE, (name, address) -> presenter.reload()))
-                .button(mbuiContext.tableButtonFactory().remove(xmlLabel, XML_FORMATTER_TEMPLATE,
-                        table -> table.selectedRow().getName(), () -> presenter.reload()))
-                .column(NAME, (cell, type, row, meta) -> row.getName())
-                .build();
+                        .button(mbuiContext.tableButtonFactory().add(Ids.build(LOGGING, XML, FORMATTER, Ids.ADD), xmlLabel,
+                                XML_FORMATTER_TEMPLATE, (name, address) -> presenter.reload()))
+                        .button(mbuiContext.tableButtonFactory().remove(xmlLabel, XML_FORMATTER_TEMPLATE,
+                                table -> table.selectedRow().getName(), () -> presenter.reload()))
+                        .column(NAME, (cell, type, row, meta) -> row.getName())
+                        .build();
 
         xmlFormatterForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(LOGGING, XML, FORMATTER, FORM), xmlMetadata)
                 .onSave((form, changedValues) -> mbuiContext.crud().save(xmlLabel, form.getModel().getName(),
@@ -209,25 +210,25 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
 
         xmlKeyOverridesForm = new ModelNodeForm.Builder<>(Ids.build(LOGGING, FORMATTER, XML, KEY_OVERRIDES, FORM),
                 xmlKeyOverridesMetadata)
-                .singleton(() -> {
+                        .singleton(() -> {
                             StatementContext xmlStatementContext = new SelectionAwareStatementContext(
                                     presenter.getStatementContext(), () -> xmlFormatterTable.selectedRow().getName());
                             return new Operation.Builder(XML_FORMATTER_TEMPLATE.resolve(xmlStatementContext),
                                     READ_ATTRIBUTE_OPERATION)
-                                    .param(NAME, KEY_OVERRIDES)
-                                    .build();
+                                            .param(NAME, KEY_OVERRIDES)
+                                            .build();
                         },
-                        () -> presenter.addComplexObject(xmlLabel, xmlFormatterTable.selectedRow().getName(),
-                                KEY_OVERRIDES, XML_FORMATTER_TEMPLATE))
-                .onSave((form, changedValues) -> presenter.saveComplexObject(xmlLabel,
-                        xmlFormatterTable.selectedRow().getName(), KEY_OVERRIDES, XML_FORMATTER_TEMPLATE,
-                        changedValues))
-                .prepareReset(form -> presenter.resetComplexObject(xmlLabel, xmlFormatterTable.selectedRow().getName(),
-                        KEY_OVERRIDES, XML_FORMATTER_TEMPLATE, xmlKeyOverridesMetadata, form))
-                .prepareRemove(
-                        form -> presenter.removeComplexObject(xmlLabel, xmlFormatterTable.selectedRow().getName(),
-                                KEY_OVERRIDES, XML_FORMATTER_TEMPLATE))
-                .build();
+                                () -> presenter.addComplexObject(xmlLabel, xmlFormatterTable.selectedRow().getName(),
+                                        KEY_OVERRIDES, XML_FORMATTER_TEMPLATE))
+                        .onSave((form, changedValues) -> presenter.saveComplexObject(xmlLabel,
+                                xmlFormatterTable.selectedRow().getName(), KEY_OVERRIDES, XML_FORMATTER_TEMPLATE,
+                                changedValues))
+                        .prepareReset(form -> presenter.resetComplexObject(xmlLabel, xmlFormatterTable.selectedRow().getName(),
+                                KEY_OVERRIDES, XML_FORMATTER_TEMPLATE, xmlKeyOverridesMetadata, form))
+                        .prepareRemove(
+                                form -> presenter.removeComplexObject(xmlLabel, xmlFormatterTable.selectedRow().getName(),
+                                        KEY_OVERRIDES, XML_FORMATTER_TEMPLATE))
+                        .build();
 
         Tabs xmlTabs = new Tabs(Ids.build(LOGGING, FORMATTER, XML, TAB_CONTAINER));
         xmlTabs.add(Ids.build(LOGGING, FORMATTER, XML, ATTRIBUTES, TAB),
@@ -306,10 +307,9 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
                 mbuiContext.resources().messages().addResourceTitle(Names.ROOT_LOGGER), form,
                 (name, model) -> {
                     Operation operation = new Operation.Builder(
-                            ROOT_LOGGER_TEMPLATE.resolve(mbuiContext.statementContext()), ADD
-                    )
-                            .payload(model)
-                            .build();
+                            ROOT_LOGGER_TEMPLATE.resolve(mbuiContext.statementContext()), ADD)
+                                    .payload(model)
+                                    .build();
                     mbuiContext.dispatcher().execute(operation, result -> {
                         MessageEvent.fire(mbuiContext.eventBus(),
                                 Message.success(mbuiContext.resources().messages()
@@ -327,7 +327,6 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
         dialog.getForm().getFormItem(HANDLERS).registerSuggestHandler(suggestHandler);
         dialog.show();
     }
-
 
     // ------------------------------------------------------ logger / categories
 
@@ -401,7 +400,6 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
         syslogHandlerForm.clear();
         syslogHandlerTable.update(items);
     }
-
 
     // ------------------------------------------------------ formatter
 

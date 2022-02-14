@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.security;
 
@@ -58,8 +58,8 @@ public class SecurityDomainColumn extends FinderColumn<SecurityDomain> {
 
         super(new FinderColumn.Builder<SecurityDomain>(finder, Ids.SECURITY_DOMAIN, Names.SECURITY_DOMAIN)
 
-                .itemsProvider((context, callback) ->
-                        crud.readChildren(SECURITY_SUBSYSTEM_TEMPLATE, SECURITY_DOMAIN, children -> {
+                .itemsProvider(
+                        (context, callback) -> crud.readChildren(SECURITY_SUBSYSTEM_TEMPLATE, SECURITY_DOMAIN, children -> {
                             List<SecurityDomain> securityDomains = children.stream()
                                     .map(SecurityDomain::new)
                                     .collect(toList());
@@ -69,10 +69,9 @@ public class SecurityDomainColumn extends FinderColumn<SecurityDomain> {
                 .withFilter()
                 .filterDescription(resources.messages().securityDomainColumnFilterDescription())
                 .useFirstActionAsBreadcrumbHandler()
-                //Do not optimize this lambda to a method reference,
-                //the JavaToJavaScript transpiler can't handle a method reference here
-                .onPreview(item -> new SecurityDomainPreview(item))
-        );
+                // Do not optimize this lambda to a method reference,
+                // the JavaToJavaScript transpiler can't handle a method reference here
+                .onPreview(item -> new SecurityDomainPreview(item)));
 
         addColumnAction(columnActionFactory.add(
                 Ids.SECURITY_DOMAIN_ADD,
@@ -80,8 +79,7 @@ public class SecurityDomainColumn extends FinderColumn<SecurityDomain> {
                 SECURITY_DOMAIN_TEMPLATE,
                 Collections.singletonList(CACHE_TYPE),
                 Ids::securityDomain,
-                this::createUniqueValidation
-        ));
+                this::createUniqueValidation));
 
         setItemRenderer(item -> new ItemDisplay<SecurityDomain>() {
             @Override

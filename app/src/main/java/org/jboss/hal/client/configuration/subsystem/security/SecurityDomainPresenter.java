@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.security;
 
@@ -20,11 +20,6 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.ballroom.table.Table;
@@ -57,6 +52,13 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
+
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.annotations.NameToken;
+import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+
 import rx.Completable;
 
 import static org.jboss.hal.client.configuration.subsystem.security.AddressTemplates.SECURITY_DOMAIN_ADDRESS;
@@ -156,9 +158,8 @@ public class SecurityDomainPresenter
         // Either 'authentication=classic' or 'authentication=jaspi' is allowed not both!
         Operation operation = new Operation.Builder(
                 SELECTED_SECURITY_DOMAIN_TEMPLATE.append("authentication=jaspi").resolve(statementContext),
-                READ_RESOURCE_OPERATION
-        )
-                .build();
+                READ_RESOURCE_OPERATION)
+                        .build();
         dispatcher.execute(operation,
                 result -> {
                     // error: there's already a 'authentication=jaspi' singleton
@@ -187,26 +188,26 @@ public class SecurityDomainPresenter
                         return dispatcher.execute(operation).toCompletable();
                     }
                 })
-                .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
-                    @Override
-                    public void onSuccess(FlowContext context) {
-                        AddressTemplate metadataTemplate = SECURITY_DOMAIN_TEMPLATE
-                                .append(module.singleton)
-                                .append(module.resource + EQ_WILDCARD);
-                        AddressTemplate selectionTemplate = SELECTED_SECURITY_DOMAIN_TEMPLATE
-                                .append(module.singleton)
-                                .append(module.resource + EQ_WILDCARD);
-                        Metadata metadata = metadataRegistry.lookup(metadataTemplate);
-                        AddResourceDialog dialog = new AddResourceDialog(module.id,
-                                resources.messages().addResourceTitle(module.type),
-                                metadata,
-                                (name, modelNode) -> {
-                                    ResourceAddress address = selectionTemplate.resolve(statementContext, name);
-                                    crud.add(module.type, name, address, modelNode, (n, a) -> reload());
-                                });
-                        dialog.show();
-                    }
-                });
+                        .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
+                            @Override
+                            public void onSuccess(FlowContext context) {
+                                AddressTemplate metadataTemplate = SECURITY_DOMAIN_TEMPLATE
+                                        .append(module.singleton)
+                                        .append(module.resource + EQ_WILDCARD);
+                                AddressTemplate selectionTemplate = SELECTED_SECURITY_DOMAIN_TEMPLATE
+                                        .append(module.singleton)
+                                        .append(module.resource + EQ_WILDCARD);
+                                Metadata metadata = metadataRegistry.lookup(metadataTemplate);
+                                AddResourceDialog dialog = new AddResourceDialog(module.id,
+                                        resources.messages().addResourceTitle(module.type),
+                                        metadata,
+                                        (name, modelNode) -> {
+                                            ResourceAddress address = selectionTemplate.resolve(statementContext, name);
+                                            crud.add(module.type, name, address, modelNode, (n, a) -> reload());
+                                        });
+                                dialog.show();
+                            }
+                        });
     }
 
     void saveModule(Form<NamedNode> form, Map<String, Object> changedValues, Module module) {
@@ -241,7 +242,7 @@ public class SecurityDomainPresenter
     }
 
     void removeModule(Table<NamedNode> table, Module module) {
-        //noinspection ConstantConditions
+        // noinspection ConstantConditions
         String name = table.selectedRow().getName();
         crud.remove(module.type, name,
                 SELECTED_SECURITY_DOMAIN_TEMPLATE
@@ -251,11 +252,10 @@ public class SecurityDomainPresenter
                 this::reload);
     }
 
-
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(SECURITY_DOMAIN)
-    @Requires({SECURITY_DOMAIN_ADDRESS, TRUST_MODULE_ADDRESS})
+    @Requires({ SECURITY_DOMAIN_ADDRESS, TRUST_MODULE_ADDRESS })
     public interface MyProxy extends ProxyPlace<SecurityDomainPresenter> {
     }
 

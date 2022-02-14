@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.accesscontrol;
 
@@ -22,10 +22,6 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.common.collect.Sets;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.web.bindery.event.shared.EventBus;
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.client.accesscontrol.AccessControlTasks.AddAssignment;
 import org.jboss.hal.client.accesscontrol.AccessControlTasks.AddRoleMapping;
 import org.jboss.hal.client.accesscontrol.AccessControlTasks.CheckRoleMapping;
@@ -53,6 +49,12 @@ import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
+
+import com.google.common.collect.Sets;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.web.bindery.event.shared.EventBus;
+
+import elemental2.dom.HTMLElement;
 
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
@@ -177,7 +179,7 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
             @Override
             public String getFilterData() {
                 List<String> data = new ArrayList<>(RoleColumn.filterData(item.getRole()));
-                data.add(item.isInclude() ? "includes" : "excludes"); //NON-NLS
+                data.add(item.isInclude() ? "includes" : "excludes"); // NON-NLS
                 return String.join(" ", data);
             }
 
@@ -239,22 +241,22 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
                         new CheckRoleMapping(dispatcher, role),
                         new AddRoleMapping(dispatcher, role, status -> status == 404),
                         new AddAssignment(dispatcher, role, principal, include))
-                        .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
-                            @Override
-                            public void onSuccess(FlowContext context) {
-                                String type = resources.constants().role();
-                                SafeHtml message = include
-                                        ? resources.messages().assignmentIncludeSuccess(type, role.getName())
-                                        : resources.messages().assignmentExcludeSuccess(type, role.getName());
-                                MessageEvent.fire(eventBus, Message.success(message));
-                                accessControl.reload(() -> {
-                                    refresh(RefreshMode.RESTORE_SELECTION);
-                                    if (isCurrentUser(principal)) {
-                                        eventBus.fireEvent(new UserChangedEvent());
+                                .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
+                                    @Override
+                                    public void onSuccess(FlowContext context) {
+                                        String type = resources.constants().role();
+                                        SafeHtml message = include
+                                                ? resources.messages().assignmentIncludeSuccess(type, role.getName())
+                                                : resources.messages().assignmentExcludeSuccess(type, role.getName());
+                                        MessageEvent.fire(eventBus, Message.success(message));
+                                        accessControl.reload(() -> {
+                                            refresh(RefreshMode.RESTORE_SELECTION);
+                                            if (isCurrentUser(principal)) {
+                                                eventBus.fireEvent(new UserChangedEvent());
+                                            }
+                                        });
                                     }
                                 });
-                            }
-                        });
             }
         };
     }

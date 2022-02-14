@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.core.mbui;
 
@@ -23,8 +23,6 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import com.google.common.collect.Iterables;
-import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
@@ -52,6 +50,10 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.Callback;
 
+import com.google.common.collect.Iterables;
+
+import elemental2.dom.HTMLElement;
+
 import static elemental2.dom.DomGlobal.alert;
 import static java.util.Collections.singletonList;
 import static org.jboss.gwt.elemento.core.Elements.h;
@@ -64,22 +66,26 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
 import static org.jboss.hal.dmr.ModelNodeHelper.storeIndex;
 
 /**
- * Master detail element for a resource with support for n complex attributes of type {@code OBJECT} and one complex
- * attribute of type {@code LIST}.
+ * Master detail element for a resource with support for n complex attributes of type {@code OBJECT} and one complex attribute
+ * of type {@code LIST}.
  *
- * <p>This class provides the following features:</p>
+ * <p>
+ * This class provides the following features:
+ * </p>
  * <ul>
  * <li>Table for the main resource with add and remove buttons.</li>
  * <li>Form with all simple configuration attributes of the main resource.</li>
- * <li>A tab for each complex attribute of type {@code OBJECT}. The tab contains a form to add, save, reset and remove
- * the complex attribute (remove is only available if the complex attribute is not required).</li>
- * <li>If there's a complex attribute of type {@code LIST}, the table contains a link to a sub-page. The sub-page
- * contains a table and a form to CRUD the elements of the complex attribute. Only simple attributes in the complex
- * attribute of type {@code LIST} are supported.</li>
+ * <li>A tab for each complex attribute of type {@code OBJECT}. The tab contains a form to add, save, reset and remove the
+ * complex attribute (remove is only available if the complex attribute is not required).</li>
+ * <li>If there's a complex attribute of type {@code LIST}, the table contains a link to a sub-page. The sub-page contains a
+ * table and a form to CRUD the elements of the complex attribute. Only simple attributes in the complex attribute of type
+ * {@code LIST} are supported.</li>
  * <li>All CRUD actions are delegated to {@link CrudOperations} and {@link ComplexAttributeOperations}</li>
  * </ul>
  *
- * <p>Multiple complex attributes of type {@code LIST} or nested complex attributes are not supported.</p>
+ * <p>
+ * Multiple complex attributes of type {@code LIST} or nested complex attributes are not supported.
+ * </p>
  */
 public class ResourceElement implements IsElement<HTMLElement>, Attachable {
 
@@ -124,11 +130,11 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
 
         ModelNodeForm.Builder formBuilder = new ModelNodeForm.Builder<NamedNode>(Ids.build(builder.baseId, Ids.FORM),
                 builder.metadata)
-                .prepareReset(f -> builder.mbuiContext.crud()
-                        .reset(builder.type, f.getModel().getName(), builder.metadata.getTemplate(), f,
-                                builder.metadata, builder.crudCallback))
-                .onSave((f, changedValues) -> builder.mbuiContext.crud().save(builder.type, f.getModel().getName(),
-                        builder.metadata.getTemplate(), changedValues, builder.crudCallback));
+                        .prepareReset(f -> builder.mbuiContext.crud()
+                                .reset(builder.type, f.getModel().getName(), builder.metadata.getTemplate(), f,
+                                        builder.metadata, builder.crudCallback))
+                        .onSave((f, changedValues) -> builder.mbuiContext.crud().save(builder.type, f.getModel().getName(),
+                                builder.metadata.getTemplate(), changedValues, builder.crudCallback));
         builder.customFormItems.forEach(formBuilder::customFormItem);
 
         form = formBuilder.build();
@@ -177,17 +183,17 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
                 };
                 ModelNodeForm.Builder<ModelNode> coFormBuilder = new ModelNodeForm.Builder<>(
                         Ids.build(builder.baseId, complexAttribute, Ids.FORM), metadata)
-                        .singleton(ping, callback)
-                        .onSave((f, changedValues) -> builder.mbuiContext.ca()
-                                .save(selectedResource, complexAttribute, type,
-                                        metadata.getTemplate(), changedValues, builder.crudCallback))
-                        .prepareReset(f -> builder.mbuiContext.ca().reset(selectedResource, complexAttribute, type,
-                                metadata.getTemplate(), f, new Form.FinishReset<ModelNode>(f) {
-                                    @Override
-                                    public void afterReset(Form<ModelNode> form) {
-                                        builder.crudCallback.execute();
-                                    }
-                                }));
+                                .singleton(ping, callback)
+                                .onSave((f, changedValues) -> builder.mbuiContext.ca()
+                                        .save(selectedResource, complexAttribute, type,
+                                                metadata.getTemplate(), changedValues, builder.crudCallback))
+                                .prepareReset(f -> builder.mbuiContext.ca().reset(selectedResource, complexAttribute, type,
+                                        metadata.getTemplate(), f, new Form.FinishReset<ModelNode>(f) {
+                                            @Override
+                                            public void afterReset(Form<ModelNode> form) {
+                                                builder.crudCallback.execute();
+                                            }
+                                        }));
                 if (!requiredComplexAttribute) {
                     coFormBuilder.prepareRemove(
                             f -> builder.mbuiContext.ca().remove(selectedResource, complexAttribute, type,
@@ -283,8 +289,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
         table.onSelectionChange(table -> {
             if (table.hasSelection()) {
                 selectedResource = table.selectedRow().getName();
-                coForms.forEach((complexAttribute, form) ->
-                        form.view(failSafeGet(table.selectedRow(), complexAttribute)));
+                coForms.forEach((complexAttribute, form) -> form.view(failSafeGet(table.selectedRow(), complexAttribute)));
             } else {
                 selectedResource = null;
                 for (Form<ModelNode> form : coForms.values()) {
@@ -368,7 +373,6 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
         return clForm;
     }
 
-
     @SuppressWarnings("unused")
     public static class Builder {
 
@@ -407,8 +411,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
         }
 
         /**
-         * Overrides the human readable type of the main resource which is built by default using the {@link
-         * LabelBuilder}.
+         * Overrides the human readable type of the main resource which is built by default using the {@link LabelBuilder}.
          */
         public Builder type(String type) {
             this.type = type;
@@ -427,8 +430,8 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
         }
 
         /**
-         * Adds a complex attribute of type {@code OBJECT}. The operation checks whether the resource contains the
-         * complex attribute.
+         * Adds a complex attribute of type {@code OBJECT}. The operation checks whether the resource contains the complex
+         * attribute.
          */
         public Builder addComplexObjectAttribute(String name) {
             coAttributes.put(name, null);
@@ -452,8 +455,8 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
         }
 
         /**
-         * Adds a complex attribute of type {@code OBJECT}. The operation checks whether the resource contains the
-         * complex attribute. Also adds a form validation for the specific complex attribute form.
+         * Adds a complex attribute of type {@code OBJECT}. The operation checks whether the resource contains the complex
+         * attribute. Also adds a form validation for the specific complex attribute form.
          */
         public Builder addComplexObjectAttribute(String name, FormValidation formValidation) {
             coAttributes.put(name, formValidation);
@@ -463,7 +466,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
         /**
          * Sets the complex attribute of type {@code LIST}.
          *
-         * @param name   The name of the complex attribute
+         * @param name The name of the complex attribute
          * @param column The column for the table on the sub-page
          */
         public Builder setComplexListAttribute(String name, String column) {
@@ -473,8 +476,8 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
         /**
          * Sets the complex attribute of type {@code LIST}.
          *
-         * @param name          The name of the complex attribute
-         * @param column        The column for the table on the sub-page
+         * @param name The name of the complex attribute
+         * @param column The column for the table on the sub-page
          * @param addAttributes attributes for the add resource dialog
          */
         public Builder setComplexListAttribute(String name, String column, Iterable<String> addAttributes) {
@@ -484,8 +487,8 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
         /**
          * Sets the complex attribute of type {@code LIST}.
          *
-         * @param name       The name of the complex attribute
-         * @param column     The column for the table on the sub-page
+         * @param name The name of the complex attribute
+         * @param column The column for the table on the sub-page
          * @param identifier function to maintain the selection after updating the table entries
          */
         public Builder setComplexListAttribute(String name, String column, Function<ModelNode, String> identifier) {
@@ -495,10 +498,10 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
         /**
          * Sets the complex attribute of type {@code LIST}.
          *
-         * @param name          The name of the complex attribute
-         * @param column        The column for the table on the sub-page
+         * @param name The name of the complex attribute
+         * @param column The column for the table on the sub-page
          * @param addAttributes attributes for the add resource dialog
-         * @param identifier    function to maintain the selection after updating the table entries
+         * @param identifier function to maintain the selection after updating the table entries
          */
         public Builder setComplexListAttribute(String name, String column, Iterable<String> addAttributes,
                 Function<ModelNode, String> identifier) {
@@ -508,7 +511,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
         /**
          * Sets the complex attribute of type {@code LIST}.
          *
-         * @param name    The name of the complex attribute
+         * @param name The name of the complex attribute
          * @param columns The columns for the table on the sub-page
          */
         public Builder setComplexListAttribute(String name, Iterable<String> columns) {
@@ -518,8 +521,8 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
         /**
          * Sets the complex attribute of type {@code LIST}.
          *
-         * @param name          The name of the complex attribute
-         * @param columns       The columns for the table on the sub-page
+         * @param name The name of the complex attribute
+         * @param columns The columns for the table on the sub-page
          * @param addAttributes attributes for the add resource dialog
          */
         public Builder setComplexListAttribute(String name, Iterable<String> columns, Iterable<String> addAttributes) {
@@ -529,8 +532,8 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
         /**
          * Sets the complex attribute of type {@code LIST}.
          *
-         * @param name       The name of the complex attribute
-         * @param columns    The columns for the table on the sub-page
+         * @param name The name of the complex attribute
+         * @param columns The columns for the table on the sub-page
          * @param identifier function to maintain the selection after updating the table entries
          */
         public Builder setComplexListAttribute(String name, Iterable<String> columns,
@@ -541,10 +544,10 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
         /**
          * Sets the complex attribute of type {@code LIST}.
          *
-         * @param name          The name of the complex attribute
-         * @param columns       The columns for the table on the sub-page
+         * @param name The name of the complex attribute
+         * @param columns The columns for the table on the sub-page
          * @param addAttributes attributes for the add resource dialog
-         * @param identifier    function to maintain the selection after updating the table entries
+         * @param identifier function to maintain the selection after updating the table entries
          */
         public Builder setComplexListAttribute(String name, Iterable<String> columns,
                 Iterable<String> addAttributes, Function<ModelNode, String> identifier) {
@@ -556,10 +559,10 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
         }
 
         /**
-         * Defines the callback which is executed to add the main resource. If not specified {@link
-         * CrudOperations#add(String, String, AddressTemplate, CrudOperations.AddCallback)} is used (which opens an
-         * {@linkplain org.jboss.hal.core.mbui.dialog.AddResourceDialog add-resource-dialog} with all required
-         * properties of the main resource).
+         * Defines the callback which is executed to add the main resource. If not specified
+         * {@link CrudOperations#add(String, String, AddressTemplate, CrudOperations.AddCallback)} is used (which opens an
+         * {@linkplain org.jboss.hal.core.mbui.dialog.AddResourceDialog add-resource-dialog} with all required properties of the
+         * main resource).
          * <p>
          * Use this method if you need to customize the add-resource-dialog somehow, e.g. if there's a required complex
          * attribute which has to be specified).

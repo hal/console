@@ -1,25 +1,20 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.skeleton;
 
-import elemental2.dom.CSSProperties.MaxHeightUnionType;
-import elemental2.dom.Element;
-import elemental2.dom.HTMLDivElement;
-import elemental2.dom.HTMLElement;
-import elemental2.dom.NodeList;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.core.mvp.HasPresenter;
@@ -28,6 +23,12 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Message;
+
+import elemental2.dom.CSSProperties.MaxHeightUnionType;
+import elemental2.dom.Element;
+import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.NodeList;
 
 import static elemental2.dom.DomGlobal.document;
 import static elemental2.dom.DomGlobal.window;
@@ -38,7 +39,8 @@ import static org.jboss.hal.resources.CSS.*;
 /**
  * Container which holds the last n messages. The user can review and clear the messages.
  *
- * @see <a href="https://www.patternfly.org/pattern-library/communication/notification-drawer/">https://www.patternfly.org/pattern-library/communication/notification-drawer/</a>
+ * @see <a href=
+ *      "https://www.patternfly.org/pattern-library/communication/notification-drawer/">https://www.patternfly.org/pattern-library/communication/notification-drawer/</a>
  */
 class NotificationDrawer implements IsElement<HTMLDivElement>, HasPresenter<HeaderPresenter> {
 
@@ -71,11 +73,11 @@ class NotificationDrawer implements IsElement<HTMLDivElement>, HasPresenter<Head
                                 .add(div().css(panelCollapse, collapse, in)
                                         .aria(UIConstants.EXPANDED, UIConstants.TRUE)
                                         .add(panelBody = div().css(CSS.panelBody)
-                                                .style("overflow-y:auto")  //NON-NLS
+                                                .style("overflow-y:auto") // NON-NLS
                                                 .element())
                                         .add(empty = div().css(blankSlatePf)
                                                 .add(div().css(blankSlatePfIcon)
-                                                        .add(span().css("pficon-info"))) //NON-NLS
+                                                        .add(span().css("pficon-info"))) // NON-NLS
                                                 .add(h(1, resources.constants().noNotifications()))
                                                 .element())
                                         .add(actions = div().css(drawerPfAction)
@@ -131,7 +133,6 @@ class NotificationDrawer implements IsElement<HTMLDivElement>, HasPresenter<Head
         return (int) panelBody.childElementCount;
     }
 
-
     // ------------------------------------------------------ event handler
 
     private void toggleWidth() {
@@ -161,7 +162,6 @@ class NotificationDrawer implements IsElement<HTMLDivElement>, HasPresenter<Head
         updateElements();
         presenter.onClearMessage();
     }
-
 
     // ------------------------------------------------------ helper methods
 

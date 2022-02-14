@@ -1,3 +1,18 @@
+/*
+ *  Copyright 2022 Red Hat
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.jboss.hal.meta.processing;
 
 import java.util.Arrays;
@@ -18,10 +33,10 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_DESCRIPT
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
 import static org.jboss.hal.meta.processing.RrdParserTestHelper.assertResourceDescriptions;
 
-@SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
+@SuppressWarnings({ "HardCodedStringLiteral", "DuplicateStringLiteralInspection" })
 public class CompositeRrdParserTest {
 
-    private static final String[] FLAT_TEMPLATES = new String[]{
+    private static final String[] FLAT_TEMPLATES = new String[] {
             "/subsystem=undertow",
             "/subsystem=undertow/server=*",
             "/subsystem=undertow/server=*/host=*",
@@ -30,7 +45,7 @@ public class CompositeRrdParserTest {
             "/subsystem=undertow/server=*/ajp-listener=*"
     };
     private static final String[] RECURSIVE_TEMPLATES = Stream.concat(Arrays.stream(FLAT_TEMPLATES),
-            Arrays.stream(new String[]{
+            Arrays.stream(new String[] {
                     // additional templates
                     "/subsystem=undertow/configuration=filter",
                     "/subsystem=undertow/configuration=filter/error-page=*",
@@ -64,13 +79,11 @@ public class CompositeRrdParserTest {
                     "/subsystem=undertow/buffer-cache=*",
             })).toArray(String[]::new);
 
-
     @Test
     public void parseFlat() {
         List<Operation> operations = Arrays.stream(FLAT_TEMPLATES)
                 .map(template -> new Operation.Builder(AddressTemplate.of(template).resolve(StatementContext.NOOP),
-                        READ_RESOURCE_DESCRIPTION_OPERATION
-                ).build())
+                        READ_RESOURCE_DESCRIPTION_OPERATION).build())
                 .collect(toList());
         Composite composite = new Composite(operations);
 
@@ -85,8 +98,7 @@ public class CompositeRrdParserTest {
     public void parseRecursive() {
         List<Operation> operations = Arrays.stream(FLAT_TEMPLATES)
                 .map(template -> new Operation.Builder(AddressTemplate.of(template).resolve(StatementContext.NOOP),
-                        READ_RESOURCE_DESCRIPTION_OPERATION
-                ).param(RECURSIVE, true).build())
+                        READ_RESOURCE_DESCRIPTION_OPERATION).param(RECURSIVE, true).build())
                 .collect(toList());
         Composite composite = new Composite(operations);
 

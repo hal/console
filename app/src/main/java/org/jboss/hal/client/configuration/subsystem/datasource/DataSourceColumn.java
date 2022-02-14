@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.datasource;
 
@@ -22,10 +22,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.client.configuration.subsystem.datasource.wizard.DataSourceWizard;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.CrudOperations;
@@ -63,6 +59,12 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+
+import elemental2.dom.HTMLElement;
+
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.*;
@@ -75,7 +77,7 @@ import static org.jboss.hal.resources.CSS.pfIcon;
 
 /** Column which is used for both XA and normal data sources. */
 @AsyncColumn("ds-configuration")
-@Requires({DATA_SOURCE_ADDRESS, XA_DATA_SOURCE_ADDRESS, JDBC_DRIVER_ADDRESS})
+@Requires({ DATA_SOURCE_ADDRESS, XA_DATA_SOURCE_ADDRESS, JDBC_DRIVER_ADDRESS })
 public class DataSourceColumn extends FinderColumn<DataSource> {
 
     private final MetadataRegistry metadataRegistry;
@@ -136,8 +138,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             ResourceAddress dataSourceAddress = DATA_SOURCE_SUBSYSTEM_TEMPLATE.resolve(statementContext);
             Operation dataSourceOperation = new Operation.Builder(dataSourceAddress, READ_CHILDREN_RESOURCES_OPERATION)
                     .param(CHILD_TYPE, DATA_SOURCE).build();
-            Operation xaDataSourceOperation = new Operation.Builder(dataSourceAddress, READ_CHILDREN_RESOURCES_OPERATION
-            )
+            Operation xaDataSourceOperation = new Operation.Builder(dataSourceAddress, READ_CHILDREN_RESOURCES_OPERATION)
                     .param(CHILD_TYPE, XA_DATA_SOURCE).build();
             dispatcher.execute(new Composite(dataSourceOperation, xaDataSourceOperation), (CompositeResult result) -> {
                 List<DataSource> combined = new ArrayList<>();
@@ -228,14 +229,14 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
     }
 
     private void prepareWizard(boolean xa) {
-        Task<FlowContext> readDataSources = context ->
-                crud.readChildren(DATA_SOURCE_SUBSYSTEM_TEMPLATE, xa ? XA_DATA_SOURCE : DATA_SOURCE)
-                        .doOnSuccess(children -> {
-                            List<DataSource> dataSources = children.stream()
-                                    .map(property -> new DataSource(property, xa)).collect(toList());
-                            context.set(DATASOURCES, dataSources);
-                        })
-                        .toCompletable();
+        Task<FlowContext> readDataSources = context -> crud
+                .readChildren(DATA_SOURCE_SUBSYSTEM_TEMPLATE, xa ? XA_DATA_SOURCE : DATA_SOURCE)
+                .doOnSuccess(children -> {
+                    List<DataSource> dataSources = children.stream()
+                            .map(property -> new DataSource(property, xa)).collect(toList());
+                    context.set(DATASOURCES, dataSources);
+                })
+                .toCompletable();
 
         List<Task<FlowContext>> tasks = new ArrayList<>();
         tasks.add(readDataSources);

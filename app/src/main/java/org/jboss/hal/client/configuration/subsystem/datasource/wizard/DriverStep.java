@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.datasource.wizard;
 
@@ -19,8 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Maps;
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.autocomplete.StaticAutoComplete;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.ValidationResult;
@@ -35,7 +33,20 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import com.google.common.collect.Maps;
+
+import elemental2.dom.HTMLElement;
+
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ACCESS_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_CLASS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_CLASS_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_MODULE_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_XA_DATASOURCE_CLASS_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NILLABLE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_WRITE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.XA_DATASOURCE_CLASS;
 
 class DriverStep extends WizardStep<Context, State> {
 
@@ -57,15 +68,14 @@ class DriverStep extends WizardStep<Context, State> {
             form.getFormItem(DRIVER_NAME)
                     .registerSuggestHandler(new StaticAutoComplete(new ArrayList<>(driversByName.keySet())));
             form.getFormItem(DRIVER_NAME)
-                    .addValidationHandler(value ->
-                            driversByName.keySet().contains(value) ? ValidationResult.OK : ValidationResult.invalid(
-                                    "Invalid driver name")
-                    );
+                    .addValidationHandler(value -> driversByName.keySet().contains(value) ? ValidationResult.OK
+                            : ValidationResult.invalid(
+                                    "Invalid driver name"));
             if (xa) {
                 // assign a value change handler that modfies the xa-datasource-class using jdbcDriver conf or template
-                form.getFormItem(DRIVER_NAME).addValueChangeHandler(event ->
-                    assignFromJdbcDriverOrTemplate(String.valueOf(event.getValue()), DRIVER_XA_DATASOURCE_CLASS_NAME)
-                );
+                form.getFormItem(DRIVER_NAME)
+                        .addValueChangeHandler(event -> assignFromJdbcDriverOrTemplate(String.valueOf(event.getValue()),
+                                DRIVER_XA_DATASOURCE_CLASS_NAME));
                 firstTime = true;
             }
         }
@@ -77,7 +87,8 @@ class DriverStep extends WizardStep<Context, State> {
         for (Property property : metadata.getDescription().get(ATTRIBUTES).asPropertyList()) {
             ModelNode value = property.getValue().clone();
             value.get(ACCESS_TYPE).set(READ_WRITE);
-            value.get(NILLABLE).set(!DRIVER_NAME.equals(property.getName()) && !DRIVER_XA_DATASOURCE_CLASS_NAME.equals(property.getName()));
+            value.get(NILLABLE).set(
+                    !DRIVER_NAME.equals(property.getName()) && !DRIVER_XA_DATASOURCE_CLASS_NAME.equals(property.getName()));
             newAttributes.get(property.getName()).set(value);
         }
 
@@ -91,6 +102,7 @@ class DriverStep extends WizardStep<Context, State> {
         return form.element();
     }
 
+    @SuppressWarnings("unchecked")
     private void assignFromJdbcDriverOrTemplate(String driverName, String propName) {
         FormItem formItem = form.getFormItem(propName);
         if (formItem != null) {

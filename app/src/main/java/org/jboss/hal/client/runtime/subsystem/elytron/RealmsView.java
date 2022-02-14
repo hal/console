@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.runtime.subsystem.elytron;
 
@@ -19,7 +19,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Table;
@@ -33,6 +32,8 @@ import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+
+import elemental2.dom.HTMLElement;
 
 import static java.util.Arrays.asList;
 import static org.jboss.gwt.elemento.core.Elements.h;
@@ -67,17 +68,17 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView {
         Metadata cachingRealmMetadata = metadataRegistry.lookup(CACHING_REALM_TEMPLATE);
         cachingRealmTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(Ids.ELYTRON, CACHING_REALM, TABLE),
                 cachingRealmMetadata)
-                .button(resources.constants().clearCache(),
-                        table -> presenter.clearCache(table.selectedRow().getName()),
-                        Constraint.executable(CACHING_REALM_TEMPLATE, CLEAR_CACHE))
-                .column(NAME, (cell, type, row, meta) -> row.getName())
-                .build();
+                        .button(resources.constants().clearCache(),
+                                table -> presenter.clearCache(table.selectedRow().getName()),
+                                Constraint.executable(CACHING_REALM_TEMPLATE, CLEAR_CACHE))
+                        .column(NAME, (cell, type, row, meta) -> row.getName())
+                        .build();
 
         cachingRealmForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(Ids.ELYTRON, CACHING_REALM, FORM),
                 cachingRealmMetadata)
-                .readOnly()
-                .includeRuntime()
-                .build();
+                        .readOnly()
+                        .includeRuntime()
+                        .build();
 
         HTMLElement cachingSection = section()
                 .add(h(1).textContent(Names.CACHING_REALM))
@@ -113,16 +114,16 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView {
         Metadata propertiesRealmMetadata = metadataRegistry.lookup(PROPERTIES_REALM_TEMPLATE);
         propertiesRealmTable = new ModelNodeTable.Builder<NamedNode>(
                 Ids.build(ELYTRON_PROPERTIES_REALM, TABLE), propertiesRealmMetadata)
-                .button(resources.constants().load(), table -> presenter.loadProperties(table.selectedRow().getName()),
-                        Constraint.executable(PROPERTIES_REALM_TEMPLATE, LOAD))
-                .column(NAME, (cell, type, row, meta) -> row.getName())
-                .build();
+                        .button(resources.constants().load(), table -> presenter.loadProperties(table.selectedRow().getName()),
+                                Constraint.executable(PROPERTIES_REALM_TEMPLATE, LOAD))
+                        .column(NAME, (cell, type, row, meta) -> row.getName())
+                        .build();
 
         propertiesRealmForm = new ModelNodeForm.Builder<NamedNode>(
                 Ids.build(ELYTRON_PROPERTIES_REALM, FORM), propertiesRealmMetadata)
-                .readOnly()
-                .includeRuntime()
-                .build();
+                        .readOnly()
+                        .includeRuntime()
+                        .build();
 
         HTMLElement propertiesSection = section()
                 .add(h(1).textContent(Names.PROPERTIES_REALM))
@@ -140,7 +141,6 @@ public class RealmsView extends HalViewImpl implements RealmsPresenter.MyView {
                 .add(column()
                         .addAll(navigation.panes())));
     }
-
 
     @Override
     public void attach() {

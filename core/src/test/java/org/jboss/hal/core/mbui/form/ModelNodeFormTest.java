@@ -1,11 +1,23 @@
+/*
+ *  Copyright 2022 Red Hat
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.jboss.hal.core.mbui.form;
 
 import java.util.Collections;
 import java.util.Iterator;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
-import com.google.gwt.junit.GWTMockUtilities;
 import org.jboss.hal.ballroom.form.AddOnlyStateMachine;
 import org.jboss.hal.ballroom.form.ExistingStateMachine;
 import org.jboss.hal.ballroom.form.FormItem;
@@ -19,6 +31,10 @@ import org.jboss.hal.meta.description.ResourceDescription;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
+import com.google.gwt.junit.GWTMockUtilities;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CONFIGURATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNTIME;
@@ -39,7 +55,6 @@ public class ModelNodeFormTest {
         requestProperties = new ResourceDescriptionBuilder().requestProperties(
                 ImmutableMap.of("foo", true, "bar", false, "baz", true, "qux", false));
     }
-
 
     // ------------------------------------------------------ test illegal states
 
@@ -63,11 +78,10 @@ public class ModelNodeFormTest {
     public void excludeRequiredAttributes() {
         new ModelNodeForm.Builder("viewAndCreateResource",
                 metadata(new ResourceDescriptionBuilder().requestProperties(ImmutableMap.of("foo", true))))
-                .fromRequestProperties()
-                .exclude("foo")
-                .build();
+                        .fromRequestProperties()
+                        .exclude("foo")
+                        .build();
     }
-
 
     // ------------------------------------------------------ verify different state machines
 
@@ -75,8 +89,8 @@ public class ModelNodeFormTest {
     public void createResourceStateMachine() {
         StateMachine stateMachine = new ModelNodeForm.Builder("createResourceStateMachine",
                 metadata(new ResourceDescriptionBuilder().requestProperties(Collections.emptyMap())))
-                .fromRequestProperties()
-                .stateMachine();
+                        .fromRequestProperties()
+                        .stateMachine();
         Assert.assertTrue(stateMachine instanceof AddOnlyStateMachine);
     }
 
@@ -84,8 +98,8 @@ public class ModelNodeFormTest {
     public void editOnlyStateMachine() {
         StateMachine stateMachine = new ModelNodeForm.Builder("editOnlyStateMachine",
                 metadata(new ResourceDescriptionBuilder().attributes()))
-                .fromRequestProperties()
-                .stateMachine();
+                        .fromRequestProperties()
+                        .stateMachine();
         Assert.assertTrue(stateMachine instanceof AddOnlyStateMachine);
     }
 
@@ -93,7 +107,7 @@ public class ModelNodeFormTest {
     public void viewOnlyStateMachine() {
         StateMachine stateMachine = new ModelNodeForm.Builder("viewOnlyStateMachine",
                 metadata(new ResourceDescriptionBuilder().attributes()))
-                .readOnly().stateMachine();
+                        .readOnly().stateMachine();
         Assert.assertTrue(stateMachine instanceof ReadOnlyStateMachine);
     }
 
@@ -101,10 +115,9 @@ public class ModelNodeFormTest {
     public void defaultStateMachine() {
         StateMachine stateMachine = new ModelNodeForm.Builder("defaultStateMachine",
                 metadata(new ResourceDescriptionBuilder().attributes()))
-                .stateMachine();
+                        .stateMachine();
         Assert.assertTrue(stateMachine instanceof ExistingStateMachine);
     }
-
 
     // ------------------------------------------------------ request properties
 
@@ -153,7 +166,6 @@ public class ModelNodeFormTest {
         assertEquals("baz", iterator.next().getName());
         assertEquals("foo", iterator.next().getName());
     }
-
 
     // ------------------------------------------------------ attributes
 
@@ -240,12 +252,11 @@ public class ModelNodeFormTest {
         assertEquals("foo", iterator.next().getName());
     }
 
-
     @Test
     public void noRuntime() throws Exception {
         ModelNodeForm<ModelNode> form = builder("noRuntime",
                 new ResourceDescriptionBuilder().storage(ImmutableMap.of("foo", CONFIGURATION, "bar", RUNTIME)))
-                .build();
+                        .build();
         Iterable<FormItem> formItems = form.getFormItems();
         Iterator<FormItem> iterator = formItems.iterator();
 
@@ -257,8 +268,8 @@ public class ModelNodeFormTest {
     public void withRuntime() throws Exception {
         ModelNodeForm<ModelNode> form = builder("withRuntime",
                 new ResourceDescriptionBuilder().storage(ImmutableMap.of("foo", CONFIGURATION, "bar", RUNTIME)))
-                .includeRuntime()
-                .build();
+                        .includeRuntime()
+                        .build();
         Iterable<FormItem> formItems = form.getFormItems();
         Iterator<FormItem> iterator = formItems.iterator();
 
@@ -266,7 +277,6 @@ public class ModelNodeFormTest {
         assertEquals("bar", iterator.next().getName());
         assertEquals("foo", iterator.next().getName());
     }
-
 
     // ------------------------------------------------------ helper methods
 

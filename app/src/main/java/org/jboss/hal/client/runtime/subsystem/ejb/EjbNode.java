@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.runtime.subsystem.ejb;
 
@@ -25,10 +25,9 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.DELIVERY_ACTIVE;
 class EjbNode extends DeploymentResource {
 
     enum Type {
-        MDB("message-driven-bean", Names.MESSAGE_DRIVEN_BEAN),
-        SINGLETON("singleton-bean", Names.SINGLETON_BEAN),
-        STATEFUL("stateful-session-bean", Names.STATEFUL_SESSION_BEAN),
-        STATELESS("stateless-session-bean", Names.STATELESS_SESSION_BEAN);
+        MDB("message-driven-bean", Names.MESSAGE_DRIVEN_BEAN), SINGLETON("singleton-bean", Names.SINGLETON_BEAN), STATEFUL(
+                "stateful-session-bean",
+                Names.STATEFUL_SESSION_BEAN), STATELESS("stateless-session-bean", Names.STATELESS_SESSION_BEAN);
 
         static Type fromResource(String resource) {
             if (MDB.resource.equals(resource)) {
@@ -51,7 +50,6 @@ class EjbNode extends DeploymentResource {
             this.type = type;
         }
     }
-
 
     final Type type;
 

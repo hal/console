@@ -1,30 +1,32 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.accesscontrol;
 
 import java.util.Comparator;
 import java.util.List;
 
-import com.google.gwt.resources.client.ExternalTextResource;
-import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.config.Role;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.resources.Previews;
 import org.jboss.hal.resources.Resources;
+
+import com.google.gwt.resources.client.ExternalTextResource;
+
+import elemental2.dom.HTMLElement;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.*;
@@ -46,8 +48,9 @@ class RolePreview extends PreviewContent<Role> {
         // @formatter:off
         super(role.getName(), role.isScoped()
                 ? (role.getType() == Role.Type.HOST
-                    ? resources.messages().hostScopedRole(role.getBaseRole().getName(), String.join(", ", role.getScope()))
-                    : resources.messages().serverGroupScopedRole(role.getBaseRole().getName(), String.join(", ", role.getScope())))
+                        ? resources.messages().hostScopedRole(role.getBaseRole().getName(), String.join(", ", role.getScope()))
+                        : resources.messages().serverGroupScopedRole(role.getBaseRole().getName(),
+                                String.join(", ", role.getScope())))
                 : null);
         // @formatter:on
 
@@ -104,8 +107,9 @@ class RolePreview extends PreviewContent<Role> {
     }
 
     private void principal(HTMLElement ul, Principal principal) {
-        String type = principal.getType() == Principal.Type.USER ? resources.constants().user() : resources.constants()
-                .group();
+        String type = principal.getType() == Principal.Type.USER ? resources.constants().user()
+                : resources.constants()
+                        .group();
         ul.appendChild(li()
                 .add(span().textContent(type + " "))
                 .add(a(tokens.principal(principal)).textContent(principal.getName())).element());

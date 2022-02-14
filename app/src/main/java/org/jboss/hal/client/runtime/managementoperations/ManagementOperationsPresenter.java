@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.runtime.managementoperations;
 
@@ -22,12 +22,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.common.base.Joiner;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
@@ -58,6 +52,14 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
+
+import com.google.common.base.Joiner;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.annotations.NameToken;
+import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+
 import rx.Completable;
 import rx.Single;
 
@@ -74,7 +76,8 @@ public class ManagementOperationsPresenter extends
     private static final String WILDCARD = "*";
     private static final String WFLYDM_0089 = "WFLYDM0089";
     public static final String MANAGEMENT_OPERATIONS_ADDRESS = "/core-service=management/service=management-operations";
-    static final String ACTIVE_OPERATIONS_ADDRESS = "{domain.controller}/" + MANAGEMENT_OPERATIONS_ADDRESS + "/active-operation=*";
+    static final String ACTIVE_OPERATIONS_ADDRESS = "{domain.controller}/" + MANAGEMENT_OPERATIONS_ADDRESS
+            + "/active-operation=*";
     private static final AddressTemplate MANAGEMENT_OPERATIONS_TEMPLATE = AddressTemplate.of(MANAGEMENT_OPERATIONS_ADDRESS);
     static final AddressTemplate ACTIVE_OPERATIONS_TEMPLATE = AddressTemplate.of(ACTIVE_OPERATIONS_ADDRESS);
 
@@ -250,9 +253,9 @@ public class ManagementOperationsPresenter extends
                                             ModelNode opResult = op.get(RESULT);
                                             // the result has two addresses
                                             // 1) the active-operation address itself, example
-                                            //  /host=master/server=server-three/core-service=management/service=management-operations/active-operation=1940701884
+                                            // /host=master/server=server-three/core-service=management/service=management-operations/active-operation=1940701884
                                             // 2) the resource address
-                                            //  /host=master/server=server-three/subsystem=elytron/filesystem-realm=file1
+                                            // /host=master/server=server-three/subsystem=elytron/filesystem-realm=file1
                                             // the active-operation address should be store to later use it to cancel, if needed
                                             // the resource address is displayed to the user
                                             ModelNode activeOpAddress = op.get(ADDRESS);
@@ -477,7 +480,7 @@ public class ManagementOperationsPresenter extends
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(MANAGEMENT_OPERATIONS)
-    @Requires({ACTIVE_OPERATIONS_ADDRESS})
+    @Requires({ ACTIVE_OPERATIONS_ADDRESS })
     public interface MyProxy extends ProxyPlace<ManagementOperationsPresenter> {
     }
 

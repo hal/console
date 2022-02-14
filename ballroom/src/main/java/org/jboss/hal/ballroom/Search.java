@@ -1,32 +1,34 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.ballroom;
 
-import com.google.common.base.Strings;
-import com.google.gwt.core.client.GWT;
-import elemental2.dom.HTMLElement;
-import elemental2.dom.HTMLInputElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Callback;
 
-import static org.jboss.gwt.elemento.core.Elements.label;
+import com.google.common.base.Strings;
+import com.google.gwt.core.client.GWT;
+
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLInputElement;
+
 import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.gwt.elemento.core.Elements.label;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.gwt.elemento.core.EventType.keyup;
 import static org.jboss.gwt.elemento.core.InputType.search;
@@ -54,12 +56,12 @@ public class Search implements IsElement<HTMLElement> {
                                         .attr(UIConstants.PLACEHOLDER, CONSTANTS.search())
                                         .on(keyup, event -> {
                                             setVisible(clearSearch, !Strings.isNullOrEmpty(searchBox.value));
-                                            if ("Enter".equals(event.key)) { //NON-NLS
+                                            if ("Enter".equals(event.key)) { // NON-NLS
                                                 builder.onSearch.search(searchBox.value);
                                             }
                                         }).element())
                                 .add(clearSearch = button().css(clear)
-                                        .aria(UIConstants.HIDDEN, "true") //NON-NLS
+                                        .aria(UIConstants.HIDDEN, "true") // NON-NLS
                                         .on(click, event -> {
                                             clear();
                                             if (builder.onClear != null) {
@@ -71,7 +73,9 @@ public class Search implements IsElement<HTMLElement> {
                 .add(buttons = div().css(formGroup, btnGroup)
                         .add(button().css(btn, btnDefault)
                                 .on(click, event -> builder.onSearch.search(searchBox.value))
-                                .add(span().css(fontAwesome("search")))).element()).element();
+                                .add(span().css(fontAwesome("search"))))
+                        .element())
+                .element();
 
         if (builder.onPrevious != null) {
             buttons.appendChild(button().css(btn, btnDefault)
@@ -100,13 +104,11 @@ public class Search implements IsElement<HTMLElement> {
         searchBox.focus();
     }
 
-
     @FunctionalInterface
     public interface SearchHandler {
 
         void search(String query);
     }
-
 
     public static class Builder {
 

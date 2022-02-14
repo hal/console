@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.core.configuration;
 
@@ -46,15 +46,14 @@ import static org.jboss.hal.dmr.ModelNodeHelper.properties;
 import static org.jboss.hal.flow.Flow.series;
 
 /**
- * Special auto complete class for paths. In standalone mode or in case there's no selected profile the paths are read
- * using {@code :read-children-names(child-type=path)}.
+ * Special auto complete class for paths. In standalone mode or in case there's no selected profile the paths are read using
+ * {@code :read-children-names(child-type=path)}.
  * <p>
  * In domain mode we try to get the first running server of the selected profile and use {@code
- * /host=foo/server-bar:read-children-names(child-type=path)} or {@code :read-children-names(child-type=path)} in case
- * there's no running server or no selected profile.
+ * /host=foo/server-bar:read-children-names(child-type=path)} or {@code :read-children-names(child-type=path)} in case there's
+ * no running server or no selected profile.
  * <p>
- * Since the operation is static it's important to update it when a profile is selected or a server is stopped or
- * started.
+ * Since the operation is static it's important to update it when a profile is selected or a server is stopped or started.
  */
 public class PathsAutoComplete extends AutoComplete {
 
@@ -82,12 +81,12 @@ public class PathsAutoComplete extends AutoComplete {
                         public void onSuccess(FlowContext context) {
                             List<Server> servers = context.get(TopologyTasks.SERVERS);
                             boolean readPathsFromServer = !servers.isEmpty() && (servers.get(0)
-                                    .isStarted() || servers.get(0).needsReload() || servers.get(0)
-                                    .needsRestart());
+                                    .isStarted() || servers.get(0).needsReload()
+                                    || servers.get(0)
+                                            .needsRestart());
                             if (readPathsFromServer) {
                                 operation = new Operation.Builder(servers.get(0).getServerAddress(),
-                                        READ_CHILDREN_NAMES_OPERATION
-                                ).param(CHILD_TYPE, "path").build();
+                                        READ_CHILDREN_NAMES_OPERATION).param(CHILD_TYPE, "path").build();
                             } else {
                                 operation = defaultOperation();
                             }
@@ -105,8 +104,8 @@ public class PathsAutoComplete extends AutoComplete {
         Options options = new OptionsBuilder<JsonObject>(
                 (query, response) -> Core.INSTANCE.dispatcher().execute(operation,
                         result -> response.response(new NamesResultProcessor().process(query, result))))
-                .renderItem(new StringRenderer<>(item -> item.get(NAME).asString()))
-                .build();
+                                .renderItem(new StringRenderer<>(item -> item.get(NAME).asString()))
+                                .build();
         init(options);
     }
 }

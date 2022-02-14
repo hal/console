@@ -1,31 +1,23 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.core.mbui.table;
 
 import java.util.List;
 import java.util.function.Function;
 
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import elemental2.dom.HTMLElement;
-import jsinterop.annotations.JsFunction;
-import jsinterop.annotations.JsIgnore;
-import jsinterop.annotations.JsMethod;
-import jsinterop.annotations.JsProperty;
-import jsinterop.annotations.JsType;
 import org.jboss.hal.ballroom.JsCallback;
 import org.jboss.hal.ballroom.table.ButtonHandler;
 import org.jboss.hal.ballroom.table.Column;
@@ -49,6 +41,16 @@ import org.jboss.hal.spi.EsParam;
 import org.jboss.hal.spi.EsReturn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+
+import elemental2.dom.HTMLElement;
+import jsinterop.annotations.JsFunction;
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsProperty;
+import jsinterop.annotations.JsType;
 
 import static java.util.Arrays.asList;
 import static org.jboss.hal.ballroom.table.RefreshMode.RESET;
@@ -78,8 +80,8 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
     public void attach() {
         super.attach();
         if (!options.buttonConstraints.isEmpty()) {
-            options.buttonConstraints.forEach((index, constraint) ->
-                    buttonElement(index).attr(data(UIConstants.CONSTRAINT), constraint));
+            options.buttonConstraints
+                    .forEach((index, constraint) -> buttonElement(index).attr(data(UIConstants.CONSTRAINT), constraint));
         }
         applySecurity();
     }
@@ -127,7 +129,6 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
         ElementGuard.processElements(ad, element());
     }
 
-
     // ------------------------------------------------------ JS methods
 
     @JsProperty(name = "element")
@@ -153,7 +154,6 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
     public void jsUpdate(T[] rows) {
         update(asList(rows));
     }
-
 
     /** Builder to create tables based on resource metadata. By default the table has no columns and no actions. */
     @SuppressWarnings("DuplicateStringLiteralInspection")
@@ -213,18 +213,16 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
             return new ModelNodeTable<>(this);
         }
 
-
         // ------------------------------------------------------ JS methods
-
 
         /**
          * Adds a button to add a new resource.
          *
-         * @param type       The human readable resource type used in the dialog header and success message.
-         * @param template   The address template for the add operation. Must end in <code>&lt;resource
+         * @param type The human readable resource type used in the dialog header and success message.
+         * @param template The address template for the add operation. Must end in <code>&lt;resource
          *                   type&gt;=&lt;resource name&gt;</code>.
          * @param attributes attributes which should be part of the add resource dialog
-         * @param callback   the callback executed after the resource has been added
+         * @param callback the callback executed after the resource has been added
          */
         @JsMethod(name = "add")
         @EsReturn("TableBuilder")
@@ -241,10 +239,9 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
         /**
          * Adds a button to remove the selected resource.
          *
-         * @param type     The human readable resource type used in the success message.
-         * @param template The address template for the add operation. Must end in <code>&lt;resource
-         *                 type&gt;=&lt;resource
-         * @param name     A function to get the name of the selected resource.
+         * @param type The human readable resource type used in the success message.
+         * @param template The address template for the add operation. Must end in <code>&lt;resource type&gt;=&lt;resource
+         * @param name A function to get the name of the selected resource.
          * @param callback The callback executed after the resource has been removed.
          */
         @JsMethod(name = "remove")
@@ -260,8 +257,8 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
         /**
          * Add a button which executes the specified callback.
          *
-         * @param text    The text on the button
-         * @param scope   The scope: "selected" or "selectedSingle"
+         * @param text The text on the button
+         * @param scope The scope: "selected" or "selectedSingle"
          * @param handler The callback to execute when the button is clicked
          */
         @JsMethod(name = "button")
@@ -290,7 +287,8 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
                 t = (AddressTemplate) template;
             } else {
                 throw new IllegalArgumentException(
-                        "Invalid 2nd argument: Use TableBuilder." + method + "(string, (string|AddressTemplate), string[], function(string, ResourceAddress))");
+                        "Invalid 2nd argument: Use TableBuilder." + method
+                                + "(string, (string|AddressTemplate), string[], function(string, ResourceAddress))");
             }
             return t;
         }

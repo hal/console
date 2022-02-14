@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.messaging;
 
@@ -20,7 +20,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
@@ -39,6 +38,8 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.SelectionAwareStatementContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
+
+import elemental2.dom.HTMLElement;
 
 import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.gwt.elemento.core.Elements.p;
@@ -81,7 +82,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
 
         String clusterCR = "cluster-credential-reference";
         crForm = cr.form(MESSAGING_SERVER, metadata, clusterCR, "cluster-password",
-                () -> form.<String>getFormItem("cluster-password").getValue(),
+                () -> form.<String> getFormItem("cluster-password").getValue(),
                 () -> presenter.resourceAddress(),
                 () -> presenter.reload());
 
@@ -123,28 +124,27 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
 
         bindingsDirectoryForm = new ModelNodeForm.Builder<>(Ids.MESSAGING_SERVER_BINDING_DIRECTORY_FORM,
                 bindingMetadata)
-                .singleton(
-                        () -> new Operation.Builder(SELECTED_BINDING_DIRECTORY_TEMPLATE.resolve(serverStatementContext),
-                                READ_RESOURCE_OPERATION).build(),
-                        () -> mbuiContext.crud()
-                                .addSingleton(Ids.MESSAGING_SERVER_BINDING_DIRECTORY_FORM, Names.BINDINGS_DIRECTORY,
-                                        bindingMetadata,
-                                        BINDING_DIRECTORY_TEMPLATE.replaceWildcards(presenter.getServerName()),
-                                        address -> presenter.reload()))
-                .prepareRemove(form -> mbuiContext.crud()
-                        .removeSingleton(Names.BINDINGS_DIRECTORY,
-                                SELECTED_BINDING_DIRECTORY_TEMPLATE.resolve(serverStatementContext),
-                                () -> presenter.reload()))
-                .prepareReset(form1 -> mbuiContext.crud()
-                        .resetSingleton(Names.BINDINGS_DIRECTORY,
-                                SELECTED_BINDING_DIRECTORY_TEMPLATE.resolve(serverStatementContext), form1,
-                                bindingMetadata, () -> presenter.reload()))
-                .onSave((form, changedValues) -> mbuiContext.crud()
-                        .saveSingleton(Names.BINDINGS_DIRECTORY,
-                                SELECTED_BINDING_DIRECTORY_TEMPLATE.resolve(serverStatementContext), changedValues,
-                                bindingMetadata, () -> presenter.reload()))
-                .build();
-
+                        .singleton(
+                                () -> new Operation.Builder(SELECTED_BINDING_DIRECTORY_TEMPLATE.resolve(serverStatementContext),
+                                        READ_RESOURCE_OPERATION).build(),
+                                () -> mbuiContext.crud()
+                                        .addSingleton(Ids.MESSAGING_SERVER_BINDING_DIRECTORY_FORM, Names.BINDINGS_DIRECTORY,
+                                                bindingMetadata,
+                                                BINDING_DIRECTORY_TEMPLATE.replaceWildcards(presenter.getServerName()),
+                                                address -> presenter.reload()))
+                        .prepareRemove(form -> mbuiContext.crud()
+                                .removeSingleton(Names.BINDINGS_DIRECTORY,
+                                        SELECTED_BINDING_DIRECTORY_TEMPLATE.resolve(serverStatementContext),
+                                        () -> presenter.reload()))
+                        .prepareReset(form1 -> mbuiContext.crud()
+                                .resetSingleton(Names.BINDINGS_DIRECTORY,
+                                        SELECTED_BINDING_DIRECTORY_TEMPLATE.resolve(serverStatementContext), form1,
+                                        bindingMetadata, () -> presenter.reload()))
+                        .onSave((form, changedValues) -> mbuiContext.crud()
+                                .saveSingleton(Names.BINDINGS_DIRECTORY,
+                                        SELECTED_BINDING_DIRECTORY_TEMPLATE.resolve(serverStatementContext), changedValues,
+                                        bindingMetadata, () -> presenter.reload()))
+                        .build();
 
         journalDirectoryForm = new ModelNodeForm.Builder<>(Ids.MESSAGING_SERVER_JOURNAL_DIRECTORY_FORM, journalMetadata)
                 .singleton(
@@ -172,30 +172,29 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
 
         largeMessagesDirectoryForm = new ModelNodeForm.Builder<>(Ids.MESSAGING_SERVER_LARGE_MESSAGES_DIRECTORY_FORM,
                 largeMetadata)
-                .singleton(
-                        () -> new Operation.Builder(
-                                SELECTED_LARGE_MESSAGES_DIRECTORY_TEMPLATE.resolve(serverStatementContext),
-                                READ_RESOURCE_OPERATION).build(),
-                        () -> mbuiContext.crud()
-                                .addSingleton(Ids.MESSAGING_SERVER_LARGE_MESSAGES_DIRECTORY_FORM,
-                                        Names.LARGE_MESSAGES_DIRECTORY, largeMetadata,
-                                        LARGE_MESSAGES_DIRECTORY_TEMPLATE.replaceWildcards(presenter.getServerName()),
-                                        address -> presenter.reload()))
-                .prepareRemove(form -> mbuiContext.crud()
-                        .removeSingleton(Names.LARGE_MESSAGES_DIRECTORY,
-                                SELECTED_LARGE_MESSAGES_DIRECTORY_TEMPLATE.resolve(serverStatementContext),
-                                () -> presenter.reload()))
-                .prepareReset(form1 -> mbuiContext.crud()
-                        .resetSingleton(Names.LARGE_MESSAGES_DIRECTORY,
-                                SELECTED_LARGE_MESSAGES_DIRECTORY_TEMPLATE.resolve(serverStatementContext), form1,
-                                largeMetadata, () -> presenter.reload()))
-                .onSave((form, changedValues) -> mbuiContext.crud()
-                        .saveSingleton(Names.LARGE_MESSAGES_DIRECTORY,
-                                SELECTED_LARGE_MESSAGES_DIRECTORY_TEMPLATE.resolve(serverStatementContext),
-                                changedValues,
-                                largeMetadata, () -> presenter.reload()))
-                .build();
-
+                        .singleton(
+                                () -> new Operation.Builder(
+                                        SELECTED_LARGE_MESSAGES_DIRECTORY_TEMPLATE.resolve(serverStatementContext),
+                                        READ_RESOURCE_OPERATION).build(),
+                                () -> mbuiContext.crud()
+                                        .addSingleton(Ids.MESSAGING_SERVER_LARGE_MESSAGES_DIRECTORY_FORM,
+                                                Names.LARGE_MESSAGES_DIRECTORY, largeMetadata,
+                                                LARGE_MESSAGES_DIRECTORY_TEMPLATE.replaceWildcards(presenter.getServerName()),
+                                                address -> presenter.reload()))
+                        .prepareRemove(form -> mbuiContext.crud()
+                                .removeSingleton(Names.LARGE_MESSAGES_DIRECTORY,
+                                        SELECTED_LARGE_MESSAGES_DIRECTORY_TEMPLATE.resolve(serverStatementContext),
+                                        () -> presenter.reload()))
+                        .prepareReset(form1 -> mbuiContext.crud()
+                                .resetSingleton(Names.LARGE_MESSAGES_DIRECTORY,
+                                        SELECTED_LARGE_MESSAGES_DIRECTORY_TEMPLATE.resolve(serverStatementContext), form1,
+                                        largeMetadata, () -> presenter.reload()))
+                        .onSave((form, changedValues) -> mbuiContext.crud()
+                                .saveSingleton(Names.LARGE_MESSAGES_DIRECTORY,
+                                        SELECTED_LARGE_MESSAGES_DIRECTORY_TEMPLATE.resolve(serverStatementContext),
+                                        changedValues,
+                                        largeMetadata, () -> presenter.reload()))
+                        .build();
 
         pagingDirectoryForm = new ModelNodeForm.Builder<>(Ids.MESSAGING_SERVER_PAGING_DIRECTORY_FORM, pagingMetadata)
                 .singleton(
@@ -267,7 +266,8 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
 
         HTMLElement root = row()
                 .add(column()
-                        .addAll(verticalNavigation.panes())).element();
+                        .addAll(verticalNavigation.panes()))
+                .element();
 
         initElement(root);
 

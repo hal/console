@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.core.runtime;
 
@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.config.Environment;
@@ -45,6 +44,9 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.web.bindery.event.shared.EventBus;
+
 import rx.Completable;
 import rx.Single;
 import rx.functions.Func1;
@@ -61,12 +63,12 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
 
 public final class TopologyTasks {
 
-    public static final String HOST = "topologyFunctions.host";                      // Host
-    public static final String HOSTS = "topologyFunctions.hosts";                    // List<Host>
-    public static final String SERVER_GROUPS = "topologyFunctions.serverGroups";     // List<ServerGroup>
-    public static final String SERVERS = "topologyFunctions.servers";                // List<Server>
+    public static final String HOST = "topologyFunctions.host"; // Host
+    public static final String HOSTS = "topologyFunctions.hosts"; // List<Host>
+    public static final String SERVER_GROUPS = "topologyFunctions.serverGroups"; // List<ServerGroup>
+    public static final String SERVERS = "topologyFunctions.servers"; // List<Server>
 
-    private static final String HOST_NAMES = "topologyFunctions.hostNames";           // List<String>
+    private static final String HOST_NAMES = "topologyFunctions.hostNames"; // List<String>
     private static final String WILDCARD = "*";
     private static final Logger logger = LoggerFactory.getLogger(TopologyTasks.class);
 
@@ -91,10 +93,11 @@ public final class TopologyTasks {
     /**
      * Returns a list of tasks to read the topology.
      *
-     * <p>The context is populated with the following keys:
+     * <p>
+     * The context is populated with the following keys:
      * <ul>
-     * <li>{@link #HOSTS}: The ordered list of hosts with the domain controller as first element. Each host contains
-     * its servers.</li>
+     * <li>{@link #HOSTS}: The ordered list of hosts with the domain controller as first element. Each host contains its
+     * servers.</li>
      * <li>{@link #SERVER_GROUPS}: The ordered list of server groups. Each server group contains its servers.</li>
      * <li>{@link #SERVERS}: The list of all servers in the domain.</li>
      * </ul>
@@ -114,10 +117,11 @@ public final class TopologyTasks {
     /**
      * Returns a list of tasks to read all hosts (connected and disconnected) and its servers.
      *
-     * <p>The context is populated with the following keys:
+     * <p>
+     * The context is populated with the following keys:
      * <ul>
-     * <li>{@link #HOSTS}: The ordered list of hosts with the domain controller as first element. Each host contains
-     * its servers.</li>
+     * <li>{@link #HOSTS}: The ordered list of hosts with the domain controller as first element. Each host contains its
+     * servers.</li>
      * </ul>
      * Started servers contain additional attributes and optional server boot errors.
      */
@@ -134,7 +138,8 @@ public final class TopologyTasks {
     /**
      * Returns a list of tasks to read all server groups and its servers.
      *
-     * <p>The context is populated with the following keys:
+     * <p>
+     * The context is populated with the following keys:
      * <ul>
      * <li>{@link #SERVER_GROUPS}: The ordered list of server groups. Each server group contains its servers.</li>
      * </ul>
@@ -153,7 +158,8 @@ public final class TopologyTasks {
     /**
      * Returns a list of tasks to read the servers of one host.
      *
-     * <p>The context is populated with the following keys:
+     * <p>
+     * The context is populated with the following keys:
      * <ul>
      * <li>{@link #SERVERS}: The list of servers of one host.</li>
      * </ul>
@@ -169,7 +175,8 @@ public final class TopologyTasks {
     /**
      * Returns a list of tasks to read the servers of one server group.
      *
-     * <p>The context is populated with the following keys:
+     * <p>
+     * The context is populated with the following keys:
      * <ul>
      * <li>{@link #SERVERS}: The list of servers of one server group.</li>
      * </ul>
@@ -187,10 +194,11 @@ public final class TopologyTasks {
     /**
      * Returns a list of tasks to read all running servers in the domain, which satisfy the specified query.
      *
-     * <p>The context is populated with the following keys:
+     * <p>
+     * The context is populated with the following keys:
      * <ul>
-     * <li>{@link #SERVERS}: The list of running servers with additional attributes and optional server boot errors for
-     * started servers.</li>
+     * <li>{@link #SERVERS}: The list of running servers with additional attributes and optional server boot errors for started
+     * servers.</li>
      * </ul>
      */
     public static List<Task<FlowContext>> runningServers(Environment environment, Dispatcher dispatcher,
@@ -204,9 +212,9 @@ public final class TopologyTasks {
     // ------------------------------------------------------ public callbacks
 
     /**
-     * Function, which is used for {@link Single#onErrorResumeNext(rx.functions.Func1)} in case of an error in tasks,
-     * which read the hosts. The erroneous host is added to the list of hosts as {@link Host#booting(String)} if the
-     * error contains {@link ModelDescriptionConstants#ERROR_WFY_CTL_0379} or as {@link Host#failed(String)} otherwise.
+     * Function, which is used for {@link Single#onErrorResumeNext(rx.functions.Func1)} in case of an error in tasks, which read
+     * the hosts. The erroneous host is added to the list of hosts as {@link Host#booting(String)} if the error contains
+     * {@link ModelDescriptionConstants#ERROR_WFY_CTL_0379} or as {@link Host#failed(String)} otherwise.
      */
     public static class HostError<T> implements Func1<Throwable, Single<T>> {
 
@@ -267,8 +275,7 @@ public final class TopologyTasks {
                     sortedHosts = new ArrayList<>();
                 }
                 Host domainController = null;
-                for (Iterator<Host> iterator = sortedHosts.iterator();
-                        iterator.hasNext() && domainController == null; ) {
+                for (Iterator<Host> iterator = sortedHosts.iterator(); iterator.hasNext() && domainController == null;) {
                     Host host = iterator.next();
                     if (host.isDomainController()) {
                         domainController = host;
@@ -367,8 +374,8 @@ public final class TopologyTasks {
                                         .add(SERVER_CONFIG, WILDCARD);
                                 Operation serverConfigOperation = new Operation.Builder(serverConfigAddress,
                                         READ_RESOURCE_OPERATION)
-                                        .param(INCLUDE_RUNTIME, true)
-                                        .build();
+                                                .param(INCLUDE_RUNTIME, true)
+                                                .build();
                                 Composite composite = new Composite(hostOperation, serverConfigOperation);
                                 return dispatcher.execute(composite)
                                         .doOnSuccess((CompositeResult result) -> {
@@ -476,9 +483,9 @@ public final class TopologyTasks {
             if (!environment.isStandalone()) {
                 Operation operation = new Operation.Builder(ResourceAddress.root(),
                         READ_CHILDREN_RESOURCES_OPERATION)
-                        .param(CHILD_TYPE, ModelDescriptionConstants.SERVER_GROUP)
-                        .param(INCLUDE_RUNTIME, true)
-                        .build();
+                                .param(CHILD_TYPE, ModelDescriptionConstants.SERVER_GROUP)
+                                .param(INCLUDE_RUNTIME, true)
+                                .build();
                 completable = dispatcher.execute(operation)
                         .doOnSuccess(result -> serverGroups.addAll(result.asPropertyList().stream()
                                 .map(ServerGroup::new)
@@ -625,7 +632,7 @@ public final class TopologyTasks {
                                                 .add(ModelDescriptionConstants.SERVER_GROUP)
                                                 .add(SERVER_STATE)
                                                 .add(SUSPEND_STATE)
-                                                .add("uuid")) //NON-NLS
+                                                .add("uuid")) // NON-NLS
                                         .param(WHERE, query)
                                         .build();
                                 return dispatcher.execute(operation)
@@ -682,8 +689,7 @@ public final class TopologyTasks {
                                     .build());
                             operations.add(
                                     new Operation.Builder(server.getServerAddress().add(CORE_SERVICE, MANAGEMENT),
-                                            READ_BOOT_ERRORS
-                                    ).build());
+                                            READ_BOOT_ERRORS).build());
                         }
                         if (!operations.isEmpty()) {
                             Composite composite = new Composite(operations);
@@ -692,7 +698,7 @@ public final class TopologyTasks {
                                         Map<String, Server> serverConfigsByName = servers.stream()
                                                 .collect(toMap(Server::getId, identity()));
 
-                                        for (Iterator<ModelNode> iterator = result.iterator(); iterator.hasNext(); ) {
+                                        for (Iterator<ModelNode> iterator = result.iterator(); iterator.hasNext();) {
                                             ModelNode attributes = iterator.next().get(RESULT);
                                             String serverId = Ids.hostServer(
                                                     attributes.get(ModelDescriptionConstants.HOST).asString(),

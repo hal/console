@@ -1,27 +1,22 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.runtime.subsystem.datasource;
 
 import javax.inject.Inject;
 
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
@@ -37,6 +32,12 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Requires;
+
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.annotations.NameToken;
+import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -94,8 +95,9 @@ public class DataSourcePresenter
 
     @Override
     protected void reload() {
-        ResourceAddress address = xa ? XA_DATA_SOURCE_TEMPLATE.resolve(statementContext, name) : DATA_SOURCE_TEMPLATE
-                .resolve(statementContext, name);
+        ResourceAddress address = xa ? XA_DATA_SOURCE_TEMPLATE.resolve(statementContext, name)
+                : DATA_SOURCE_TEMPLATE
+                        .resolve(statementContext, name);
         Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                 .param(INCLUDE_RUNTIME, true)
                 .param(RECURSIVE, true)
@@ -111,20 +113,20 @@ public class DataSourcePresenter
         return xa;
     }
 
-
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(DATA_SOURCE_RUNTIME)
-    @Requires({DATA_SOURCE_ADDRESS, XA_DATA_SOURCE_ADDRESS,
+    @Requires({ DATA_SOURCE_ADDRESS, XA_DATA_SOURCE_ADDRESS,
             OPTIONAL + DATA_SOURCE_POOL_ADDRESS,
             OPTIONAL + DATA_SOURCE_JDBC_ADDRESS,
             OPTIONAL + XA_DATA_SOURCE_POOL_ADDRESS,
-            OPTIONAL + XA_DATA_SOURCE_JDBC_ADDRESS})
+            OPTIONAL + XA_DATA_SOURCE_JDBC_ADDRESS })
     public interface MyProxy extends ProxyPlace<DataSourcePresenter> {
     }
 
     public interface MyView extends HalView, HasPresenter<DataSourcePresenter> {
         void setup();
+
         void update(DataSource dataSource);
     }
     // @formatter:on

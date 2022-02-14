@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.distributableweb;
 
@@ -22,8 +22,6 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import elemental2.dom.HTMLElement;
-import elemental2.dom.HTMLSelectElement;
 import org.jboss.gwt.elemento.core.EventType;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.Tabs;
@@ -46,6 +44,9 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
+
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLSelectElement;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.*;
@@ -135,35 +136,44 @@ public abstract class DistributableWebView extends MbuiViewImpl<DistributableWeb
 
         // -- hotrod session management
         String hotRodId = "dw-hotrod-session-management";
-        String hotRodNavLabel = SessionManagement.HOTROD.type.substring(0, SessionManagement.HOTROD.type.lastIndexOf(' ')); // remove " Management";
+        String hotRodNavLabel = SessionManagement.HOTROD.type.substring(0, SessionManagement.HOTROD.type.lastIndexOf(' ')); // remove
+                                                                                                                            // "
+                                                                                                                            // Management";
 
         hotRodSessionManagementForm = createMgmtForm(hotRodId, SessionManagement.HOTROD);
         hotRodSessionManagementTable = createMgmtTable(hotRodId, SessionManagement.HOTROD);
-        hotRodSessionManagementAffinityElement = new AffinityElement(SessionManagement.HOTROD, mbuiContext.metadataRegistry(), mbuiContext.resources());
+        hotRodSessionManagementAffinityElement = new AffinityElement(SessionManagement.HOTROD, mbuiContext.metadataRegistry(),
+                mbuiContext.resources());
 
         registerAttachable(hotRodSessionManagementAffinityElement);
 
-        HTMLElement hotRodSection = createMgmtSection(hotRodId, hotRodSessionManagementForm.element(), hotRodSessionManagementAffinityElement.element(),
+        HTMLElement hotRodSection = createMgmtSection(hotRodId, hotRodSessionManagementForm.element(),
+                hotRodSessionManagementAffinityElement.element(),
                 hotRodSessionManagementTable, SessionManagement.HOTROD);
 
-        navigation.insertPrimary(build(hotRodId, ITEM), build("dw-hotrod-sso-management", ITEM), hotRodNavLabel, "pficon pficon-users", hotRodSection);
+        navigation.insertPrimary(build(hotRodId, ITEM), build("dw-hotrod-sso-management", ITEM), hotRodNavLabel,
+                "pficon pficon-users", hotRodSection);
 
         registerAttachable(hotRodSessionManagementTable, hotRodSessionManagementForm);
 
         // -- infinispan session management
         String infinispanId = "dw-infinispan-session-management";
-        String infinispanNavLabel = SessionManagement.INFINISPAN.type.substring(0, SessionManagement.INFINISPAN.type.lastIndexOf(' '));
+        String infinispanNavLabel = SessionManagement.INFINISPAN.type.substring(0,
+                SessionManagement.INFINISPAN.type.lastIndexOf(' '));
 
         infinispanSessionManagementForm = createMgmtForm(infinispanId, SessionManagement.INFINISPAN);
         infinispanSessionManagementTable = createMgmtTable(infinispanId, SessionManagement.INFINISPAN);
-        infinispanSessionManagementAffinityElement = new AffinityElement(SessionManagement.INFINISPAN, mbuiContext.metadataRegistry(), mbuiContext.resources());
+        infinispanSessionManagementAffinityElement = new AffinityElement(SessionManagement.INFINISPAN,
+                mbuiContext.metadataRegistry(), mbuiContext.resources());
 
         registerAttachable(infinispanSessionManagementAffinityElement);
 
-        HTMLElement infinispanSection = createMgmtSection(infinispanId, infinispanSessionManagementForm.element(), infinispanSessionManagementAffinityElement.element(),
+        HTMLElement infinispanSection = createMgmtSection(infinispanId, infinispanSessionManagementForm.element(),
+                infinispanSessionManagementAffinityElement.element(),
                 infinispanSessionManagementTable, SessionManagement.INFINISPAN);
 
-        navigation.insertPrimary(build(infinispanId, ITEM), build("dw-infinispan-sso-management", ITEM), infinispanNavLabel, "pficon pficon-users", infinispanSection);
+        navigation.insertPrimary(build(infinispanId, ITEM), build("dw-infinispan-sso-management", ITEM), infinispanNavLabel,
+                "pficon pficon-users", infinispanSection);
 
         registerAttachable(infinispanSessionManagementTable, infinispanSessionManagementForm);
     }
@@ -179,7 +189,8 @@ public abstract class DistributableWebView extends MbuiViewImpl<DistributableWeb
         hotRodSessionManagementTable.onSelectionChange((table -> {
             NamedNode row = table.selectedRow();
             String mgtmName = row != null ? row.getName() : null;
-            List<Property> affinities = row != null ? ModelNodeHelper.failSafePropertyList(table.selectedRow(), AFFINITY) : Collections.emptyList();
+            List<Property> affinities = row != null ? ModelNodeHelper.failSafePropertyList(table.selectedRow(), AFFINITY)
+                    : Collections.emptyList();
             hotRodSessionManagementAffinityElement.update(mgtmName, affinities);
         }));
 
@@ -187,7 +198,8 @@ public abstract class DistributableWebView extends MbuiViewImpl<DistributableWeb
         infinispanSessionManagementTable.onSelectionChange((table -> {
             NamedNode row = table.selectedRow();
             String mgtmName = row != null ? row.getName() : null;
-            List<Property> affinities = row != null ? ModelNodeHelper.failSafePropertyList(table.selectedRow(), AFFINITY) : Collections.emptyList();
+            List<Property> affinities = row != null ? ModelNodeHelper.failSafePropertyList(table.selectedRow(), AFFINITY)
+                    : Collections.emptyList();
             infinispanSessionManagementAffinityElement.update(mgtmName, affinities);
         }));
     }
@@ -257,11 +269,13 @@ public abstract class DistributableWebView extends MbuiViewImpl<DistributableWeb
         return new ModelNodeForm.Builder<NamedNode>(build(mgmtId, FORM), metadata)
                 .onSave((form, changedValues) -> {
                     String name = form.getModel().getName();
-                    saveForm(sessionManagement.type, name, sessionManagement.template.resolve(statementContext(), name), changedValues, metadata);
+                    saveForm(sessionManagement.type, name, sessionManagement.template.resolve(statementContext(), name),
+                            changedValues, metadata);
                 })
                 .prepareReset(form -> {
                     String name = form.getModel().getName();
-                    resetForm(sessionManagement.type, name, sessionManagement.template.resolve(statementContext(), name), form, metadata);
+                    resetForm(sessionManagement.type, name, sessionManagement.template.resolve(statementContext(), name), form,
+                            metadata);
                 })
                 .build();
     }
@@ -269,7 +283,8 @@ public abstract class DistributableWebView extends MbuiViewImpl<DistributableWeb
     private Table<NamedNode> createMgmtTable(String mgmtId, SessionManagement sessionManagement) {
         Metadata metadata = mbuiContext.metadataRegistry().lookup(sessionManagement.template);
         return new ModelNodeTable.Builder<NamedNode>(build(mgmtId, ModelDescriptionConstants.TABLE), metadata)
-                .button(mbuiContext.tableButtonFactory().add(build(mgmtId, ModelDescriptionConstants.TABLE, ModelDescriptionConstants.ADD), sessionManagement.type,
+                .button(mbuiContext.tableButtonFactory().add(
+                        build(mgmtId, ModelDescriptionConstants.TABLE, ModelDescriptionConstants.ADD), sessionManagement.type,
                         sessionManagement.template, (name, address) -> presenter.reload()))
                 .button(mbuiContext.tableButtonFactory().remove(sessionManagement.type, sessionManagement.template,
                         table -> table.selectedRow().getName(),
@@ -278,7 +293,8 @@ public abstract class DistributableWebView extends MbuiViewImpl<DistributableWeb
                 .build();
     }
 
-    private HTMLElement createMgmtSection(String mgmtId, HTMLElement formElement, HTMLElement affinityElement, Table<NamedNode> table, SessionManagement sessionManagement) {
+    private HTMLElement createMgmtSection(String mgmtId, HTMLElement formElement, HTMLElement affinityElement,
+            Table<NamedNode> table, SessionManagement sessionManagement) {
         Metadata metadata = mbuiContext.metadataRegistry().lookup(sessionManagement.template);
         Tabs tabs = new Tabs(build(mgmtId, "container"));
         tabs.add(build(mgmtId, TAB), mbuiContext.resources().constants().attributes(), formElement);

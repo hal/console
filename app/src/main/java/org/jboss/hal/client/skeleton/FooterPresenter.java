@@ -1,27 +1,22 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.skeleton;
 
 import javax.inject.Inject;
 
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.PresenterWidget;
-import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.client.bootstrap.tasks.VersionUpdateEvent;
@@ -47,6 +42,13 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.PresenterWidget;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+
+import elemental2.dom.HTMLElement;
+
 public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView>
         implements IsElement, MacroOperationHandler, MacroFinishedHandler, VersionUpdateHandler {
 
@@ -60,7 +62,7 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView>
     private boolean recording;
 
     @Inject
-    @SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection"})
+    @SuppressWarnings({ "HardCodedStringLiteral", "DuplicateStringLiteralInspection" })
     public FooterPresenter(EventBus eventBus,
             MyView view,
             Environment environment,
@@ -166,9 +168,13 @@ public class FooterPresenter extends PresenterWidget<FooterPresenter.MyView>
     // @formatter:off
     public interface MyView extends HalView, HasPresenter<FooterPresenter> {
         void updateEnvironment(Environment environment);
+
         void updateVersion(Version version);
+
         void startRecording();
+
         void steps(int size);
+
         void stopRecording();
     }
     // @formatter:on

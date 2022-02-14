@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.infinispan;
 
@@ -19,9 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.Form.FinishRemove;
 import org.jboss.hal.ballroom.form.Form.FinishReset;
@@ -50,6 +47,10 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
+
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
@@ -135,7 +136,6 @@ abstract class CachePresenter<V extends CacheView<?>, Proxy_ extends ProxyPlace<
                 });
     }
 
-
     // ------------------------------------------------------ cache
 
     void saveCache(Map<String, Object> changedValues) {
@@ -153,7 +153,6 @@ abstract class CachePresenter<V extends CacheView<?>, Proxy_ extends ProxyPlace<
                     }
                 });
     }
-
 
     // ------------------------------------------------------ component
 
@@ -198,7 +197,6 @@ abstract class CachePresenter<V extends CacheView<?>, Proxy_ extends ProxyPlace<
         return resourceAddress().add(COMPONENT, component.resource);
     }
 
-
     // ------------------------------------------------------ memory
 
     void saveMemory(Memory memory, Map<String, Object> changedValues) {
@@ -242,7 +240,6 @@ abstract class CachePresenter<V extends CacheView<?>, Proxy_ extends ProxyPlace<
     private ResourceAddress memoryAddress(Memory memory) {
         return resourceAddress().add(MEMORY, memory.resource);
     }
-
 
     // ------------------------------------------------------ store
 
@@ -304,18 +301,18 @@ abstract class CachePresenter<V extends CacheView<?>, Proxy_ extends ProxyPlace<
                         .build();
                 AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(newStore.type),
                         form, (name, model) -> {
-                    operations.add(new Operation.Builder(storeAddress(newStore), ADD)
-                            .payload(model)
-                            .build());
-                    Composite composite = new Composite(operations)
-                            .addHeader(ALLOW_RESOURCE_SERVICE_RESTART, true);
-                    dispatcher.execute(composite, (CompositeResult result) -> {
-                        MessageEvent.fire(getEventBus(),
-                                Message.success(resources.messages().addSingleResourceSuccess(newStore.type)));
-                        this.store = newStore;
-                        reload();
-                    });
-                });
+                            operations.add(new Operation.Builder(storeAddress(newStore), ADD)
+                                    .payload(model)
+                                    .build());
+                            Composite composite = new Composite(operations)
+                                    .addHeader(ALLOW_RESOURCE_SERVICE_RESTART, true);
+                            dispatcher.execute(composite, (CompositeResult result) -> {
+                                MessageEvent.fire(getEventBus(),
+                                        Message.success(resources.messages().addSingleResourceSuccess(newStore.type)));
+                                this.store = newStore;
+                                reload();
+                            });
+                        });
                 dialog.show();
 
             } else {
@@ -339,7 +336,6 @@ abstract class CachePresenter<V extends CacheView<?>, Proxy_ extends ProxyPlace<
     private ResourceAddress storeAddress(Store store) {
         return resourceAddress().add(STORE, store.resource);
     }
-
 
     // ------------------------------------------------------ tables of jdbc stores
 
@@ -366,7 +362,6 @@ abstract class CachePresenter<V extends CacheView<?>, Proxy_ extends ProxyPlace<
     private ResourceAddress tableAddress(Table table) {
         return storeAddress(store).add(TABLE, table.resource);
     }
-
 
     // ------------------------------------------------------ write through / behind
 
@@ -407,7 +402,6 @@ abstract class CachePresenter<V extends CacheView<?>, Proxy_ extends ProxyPlace<
     private ResourceAddress writeAddress(Write write) {
         return storeAddress(store).add(WRITE, write.resource);
     }
-
 
     // ------------------------------------------------------ backup
 

@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.deployment;
 
@@ -21,10 +21,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.web.bindery.event.shared.EventBus;
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.wizard.Wizard;
 import org.jboss.hal.client.deployment.DeploymentTasks.AddServerGroupDeployment;
 import org.jboss.hal.client.deployment.DeploymentTasks.AddUnmanagedDeployment;
@@ -36,9 +32,9 @@ import org.jboss.hal.client.deployment.DeploymentTasks.UploadOrReplace;
 import org.jboss.hal.client.deployment.dialog.AddUnmanagedDialog;
 import org.jboss.hal.client.deployment.dialog.DeployContentDialog2;
 import org.jboss.hal.client.deployment.wizard.DeploymentContext;
+import org.jboss.hal.client.deployment.wizard.DeploymentState;
 import org.jboss.hal.client.deployment.wizard.NamesStep;
 import org.jboss.hal.client.deployment.wizard.UploadDeploymentStep;
-import org.jboss.hal.client.deployment.wizard.DeploymentState;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.SuccessfulOutcome;
@@ -82,6 +78,12 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.web.bindery.event.shared.EventBus;
+
+import elemental2.dom.HTMLElement;
+
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.deployment.ContentColumn.CONTENT_ADDRESS;
 import static org.jboss.hal.client.deployment.ContentColumn.CONTENT_TEMPLATE;
@@ -99,7 +101,7 @@ import static org.jboss.hal.resources.CSS.pfIcon;
 
 /** The deployments of a server group. */
 @AsyncColumn(Ids.SERVER_GROUP_DEPLOYMENT)
-@Requires(value = {CONTENT_ADDRESS, SERVER_GROUP_DEPLOYMENT_ADDRESS}, recursive = false)
+@Requires(value = { CONTENT_ADDRESS, SERVER_GROUP_DEPLOYMENT_ADDRESS }, recursive = false)
 public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeployment> {
 
     static final String SERVER_GROUP_DEPLOYMENT_ADDRESS = "/{selected.group}/deployment=*";
@@ -188,8 +190,8 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
         setItemsProvider(itemsProvider);
 
         // reuse the items provider to filter breadcrumb items
-        setBreadcrumbItemsProvider((context, callback) ->
-                itemsProvider.get(context, new AsyncCallback<List<ServerGroupDeployment>>() {
+        setBreadcrumbItemsProvider(
+                (context, callback) -> itemsProvider.get(context, new AsyncCallback<List<ServerGroupDeployment>>() {
                     @Override
                     public void onFailure(Throwable caught) {
                         callback.onFailure(caught);
@@ -229,8 +231,9 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                         return resources.constants().unknownState();
                     }
                 } else {
-                    return item.isEnabled() ? resources.constants().enabled() : resources.constants()
-                            .disabled();
+                    return item.isEnabled() ? resources.constants().enabled()
+                            : resources.constants()
+                                    .disabled();
                 }
             }
 
@@ -307,42 +310,45 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
         Wizard<DeploymentContext, DeploymentState> wizard = new Wizard.Builder<DeploymentContext, DeploymentState>(
                 resources.messages().addResourceTitle(resources.constants().content()), new DeploymentContext())
 
-                .addStep(UPLOAD, new UploadDeploymentStep(resources))
-                .addStep(NAMES, new NamesStep(environment, metadata, resources))
+                        .addStep(UPLOAD, new UploadDeploymentStep(resources))
+                        .addStep(NAMES, new NamesStep(environment, metadata, resources))
 
-                .onBack((context, currentState) -> currentState == NAMES ? UPLOAD : null)
-                .onNext((context, currentState) -> currentState == UPLOAD ? NAMES : null)
+                        .onBack((context, currentState) -> currentState == NAMES ? UPLOAD : null)
+                        .onNext((context, currentState) -> currentState == UPLOAD ? NAMES : null)
 
-                .stayOpenAfterFinish()
-                .onFinish((wzd, context) -> {
-                    String name = context.name;
-                    String runtimeName = context.runtimeName;
-                    wzd.showProgress(resources.constants().deploymentInProgress(),
-                            resources.messages().deploymentInProgress(name));
+                        .stayOpenAfterFinish()
+                        .onFinish((wzd, context) -> {
+                            String name = context.name;
+                            String runtimeName = context.runtimeName;
+                            wzd.showProgress(resources.constants().deploymentInProgress(),
+                                    resources.messages().deploymentInProgress(name));
 
-                    series(new FlowContext(progress.get()),
-                            new CheckDeployment(dispatcher, name),
-                            new UploadOrReplace(environment, dispatcher, name, runtimeName, context.file, false),
-                            new AddServerGroupDeployment(environment, dispatcher, name, runtimeName,
-                                    statementContext.selectedServerGroup()))
-                            .subscribe(new Outcome<FlowContext>() {
-                                @Override
-                                public void onError(FlowContext context, Throwable error) {
-                                    wzd.showError(resources.constants().deploymentError(),
-                                            resources.messages().deploymentError(name), error.getMessage());
-                                }
+                            series(new FlowContext(progress.get()),
+                                    new CheckDeployment(dispatcher, name),
+                                    new UploadOrReplace(environment, dispatcher, name, runtimeName, context.file, false),
+                                    new AddServerGroupDeployment(environment, dispatcher, name, runtimeName,
+                                            statementContext.selectedServerGroup()))
+                                                    .subscribe(new Outcome<FlowContext>() {
+                                                        @Override
+                                                        public void onError(FlowContext context, Throwable error) {
+                                                            wzd.showError(resources.constants().deploymentError(),
+                                                                    resources.messages().deploymentError(name),
+                                                                    error.getMessage());
+                                                        }
 
-                                @Override
-                                public void onSuccess(FlowContext context) {
-                                    refresh(Ids.serverGroupDeployment(statementContext.selectedServerGroup(), name));
-                                    wzd.showSuccess(resources.constants().deploymentSuccessful(),
-                                            resources.messages().deploymentSuccessful(name),
-                                            resources.messages().view(Names.DEPLOYMENT),
-                                            cxt -> { /* nothing to do, content is already selected */ });
-                                }
-                            });
-                })
-                .build();
+                                                        @Override
+                                                        public void onSuccess(FlowContext context) {
+                                                            refresh(Ids.serverGroupDeployment(
+                                                                    statementContext.selectedServerGroup(), name));
+                                                            wzd.showSuccess(resources.constants().deploymentSuccessful(),
+                                                                    resources.messages().deploymentSuccessful(name),
+                                                                    resources.messages().view(Names.DEPLOYMENT),
+                                                                    cxt -> {
+                                                                        /* nothing to do, content is already selected */ });
+                                                        }
+                                                    });
+                        })
+                        .build();
         wizard.show();
     }
 
@@ -407,17 +413,17 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                         series(new FlowContext(progress.get()),
                                 new AddUnmanagedDeployment(dispatcher, name, model),
                                 new AddServerGroupDeployment(environment, dispatcher, name, runtimeName, serverGroup))
-                                .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
-                                    @Override
-                                    public void onSuccess(FlowContext context) {
-                                        refresh(Ids.serverGroupDeployment(serverGroup, name));
-                                        MessageEvent.fire(eventBus, Message.success(resources.messages()
-                                                .addResourceSuccess(Names.UNMANAGED_DEPLOYMENT, name)));
-                                    }
-                                });
+                                        .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
+                                            @Override
+                                            public void onSuccess(FlowContext context) {
+                                                refresh(Ids.serverGroupDeployment(serverGroup, name));
+                                                MessageEvent.fire(eventBus, Message.success(resources.messages()
+                                                        .addResourceSuccess(Names.UNMANAGED_DEPLOYMENT, name)));
+                                            }
+                                        });
                     }
                 });
-        dialog.getForm().<String>getFormItem(NAME).addValidationHandler(createUniqueValidation());
+        dialog.getForm().<String> getFormItem(NAME).addValidationHandler(createUniqueValidation());
         dialog.show();
     }
 

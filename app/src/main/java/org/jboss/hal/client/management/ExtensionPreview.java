@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.management;
 
@@ -44,17 +44,17 @@ class ExtensionPreview extends PreviewContent<InstalledExtension> {
 
         PreviewAttributes<InstalledExtension> attributes = new PreviewAttributes<>(extension,
                 asList(NAME, VERSION, DESCRIPTION))
-                .append(model -> new PreviewAttribute(Names.URL, model.get(URL).asString(), model.get(URL).asString(),
-                        Ids.build(model.getName(), URL)))
-                .append(SCRIPT)
-                .append(STYLESHEETS)
-                .append(EXTENSION_POINT)
-                .append(AUTHOR)
-                .append(AUTHOR)
-                .append(model -> new PreviewAttribute(new LabelBuilder().label(HOMEPAGE),
-                        model.get(HOMEPAGE).asString(), model.get(HOMEPAGE).asString(),
-                        Ids.build(model.getName(), Ids.HOMEPAGE)))
-                .append(LICENSE);
+                        .append(model -> new PreviewAttribute(Names.URL, model.get(URL).asString(), model.get(URL).asString(),
+                                Ids.build(model.getName(), URL)))
+                        .append(SCRIPT)
+                        .append(STYLESHEETS)
+                        .append(EXTENSION_POINT)
+                        .append(AUTHOR)
+                        .append(AUTHOR)
+                        .append(model -> new PreviewAttribute(new LabelBuilder().label(HOMEPAGE),
+                                model.get(HOMEPAGE).asString(), model.get(HOMEPAGE).asString(),
+                                Ids.build(model.getName(), Ids.HOMEPAGE)))
+                        .append(LICENSE);
 
         previewBuilder()
                 .add(scriptOk)

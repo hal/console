@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.messaging;
 
@@ -19,7 +19,6 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
@@ -40,6 +39,8 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
+
+import elemental2.dom.HTMLElement;
 
 import static java.util.Arrays.asList;
 import static org.jboss.gwt.elemento.core.Elements.h;
@@ -91,7 +92,7 @@ public abstract class RemoteActiveMQView extends MbuiViewImpl<RemoteActiveMQPres
     void init() {
         Metadata metadata = mbuiContext.metadataRegistry().lookup(POOLED_CONNECTION_FACTORY_REMOTE_TEMPLATE);
         crForm = cr.form(Ids.MESSAGING_REMOTE_ACTIVEMQ, metadata, CREDENTIAL_REFERENCE, PASSWORD,
-                () -> pooledConnectionFactoryForm.<String>getFormItem(PASSWORD).getValue(),
+                () -> pooledConnectionFactoryForm.<String> getFormItem(PASSWORD).getValue(),
                 () -> presenter.pooledConnectionFactoryAddress(
                         pooledConnectionFactoryTable.hasSelection() ? pooledConnectionFactoryTable.selectedRow()
                                 .getName() : null),
@@ -99,22 +100,23 @@ public abstract class RemoteActiveMQView extends MbuiViewImpl<RemoteActiveMQPres
 
         pooledConnectionFactoryTable = new ModelNodeTable.Builder<NamedNode>(
                 Ids.build(MESSAGING_REMOTE_ACTIVEMQ, POOLED_CONNECTION_FACTORY, Ids.TABLE), metadata)
-                .button(mbuiContext.resources().constants().add(),
-                        table -> presenter.addConnectionFactory(RemoteActiveMQSubResource.POOLED_CONNECTION_FACTORY),
-                        Constraint.executable(POOLED_CONNECTION_FACTORY_TEMPLATE, ADD))
-                .button(mbuiContext.resources().constants().remove(),
-                        table -> presenter.remove(RemoteActiveMQSubResource.POOLED_CONNECTION_FACTORY, table.selectedRow()),
-                        Scope.SELECTED,
-                        Constraint.executable(POOLED_CONNECTION_FACTORY_TEMPLATE, REMOVE))
-                .column(NAME, (cell, type, row, meta) -> row.getName())
-                .build();
+                        .button(mbuiContext.resources().constants().add(),
+                                table -> presenter.addConnectionFactory(RemoteActiveMQSubResource.POOLED_CONNECTION_FACTORY),
+                                Constraint.executable(POOLED_CONNECTION_FACTORY_TEMPLATE, ADD))
+                        .button(mbuiContext.resources().constants().remove(),
+                                table -> presenter.remove(RemoteActiveMQSubResource.POOLED_CONNECTION_FACTORY,
+                                        table.selectedRow()),
+                                Scope.SELECTED,
+                                Constraint.executable(POOLED_CONNECTION_FACTORY_TEMPLATE, REMOVE))
+                        .column(NAME, (cell, type, row, meta) -> row.getName())
+                        .build();
 
         pooledConnectionFactoryForm = new ModelNodeForm.Builder<NamedNode>(
                 Ids.build(Ids.MESSAGING_POOLED_CONNECTION_FACTORY, Ids.FORM), metadata)
-                .onSave((form, changedValues) -> presenter
-                        .save(RemoteActiveMQSubResource.POOLED_CONNECTION_FACTORY, form, changedValues))
-                .prepareReset(form -> presenter.reset(RemoteActiveMQSubResource.POOLED_CONNECTION_FACTORY, form))
-                .build();
+                        .onSave((form, changedValues) -> presenter
+                                .save(RemoteActiveMQSubResource.POOLED_CONNECTION_FACTORY, form, changedValues))
+                        .prepareReset(form -> presenter.reset(RemoteActiveMQSubResource.POOLED_CONNECTION_FACTORY, form))
+                        .build();
         pooledConnectionFactoryForm.addFormValidation(
                 new CredentialReference.AlternativeValidation<>(PASSWORD, () -> crForm.getModel(),
                         mbuiContext.resources()));
@@ -171,7 +173,6 @@ public abstract class RemoteActiveMQView extends MbuiViewImpl<RemoteActiveMQPres
         pooledConnectionFactoryForm.getFormItem(DISCOVERY_GROUP).registerSuggestHandler(
                 new ReadChildrenAutoComplete(mbuiContext.dispatcher(), presenter.statementContext,
                         DISCOVERY_GROUP_REMOTE_TEMPLATE));
-
 
         connectorForm.getFormItem(SOCKET_BINDING).registerSuggestHandler(new ReadChildrenAutoComplete(
                 mbuiContext.dispatcher(), statementContext(), SOCKET_BINDING_TEMPLATE));
