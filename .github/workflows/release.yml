@@ -83,7 +83,7 @@ jobs:
           folder: app/target/gh-pages
           clean: true
 
-  changelog:
+  release:
     name: Create Release
     needs: deploy
     runs-on: ubuntu-latest
