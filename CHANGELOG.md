@@ -2,8 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
-to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
@@ -57,6 +56,5 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - in case of vulnerabilities
 -->
 
-[unreleased]: https://github.com/hal/console/compare/v3.5.0.Final...HEAD
-
+[Unreleased]: https://github.com/hal/console/compare/v3.5.0.Final...HEAD
 [3.5.0.Final]: https://github.com/hal/console/compare/3.4.4.Final...v3.5.0.Final
