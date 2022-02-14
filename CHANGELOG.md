@@ -7,8 +7,29 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
----
+## [3.5.0.Final] - 2022-02-14
 
+### Added
+
+- Add maven plugins to verify codebase & source code:
+  - Enforcer rules
+  - Checkstyle rules
+  - Eclipse code formatter definitions
+  - License check
+  - Common import statement order
+- Add GitHub workflows to verify and release HAL
+- [HAL-1767](https://issues.redhat.com/browse/HAL-1767): Add active thread count
+- [HAL-1766](https://issues.redhat.com/browse/HAL-1766): Support direct connect URL for standalone mode
+
+### Changed
+
+- Update documentation
+
+### Fixed
+
+- [HAL-1772](https://issues.redhat.com/browse/HAL-1772): Fix adding messaging servers
+
+<!--
 ## Template
 
 ### Added
@@ -34,5 +55,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Security
 
 - in case of vulnerabilities
+-->
 
-[unreleased]: https://github.com/hal/console/releases/tag/4.4.4.Final...HEAD
+[unreleased]: https://github.com/hal/console/compare/v3.5.0.Final...HEAD
+
+[3.5.0.Final]: https://github.com/hal/console/compare/3.4.4.Final...v3.5.0.Final
