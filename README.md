@@ -172,4 +172,3 @@ Bumps the version to the specified version number.
 This project uses the following licenses:
 
 * [Apache License 2.0](https://repository.jboss.org/licenses/apache-2.0.txt)
-* [MIT License](https://repository.jboss.org/licenses/mit.txt)
