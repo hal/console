@@ -1,6 +1,7 @@
-[![TC Build](https://ci.wildfly.org/app/rest/builds/buildType:(id:hal_ConsoleDevelopment)/statusIcon.svg)](https://ci.wildfly.org/viewType.html?buildTypeId=hal_ConsoleDevelopment&guest=1) [![Chat on Gitter](https://badges.gitter.im/hal/console.svg)](https://gitter.im/hal/console)
+[![Verify Codebase](https://github.com/hal/console/actions/workflows/verify.yml/badge.svg)](https://github.com/hal/console/actions/workflows/verify.yml) [![Chat on Gitter](https://badges.gitter.im/hal/console.svg)](https://gitter.im/hal/console)
 
-HAL is the project name for the WildFly and JBoss EAP management console. It's part of every WildFly and JBoss EAP installation. To get started simply fire up your browser and open http://localhost:9990. 
+HAL is the project name for the WildFly and JBoss EAP management console. It's part of every WildFly and JBoss EAP
+installation. To get started simply fire up your browser and open http://localhost:9990.
 
 # Technical Stack
 
