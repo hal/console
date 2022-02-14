@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.elytron;
 
@@ -217,7 +217,8 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 AUTHENTICATION_CONFIGURATION.resourceElementBuilder(mbuiContext,
                         () -> presenter.reload(AUTHENTICATION_CONFIGURATION.resource,
                                 nodes -> updateResourceElement(AUTHENTICATION_CONFIGURATION.resource, nodes)))
-                        .addComplexObjectAttributeForm(CREDENTIAL_REFERENCE, createCrForm(cr, mbuiContext, AUTHENTICATION_CONFIGURATION))
+                        .addComplexObjectAttributeForm(CREDENTIAL_REFERENCE,
+                                createCrForm(cr, mbuiContext, AUTHENTICATION_CONFIGURATION))
                         .build(),
                 Ids.ELYTRON_AUTHENTICATION_ITEM,
                 Ids.build(AUTHENTICATION_CONFIGURATION.baseId, Ids.ITEM),
@@ -302,7 +303,8 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 CERTIFICATE_AUTHORITY_ACCOUNT.resourceElementBuilder(mbuiContext,
                         () -> presenter.reload(CERTIFICATE_AUTHORITY_ACCOUNT.resource,
                                 nodes -> updateResourceElement(CERTIFICATE_AUTHORITY_ACCOUNT.resource, nodes)))
-                        .addComplexObjectAttributeForm(CREDENTIAL_REFERENCE, createCrForm(cr, mbuiContext, CERTIFICATE_AUTHORITY_ACCOUNT))
+                        .addComplexObjectAttributeForm(CREDENTIAL_REFERENCE,
+                                createCrForm(cr, mbuiContext, CERTIFICATE_AUTHORITY_ACCOUNT))
                         .build(),
                 Ids.ELYTRON_OTHER_ITEM,
                 Ids.build(CERTIFICATE_AUTHORITY_ACCOUNT.baseId, Ids.ITEM),
@@ -352,7 +354,6 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
         registerAttachable(policyElement);
         navigation.addSecondary(Ids.ELYTRON_OTHER_ITEM, Ids.ELYTRON_POLICY, Names.POLICY, policyElement.element());
 
-
         initElement(row()
                 .add(column()
                         .addAll(navigation.panes())));
@@ -372,8 +373,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                     Table<NamedNode> table = elements.get(er.resource).getTable();
                     return table.hasSelection() ? presenter.resolveTemplate(er, table.selectedRow().getName()) : null;
                 },
-                () -> presenter.reload()
-        );
+                () -> presenter.reload());
     }
 
     @Override
@@ -394,8 +394,8 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 List<String> realmList = table.selectedRow().get(REALMS).asList().stream()
                         .map(modelNode -> modelNode.get(REALM).asString())
                         .collect(toList());
-                SingleSelectBoxItem singleSelectBoxItem = (SingleSelectBoxItem) securityDomainElement.getForm().
-                        <String>getFormItem(DEFAULT_REALM);
+                SingleSelectBoxItem singleSelectBoxItem = (SingleSelectBoxItem) securityDomainElement.getForm()
+                        .<String> getFormItem(DEFAULT_REALM);
                 singleSelectBoxItem.updateAllowedValues(realmList);
             }
         });

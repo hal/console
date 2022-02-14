@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.elytron;
 
@@ -21,10 +21,6 @@ import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.ComplexAttributeOperations;
@@ -56,6 +52,11 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.annotations.NameToken;
+import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+
 import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -67,7 +68,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.move;
 public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, RealmsPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    static final String[] KEY_MAPPERS = new String[]{
+    static final String[] KEY_MAPPERS = new String[] {
             "clear-password-mapper",
             "bcrypt-mapper",
             "modular-crypt-mapper",
@@ -76,7 +77,6 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
             "scram-mapper",
     };
     private static final String DOT = ".";
-
 
     private final CrudOperations crud;
     private final ComplexAttributeOperations ca;
@@ -170,7 +170,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
                             asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateResourceElement(ElytronResource.MAPPED_REGEX_REALM_MAPPER.resource,
                             asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
-                    //noinspection UnusedAssignment
+                    // noinspection UnusedAssignment
                     getView().updateResourceElement(ElytronResource.SIMPLE_REGEX_REALM_MAPPER.resource,
                             asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                 });
@@ -180,7 +180,6 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
         crud.readChildren(AddressTemplates.ELYTRON_SUBSYSTEM_TEMPLATE, resource,
                 children -> callback.accept(asNamedNodes(children)));
     }
-
 
     // ------------------------------------------------------ JDBC realm
 
@@ -303,12 +302,12 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
                 .forComplexAttribute(ATTRIBUTE_MAPPING);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(
                 Ids.build(Ids.ELYTRON_JDBC_REALM, ATTRIBUTE_MAPPING, Ids.ADD), metadata)
-                .addOnly()
-                .include(TO, INDEX)
-                .build();
+                        .addOnly()
+                        .include(TO, INDEX)
+                        .build();
         AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(Names.ATTRIBUTE_MAPPING),
                 form, (name, model) -> ca.listAdd(jdbcRealm, attributeMappingAttribute(pqIndex),
-                Names.ATTRIBUTE_MAPPING, JDBC_REALM_TEMPLATE, model, this::reloadJdbcRealms));
+                        Names.ATTRIBUTE_MAPPING, JDBC_REALM_TEMPLATE, model, this::reloadJdbcRealms));
         dialog.show();
     }
 
@@ -330,7 +329,6 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
     private String attributeMappingAttribute(int pqIndex) {
         return PRINCIPAL_QUERY + "[" + pqIndex + "]." + ATTRIBUTE_MAPPING;
     }
-
 
     // ------------------------------------------------------ LDAP Realm
 
@@ -465,8 +463,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
         form.addFormValidation(new RequireAtLeastOneAttributeValidation<>(
                 asList(FROM, TO), resources));
         AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(Names.ATTRIBUTE_MAPPING),
-                form, (name, model) ->
-                ca.listAdd(selectedLdapRealm, IDENTITY_MAPPING + DOT + ATTRIBUTE_MAPPING,
+                form, (name, model) -> ca.listAdd(selectedLdapRealm, IDENTITY_MAPPING + DOT + ATTRIBUTE_MAPPING,
                         Names.IDENTITY_ATTRIBUTE_MAPPING, LDAP_REALM_TEMPLATE, model, this::reloadLdapRealms));
         dialog.show();
     }
@@ -485,8 +482,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
                 this::reloadLdapRealms);
     }
 
-
-    // ------------------------------------------------------  properties realm
+    // ------------------------------------------------------ properties realm
 
     void addPropertiesRealm() {
         Metadata metadata = metadataRegistry.lookup(PROPERTIES_REALM_TEMPLATE);
@@ -508,12 +504,10 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
                 move(model, RELATIVE_TO, USERS_PROPERTIES + "/" + RELATIVE_TO);
             }
             ResourceAddress address = PROPERTIES_REALM_TEMPLATE.resolve(statementContext, nameItem.getValue());
-            crud.add(Names.PROPERTIES_REALM, name, address, model, (n, a) ->
-                    reload(PROPERTIES_REALM, nodes ->
-                            getView().updateResourceElement(PROPERTIES_REALM, nodes)));
+            crud.add(Names.PROPERTIES_REALM, name, address, model,
+                    (n, a) -> reload(PROPERTIES_REALM, nodes -> getView().updateResourceElement(PROPERTIES_REALM, nodes)));
         }).show();
     }
-
 
     @ProxyCodeSplit
     @Requires(value = {
@@ -531,16 +525,17 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
             MAPPED_REGEX_REALM_MAPPER_ADDRESS,
             PROPERTIES_REALM_ADDRESS,
             SIMPLE_REGEX_REALM_MAPPER_ADDRESS,
-            TOKEN_REALM_ADDRESS})
+            TOKEN_REALM_ADDRESS })
     @NameToken(NameTokens.ELYTRON_SECURITY_REALMS)
     public interface MyProxy extends ProxyPlace<RealmsPresenter> {
     }
 
-
     // @formatter:off
     public interface MyView extends MbuiView<RealmsPresenter> {
         void updateResourceElement(String resource, List<NamedNode> nodes);
+
         void updateJdbcRealm(List<NamedNode> nodes);
+
         void updateLdapRealm(List<NamedNode> nodes);
     }
     // @formatter:on

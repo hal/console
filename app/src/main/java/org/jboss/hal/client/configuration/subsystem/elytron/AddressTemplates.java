@@ -1,23 +1,23 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.elytron;
 
 import org.jboss.hal.meta.AddressTemplate;
 
-interface AddressTemplates {
+public interface AddressTemplates {
 
     // @formatter:off
     String ELYTRON_SUBSYSTEM_ADDRESS = "{selected.profile}/subsystem=elytron";
@@ -27,7 +27,8 @@ interface AddressTemplates {
 
     String ADD_PREFIX_ROLE_MAPPER_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/add-prefix-role-mapper=*";
     String ADD_SUFFIX_ROLE_MAPPER_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/add-suffix-role-mapper=*";
-    String AGGREGATE_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/aggregate-http-server-mechanism-factory=*";
+    String AGGREGATE_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS
+            + "/aggregate-http-server-mechanism-factory=*";
     String AGGREGATE_PRINCIPAL_DECODER_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/aggregate-principal-decoder=*";
     String AGGREGATE_PRINCIPAL_TRANSFORMER_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/aggregate-principal-transformer=*";
     String AGGREGATE_PROVIDERS_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/aggregate-providers=*";
@@ -44,7 +45,8 @@ interface AddressTemplates {
     String CHAINED_PRINCIPAL_TRANSFORMER_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/chained-principal-transformer=*";
     String CLIENT_SSL_CONTEXT_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/client-ssl-context=*";
     String CONCATENATING_PRINCIPAL_DECODER_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/concatenating-principal-decoder=*";
-    String CONFIGURABLE_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/configurable-http-server-mechanism-factory=*";
+    String CONFIGURABLE_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS
+            + "/configurable-http-server-mechanism-factory=*";
     String CONFIGURABLE_SASL_SERVER_FACTORY_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/configurable-sasl-server-factory=*";
     String CONSTANT_PERMISSION_MAPPER_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/constant-permission-mapper=*";
     String CONSTANT_PRINCIPAL_DECODER_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/constant-principal-decoder=*";
@@ -90,25 +92,29 @@ interface AddressTemplates {
 
     String MAPPED_REGEX_REALM_MAPPER_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/mapped-regex-realm-mapper=*";
     String MAPPED_ROLE_MAPPER_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/mapped-role-mapper=*";
-    String MECHANISM_PROVIDER_FILTERING_SASL_SERVER_FACTORY_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/mechanism-provider-filtering-sasl-server-factory=*";
+    String MECHANISM_PROVIDER_FILTERING_SASL_SERVER_FACTORY_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS
+            + "/mechanism-provider-filtering-sasl-server-factory=*";
 
     String PERIODIC_FILE_AUDIT_LOG_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/periodic-rotating-file-audit-log=*";
     String PERIODIC_ROTATING_FILE_AUDIT_LOG_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/periodic-rotating-file-audit-log=*";
     String PERMISSION_SET_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/permission-set=*";
     String POLICY_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/policy=*";
     String PROPERTIES_REALM_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/properties-realm=*";
-    String PROVIDER_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/provider-http-server-mechanism-factory=*";
+    String PROVIDER_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS
+            + "/provider-http-server-mechanism-factory=*";
     String PROVIDER_LOADER_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/provider-loader=*";
     String PROVIDER_SASL_SERVER_FACTORY_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/provider-sasl-server-factory=*";
 
     String REGEX_PRINCIPAL_TRANSFORMER_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/regex-principal-transformer=*";
-    String REGEX_VALIDATING_PRINCIPAL_TRANSFORMER_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/regex-validating-principal-transformer=*";
+    String REGEX_VALIDATING_PRINCIPAL_TRANSFORMER_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS
+            + "/regex-validating-principal-transformer=*";
 
     String SASL_AUTHENTICATION_FACTORY_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/sasl-authentication-factory=*";
     String SECURITY_DOMAIN_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/security-domain=*";
     String SERVER_SSL_CONTEXT_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/server-ssl-context=*";
     String SERVER_SSL_SNI_CONTEXT_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/server-ssl-sni-context=*";
-    String SERVICE_LOADER_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/service-loader-http-server-mechanism-factory=*";
+    String SERVICE_LOADER_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS
+            + "/service-loader-http-server-mechanism-factory=*";
     String SERVICE_LOADER_SASL_SERVER_FACTORY_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/service-loader-sasl-server-factory=*";
     String SIMPLE_PERMISSION_MAPPER_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/simple-permission-mapper=*";
     String SIMPLE_REGEX_REALM_MAPPER_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/simple-regex-realm-mapper=*";
@@ -121,12 +127,12 @@ interface AddressTemplates {
 
     String X500_ATTRIBUTE_PRINCIPAL_DECODER_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/x500-attribute-principal-decoder=*";
 
-
     // ------------------------------------------------------ templates (a-z)
 
     AddressTemplate ADD_PREFIX_ROLE_MAPPER_TEMPLATE = AddressTemplate.of(ADD_PREFIX_ROLE_MAPPER_ADDRESS);
     AddressTemplate ADD_SUFFIX_ROLE_MAPPER_TEMPLATE = AddressTemplate.of(ADD_SUFFIX_ROLE_MAPPER_ADDRESS);
-    AddressTemplate AGGREGATE_HTTP_SERVER_MECHANISM_FACTORY_TEMPLATE = AddressTemplate.of(AGGREGATE_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS);
+    AddressTemplate AGGREGATE_HTTP_SERVER_MECHANISM_FACTORY_TEMPLATE = AddressTemplate
+            .of(AGGREGATE_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS);
     AddressTemplate AGGREGATE_PRINCIPAL_DECODER_TEMPLATE = AddressTemplate.of(AGGREGATE_PRINCIPAL_DECODER_ADDRESS);
     AddressTemplate AGGREGATE_PRINCIPAL_TRANSFORMER_TEMPLATE = AddressTemplate.of(AGGREGATE_PRINCIPAL_TRANSFORMER_ADDRESS);
     AddressTemplate AGGREGATE_PROVIDERS_TEMPLATE = AddressTemplate.of(AGGREGATE_PROVIDERS_ADDRESS);
@@ -142,7 +148,8 @@ interface AddressTemplates {
     AddressTemplate CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE = AddressTemplate.of(CERTIFICATE_AUTHORITY_ACCOUNT_ADDRESS);
     AddressTemplate CLIENT_SSL_CONTEXT_TEMPLATE = AddressTemplate.of(CLIENT_SSL_CONTEXT_ADDRESS);
     AddressTemplate CONCATENATING_PRINCIPAL_DECODER_TEMPLATE = AddressTemplate.of(CONCATENATING_PRINCIPAL_DECODER_ADDRESS);
-    AddressTemplate CONFIGURABLE_HTTP_SERVER_MECHANISM_FACTORY_TEMPLATE = AddressTemplate.of(CONFIGURABLE_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS);
+    AddressTemplate CONFIGURABLE_HTTP_SERVER_MECHANISM_FACTORY_TEMPLATE = AddressTemplate
+            .of(CONFIGURABLE_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS);
     AddressTemplate CONFIGURABLE_SASL_SERVER_FACTORY_TEMPLATE = AddressTemplate.of(CONFIGURABLE_SASL_SERVER_FACTORY_ADDRESS);
     AddressTemplate CONSTANT_PERMISSION_MAPPER_TEMPLATE = AddressTemplate.of(CONSTANT_PERMISSION_MAPPER_ADDRESS);
     AddressTemplate CONSTANT_PRINCIPAL_DECODER_TEMPLATE = AddressTemplate.of(CONSTANT_PRINCIPAL_DECODER_ADDRESS);
@@ -150,7 +157,8 @@ interface AddressTemplates {
     AddressTemplate CONSTANT_REALM_MAPPER_TEMPLATE = AddressTemplate.of(CONSTANT_REALM_MAPPER_ADDRESS);
     AddressTemplate CONSTANT_ROLE_MAPPER_TEMPLATE = AddressTemplate.of(CONSTANT_ROLE_MAPPER_ADDRESS);
     AddressTemplate CREDENTIAL_STORE_TEMPLATE = AddressTemplate.of(CREDENTIAL_STORE_ADDRESS);
-    AddressTemplate CUSTOM_CREDENTIAL_SECURITY_FACTORY_TEMPLATE = AddressTemplate.of(CUSTOM_CREDENTIAL_SECURITY_FACTORY_ADDRESS);
+    AddressTemplate CUSTOM_CREDENTIAL_SECURITY_FACTORY_TEMPLATE = AddressTemplate
+            .of(CUSTOM_CREDENTIAL_SECURITY_FACTORY_ADDRESS);
     AddressTemplate CUSTOM_MODIFIABLE_REALM_TEMPLATE = AddressTemplate.of(CUSTOM_MODIFIABLE_REALM_ADDRESS);
     AddressTemplate CUSTOM_PERMISSION_MAPPER_TEMPLATE = AddressTemplate.of(CUSTOM_PERMISSION_MAPPER_ADDRESS);
     AddressTemplate CUSTOM_PRINCIPAL_DECODER_TEMPLATE = AddressTemplate.of(CUSTOM_PRINCIPAL_DECODER_ADDRESS);
@@ -186,13 +194,15 @@ interface AddressTemplates {
 
     AddressTemplate MAPPED_REGEX_REALM_MAPPER_TEMPLATE = AddressTemplate.of(MAPPED_REGEX_REALM_MAPPER_ADDRESS);
     AddressTemplate MAPPED_ROLE_MAPPER_TEMPLATE = AddressTemplate.of(MAPPED_ROLE_MAPPER_ADDRESS);
-    AddressTemplate MECHANISM_PROVIDER_FILTERING_SASL_SERVER_FACTORY_TEMPLATE = AddressTemplate.of(MECHANISM_PROVIDER_FILTERING_SASL_SERVER_FACTORY_ADDRESS);
+    AddressTemplate MECHANISM_PROVIDER_FILTERING_SASL_SERVER_FACTORY_TEMPLATE = AddressTemplate
+            .of(MECHANISM_PROVIDER_FILTERING_SASL_SERVER_FACTORY_ADDRESS);
 
     AddressTemplate PERIODIC_ROTATING_FILE_AUDIT_LOG_TEMPLATE = AddressTemplate.of(PERIODIC_ROTATING_FILE_AUDIT_LOG_ADDRESS);
     AddressTemplate PERMISSION_SET_TEMPLATE = AddressTemplate.of(PERMISSION_SET_ADDRESS);
     AddressTemplate POLICY_TEMPLATE = AddressTemplate.of(POLICY_ADDRESS);
     AddressTemplate PROPERTIES_REALM_TEMPLATE = AddressTemplate.of(PROPERTIES_REALM_ADDRESS);
-    AddressTemplate PROVIDER_HTTP_SERVER_MECHANISM_FACTORY_TEMPLATE = AddressTemplate.of(PROVIDER_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS);
+    AddressTemplate PROVIDER_HTTP_SERVER_MECHANISM_FACTORY_TEMPLATE = AddressTemplate
+            .of(PROVIDER_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS);
     AddressTemplate PROVIDER_LOADER_TEMPLATE = AddressTemplate.of(PROVIDER_LOADER_ADDRESS);
     AddressTemplate PROVIDER_SASL_SERVER_FACTORY_TEMPLATE = AddressTemplate.of(PROVIDER_SASL_SERVER_FACTORY_ADDRESS);
 
@@ -204,8 +214,10 @@ interface AddressTemplates {
     AddressTemplate SECURITY_DOMAIN_TEMPLATE = AddressTemplate.of(SECURITY_DOMAIN_ADDRESS);
     AddressTemplate SERVER_SSL_CONTEXT_TEMPLATE = AddressTemplate.of(SERVER_SSL_CONTEXT_ADDRESS);
     AddressTemplate SERVER_SSL_SNI_CONTEXT_TEMPLATE = AddressTemplate.of(SERVER_SSL_SNI_CONTEXT_ADDRESS);
-    AddressTemplate SERVICE_LOADER_HTTP_SERVER_MECHANISM_FACTORY_TEMPLATE = AddressTemplate.of(SERVICE_LOADER_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS);
-    AddressTemplate SERVICE_LOADER_SASL_SERVER_FACTORY_TEMPLATE = AddressTemplate.of(SERVICE_LOADER_SASL_SERVER_FACTORY_ADDRESS);
+    AddressTemplate SERVICE_LOADER_HTTP_SERVER_MECHANISM_FACTORY_TEMPLATE = AddressTemplate
+            .of(SERVICE_LOADER_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS);
+    AddressTemplate SERVICE_LOADER_SASL_SERVER_FACTORY_TEMPLATE = AddressTemplate
+            .of(SERVICE_LOADER_SASL_SERVER_FACTORY_ADDRESS);
     AddressTemplate SIMPLE_PERMISSION_MAPPER_TEMPLATE = AddressTemplate.of(SIMPLE_PERMISSION_MAPPER_ADDRESS);
     AddressTemplate SIMPLE_REGEX_REALM_MAPPER_TEMPLATE = AddressTemplate.of(SIMPLE_REGEX_REALM_MAPPER_ADDRESS);
     AddressTemplate SIMPLE_ROLE_DECODER_TEMPLATE = AddressTemplate.of(SIMPLE_ROLE_DECODER_ADDRESS);

@@ -1,30 +1,32 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.ballroom.form;
 
 import java.util.Set;
 
-import com.google.common.base.Strings;
-import com.google.web.bindery.event.shared.HandlerRegistration;
-import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.form.AbstractFormItem.ExpressionContext;
 import org.jboss.hal.dmr.Deprecation;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
+
+import com.google.common.base.Strings;
+import com.google.web.bindery.event.shared.HandlerRegistration;
+
+import elemental2.dom.HTMLElement;
 
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.gwt.elemento.core.Elements.label;
@@ -36,13 +38,23 @@ import static org.jboss.hal.ballroom.form.Decoration.EXPRESSION;
 import static org.jboss.hal.ballroom.form.Decoration.HINT;
 import static org.jboss.hal.ballroom.form.Decoration.SENSITIVE;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.clickable;
+import static org.jboss.hal.resources.CSS.controlLabel;
+import static org.jboss.hal.resources.CSS.empty;
+import static org.jboss.hal.resources.CSS.fontAwesome;
+import static org.jboss.hal.resources.CSS.formControlStatic;
+import static org.jboss.hal.resources.CSS.formGroup;
+import static org.jboss.hal.resources.CSS.halFormInput;
+import static org.jboss.hal.resources.CSS.halFormLabel;
+import static org.jboss.hal.resources.CSS.hint;
+import static org.jboss.hal.resources.CSS.marginRight5;
 import static org.jboss.hal.resources.UIConstants.HIDDEN;
 import static org.jboss.hal.resources.UIConstants.MASK_CHARACTER;
 import static org.jboss.hal.resources.UIConstants.TRUE;
 
 /**
  * Abstract read-only appearance which builds the following DOM tree:
+ *
  * <pre>
  * &lt;div class="form-group"&gt;
  *     &lt;label class="control-label hal-form-label"&gt;&lt;/label&gt;
@@ -52,8 +64,8 @@ import static org.jboss.hal.resources.UIConstants.TRUE;
  * &lt;/div&gt;
  * </pre>
  * <p>
- * Unless you override {@link #safeApply(Decoration, Object)} or {@link #safeUnapply(Decoration)} the following
- * decorations are not supported by this read-only appearance:
+ * Unless you override {@link #safeApply(Decoration, Object)} or {@link #safeUnapply(Decoration)} the following decorations are
+ * not supported by this read-only appearance:
  * <ul>
  * <li>{@link Decoration#ENABLED}</li>
  * <li>{@link Decoration#INVALID}</li>
@@ -83,7 +95,8 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
                 .add(labelElement = label().css(controlLabel, halFormLabel).element())
                 .add(div().css(halFormInput)
                         .add(valueContainer = p().css(formControlStatic)
-                                .add(valueElement = span().element()).element())).element();
+                                .add(valueElement = span().element()).element()))
+                .element();
 
         hintElement = span().css(hint).element();
         defaultValue = span()
@@ -117,7 +130,6 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
     public void attach() {
         // noop
     }
-
 
     // ------------------------------------------------------ value
 
@@ -189,7 +201,6 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
         peekLink.classList.remove("fa-eye");
         masked = false;
     }
-
 
     // ------------------------------------------------------ decorations
 
@@ -295,7 +306,6 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
                 break;
         }
     }
-
 
     // ------------------------------------------------------ properties & delegates
 

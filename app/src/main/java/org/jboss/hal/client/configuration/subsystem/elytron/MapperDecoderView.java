@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.elytron;
 
@@ -19,7 +19,6 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
@@ -37,6 +36,8 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
+import elemental2.dom.HTMLElement;
+
 import static java.util.Arrays.asList;
 import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.gwt.elemento.core.Elements.p;
@@ -49,7 +50,7 @@ import static org.jboss.hal.resources.Ids.ITEM;
 import static org.jboss.hal.resources.Ids.build;
 
 @MbuiView
-@SuppressWarnings({"DuplicateStringLiteralInspection", "HardCodedStringLiteral", "WeakerAccess"})
+@SuppressWarnings({ "DuplicateStringLiteralInspection", "HardCodedStringLiteral", "WeakerAccess" })
 public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
         implements MapperDecoderPresenter.MyView {
 
@@ -96,7 +97,6 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
     @MbuiElement("mappers-decoders-x500-attribute-principal-decoder-form") Form<NamedNode> x500AttributePrincipalDecoderForm;
     // @formatter:on
 
-
     MapperDecoderView(MbuiContext mbuiContext) {
         super(mbuiContext);
     }
@@ -106,11 +106,11 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
         Metadata metadata = mbuiContext.metadataRegistry().lookup(CONSTANT_PERMISSION_MAPPER_TEMPLATE);
         constantPermissionMapperElement = new ResourceElement.Builder(Ids.ELYTRON_CONSTANT_PERMISSION_MAPPER,
                 CONSTANT_PERMISSION_MAPPER, metadata, mbuiContext)
-                .column(NAME, (cell, type, row, meta) -> row.getName())
-                .setComplexListAttribute(PERMISSIONS, asList(CLASS_NAME, MODULE), asList(CLASS_NAME, MODULE),
-                        modelNode -> build(modelNode.get(CLASS_NAME).asString(), modelNode.get(MODULE).asString()))
-                .onCrud(() -> presenter.reload(CONSTANT_PERMISSION_MAPPER, this::updateConstantPermissionMapper))
-                .build();
+                        .column(NAME, (cell, type, row, meta) -> row.getName())
+                        .setComplexListAttribute(PERMISSIONS, asList(CLASS_NAME, MODULE), asList(CLASS_NAME, MODULE),
+                                modelNode -> build(modelNode.get(CLASS_NAME).asString(), modelNode.get(MODULE).asString()))
+                        .onCrud(() -> presenter.reload(CONSTANT_PERMISSION_MAPPER, this::updateConstantPermissionMapper))
+                        .build();
 
         navigation.insertSecondary("mappers-decoders-permission-mapper-item",
                 build(Ids.ELYTRON_CONSTANT_PERMISSION_MAPPER, ITEM),
@@ -126,7 +126,8 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
         LabelBuilder labelBuilder = new LabelBuilder();
         String title = labelBuilder.label(MAPPED_ROLE_MAPPER);
         mappedRoleMapperTable = new ModelNodeTable.Builder<NamedNode>(build(mappedId, TABLE), mappedMetadata)
-                .button(mbuiContext.tableButtonFactory().add(MAPPED_ROLE_MAPPER_TEMPLATE, table -> presenter.addMappedRoleMapper()))
+                .button(mbuiContext.tableButtonFactory().add(MAPPED_ROLE_MAPPER_TEMPLATE,
+                        table -> presenter.addMappedRoleMapper()))
                 .button(mbuiContext.tableButtonFactory().remove(title, MAPPED_ROLE_MAPPER_TEMPLATE,
                         table -> table.selectedRow().getName(),
                         () -> presenter.reload()))
@@ -256,6 +257,7 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
         logicalRoleMapperForm.clear();
         logicalRoleMapperTable.update(model);
     }
+
     @Override
     public void updateMappedRoleMapper(List<NamedNode> model) {
         mappedRoleMapperForm.clear();

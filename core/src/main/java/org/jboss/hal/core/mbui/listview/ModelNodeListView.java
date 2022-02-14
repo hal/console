@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.core.mbui.listview;
 
@@ -21,10 +21,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import elemental2.dom.CSSProperties.MarginTopUnionType;
-import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.EmptyState;
@@ -46,6 +42,12 @@ import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Messages;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtml;
+
+import elemental2.dom.CSSProperties.MarginTopUnionType;
+import elemental2.dom.HTMLElement;
+
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
@@ -55,11 +57,12 @@ import static org.jboss.hal.ballroom.Skeleton.applicationOffset;
 import static org.jboss.hal.resources.CSS.vh;
 
 /**
- * A list view for model nodes with a toolbar, pager and empty states. Actions are filtered according to their
- * constraints.
+ * A list view for model nodes with a toolbar, pager and empty states. Actions are filtered according to their constraints.
  *
- * <p>Please note that the {@code ModelNodeListView} uses its own {@code <div class="row"/>} element. This is important
- * if you add the toolbar using the methods from {@link org.jboss.hal.ballroom.LayoutBuilder}</p>
+ * <p>
+ * Please note that the {@code ModelNodeListView} uses its own {@code <div class="row"/>} element. This is important if you add
+ * the toolbar using the methods from {@link org.jboss.hal.ballroom.LayoutBuilder}
+ * </p>
  */
 public class ModelNodeListView<T extends ModelNode> implements Display<T>, Iterable<HTMLElement>, Attachable {
 
@@ -108,7 +111,7 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, Itera
                 toolbar::clearAllFilters);
         builder.emptyStates.forEach((key, emptyState) -> {
             HTMLElement element = emptyState.element();
-            element.style.marginTop = MarginTopUnionType.of(MARGIN_BIG + "px"); //NON-NLS
+            element.style.marginTop = MarginTopUnionType.of(MARGIN_BIG + "px"); // NON-NLS
             emptyStates.put(key, element);
         });
         HTMLElement emptyStatesContainer = div().element();
@@ -157,12 +160,12 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, Itera
         int pagerHeight = (int) pager.element().offsetHeight;
         listView.element().style.height = vh(
                 applicationOffset() + toolbarHeight + pagerHeight + surroundingHeight + 2);
-        listView.element().style.overflow = "scroll"; //NON-NLS
+        listView.element().style.overflow = "scroll"; // NON-NLS
     }
 
     /**
-     * Use this method if you embed the list view into an application view and if you have additional elements before or
-     * after the list view. This method should be called before the list view is attached.
+     * Use this method if you embed the list view into an application view and if you have additional elements before or after
+     * the list view. This method should be called before the list view is attached.
      *
      * @param surroundingHeight the sum of the height of all surrounding elements
      */
@@ -210,7 +213,6 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, Itera
         }
         Elements.setVisible(listView.element(), true);
     }
-
 
     public static class Builder<T extends ModelNode> {
 

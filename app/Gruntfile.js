@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 module.exports = function (grunt) {
     'use strict';
@@ -29,7 +29,6 @@ module.exports = function (grunt) {
             node: 'node_modules',
             public: 'src/main/resources/org/jboss/hal/public',
             themeDir: '../themes/<%= theme %>/src/main/resources/org/jboss/hal/theme/<%= theme %>',
-            version: '3.4.4',
         },
 
         clean: {
@@ -104,7 +103,7 @@ module.exports = function (grunt) {
             polyfill: {
                 options: {
                     banner: '/*!\n' +
-                        ' * Polyfill JS files for IE 11 and below. HAL <%= config.version %>\n' +
+                        ' * Polyfill JS files for IE 11 and below.\n' +
                         ' * Build date: <%= grunt.template.today("yyyy-mm-dd HH:MM:ss") %>\n' +
                         ' */\n\n',
                     stripBanners: true
@@ -160,7 +159,7 @@ module.exports = function (grunt) {
             externalProd: {
                 options: {
                     banner: '/*!\n' +
-                        ' * External JS files for HAL <%= config.version %>\n' +
+                        ' * External JS files\n' +
                         ' * Build date: <%= grunt.template.today("yyyy-mm-dd HH:MM:ss") %>\n' +
                         ' */\n\n',
                     stripBanners: true
@@ -203,7 +202,7 @@ module.exports = function (grunt) {
             target: {
                 options: {
                     banner: '/*\n' +
-                        ' * Generated CSS file for HAL <%= config.version %>\n' +
+                        ' * Generated CSS file\n' +
                         ' * Build date: <%= grunt.template.today("yyyy-mm-dd HH:MM:ss") %>\n' +
                         ' */\n\n',
                     paths: ['<%= config.less %>', '../themes/<%= theme %>/src/main/less'],

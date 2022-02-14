@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.mail;
 
@@ -21,9 +21,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import com.google.common.base.Joiner;
-import com.google.web.bindery.event.shared.EventBus;
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -47,12 +44,17 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
+import com.google.common.base.Joiner;
+import com.google.web.bindery.event.shared.EventBus;
+
+import elemental2.dom.HTMLElement;
+
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 @AsyncColumn(Ids.MAIL_SESSION)
-@Requires({MAIL_ADDRESS, MAIL_SESSION_ADDRESS, SERVER_ADDRESS})
+@Requires({ MAIL_ADDRESS, MAIL_SESSION_ADDRESS, SERVER_ADDRESS })
 public class MailSessionColumn extends FinderColumn<MailSession> {
 
     @Inject
@@ -88,7 +90,7 @@ public class MailSessionColumn extends FinderColumn<MailSession> {
                     Metadata metadata = metadataRegistry.lookup(AddressTemplates.MAIL_SESSION_TEMPLATE);
                     AddResourceDialog dialog = new AddResourceDialog(Ids.MAIL_SESSION_DIALOG,
                             resources.messages().addResourceTitle(Names.MAIL_SESSION), metadata,
-                            Arrays.asList(JNDI_NAME, FROM, "debug"), //NON-NLS
+                            Arrays.asList(JNDI_NAME, FROM, "debug"), // NON-NLS
                             (name, modelNode) -> {
                                 if (modelNode != null) {
                                     ResourceAddress address = AddressTemplates.MAIL_SESSION_TEMPLATE
@@ -105,7 +107,7 @@ public class MailSessionColumn extends FinderColumn<MailSession> {
                                     });
                                 }
                             });
-                    dialog.getForm().<String>getFormItem(NAME).addValidationHandler(createUniqueValidation());
+                    dialog.getForm().<String> getFormItem(NAME).addValidationHandler(createUniqueValidation());
                     dialog.show();
                 }));
         addColumnAction(columnActionFactory.refresh(Ids.MAIL_SESSION_REFRESH));

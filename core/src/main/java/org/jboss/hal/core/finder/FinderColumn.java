@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.core.finder;
 
@@ -25,17 +25,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import com.google.common.collect.Iterables;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.web.bindery.event.shared.HandlerRegistration;
-import elemental2.dom.DragEvent;
-import elemental2.dom.Element;
-import elemental2.dom.HTMLDivElement;
-import elemental2.dom.HTMLElement;
-import elemental2.dom.HTMLInputElement;
-import elemental2.dom.KeyboardEvent;
-import elemental2.dom.NodeList;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.EventCallbackFn;
 import org.jboss.gwt.elemento.core.IsElement;
@@ -59,9 +48,22 @@ import org.jboss.hal.spi.NamedObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Iterables;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.web.bindery.event.shared.HandlerRegistration;
+
+import elemental2.dom.DragEvent;
+import elemental2.dom.Element;
+import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLInputElement;
+import elemental2.dom.KeyboardEvent;
+import elemental2.dom.NodeList;
+
 import static java.util.stream.Collectors.toList;
-import static org.jboss.gwt.elemento.core.Elements.header;
 import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.gwt.elemento.core.Elements.header;
 import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.gwt.elemento.core.EventType.keydown;
@@ -79,15 +81,15 @@ import static org.jboss.hal.resources.UIConstants.ROLE;
 import static org.jboss.hal.resources.UIConstants.TABINDEX;
 
 /**
- * Describes a column in a finder. A column has an unique id, a title, a number of optional column actions and an {@link
- * ItemRenderer} which defines how the items of this column are rendered. All items of a column must have the same type
+ * Describes a column in a finder. A column has an unique id, a title, a number of optional column actions and an
+ * {@link ItemRenderer} which defines how the items of this column are rendered. All items of a column must have the same type
  * parameter which is the type parameter of this column.
  * <p>
- * The idea is that columns are self-contained and don't need direct references to other columns. References are only
- * provided by id. The {@link ColumnRegistry} will then resolve the id against an existing column.
+ * The idea is that columns are self-contained and don't need direct references to other columns. References are only provided
+ * by id. The {@link ColumnRegistry} will then resolve the id against an existing column.
  * <p>
- * Please do not use constants from {@code ModelDescriptionConstants} for the column ids (it makes refactoring harder).
- * Instead add an id to {@link org.jboss.hal.resources.Ids}.
+ * Please do not use constants from {@code ModelDescriptionConstants} for the column ids (it makes refactoring harder). Instead
+ * add an id to {@link org.jboss.hal.resources.Ids}.
  * <p>
  * TODO This class is huge! Try to refactor and break into smaller pieces.
  *
@@ -126,7 +128,6 @@ public class FinderColumn<T> implements IsElement<HTMLDivElement>, Attachable {
     private PreviewCallback<T> previewCallback;
     private BreadcrumbItemsProvider<T> breadcrumbItemsProvider;
     private final BreadcrumbItemHandler<T> breadcrumbItemHandler;
-
 
     // ------------------------------------------------------ ui
 
@@ -315,7 +316,6 @@ public class FinderColumn<T> implements IsElement<HTMLDivElement>, Attachable {
         handlers.clear();
     }
 
-
     // ------------------------------------------------------ event handler
 
     private void onFilter(KeyboardEvent event) {
@@ -471,7 +471,6 @@ public class FinderColumn<T> implements IsElement<HTMLDivElement>, Attachable {
         return asElement && Elements.isVisible(root) && root.parentNode != null;
     }
 
-
     // ------------------------------------------------------ internal API
 
     void markHiddenColumns(boolean show) {
@@ -479,7 +478,7 @@ public class FinderColumn<T> implements IsElement<HTMLDivElement>, Attachable {
     }
 
     private HTMLElement activeElement() {
-        return (HTMLElement) ulElement.querySelector("li." + active); //NON-NLS
+        return (HTMLElement) ulElement.querySelector("li." + active); // NON-NLS
     }
 
     private boolean hasVisibleElements() {
@@ -519,7 +518,7 @@ public class FinderColumn<T> implements IsElement<HTMLDivElement>, Attachable {
     }
 
     FinderRow<T> selectedRow() {
-        HTMLElement activeItem = (HTMLElement) ulElement.querySelector("li." + active); //NON-NLS
+        HTMLElement activeItem = (HTMLElement) ulElement.querySelector("li." + active); // NON-NLS
         if (activeItem != null && rows.containsKey(activeItem.id)) {
             return rows.get(activeItem.id);
         }
@@ -671,7 +670,7 @@ public class FinderColumn<T> implements IsElement<HTMLDivElement>, Attachable {
         } else {
             unpinnedItems.addAll(items);
         }
-        for (Iterator<T> iterator = pinnedItems.iterator(); iterator.hasNext(); ) {
+        for (Iterator<T> iterator = pinnedItems.iterator(); iterator.hasNext();) {
             T item = iterator.next();
             FinderRow<T> row = new FinderRow<>(finder, this, item, true,
                     itemRenderer.render(item), previewCallback);
@@ -688,7 +687,7 @@ public class FinderColumn<T> implements IsElement<HTMLDivElement>, Attachable {
             ulElement.appendChild(row.element());
         }
         updateHeader(items.size());
-        Tooltip.select(HASH + id + " [data-" + UIConstants.TOGGLE + "=" + UIConstants.TOOLTIP + "]").init(); //NON-NLS
+        Tooltip.select(HASH + id + " [data-" + UIConstants.TOGGLE + "=" + UIConstants.TOOLTIP + "]").init(); // NON-NLS
 
         if (items.isEmpty()) {
             ulElement.appendChild(noItems);
@@ -700,9 +699,9 @@ public class FinderColumn<T> implements IsElement<HTMLDivElement>, Attachable {
     }
 
     /**
-     * Sometimes you need to reference {@code this} in the column action handler. This is not possible if they're part
-     * of the builder which is passed to {@code super()}. In this case you can use this method to add your column
-     * actions <strong>after</strong> the call to {@code super()}.
+     * Sometimes you need to reference {@code this} in the column action handler. This is not possible if they're part of the
+     * builder which is passed to {@code super()}. In this case you can use this method to add your column actions
+     * <strong>after</strong> the call to {@code super()}.
      */
     protected void addColumnAction(ColumnAction<T> columnAction) {
         if (isAllowed(columnAction)) {
@@ -742,8 +741,8 @@ public class FinderColumn<T> implements IsElement<HTMLDivElement>, Attachable {
      * possible if they're part of the builder which is passed to {@code super()}. In this case the item renderer can be
      * specified <strong>after</strong> the call to {@code super()} using this setter.
      * <p>
-     * However make sure to call the setter <strong>before</strong> the column is used {@link #element()} and gets
-     * attached to the DOM!
+     * However make sure to call the setter <strong>before</strong> the column is used {@link #element()} and gets attached to
+     * the DOM!
      */
     protected void setItemRenderer(ItemRenderer<T> itemRenderer) {
         assertNotAsElement("setItemRenderer()");
@@ -755,12 +754,12 @@ public class FinderColumn<T> implements IsElement<HTMLDivElement>, Attachable {
     }
 
     /**
-     * Sometimes you need to reference {@code this} in the items provider. This is not possible if the items provider is
-     * part of the builder which is passed to {@code super()}. In this case the items provider can be specified
-     * <strong>after</strong> the call to {@code super()} using this setter.
+     * Sometimes you need to reference {@code this} in the items provider. This is not possible if the items provider is part of
+     * the builder which is passed to {@code super()}. In this case the items provider can be specified <strong>after</strong>
+     * the call to {@code super()} using this setter.
      * <p>
-     * However make sure to call the setter <strong>before</strong> the column is used {@link #element()} and gets
-     * attached to the DOM!
+     * However make sure to call the setter <strong>before</strong> the column is used {@link #element()} and gets attached to
+     * the DOM!
      */
     protected void setItemsProvider(ItemsProvider<T> itemsProvider) {
         assertNotAsElement("setItemsProvider()");
@@ -797,24 +796,24 @@ public class FinderColumn<T> implements IsElement<HTMLDivElement>, Attachable {
     }
 
     /**
-     * Sometimes you need to reference {@code this} in the preview callback. This is not possible if the preview
-     * callback is part of the builder which is passed to {@code super()}. In this case the preview callback can be
-     * specified <strong>after</strong> the call to {@code super()} using this setter.
+     * Sometimes you need to reference {@code this} in the preview callback. This is not possible if the preview callback is
+     * part of the builder which is passed to {@code super()}. In this case the preview callback can be specified
+     * <strong>after</strong> the call to {@code super()} using this setter.
      * <p>
-     * However make sure to call the setter <strong>before</strong> the column is used {@link #element()} and gets
-     * attached to the DOM!
+     * However make sure to call the setter <strong>before</strong> the column is used {@link #element()} and gets attached to
+     * the DOM!
      */
     protected void setPreviewCallback(PreviewCallback<T> previewCallback) {
         this.previewCallback = previewCallback;
     }
 
     /**
-     * Sometimes you need to reference {@code this} in the breadcrumb items provider. This is not possible if the
-     * breadcrumb items provider is part of the builder which is passed to {@code super()}. In this case the breadcrumb
-     * items provider can be specified <strong>after</strong> the call to {@code super()} using this setter.
+     * Sometimes you need to reference {@code this} in the breadcrumb items provider. This is not possible if the breadcrumb
+     * items provider is part of the builder which is passed to {@code super()}. In this case the breadcrumb items provider can
+     * be specified <strong>after</strong> the call to {@code super()} using this setter.
      * <p>
-     * However make sure to call the setter <strong>before</strong> the column is used {@link #element()} and gets
-     * attached to the DOM!
+     * However make sure to call the setter <strong>before</strong> the column is used {@link #element()} and gets attached to
+     * the DOM!
      */
     protected void setBreadcrumbItemsProvider(BreadcrumbItemsProvider<T> breadcrumbItemsProvider) {
         assertNotAsElement("setBreadcrumbItemsProvider()");
@@ -843,7 +842,6 @@ public class FinderColumn<T> implements IsElement<HTMLDivElement>, Attachable {
                     " after FinderColumn.element(). Make sure to setup the column before it's used as an element.");
         }
     }
-
 
     // ------------------------------------------------------ public API
 
@@ -926,7 +924,6 @@ public class FinderColumn<T> implements IsElement<HTMLDivElement>, Attachable {
         return finder;
     }
 
-
     // ------------------------------------------------------ rbac / security
 
     private List<ColumnAction<T>> allowedActions(List<ColumnAction<T>> actions) {
@@ -967,11 +964,9 @@ public class FinderColumn<T> implements IsElement<HTMLDivElement>, Attachable {
                 .isAllowed(Constraints.and(collect));
     }
 
-
     public enum RefreshMode {
         CLEAR_SELECTION, RESTORE_SELECTION
     }
-
 
     public static class Builder<T> {
 
@@ -1079,8 +1074,8 @@ public class FinderColumn<T> implements IsElement<HTMLDivElement>, Attachable {
         }
 
         /**
-         * Uses the item's first action as breadcrumb item handler. If a custom handler is set using {@link
-         * #onBreadcrumbItem(BreadcrumbItemHandler)} this handler will be used instead of the first item action.
+         * Uses the item's first action as breadcrumb item handler. If a custom handler is set using
+         * {@link #onBreadcrumbItem(BreadcrumbItemHandler)} this handler will be used instead of the first item action.
          */
         public Builder<T> useFirstActionAsBreadcrumbHandler() {
             this.firstActionAsBreadcrumbHandler = true;

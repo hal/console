@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.deployment;
 
@@ -22,9 +22,6 @@ import java.util.function.Consumer;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.web.bindery.event.shared.EventBus;
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.wizard.Wizard;
 import org.jboss.hal.client.deployment.DeploymentTasks.AddUnmanagedDeployment;
@@ -33,10 +30,10 @@ import org.jboss.hal.client.deployment.DeploymentTasks.UploadOrReplace;
 import org.jboss.hal.client.deployment.dialog.AddUnmanagedDialog;
 import org.jboss.hal.client.deployment.dialog.CreateEmptyDialog;
 import org.jboss.hal.client.deployment.wizard.DeploymentContext;
+import org.jboss.hal.client.deployment.wizard.DeploymentState;
 import org.jboss.hal.client.deployment.wizard.NamesStep;
 import org.jboss.hal.client.deployment.wizard.UploadDeploymentStep;
 import org.jboss.hal.client.shared.uploadwizard.UploadElement;
-import org.jboss.hal.client.deployment.wizard.DeploymentState;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.SuccessfulOutcome;
@@ -78,6 +75,11 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
+
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.web.bindery.event.shared.EventBus;
+
+import elemental2.dom.HTMLElement;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.span;
@@ -126,10 +128,10 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
                 .itemsProvider((context, callback) -> {
                     Operation operation = new Operation.Builder(ResourceAddress.root(),
                             READ_CHILDREN_RESOURCES_OPERATION)
-                            .param(CHILD_TYPE, DEPLOYMENT)
-                            .param(INCLUDE_RUNTIME, true)
-                            .param(RECURSIVE_DEPTH, 2)
-                            .build();
+                                    .param(CHILD_TYPE, DEPLOYMENT)
+                                    .param(INCLUDE_RUNTIME, true)
+                                    .param(RECURSIVE_DEPTH, 2)
+                                    .build();
                     dispatcher.execute(operation, result -> {
                         List<Deployment> deployments = result.asPropertyList().stream()
                                 .map(property -> new Deployment(Server.STANDALONE, property.getValue()))
@@ -191,8 +193,9 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
                 } else if (item.getStatus() == Status.OK) {
                     return resources.constants().activeLower();
                 } else {
-                    return item.isEnabled() ? resources.constants().enabled() : resources.constants()
-                            .disabled();
+                    return item.isEnabled() ? resources.constants().enabled()
+                            : resources.constants()
+                                    .disabled();
                 }
             }
 
@@ -269,8 +272,7 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
         super.attach();
         if (JsHelper.supportsAdvancedUpload()) {
             setOnDrop(event -> DeploymentTasks.upload(this, environment, dispatcher, eventBus, progress,
-                    event.dataTransfer.files, resources
-            ));
+                    event.dataTransfer.files, resources));
         }
     }
 
@@ -279,41 +281,43 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
         Wizard<DeploymentContext, DeploymentState> wizard = new Wizard.Builder<DeploymentContext, DeploymentState>(
                 resources.messages().addResourceTitle(Names.DEPLOYMENT), new DeploymentContext())
 
-                .addStep(UPLOAD, new UploadDeploymentStep(resources))
-                .addStep(NAMES, new NamesStep(environment, metadata, resources))
+                        .addStep(UPLOAD, new UploadDeploymentStep(resources))
+                        .addStep(NAMES, new NamesStep(environment, metadata, resources))
 
-                .onBack((context, currentState) -> currentState == NAMES ? UPLOAD : null)
-                .onNext((context, currentState) -> currentState == UPLOAD ? NAMES : null)
+                        .onBack((context, currentState) -> currentState == NAMES ? UPLOAD : null)
+                        .onNext((context, currentState) -> currentState == UPLOAD ? NAMES : null)
 
-                .stayOpenAfterFinish()
-                .onFinish((wzd, context) -> {
-                    String name = context.name;
-                    String runtimeName = context.runtimeName;
-                    wzd.showProgress(resources.constants().deploymentInProgress(),
-                            resources.messages().deploymentInProgress(name));
+                        .stayOpenAfterFinish()
+                        .onFinish((wzd, context) -> {
+                            String name = context.name;
+                            String runtimeName = context.runtimeName;
+                            wzd.showProgress(resources.constants().deploymentInProgress(),
+                                    resources.messages().deploymentInProgress(name));
 
-                    series(new FlowContext(progress.get()),
-                            new CheckDeployment(dispatcher, name),
-                            new UploadOrReplace(environment, dispatcher, name, runtimeName, context.file,
-                                    context.enabled))
-                            .subscribe(new Outcome<FlowContext>() {
-                                @Override
-                                public void onError(FlowContext context, Throwable error) {
-                                    wzd.showError(resources.constants().deploymentError(),
-                                            resources.messages().deploymentError(name), error.getMessage());
-                                }
+                            series(new FlowContext(progress.get()),
+                                    new CheckDeployment(dispatcher, name),
+                                    new UploadOrReplace(environment, dispatcher, name, runtimeName, context.file,
+                                            context.enabled))
+                                                    .subscribe(new Outcome<FlowContext>() {
+                                                        @Override
+                                                        public void onError(FlowContext context, Throwable error) {
+                                                            wzd.showError(resources.constants().deploymentError(),
+                                                                    resources.messages().deploymentError(name),
+                                                                    error.getMessage());
+                                                        }
 
-                                @Override
-                                public void onSuccess(FlowContext context) {
-                                    refresh(Ids.deployment(name));
-                                    wzd.showSuccess(resources.constants().uploadSuccessful(),
-                                            resources.messages().uploadSuccessful(name),
-                                            resources.messages().view(Names.DEPLOYMENT),
-                                            cxt -> { /* nothing to do, deployment is already selected */ });
-                                }
-                            });
-                })
-                .build();
+                                                        @Override
+                                                        public void onSuccess(FlowContext context) {
+                                                            refresh(Ids.deployment(name));
+                                                            wzd.showSuccess(resources.constants().uploadSuccessful(),
+                                                                    resources.messages().uploadSuccessful(name),
+                                                                    resources.messages().view(Names.DEPLOYMENT),
+                                                                    cxt -> {
+                                                                        /* nothing to do, deployment is already selected */ });
+                                                        }
+                                                    });
+                        })
+                        .build();
         wizard.show();
     }
 
@@ -332,23 +336,24 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
                                 // To replace an existing deployment, the original name and runtime-name must be preserved.
                                 new UploadOrReplace(environment, dispatcher, deployment.getName(),
                                         deployment.getRuntimeName(), uploadElement.getFiles().item(0), false))
-                                .subscribe(new Outcome<FlowContext>() {
-                                    @Override
-                                    public void onError(FlowContext context, Throwable error) {
-                                        replaceDeploymentPanel.off();
-                                        MessageEvent.fire(eventBus, Message.error(
-                                                resources.messages().contentReplaceError(deployment.getName()),
-                                                error.getMessage()));
-                                    }
+                                                .subscribe(new Outcome<FlowContext>() {
+                                                    @Override
+                                                    public void onError(FlowContext context, Throwable error) {
+                                                        replaceDeploymentPanel.off();
+                                                        MessageEvent.fire(eventBus, Message.error(
+                                                                resources.messages().contentReplaceError(deployment.getName()),
+                                                                error.getMessage()));
+                                                    }
 
-                                    @Override
-                                    public void onSuccess(FlowContext context) {
-                                        refresh(Ids.content(deployment.getName()));
-                                        replaceDeploymentPanel.off();
-                                        MessageEvent.fire(eventBus, Message.success(
-                                                resources.messages().contentReplaceSuccess(deployment.getName())));
-                                    }
-                                });
+                                                    @Override
+                                                    public void onSuccess(FlowContext context) {
+                                                        refresh(Ids.content(deployment.getName()));
+                                                        replaceDeploymentPanel.off();
+                                                        MessageEvent.fire(eventBus, Message.success(
+                                                                resources.messages()
+                                                                        .contentReplaceSuccess(deployment.getName())));
+                                                    }
+                                                });
                     }
                     return valid;
                 })
@@ -361,16 +366,16 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
         AddUnmanagedDialog dialog = new AddUnmanagedDialog(metadata, resources,
                 (name, model) -> series(new FlowContext(progress.get()),
                         new AddUnmanagedDeployment(dispatcher, name, model))
-                        .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
-                            @Override
-                            public void onSuccess(FlowContext context) {
-                                refresh(Ids.deployment(name));
-                                MessageEvent.fire(eventBus, Message.success(
-                                        resources.messages()
-                                                .addResourceSuccess(Names.UNMANAGED_DEPLOYMENT, name)));
-                            }
-                        }));
-        dialog.getForm().<String>getFormItem(NAME).addValidationHandler(createUniqueValidation());
+                                .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
+                                    @Override
+                                    public void onSuccess(FlowContext context) {
+                                        refresh(Ids.deployment(name));
+                                        MessageEvent.fire(eventBus, Message.success(
+                                                resources.messages()
+                                                        .addResourceSuccess(Names.UNMANAGED_DEPLOYMENT, name)));
+                                    }
+                                }));
+        dialog.getForm().<String> getFormItem(NAME).addValidationHandler(createUniqueValidation());
         dialog.show();
     }
 
@@ -447,8 +452,7 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
                 subdeployment -> {
                     Operation explode = new Operation.Builder(address, EXPLODE).param(PATH, subdeployment.getName()).build();
                     op.add(explode);
-                }
-        );
+                });
 
         dispatcher.execute(op, (Consumer<CompositeResult>) result -> {
             enable(deployment);
@@ -456,7 +460,8 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
                     .fire(eventBus, Message.success(resources.messages().deploymentExploded(deployment.getName())));
         }, (operation, failure) -> {
             ItemMonitor.stopProgress(id);
-            SafeHtml message = failure.contains("WFLYDR0015") ? resources.messages().deploymentSubAlreadyExploded() : resources.messages().lastOperationException();
+            SafeHtml message = failure.contains("WFLYDR0015") ? resources.messages().deploymentSubAlreadyExploded()
+                    : resources.messages().lastOperationException();
             MessageEvent.fire(eventBus, Message.error(message, failure));
         });
     }

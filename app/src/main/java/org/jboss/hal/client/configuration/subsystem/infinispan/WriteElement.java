@@ -1,22 +1,20 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.infinispan;
 
-import elemental2.dom.HTMLElement;
-import elemental2.dom.HTMLInputElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
@@ -31,6 +29,9 @@ import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
+
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLInputElement;
 
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
@@ -69,17 +70,18 @@ class WriteElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
                                         .attr(UIConstants.NAME, radioName)
                                         .attr(UIConstants.VALUE, THROUGH.resource)
                                         .attr(UIConstants.CHECKED, UIConstants.TRUE))
-                                .add(span().textContent(THROUGH.type)))).elements();
+                                .add(span().textContent(THROUGH.type))))
+                .elements();
 
         emptyState = new EmptyState.Builder(Ids.build(cacheType.baseId, store.baseId, WRITE, Ids.EMPTY),
                 resources.constants().noWrite())
-                .description(resources.messages().noWrite())
-                .addAll(elements)
-                .primaryAction(resources.constants().add(), () -> {
-                    Write write = behindRadio.checked ? BEHIND : THROUGH;
-                    presenter.addWrite(write);
-                })
-                .build();
+                        .description(resources.messages().noWrite())
+                        .addAll(elements)
+                        .primaryAction(resources.constants().add(), () -> {
+                            Write write = behindRadio.checked ? BEHIND : THROUGH;
+                            presenter.addWrite(write);
+                        })
+                        .build();
         emptyState.element().classList.add(marginTopLarge);
 
         throughElement = div()
@@ -87,7 +89,8 @@ class WriteElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
                         .innerHtml(resources.messages().writeBehaviour(THROUGH.type, BEHIND.type)))
                 .add(button(resources.constants().switchBehaviour())
                         .css(btn, btnDefault)
-                        .on(click, event -> presenter.switchWrite(THROUGH, BEHIND))).element();
+                        .on(click, event -> presenter.switchWrite(THROUGH, BEHIND)))
+                .element();
 
         String id = Ids.build(cacheType.baseId, store.baseId, BEHIND.baseId, Ids.FORM);
         Metadata metadata = metadataRegistry.lookup(cacheType.template

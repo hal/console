@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.ballroom;
 
@@ -20,13 +20,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.hal.resources.UIConstants;
+
 import elemental2.dom.Element;
 import elemental2.dom.HTMLElement;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.hal.resources.UIConstants;
 
 import static java.util.Arrays.asList;
 import static jsinterop.annotations.JsPackage.GLOBAL;
@@ -73,7 +74,7 @@ public class Tabs implements IsElement<HTMLElement> {
         }
         indexToId.put(size, id);
 
-        HTMLElement tab = li().attr(UIConstants.ROLE, "presentation") //NON-NLS
+        HTMLElement tab = li().attr(UIConstants.ROLE, "presentation") // NON-NLS
                 .add(a("#" + id)
                         .aria(UIConstants.CONTROLS, id)
                         .attr(UIConstants.ROLE, UIConstants.TAB)
@@ -82,8 +83,9 @@ public class Tabs implements IsElement<HTMLElement> {
                             event.preventDefault();
                             showTab(id);
                         })
-                        .textContent(title)).element();
-        HTMLElement pane = div().id(id).css(tabPane).attr(UIConstants.ROLE, "tabpanel").element(); //NON-NLS
+                        .textContent(title))
+                .element();
+        HTMLElement pane = div().id(id).css(tabPane).attr(UIConstants.ROLE, "tabpanel").element(); // NON-NLS
 
         tabs.appendChild(tab);
         panes.appendChild(pane);
@@ -121,7 +123,7 @@ public class Tabs implements IsElement<HTMLElement> {
     @SuppressWarnings("WeakerAccess")
     public void showTab(String id) {
         if (id != null) {
-            Api.select("a[href='#" + id + "']").tab("show"); //NON-NLS
+            Api.select("a[href='#" + id + "']").tab("show"); // NON-NLS
         }
     }
 
@@ -141,14 +143,14 @@ public class Tabs implements IsElement<HTMLElement> {
 
     public void onShow(String id, JsCallback callback) {
         if (id != null) {
-            Api.select("a[href='#" + id + "']").on("shown.bs.tab", callback); //NON-NLS
+            Api.select("a[href='#" + id + "']").on("shown.bs.tab", callback); // NON-NLS
         }
     }
 
     public HTMLElement tabElement(String id) {
         HTMLElement selectedTab = null;
         if (id != null) {
-            selectedTab = (HTMLElement) tabs.querySelector("li > a[href='#" + id + "']"); //NON-NLS
+            selectedTab = (HTMLElement) tabs.querySelector("li > a[href='#" + id + "']"); // NON-NLS
         }
         return selectedTab;
     }
@@ -160,7 +162,6 @@ public class Tabs implements IsElement<HTMLElement> {
         }
         return null;
     }
-
 
     @JsType(isNative = true)
     static class Api {

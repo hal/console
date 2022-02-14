@@ -1,52 +1,59 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.bootstrap.endpoint;
 
-import com.google.common.base.Strings;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import elemental2.dom.HTMLScriptElement;
-import elemental2.dom.XMLHttpRequest;
+import java.util.Optional;
+import java.util.function.Consumer;
+
+import javax.inject.Inject;
+
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.client.bootstrap.BootstrapFailed;
 import org.jboss.hal.client.bootstrap.tasks.BootstrapTask;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.keycloak.Keycloak;
 import org.jboss.hal.config.keycloak.KeycloakHolder;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.js.Json;
 import org.jboss.hal.js.JsonObject;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.spi.Callback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import java.util.function.Consumer;
-import java.util.Optional;
+import com.google.common.base.Strings;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
+import elemental2.dom.HTMLScriptElement;
+import elemental2.dom.XMLHttpRequest;
 
 import static elemental2.dom.DomGlobal.document;
 import static elemental2.dom.DomGlobal.setInterval;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.AUTH_SERVER_URL;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.KEYCLOAK;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.URL;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.GET;
 import static org.jboss.hal.js.JsHelper.requestParameter;
 import static org.jboss.hal.resources.Urls.MANAGEMENT;
 
 /**
- * Class which connects to a running management endpoint or triggers the selection of an arbitrary management endpoint.
- * By default this class first tries to connect to the management endpoint the console was loaded from. If no endpoint
- * was found, the selection is triggered by {@link EndpointDialog}.
+ * Class which connects to a running management endpoint or triggers the selection of an arbitrary management endpoint. By
+ * default this class first tries to connect to the management endpoint the console was loaded from. If no endpoint was found,
+ * the selection is triggered by {@link EndpointDialog}.
  * <p>
  * Please note: This class must run <em>before</em> any {@linkplain BootstrapTask bootstrap function}!
  */
@@ -79,14 +86,23 @@ public class EndpointManager {
 
         String connect = requestParameter(CONNECT_PARAMETER);
         if (Strings.emptyToNull(connect) != null) {
-            // Connect to a server given as a request parameter
-            Endpoint endpoint = storage.get(connect);
-            if (endpoint != null) {
-                logger.info("Try to connect to endpoint '{}'", endpoint.getUrl());
+            if (connect.contains("://")) {
+                logger.info("Use direct endpoint '{}'", connect);
+                ModelNode modelNode = new ModelNode();
+                modelNode.get(NAME).set(Ids.asId(connect));
+                modelNode.get(URL).set(connect);
+                Endpoint endpoint = new Endpoint(modelNode);
                 connect(Optional.of(endpoint));
             } else {
-                logger.error("Unable to get URL for named endpoint '{}' from local storage", connect);
-                openDialog();
+                // Connect to a server given as a request parameter
+                Endpoint endpoint = storage.get(connect);
+                if (endpoint != null) {
+                    logger.info("Try to connect to endpoint '{}'", endpoint.getUrl());
+                    connect(Optional.of(endpoint));
+                } else {
+                    logger.error("Unable to get URL for named endpoint '{}' from local storage", connect);
+                    openDialog();
+                }
             }
         } else {
             connect(Optional.empty());
@@ -119,15 +135,17 @@ public class EndpointManager {
                     break;
                 case 403:
                     Elements.removeChildrenFrom(document.body);
-                    document.body.appendChild(new RbacProviderFailed("Status " + status + " - " + xhr.statusText).element());
+                    document.body.appendChild(
+                            new RbacProviderFailed("Status " + status + " - " + xhr.statusText).element());
                     break;
                 case 503:
                     Elements.removeChildrenFrom(document.body);
-                    document.body.appendChild(new BootstrapFailed("Status " + status + " - " + xhr.statusText, Endpoints.INSTANCE).element());
+                    document.body.appendChild(new BootstrapFailed("Status " + status + " - " + xhr.statusText,
+                            Endpoints.INSTANCE).element());
                     break;
                 // TODO Show an error page!
                 // case 500:
-                //     break;
+                // break;
                 default:
                     logger.info("Unable to serve HAL from '{}'. Please select a management interface.",
                             managementEndpoint);
@@ -137,7 +155,8 @@ public class EndpointManager {
         };
         xhr.onerror = (event) -> {
             Elements.removeChildrenFrom(document.body);
-            document.body.appendChild(new BootstrapFailed("Failed connecting to a management interface", Endpoints.INSTANCE).element());
+            document.body.appendChild(
+                    new BootstrapFailed("Failed connecting to a management interface", Endpoints.INSTANCE).element());
             return null;
         };
         xhr.open(GET.name(), managementEndpoint, true);

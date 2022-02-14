@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright 2015-2016 Red Hat, Inc, and individual contributors.
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~ https://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
+
+     Copyright 2022 Red Hat
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+         https://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+
+-->
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -21,15 +23,15 @@
 
     <parent>
         <groupId>org.jboss.hal</groupId>
-        <artifactId>hal-parent-with-gwt</artifactId>
-        <version>3.4.4.Final</version>
-        <relativePath>../parent-with-gwt/pom.xml</relativePath>
+        <artifactId>hal-gwt-parent</artifactId>
+        <version>3.5.0.Final</version>
+        <relativePath>../gwt-parent/pom.xml</relativePath>
     </parent>
 
     <artifactId>hal-console</artifactId>
-    <name>HAL :: Console</name>
-    <description>The HAL console containing the GWT entry point and the UI.</description>
     <packaging>gwt-app</packaging>
+    <name>HAL :: Console</name>
+    <description>The HAL console containing the GWT entry point and the UI</description>
 
     <dependencies>
         <!-- HAL -->
@@ -140,67 +142,7 @@
         </testResources>
 
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-clean-plugin</artifactId>
-                <configuration>
-                    <filesets>
-                        <fileset>
-                            <directory>src/main/resources/org/jboss/hal/public</directory>
-                            <includes>
-                                <include>*.ico</include>
-                                <include>*.png</include>
-                            </includes>
-                        </fileset>
-                        <fileset>
-                            <directory>src/main/resources/org/jboss/hal/public/css</directory>
-                        </fileset>
-                        <fileset>
-                            <directory>src/main/resources/org/jboss/hal/public/fonts</directory>
-                        </fileset>
-                        <fileset>
-                            <directory>src/main/resources/org/jboss/hal/public/img</directory>
-                        </fileset>
-                        <fileset>
-                            <directory>src/main/resources/org/jboss/hal/public/js</directory>
-                        </fileset>
-                    </filesets>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>com.github.eirslett</groupId>
-                <artifactId>frontend-maven-plugin</artifactId>
-                <configuration>
-                    <nodeVersion>${node.version}</nodeVersion>
-                    <npmVersion>${npm.version}</npmVersion>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>install node and npm</id>
-                        <goals>
-                            <goal>install-node-and-npm</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>npm</id>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>install</arguments>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>grunt build</id>
-                        <goals>
-                            <goal>grunt</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>${grunt-task} --theme=${theme.name}</arguments>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+            <!-- Ordered by artifactID -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
@@ -248,32 +190,39 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <configuration>
+                    <nodeVersion>${version.node}</nodeVersion>
+                    <npmVersion>${version.npm}</npmVersion>
+                    <skip>${skip.gwt}</skip>
+                </configuration>
                 <executions>
                     <execution>
-                        <id>resource-jar</id>
-                        <phase>package</phase>
+                        <id>install node and npm</id>
                         <goals>
-                            <goal>jar</goal>
+                            <goal>install-node-and-npm</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>npm</id>
+                        <goals>
+                            <goal>npm</goal>
                         </goals>
                         <configuration>
-                            <classifier>resources</classifier>
-                            <classesDirectory>
-                                ${project.build.directory}/${project.build.finalName}/${gwt.moduleShortname}
-                            </classesDirectory>
+                            <arguments>install</arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>grunt build</id>
+                        <goals>
+                            <goal>grunt</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>${grunt-task} --theme=${theme.name}</arguments>
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <classpathDependencyExcludes>
-                        <classpathDependencyExcludes>com.google.guava:guava-gwt</classpathDependencyExcludes>
-                    </classpathDependencyExcludes>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>net.ltgt.gwt.maven</groupId>
@@ -306,7 +255,7 @@
                     <moduleShortName>${gwt.moduleShortname}</moduleShortName>
                     <moduleTemplate>${gwt.moduleTemplate}</moduleTemplate>
                     <optimize>${gwt.optimize}</optimize>
-                    <skipCompilation>${gwt.skipCompilation}</skipCompilation>
+                    <skipCompilation>${skip.gwt}</skipCompilation>
                     <style>${gwt.style}</style>
                 </configuration>
             </plugin>
@@ -328,75 +277,87 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>src/main/resources/org/jboss/hal/public</directory>
+                            <includes>
+                                <include>*.ico</include>
+                                <include>*.png</include>
+                            </includes>
+                        </fileset>
+                        <fileset>
+                            <directory>src/main/resources/org/jboss/hal/public/css</directory>
+                        </fileset>
+                        <fileset>
+                            <directory>src/main/resources/org/jboss/hal/public/fonts</directory>
+                        </fileset>
+                        <fileset>
+                            <directory>src/main/resources/org/jboss/hal/public/img</directory>
+                        </fileset>
+                        <fileset>
+                            <directory>src/main/resources/org/jboss/hal/public/js</directory>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>resource-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>resources</classifier>
+                            <classesDirectory>
+                                ${project.build.directory}/${project.build.finalName}/${gwt.moduleShortname}
+                            </classesDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <classpathDependencyExcludes>
+                        <classpathDependencyExcludes>com.google.guava:guava-gwt</classpathDependencyExcludes>
+                    </classpathDependencyExcludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack-gh-pages</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>${project.artifactId}</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                    <classifier>resources</classifier>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${project.build.directory}/gh-pages</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>esdoc</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>process-es6-documentation</id>
-                                <phase>generate-resources</phase>
-                                <goals>
-                                    <goal>compile</goal>
-                                </goals>
-                                <configuration>
-                                    <compilerArgs>
-                                        <arg>-proc:only</arg>
-                                        <arg>-processor</arg>
-                                        <arg>org.jboss.hal.processor.EsDocProcessor</arg>
-                                    </compilerArgs>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>com.github.eirslett</groupId>
-                        <artifactId>frontend-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>grunt-esdoc</id>
-                                <phase>generate-resources</phase>
-                                <goals>
-                                    <goal>grunt</goal>
-                                </goals>
-                                <configuration>
-                                    <arguments>esdoc</arguments>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>i18n</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>net.ltgt.gwt.maven</groupId>
-                        <artifactId>gwt-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>generate-i18n-module</id>
-                                <phase>generate-resources</phase>
-                                <goals>
-                                    <goal>generate-module</goal>
-                                </goals>
-                                <configuration>
-                                    <moduleTemplate>${project.basedir}/src/main/module-i18n.gwt.xml</moduleTemplate>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>

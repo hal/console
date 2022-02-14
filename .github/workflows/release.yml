@@ -1,0 +1,113 @@
+name: Release HAL
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+
+  deploy:
+    name: Deploy Maven Artifacts
+    runs-on: ubuntu-latest
+    env:
+      MVN: mvn --show-version --batch-mode
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v2
+      - name: Set up JDK
+        id: setup-jdk
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: maven
+      - name: Deploy
+        id: deploy
+        run: $MVN deploy -P prod,release,theme-wildfly
+
+  standalone:
+    name: Build Sandalone Console
+    needs: deploy
+    runs-on: ubuntu-latest
+    env:
+      MVN: mvn --show-version --batch-mode
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v2
+      - name: Set up JDK
+        id: setup-jdk
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: maven
+      - name: Login to Quay.io
+        id: login-to-quay-io
+        uses: docker/login-action@v1
+        with:
+          registry: quay.io
+          username: ${{ secrets.QUAY_USERNAME }}
+          password: ${{ secrets.QUAY_ROBOT_TOKEN }}
+      - name: Package
+        id: package
+        run: $MVN package --projects standalone --also-make -P native,prod,theme-hal -Dquarkus.native.container-build=true -Dquarkus.container-image.push=true -Dquarkus.container-image.image=quay.io/halconsole/hal:latest '-Dquarkus.jib.labels."org.opencontainers.image.revision"='$GITHUB_SHA
+
+  publish:
+    name: Publish to GitHub Pages
+    needs: deploy
+    runs-on: ubuntu-latest
+    env:
+      MVN: mvn --show-version --batch-mode
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v2
+      - name: Set up JDK
+        id: setup-jdk
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: maven
+      - name: Package
+        id: package
+        run: $MVN package -P prod,theme-hal
+      - name: Publish
+        id: publish
+        uses: JamesIves/github-pages-deploy-action@v4.2.3
+        with:
+          branch: gh-pages
+          folder: ./app/target/gh-pages
+          clean: true
+
+  release:
+    name: Create Release
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get Version
+        id: get-version
+        uses: battila7/get-version-action@v2.2.1
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v2
+      - name: Read Changelog
+        id: read-changelog
+        uses: mindsers/changelog-reader-action@v2
+        with:
+          path: ./CHANGELOG.md
+          version: ${{ steps.get-version.outputs.version-without-v }}
+      - name: Create Release
+        id: create-release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.get-version.outputs.version }}
+          release_name: HAL ${{ steps.get-version.outputs.version-without-v }}
+          body: ${{ steps.read-changelog.outputs.changes }}
+          draft: false
+          prerelease: false

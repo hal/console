@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.ballroom;
 
@@ -20,11 +20,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
-import elemental2.dom.Element;
-import elemental2.dom.HTMLAnchorElement;
-import elemental2.dom.HTMLElement;
-import jsinterop.annotations.JsMethod;
-import jsinterop.annotations.JsType;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.resources.Ids;
@@ -33,36 +28,70 @@ import org.jboss.hal.spi.Callback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import elemental2.dom.Element;
+import elemental2.dom.HTMLAnchorElement;
+import elemental2.dom.HTMLElement;
+import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsType;
+
 import static elemental2.dom.DomGlobal.document;
 import static java.util.stream.Collectors.toList;
 import static jsinterop.annotations.JsPackage.GLOBAL;
-import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.gwt.elemento.core.Elements.a;
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.li;
+import static org.jboss.gwt.elemento.core.Elements.span;
+import static org.jboss.gwt.elemento.core.Elements.ul;
 import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.active;
+import static org.jboss.hal.resources.CSS.badge;
+import static org.jboss.hal.resources.CSS.badgeContainerPf;
+import static org.jboss.hal.resources.CSS.clickable;
+import static org.jboss.hal.resources.CSS.containerPfNavPfVertical;
+import static org.jboss.hal.resources.CSS.containerPfNavPfVerticalWithSubMenus;
+import static org.jboss.hal.resources.CSS.listGroup;
+import static org.jboss.hal.resources.CSS.listGroupItem;
+import static org.jboss.hal.resources.CSS.listGroupItemValue;
+import static org.jboss.hal.resources.CSS.navItemPfHeader;
+import static org.jboss.hal.resources.CSS.navPfPersistentSecondary;
+import static org.jboss.hal.resources.CSS.navPfSecondaryNav;
+import static org.jboss.hal.resources.CSS.navPfSecondaryNavHal;
+import static org.jboss.hal.resources.CSS.navPfVertical;
+import static org.jboss.hal.resources.CSS.navPfVerticalHal;
+import static org.jboss.hal.resources.CSS.navPfVerticalWithSubMenus;
+import static org.jboss.hal.resources.CSS.secondaryCollapseTogglePf;
+import static org.jboss.hal.resources.CSS.secondaryNavItemPf;
+import static org.jboss.hal.resources.CSS.secondaryVisiblePf;
 
 /**
  * An element which implements the <a href="https://www.patternfly.org/patterns/vertical-with-persistent-secondary/">vertical
  * navigation</a> from PatternFly.
  *
- * <p>The vertical navigation consists of two parts:</p>
+ * <p>
+ * The vertical navigation consists of two parts:
+ * </p>
  * <ol>
  * <li>Items: The actual menu / navigation items which are child elements of the vertical navigation</li>
- * <li>Panes: The panes which are <strong>not</strong> children of the vertical navigation. The panes are typically
- * children
- * of the root container. Their visibility is controlled by the vertical navigation.</li>
+ * <li>Panes: The panes which are <strong>not</strong> children of the vertical navigation. The panes are typically children of
+ * the root container. Their visibility is controlled by the vertical navigation.</li>
  * </ol>
  *
- * <p>The vertical navigation itself is not a child but a sibling of the root container. It gets attached / detached to
- * the DOM by calling {@link #attach()} and {@link #detach()}.</p>
+ * <p>
+ * The vertical navigation itself is not a child but a sibling of the root container. It gets attached / detached to the DOM by
+ * calling {@link #attach()} and {@link #detach()}.
+ * </p>
  *
- * <p>There are two groups of methods:</p>
+ * <p>
+ * There are two groups of methods:
+ * </p>
  * <ul>
  * <li>{@code add*()}: Use these methods to add panes <strong>before</strong> the panes were added to the DOM</li>
  * <li>{@code insert*()}: Use these methods to add panes <strong>after</strong> the panes were added to the DOM</li>
  * </ul>
  *
- * @see <a href="https://www.patternfly.org/patterns/vertical-with-persistent-secondary/">https://www.patternfly.org/patterns/vertical-with-persistent-secondary/</a>
+ * @see <a href=
+ *      "https://www.patternfly.org/patterns/vertical-with-persistent-secondary/">https://www.patternfly.org/patterns/vertical-with-persistent-secondary/</a>
  */
 // TODO Simplify: Replace linked collections. The order of items and panes should not matter, only the order
 // TODO of elements in the DOM matters! This should simplify the insert*() methods.
@@ -132,7 +161,6 @@ public class VerticalNavigation implements Attachable {
         Elements.setVisible(root, false);
     }
 
-
     // ------------------------------------------------------ add primary items
 
     /**
@@ -149,17 +177,19 @@ public class VerticalNavigation implements Attachable {
     /**
      * Adds a primary navigation item to the navigation which controls the visibility of the specified element.
      * <p>
-     * Unlike similar UI elements such as {@code Tabs} the element is <strong>not</strong> added as a child of this
-     * navigation. The element should be rather a child of the root container.
+     * Unlike similar UI elements such as {@code Tabs} the element is <strong>not</strong> added as a child of this navigation.
+     * The element should be rather a child of the root container.
      *
-     * <p><strong>Please note</strong><br/>
-     * This method does <strong>not</strong> add the item to the DOM. This has to be done manually using something
-     * like</p>
+     * <p>
+     * <strong>Please note</strong><br/>
+     * This method does <strong>not</strong> add the item to the DOM. This has to be done manually using something like
+     * </p>
+     *
      * <pre>
      * HTMLElement root = row()
-     *     .add(column()
-     *         .addAll(navigation.panes()))
-     *     .get();
+     *         .add(column()
+     *                 .addAll(navigation.panes()))
+     *         .get();
      * </pre>
      */
     public VerticalNavigation addPrimary(String id, String text, String iconClass, IsElement element) {
@@ -171,16 +201,16 @@ public class VerticalNavigation implements Attachable {
     }
 
     /**
-     * Inserts a primary navigation item <em>before</em> the specified item. If {@code beforeId} is {@code null}, the
-     * item is inserted as last item. If there's not item with id {@code beforeId}, an error message is logged and no
-     * item is inserted.
+     * Inserts a primary navigation item <em>before</em> the specified item. If {@code beforeId} is {@code null}, the item is
+     * inserted as last item. If there's not item with id {@code beforeId}, an error message is logged and no item is inserted.
      * <p>
      * You must call this method <em>after</em> at least one item was added and <em>before</em> the navigation is
      * {@linkplain #attach() attached}.
      *
-     * <p><strong>Please note</strong><br/>
-     * Unlike {@link #addPrimary(String, String, String, IsElement)}, this method <strong>does</strong> add the item to
-     * the DOM.</p>
+     * <p>
+     * <strong>Please note</strong><br/>
+     * Unlike {@link #addPrimary(String, String, String, IsElement)}, this method <strong>does</strong> add the item to the DOM.
+     * </p>
      */
     public void insertPrimary(String id, String beforeId, String text, String iconClass, IsElement element) {
         insertPrimary(id, beforeId, text, iconClass, element.element());
@@ -269,23 +299,24 @@ public class VerticalNavigation implements Attachable {
         return this;
     }
 
-
     // ------------------------------------------------------ add secondary items
 
     /**
      * Adds a secondary navigation item to the navigation which controls the visibility of the specified element.
      * <p>
-     * Unlike similar UI elements such as {@code Tabs} the element is <strong>not</strong> added as a child of this
-     * navigation. The element should be rather a child of the root container.
+     * Unlike similar UI elements such as {@code Tabs} the element is <strong>not</strong> added as a child of this navigation.
+     * The element should be rather a child of the root container.
      *
-     * <p><strong>Please note</strong><br/>
-     * This method does <strong>not</strong> add the item to the DOM. This has to be done manually using something
-     * like</p>
+     * <p>
+     * <strong>Please note</strong><br/>
+     * This method does <strong>not</strong> add the item to the DOM. This has to be done manually using something like
+     * </p>
+     *
      * <pre>
      * HTMLElement root = row()
-     *     .add(column()
-     *         .addAll(navigation.panes()))
-     *     .get();
+     *         .add(column()
+     *                 .addAll(navigation.panes()))
+     *         .get();
      * </pre>
      */
     public VerticalNavigation addSecondary(String primaryId, String id, String text, HTMLElement element) {
@@ -293,16 +324,17 @@ public class VerticalNavigation implements Attachable {
     }
 
     /**
-     * Inserts a secondary navigation item <em>before</em> the specified item. If {@code beforeId} is {@code null}, the
-     * item is inserted as last item. If there's not item with id {@code beforeId}, an error message is logged and no
-     * item is inserted.
+     * Inserts a secondary navigation item <em>before</em> the specified item. If {@code beforeId} is {@code null}, the item is
+     * inserted as last item. If there's not item with id {@code beforeId}, an error message is logged and no item is inserted.
      * <p>
      * You must call this method <em>after</em> at least one item was added and <em>before</em> the navigation is
      * {@linkplain #attach() attached}.
      *
-     * <p><strong>Please note</strong><br/>
-     * Unlike {@link #addSecondary(String, String, String, HTMLElement)}, this method <strong>does</strong> add the item
-     * to the DOM.</p>
+     * <p>
+     * <strong>Please note</strong><br/>
+     * Unlike {@link #addSecondary(String, String, String, HTMLElement)}, this method <strong>does</strong> add the item to the
+     * DOM.
+     * </p>
      */
     public void insertSecondary(String primaryId, String id, String beforeId, String text, HTMLElement element) {
         Item primaryItem = items.get(primaryId);
@@ -334,7 +366,7 @@ public class VerticalNavigation implements Attachable {
 
         if (primaryItem != null) {
             HTMLElement secondaryUl = (HTMLElement) primaryItem.element()
-                    .querySelector("." + navPfSecondaryNav + " > ul." + listGroup); //NON-NLS
+                    .querySelector("." + navPfSecondaryNav + " > ul." + listGroup); // NON-NLS
 
             if (secondaryUl == null) {
                 // seems to be the first secondary item -> setup the secondary containers
@@ -347,7 +379,7 @@ public class VerticalNavigation implements Attachable {
                         .id(secondaryContainerId)
                         .add(div().css(navItemPfHeader)
                                 .add(a().css(secondaryCollapseTogglePf)
-                                        .data(UIConstants.TOGGLE, "collapse-secondary-nav")) //NON-NLS
+                                        .data(UIConstants.TOGGLE, "collapse-secondary-nav")) // NON-NLS
                                 .add(span = span().textContent(primaryItem.text).element()))
                         .add(secondaryUl = ul().css(listGroup).element()).element();
 
@@ -359,7 +391,8 @@ public class VerticalNavigation implements Attachable {
 
             HTMLElement li = li().id(id).css(listGroupItem)
                     .add(a().css(clickable).on(click, event -> show(id))
-                            .add(span().css(listGroupItemValue).textContent(text))).element();
+                            .add(span().css(listGroupItemValue).textContent(text)))
+                    .element();
 
             primaryItem.addChild(id);
             Item secondaryItem = new Item(id, primaryId, text, li);
@@ -372,7 +405,6 @@ public class VerticalNavigation implements Attachable {
         }
         return this;
     }
-
 
     // ------------------------------------------------------ misc
 
@@ -459,8 +491,8 @@ public class VerticalNavigation implements Attachable {
     }
 
     /**
-     * Returns the elements which were registered using the {@code add()} methods. Use this method to add those elements
-     * to another container.
+     * Returns the elements which were registered using the {@code add()} methods. Use this method to add those elements to
+     * another container.
      */
     public Iterable<HTMLElement> panes() {
         return panes.values().stream().map(Pane::element).collect(toList());
@@ -470,7 +502,6 @@ public class VerticalNavigation implements Attachable {
         return items.values().stream().anyMatch(item -> !item.children.isEmpty());
     }
 
-
     @JsType(isNative = true)
     static class Api {
 
@@ -479,7 +510,6 @@ public class VerticalNavigation implements Attachable {
 
         public native void setupVerticalNavigation(boolean handleItemSelections);
     }
-
 
     private static class Item implements IsElement {
 
@@ -514,7 +544,6 @@ public class VerticalNavigation implements Attachable {
             return children.iterator().next();
         }
     }
-
 
     private static class Pane implements IsElement {
 

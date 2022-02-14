@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.runtime.subsystem.messaging;
 
@@ -22,12 +22,6 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
@@ -62,6 +56,14 @@ import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.annotations.NameToken;
+import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+
 import rx.Completable;
 
 import static java.util.Collections.emptyList;
@@ -192,8 +194,8 @@ public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresen
     private void readAll() {
         ResourceAddress address = queueAddress();
         Operation operation = new Operation.Builder(address, LIST_MESSAGES).build();
-        dispatcher.execute(operation, result ->
-                getView().showAll(result.asList().stream().map(JmsMessage::new).collect(toList())));
+        dispatcher.execute(operation,
+                result -> getView().showAll(result.asList().stream().map(JmsMessage::new).collect(toList())));
     }
 
     private boolean showAll() {
@@ -208,7 +210,7 @@ public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresen
             Metadata metadata = metadataRegistry.lookup(MESSAGING_CORE_QUEUE_TEMPLATE);
             Form<ModelNode> form = new OperationFormBuilder<>(Ids.JMS_MESSAGE_CHANGE_PRIORITY_FORM, metadata,
                     CHANGE_MESSAGE_PRIORITY)
-                    .build();
+                            .build();
 
             Dialog dialog = new Dialog.Builder(resources.constants().changePriority())
                     .add(form.element())
@@ -393,7 +395,7 @@ public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresen
     private String filter(List<JmsMessage> messages) {
         return messages.stream()
                 .map(message -> JMS_MESSAGE_ID + "='" + message.getMessageId() + "'")
-                .collect(joining(" OR ")); //NON-NLS
+                .collect(joining(" OR ")); // NON-NLS
     }
 
     private ResourceAddress queueAddress() {
@@ -417,7 +419,6 @@ public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresen
         return address;
     }
 
-
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(NameTokens.JMS_QUEUE)
@@ -427,6 +428,7 @@ public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresen
 
     public interface MyView extends HalView, HasPresenter<JmsQueuePresenter> {
         void showMany(long count);
+
         void showAll(List<JmsMessage> messages);
     }
     // @formatter:on

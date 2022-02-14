@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.runtime.subsystem.messaging;
 
@@ -35,7 +35,6 @@ import org.jboss.hal.resources.Resources;
 import static java.util.Comparator.comparing;
 import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_CORE_QUEUE_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-
 
 public class JmsQueueView extends HalViewImpl implements JmsQueuePresenter.MyView {
 
@@ -61,50 +60,50 @@ public class JmsQueueView extends HalViewImpl implements JmsQueuePresenter.MyVie
         listView = new ModelNodeListView.Builder<>(Ids.JMS_MESSAGE_LIST, metadata, dataProvider,
                 item -> new JmsMessageDisplay(item, presenter, resources))
 
-                .toolbarAttribute(new Attribute<>(JMS_MESSAGE_ID, JMS_MESSAGE_ID,
-                        (model, filter) -> model.getMessageId().contains(filter),
-                        comparing(JmsMessage::getMessageId)))
-                .toolbarAttribute(new Attribute<>(JMS_TIMESTAMP, JMS_TIMESTAMP,
-                        comparing(JmsMessage::getTimestamp)))
-                .toolbarAttribute(new Attribute<>(JMS_EXPIRATION, JMS_EXPIRATION,
-                        comparing(JmsMessage::getExpiration)))
-                .toolbarAttribute(new Attribute<>(JMS_PRIORITY, JMS_PRIORITY,
-                        (model, filter) -> model.hasDefined(JMS_PRIORITY) &&
-                                model.get(JMS_PRIORITY).asString().equals(filter),
-                        comparing(JmsMessage::getPriority)))
-                .toolbarAttribute(new Attribute<>(JMS_DELIVERY_MODE, JMS_DELIVERY_MODE,
-                        (model, filter) -> model.hasDefined(JMS_DELIVERY_MODE) &&
-                                model.get(JMS_DELIVERY_MODE).asString().contains(filter),
-                        comparing(JmsMessage::getDeliveryMode)))
+                        .toolbarAttribute(new Attribute<>(JMS_MESSAGE_ID, JMS_MESSAGE_ID,
+                                (model, filter) -> model.getMessageId().contains(filter),
+                                comparing(JmsMessage::getMessageId)))
+                        .toolbarAttribute(new Attribute<>(JMS_TIMESTAMP, JMS_TIMESTAMP,
+                                comparing(JmsMessage::getTimestamp)))
+                        .toolbarAttribute(new Attribute<>(JMS_EXPIRATION, JMS_EXPIRATION,
+                                comparing(JmsMessage::getExpiration)))
+                        .toolbarAttribute(new Attribute<>(JMS_PRIORITY, JMS_PRIORITY,
+                                (model, filter) -> model.hasDefined(JMS_PRIORITY) &&
+                                        model.get(JMS_PRIORITY).asString().equals(filter),
+                                comparing(JmsMessage::getPriority)))
+                        .toolbarAttribute(new Attribute<>(JMS_DELIVERY_MODE, JMS_DELIVERY_MODE,
+                                (model, filter) -> model.hasDefined(JMS_DELIVERY_MODE) &&
+                                        model.get(JMS_DELIVERY_MODE).asString().contains(filter),
+                                comparing(JmsMessage::getDeliveryMode)))
 
-                .toolbarAction(new Toolbar.Action(Ids.JMS_MESSAGE_LIST_REFRESH, resources.constants().refresh(),
-                        this::refresh))
-                .toolbarAction(new Toolbar.Action(Ids.JMS_MESSAGE_LIST_CLEAR_SELECTION,
-                        resources.constants().clearSelection(), this::clearSelection))
-                .toolbarAction(new Toolbar.Action(Ids.JMS_MESSAGE_LIST_SELECT_ALL,
-                        resources.constants().selectAll(), this::selectAll))
-                .toolbarAction(new Toolbar.Action(Ids.JMS_MESSAGE_LIST_CHANGE_PRIORITY,
-                        resources.constants().changePriority(),
-                        Constraint.executable(MESSAGING_CORE_QUEUE_TEMPLATE, CHANGE_MESSAGES_PRIORITY),
-                        this::changePriority))
-                .toolbarAction(new Toolbar.Action(Ids.JMS_MESSAGE_LIST_EXPIRE,
-                        resources.constants().expire(),
-                        Constraint.executable(MESSAGING_CORE_QUEUE_TEMPLATE, EXPIRE_MESSAGES),
-                        this::expire))
-                .toolbarAction(new Toolbar.Action(Ids.JMS_MESSAGE_LIST_MOVE, resources.constants().move(),
-                        Constraint.executable(MESSAGING_CORE_QUEUE_TEMPLATE, MOVE_MESSAGES),
-                        this::move))
-                .toolbarAction(new Toolbar.Action(Ids.JMS_MESSAGE_LIST_SEND_TO_DEAD_LETTER,
-                        resources.constants().sendToDeadLetter(),
-                        Constraint.executable(MESSAGING_CORE_QUEUE_TEMPLATE, SEND_MESSAGES_TO_DEAD_LETTER_ADDRESS),
-                        this::sendToDeadLetter))
-                .toolbarAction(new Toolbar.Action(Ids.JMS_MESSAGE_LIST_REMOVE, resources.constants().remove(),
-                        Constraint.executable(MESSAGING_CORE_QUEUE_TEMPLATE, REMOVE_MESSAGES),
-                        this::remove))
+                        .toolbarAction(new Toolbar.Action(Ids.JMS_MESSAGE_LIST_REFRESH, resources.constants().refresh(),
+                                this::refresh))
+                        .toolbarAction(new Toolbar.Action(Ids.JMS_MESSAGE_LIST_CLEAR_SELECTION,
+                                resources.constants().clearSelection(), this::clearSelection))
+                        .toolbarAction(new Toolbar.Action(Ids.JMS_MESSAGE_LIST_SELECT_ALL,
+                                resources.constants().selectAll(), this::selectAll))
+                        .toolbarAction(new Toolbar.Action(Ids.JMS_MESSAGE_LIST_CHANGE_PRIORITY,
+                                resources.constants().changePriority(),
+                                Constraint.executable(MESSAGING_CORE_QUEUE_TEMPLATE, CHANGE_MESSAGES_PRIORITY),
+                                this::changePriority))
+                        .toolbarAction(new Toolbar.Action(Ids.JMS_MESSAGE_LIST_EXPIRE,
+                                resources.constants().expire(),
+                                Constraint.executable(MESSAGING_CORE_QUEUE_TEMPLATE, EXPIRE_MESSAGES),
+                                this::expire))
+                        .toolbarAction(new Toolbar.Action(Ids.JMS_MESSAGE_LIST_MOVE, resources.constants().move(),
+                                Constraint.executable(MESSAGING_CORE_QUEUE_TEMPLATE, MOVE_MESSAGES),
+                                this::move))
+                        .toolbarAction(new Toolbar.Action(Ids.JMS_MESSAGE_LIST_SEND_TO_DEAD_LETTER,
+                                resources.constants().sendToDeadLetter(),
+                                Constraint.executable(MESSAGING_CORE_QUEUE_TEMPLATE, SEND_MESSAGES_TO_DEAD_LETTER_ADDRESS),
+                                this::sendToDeadLetter))
+                        .toolbarAction(new Toolbar.Action(Ids.JMS_MESSAGE_LIST_REMOVE, resources.constants().remove(),
+                                Constraint.executable(MESSAGING_CORE_QUEUE_TEMPLATE, REMOVE_MESSAGES),
+                                this::remove))
 
-                .emptyState(TOO_MANY_MESSAGES, tooManyMessages)
-                .multiSelect(true)
-                .build();
+                        .emptyState(TOO_MANY_MESSAGES, tooManyMessages)
+                        .multiSelect(true)
+                        .build();
 
         registerAttachable(listView);
         initElements(listView);

@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.messaging;
 
@@ -21,10 +21,6 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.Form.FinishReset;
@@ -61,6 +57,12 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
+
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.annotations.NameToken;
+import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+
 import rx.Completable;
 
 import static java.util.Arrays.asList;
@@ -306,14 +308,14 @@ public class DestinationPresenter
 
                         series(new FlowContext(progress.get()),
                                 removeRole, readRemainingRoles, removeSecuritySetting)
-                                .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
-                                    @Override
-                                    public void onSuccess(FlowContext context) {
-                                        MessageEvent.fire(getEventBus(), Message.success(resources.messages()
-                                                .removeResourceSuccess(Names.SECURITY_SETTING, combinedName)));
-                                        reload();
-                                    }
-                                });
+                                        .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
+                                            @Override
+                                            public void onSuccess(FlowContext context) {
+                                                MessageEvent.fire(getEventBus(), Message.success(resources.messages()
+                                                        .removeResourceSuccess(Names.SECURITY_SETTING, combinedName)));
+                                                reload();
+                                            }
+                                        });
                     });
 
         } else {
@@ -321,25 +323,29 @@ public class DestinationPresenter
         }
     }
 
-
     // @formatter:off
     @ProxyCodeSplit
-    @Requires({ADDRESS_SETTING_ADDRESS,
+    @Requires({ ADDRESS_SETTING_ADDRESS,
             CORE_QUEUE_ADDRESS,
             DIVERT_ADDRESS,
             JMS_QUEUE_ADDRESS,
             JMS_TOPIC_ADDRESS,
-            SECURITY_SETTING_ADDRESS})
+            SECURITY_SETTING_ADDRESS })
     @NameToken(NameTokens.MESSAGING_SERVER_DESTINATION)
     public interface MyProxy extends ProxyPlace<DestinationPresenter> {
     }
 
     public interface MyView extends MbuiView<DestinationPresenter> {
         void updateCoreQueue(List<NamedNode> coreQueues);
+
         void updateJmsQueue(List<NamedNode> jmsQueues);
+
         void updateJmsTopic(List<NamedNode> jmsTopics);
+
         void updateSecuritySetting(List<NamedNode> securitySettings);
+
         void updateAddressSetting(List<NamedNode> addressSettings);
+
         void updateDivert(List<NamedNode> diverts);
     }
     // @formatter:on

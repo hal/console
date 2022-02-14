@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.ballroom;
 
@@ -19,10 +19,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.resources.Constants;
@@ -30,6 +26,11 @@ import org.jboss.hal.resources.Messages;
 import org.jboss.hal.resources.Names;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.ballroom.HelpTextBuilder.RestartMode.ALL_SERVICES;
@@ -39,18 +40,15 @@ import static org.jboss.hal.ballroom.HelpTextBuilder.RestartMode.UNKNOWN;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 /**
- * Class to build a help text from an attribute description. Besides the description itself includes information about
- * an optional capability reference, whether an attribute is required, supports expressions or needs some kind of
- * restart after modification.
+ * Class to build a help text from an attribute description. Besides the description itself includes information about an
+ * optional capability reference, whether an attribute is required, supports expressions or needs some kind of restart after
+ * modification.
  */
 public class HelpTextBuilder {
 
     enum RestartMode {
-        ALL_SERVICES(CONSTANTS.restartAllServices()),
-        JVM(CONSTANTS.restartJvm()),
-        NO_SERVICES(CONSTANTS.restartNoServices()),
-        RESOURCE_SERVICES(CONSTANTS.restartResourceServices()),
-        UNKNOWN(Names.UNKNOWN);
+        ALL_SERVICES(CONSTANTS.restartAllServices()), JVM(CONSTANTS.restartJvm()), NO_SERVICES(
+                CONSTANTS.restartNoServices()), RESOURCE_SERVICES(CONSTANTS.restartResourceServices()), UNKNOWN(Names.UNKNOWN);
 
         private final String description;
 
@@ -62,7 +60,6 @@ public class HelpTextBuilder {
             return description;
         }
     }
-
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final Messages MESSAGES = GWT.create(Messages.class);
@@ -85,7 +82,8 @@ public class HelpTextBuilder {
             logger.warn("Unknown restart mode in attribute description for '{}': '{}'", property.getName(),
                     attribute.get(RESTART_REQUIRED).asString());
         }
-        boolean showRestartHelp = (restartMode == ALL_SERVICES || restartMode == RestartMode.JVM || restartMode == RESOURCE_SERVICES);
+        boolean showRestartHelp = (restartMode == ALL_SERVICES || restartMode == RestartMode.JVM
+                || restartMode == RESOURCE_SERVICES);
 
         SafeHtml desc = SafeHtmlUtils.fromSafeConstant(attribute.get(DESCRIPTION).asString());
         help.append(desc);

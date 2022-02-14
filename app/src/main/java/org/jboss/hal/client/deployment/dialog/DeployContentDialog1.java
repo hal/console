@@ -1,26 +1,23 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.deployment.dialog;
 
 import java.util.List;
 import java.util.Set;
 
-import com.google.gwt.safehtml.shared.SafeHtml;
-import elemental2.dom.HTMLElement;
-import elemental2.dom.HTMLInputElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.dialog.Dialog;
@@ -35,6 +32,11 @@ import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+
+import com.google.gwt.safehtml.shared.SafeHtml;
+
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLInputElement;
 
 import static java.util.Comparator.naturalOrder;
 import static java.util.stream.Collectors.toList;
@@ -68,7 +70,7 @@ public class DeployContentDialog1 {
     private DeployContentDialog1(Content content, Set<String> serverGroups, Resources resources,
             DeployCallback deployCallback, UndeployCallback undeployCallback) {
         this.content = content;
-        //noinspection Convert2MethodRef - do not replace w/ method reference. GWT compiler will blow up
+        // noinspection Convert2MethodRef - do not replace w/ method reference. GWT compiler will blow up
         this.serverGroups = serverGroups.stream()
                 .sorted(naturalOrder())
                 .map((serverGroup) -> new ServerGroup(serverGroup))
@@ -89,8 +91,9 @@ public class DeployContentDialog1 {
         table = new DataTable<>(Ids.SERVER_GROUP_DEPLOYMENT_TABLE, options);
 
         SafeHtml description = deployCallback != null ? resources.messages()
-                .chooseServerGroupsToDeploy(content.getName()) : resources.messages()
-                .chooseServerGroupsToUndeploy(content.getName());
+                .chooseServerGroupsToDeploy(content.getName())
+                : resources.messages()
+                        .chooseServerGroupsToUndeploy(content.getName());
 
         Iterable<HTMLElement> elements = collect()
                 .add(div().add(noServerGroupSelected))
@@ -100,10 +103,13 @@ public class DeployContentDialog1 {
                         .add(enable = input(checkbox).id(Ids.SERVER_GROUP_DEPLOYMENT_ENABLE).element())
                         .add(label().css(CSS.marginLeft5)
                                 .apply(l -> l.htmlFor = Ids.SERVER_GROUP_DEPLOYMENT_ENABLE)
-                                .textContent(resources.constants().enableDeployment())).element()).elements();
+                                .textContent(resources.constants().enableDeployment()))
+                        .element())
+                .elements();
 
-        String title = deployCallback != null ? resources.constants().deployContent() : resources.constants()
-                .undeployContent();
+        String title = deployCallback != null ? resources.constants().deployContent()
+                : resources.constants()
+                        .undeployContent();
         String primary = deployCallback != null ? resources.constants().deploy() : resources.constants().undeploy();
         dialog = new Dialog.Builder(title)
                 .add(elements)
@@ -137,20 +143,17 @@ public class DeployContentDialog1 {
         SwitchBridge.Api.element(enable).setValue(true);
     }
 
-
     @FunctionalInterface
     public interface DeployCallback {
 
         void deploy(Content content, List<String> serverGroups, boolean enable);
     }
 
-
     @FunctionalInterface
     public interface UndeployCallback {
 
         void undeploy(Content content, List<String> serverGroups);
     }
-
 
     private static class ServerGroup {
 

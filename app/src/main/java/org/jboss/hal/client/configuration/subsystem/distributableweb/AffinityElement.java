@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.distributableweb;
 
@@ -19,8 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import elemental2.dom.HTMLElement;
-import elemental2.dom.HTMLSelectElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
@@ -36,6 +34,9 @@ import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLSelectElement;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.*;
@@ -69,7 +70,8 @@ class AffinityElement implements IsElement<HTMLElement>, Attachable, HasPresente
         affinityForms = new HashMap<>();
 
         // hotrod session mgmt doesn't support the full range of affinities
-        values = sessionManagement == SessionManagement.INFINISPAN ? Affinity.values() : new Affinity[]{Affinity.LOCAL, Affinity.NONE, Affinity.UNDEFINED};
+        values = sessionManagement == SessionManagement.INFINISPAN ? Affinity.values()
+                : new Affinity[] { Affinity.LOCAL, Affinity.NONE, Affinity.UNDEFINED };
 
         selectAffinityId = Ids.build("dw", sessionManagement.type, AFFINITY, "select");
         selectAffinity = affinitySelect();
@@ -79,12 +81,13 @@ class AffinityElement implements IsElement<HTMLElement>, Attachable, HasPresente
             if (affinity == Affinity.UNDEFINED) {
                 continue;
             }
-            Metadata metadata = metadataRegistry.lookup(sessionManagement.template.append(AddressTemplates.AFFINITY_TEMPLATE.replaceWildcards(affinity.resource)));
+            Metadata metadata = metadataRegistry.lookup(
+                    sessionManagement.template.append(AddressTemplates.AFFINITY_TEMPLATE.replaceWildcards(affinity.resource)));
             Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(affinity.baseId, Ids.FORM),
                     metadata)
-                    .onSave((f, changedValues) -> presenter.saveAffinity(affinity, changedValues))
-                    .prepareReset(f -> presenter.resetAffinity(affinity, f))
-                    .build();
+                            .onSave((f, changedValues) -> presenter.saveAffinity(affinity, changedValues))
+                            .prepareReset(f -> presenter.resetAffinity(affinity, f))
+                            .build();
             Elements.setVisible(form.element(), false);
             affinityForms.put(affinity, form);
         }
@@ -142,7 +145,7 @@ class AffinityElement implements IsElement<HTMLElement>, Attachable, HasPresente
     private void autoWidth(HTMLElement element) {
         HTMLElement select = (HTMLElement) element.querySelector("." + btnGroup + "." + bootstrapSelect);
         if (select != null) {
-            select.style.width = width("auto"); //NON-NLS
+            select.style.width = width("auto"); // NON-NLS
         }
     }
 

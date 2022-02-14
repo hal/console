@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.ballroom.table;
 
@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gwt.core.client.GWT;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.config.Settings;
 import org.jboss.hal.meta.security.Constraint;
@@ -28,6 +27,8 @@ import org.jboss.hal.meta.security.Constraints;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
+
+import com.google.gwt.core.client.GWT;
 
 import static java.util.Collections.singletonList;
 import static org.jboss.hal.config.Settings.Key.PAGE_SIZE;
@@ -151,8 +152,8 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
     }
 
     /**
-     * Adds several column actions. If the list contains more than one action, it's assumed that this is the last
-     * column (the {@code colspan} attribute is adjusted for the last table header)
+     * Adds several column actions. If the list contains more than one action, it's assumed that this is the last column (the
+     * {@code colspan} attribute is adjusted for the last table header)
      */
     public B column(List<InlineAction<T>> inlineActions, String width) {
         assertNoOptions();
@@ -172,12 +173,12 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
             Column<T> column = new ColumnBuilder<T>(Ids.build(Ids.INLINE_ACTION, Ids.uniqueId()),
                     CONSTANTS.actions(),
                     (cell, type, row, meta) -> "<div class=\"" + tableViewHalBtn + "\">" + buttons + "</div>")
-                    .className(tableViewHalActions)
-                    .orderable(false)
-                    .searchable(false)
-                    .safeHtml()
-                    .width(width)
-                    .build();
+                            .className(tableViewHalActions)
+                            .orderable(false)
+                            .searchable(false)
+                            .safeHtml()
+                            .width(width)
+                            .build();
             columns.add(column);
         }
 
@@ -191,7 +192,7 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
         checkboxColumn.orderable = false;
         checkboxColumn.className = selectCheckbox;
         checkboxColumn.render = (cell, type, row, meta) -> null;
-        checkboxColumn.width = "40px"; //NON-NLS
+        checkboxColumn.width = "40px"; // NON-NLS
         return column(checkboxColumn);
     }
 
@@ -223,7 +224,7 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
         return that();
     }
 
-    @SuppressWarnings({"HardCodedStringLiteral", "unchecked"})
+    @SuppressWarnings({ "HardCodedStringLiteral", "unchecked" })
     public Options<T> options() {
         if (options != null) {
             return options;

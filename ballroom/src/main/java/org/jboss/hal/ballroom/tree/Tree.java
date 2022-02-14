@@ -1,26 +1,27 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.ballroom.tree;
+
+import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.hal.ballroom.Attachable;
+import org.jboss.hal.ballroom.JsCallback;
 
 import elemental2.core.JsArray;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLElement;
-import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.hal.ballroom.Attachable;
-import org.jboss.hal.ballroom.JsCallback;
 
 import static elemental2.dom.DomGlobal.document;
 import static org.jboss.gwt.elemento.core.Elements.div;
@@ -46,7 +47,7 @@ public class Tree<T> implements IsElement, Attachable {
         this.options = initOptions();
         this.options.core.data = (DataFunction<T>) (node, callback) -> {
             if (ROOT_NODE.equals(node.id)) {
-                Node<T>[] rootNodes = new Node[]{root};
+                Node<T>[] rootNodes = new Node[] { root };
                 callback.result(rootNodes);
             } else {
                 data.load(node, callback);
@@ -55,8 +56,8 @@ public class Tree<T> implements IsElement, Attachable {
     }
 
     /**
-     * Creates a tree and populates the tree with the specified nodes. This expects all nodes at construction time and
-     * does not load nodes on demand.
+     * Creates a tree and populates the tree with the specified nodes. This expects all nodes at construction time and does not
+     * load nodes on demand.
      * <p>
      * If you use this constructor you must ensure that {@code T} can be turned into JSON.
      */
@@ -73,13 +74,13 @@ public class Tree<T> implements IsElement, Attachable {
         options.core.animation = false;
         options.core.multiple = false;
         options.core.themes = new Options.Themes();
-        options.core.themes.name = "hal"; //NON-NLS
+        options.core.themes.name = "hal"; // NON-NLS
         options.core.themes.dots = false;
         options.core.themes.icons = true;
         options.core.themes.responsive = true;
         options.core.themes.striped = false;
         options.core.themes.url = false;
-        options.plugins = new String[]{"search", "wholerow"}; //NON-NLS
+        options.plugins = new String[] { "search", "wholerow" }; // NON-NLS
         return options;
     }
 
@@ -89,10 +90,9 @@ public class Tree<T> implements IsElement, Attachable {
     }
 
     /**
-     * Initialized the {@link org.jboss.hal.ballroom.tree.Api} instance using the {@link
-     * org.jboss.hal.ballroom.tree.Options} given at constructor argument. Make sure to call
-     * this method before using any of the API methods. It's safe to call the methods multiple times (the
-     * initialization will happen only once).
+     * Initialized the {@link org.jboss.hal.ballroom.tree.Api} instance using the {@link org.jboss.hal.ballroom.tree.Options}
+     * given at constructor argument. Make sure to call this method before using any of the API methods. It's safe to call the
+     * methods multiple times (the initialization will happen only once).
      */
     @Override
     public void attach() {
@@ -111,7 +111,6 @@ public class Tree<T> implements IsElement, Attachable {
         return bridge;
     }
 
-
     private Api<T> api() {
         if (bridge == null || api == null) {
             throw unattached();
@@ -123,7 +122,6 @@ public class Tree<T> implements IsElement, Attachable {
         return new IllegalStateException(
                 "Tree('" + id + "') is not attached. Call Tree.attach() before using any of the API methods!");
     }
-
 
     // ------------------------------------------------------ methods
 
@@ -171,7 +169,6 @@ public class Tree<T> implements IsElement, Attachable {
     public void clearSearch() {
         api().clear_search();
     }
-
 
     // ------------------------------------------------------ events
 

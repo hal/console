@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.distributableweb;
 
@@ -22,10 +22,6 @@ import java.util.Objects;
 
 import javax.inject.Inject;
 
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
@@ -53,6 +49,11 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
+
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.annotations.NameToken;
+import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
 import static org.jboss.hal.client.configuration.subsystem.distributableweb.AddressTemplates.DISTRIBUTABLE_WEB_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -217,13 +218,13 @@ public class DistributableWebPresenter
     }
 
     private AddressTemplate affinityTemplate(ManagementAffinity mgmtAffinity) {
-        return mgmtAffinity.getMgmt().template.append(AddressTemplates.AFFINITY_TEMPLATE.replaceWildcards(mgmtAffinity.getAffinity().resource));
+        return mgmtAffinity.getMgmt().template
+                .append(AddressTemplates.AFFINITY_TEMPLATE.replaceWildcards(mgmtAffinity.getAffinity().resource));
     }
 
     private ResourceAddress affinityAddress(ManagementAffinity mgmtAffinity) {
         return affinityTemplate(mgmtAffinity).resolve(statementContext, mgmtAffinity.getMgmtName());
     }
-
 
     // @formatter:off
     @ProxyCodeSplit
@@ -234,10 +235,15 @@ public class DistributableWebPresenter
 
     public interface MyView extends MbuiView<DistributableWebPresenter> {
         void updateConfiguration(ModelNode node);
+
         void updateRouting(Routing routing, ModelNode node);
+
         void updateHotRodSessionManagement(List<NamedNode> nodes);
+
         void updateHotRodSSOManagement(List<NamedNode> nodes);
+
         void updateInfinispanSessionManagement(List<NamedNode> nodes);
+
         void updateInfinispanSSOManagement(List<NamedNode> nodes);
     }
     // @formatter:on

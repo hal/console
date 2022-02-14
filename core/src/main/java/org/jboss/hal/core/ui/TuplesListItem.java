@@ -1,23 +1,26 @@
 /*
- * Copyright 2021 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.core.ui;
 
-import com.google.gwt.core.client.GWT;
-import elemental2.dom.HTMLElement;
-import elemental2.dom.HTMLInputElement;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.form.ModelNodeItem;
 import org.jboss.hal.ballroom.form.TagsItem;
@@ -30,24 +33,40 @@ import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Messages;
 
+import com.google.gwt.core.client.GWT;
+
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLInputElement;
+
 import static java.util.Collections.emptyList;
-import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.gwt.elemento.core.Elements.button;
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.i;
+import static org.jboss.gwt.elemento.core.Elements.input;
+import static org.jboss.gwt.elemento.core.Elements.label;
 import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.gwt.elemento.core.InputType.checkbox;
-import static org.jboss.hal.ballroom.form.Decoration.*;
+import static org.jboss.hal.ballroom.form.Decoration.DEFAULT;
+import static org.jboss.hal.ballroom.form.Decoration.DEPRECATED;
+import static org.jboss.hal.ballroom.form.Decoration.ENABLED;
+import static org.jboss.hal.ballroom.form.Decoration.INVALID;
+import static org.jboss.hal.ballroom.form.Decoration.REQUIRED;
+import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
+import static org.jboss.hal.ballroom.form.Decoration.SUGGESTIONS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NILLABLE;
-import static org.jboss.hal.resources.CSS.*;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.stream.Collectors;
+import static org.jboss.hal.resources.CSS.btn;
+import static org.jboss.hal.resources.CSS.btnDefault;
+import static org.jboss.hal.resources.CSS.controlLabel;
+import static org.jboss.hal.resources.CSS.fontAwesome;
+import static org.jboss.hal.resources.CSS.formGroup;
+import static org.jboss.hal.resources.CSS.halFormInput;
+import static org.jboss.hal.resources.CSS.halFormLabel;
 
 /**
  * Form item which is used for some attributes which are defined as
+ *
  * <pre>
  * "attribute-name" => {
  *     "type" => LIST,
@@ -68,6 +87,7 @@ public class TuplesListItem extends TagsItem<ModelNode> implements ModelNodeItem
         this(name, label, metadata, createButton(), new TuplesListMapping(metadata));
     }
 
+    @SuppressWarnings("unchecked")
     private TuplesListItem(String name, String label, Metadata metadata, HTMLElement addButton, TuplesListMapping mapping) {
         super(name, label, MESSAGES.tuplesHint(String.join(",", getAttributeNames(metadata, true))),
                 EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED, SUGGESTIONS),
@@ -113,7 +133,9 @@ public class TuplesListItem extends TagsItem<ModelNode> implements ModelNodeItem
     public static String[] getAttributeNames(Metadata metadata, boolean markRequired) {
         return metadata.getDescription().get(ATTRIBUTES).asPropertyList().stream()
                 .map(prop -> prop.getName()
-                        + (markRequired && prop.getValue().hasDefined(NILLABLE) && !prop.getValue().get(NILLABLE).asBoolean() ? "*" : ""))
+                        + (markRequired && prop.getValue().hasDefined(NILLABLE) && !prop.getValue().get(NILLABLE).asBoolean()
+                                ? "*"
+                                : ""))
                 .toArray(String[]::new);
     }
 
@@ -187,7 +209,7 @@ public class TuplesListItem extends TagsItem<ModelNode> implements ModelNodeItem
 
         private ModelNode stringToTuple(String tag) {
             ModelNode tuple = new ModelNode();
-            String[] attrValues = tag.split(SEPARATOR,-1);
+            String[] attrValues = tag.split(SEPARATOR, -1);
             for (int i = 0; i < attributeNames.length; i++) {
                 if (!attrValues[i].isEmpty()) {
                     tuple.get(attributeNames[i]).set(attrValues[i]);

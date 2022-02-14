@@ -1,46 +1,59 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.ballroom.autocomplete;
 
-import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
-import org.jboss.hal.dmr.*;
+import java.util.List;
+
+import org.jboss.hal.dmr.Composite;
+import org.jboss.hal.dmr.CompositeResult;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.Property;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.js.JsonObject;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 
-import java.util.List;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 
 import static java.util.Collections.singleton;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES_ONLY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_ALIASES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_DEFAULTS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROXIES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 
 public class ReadChildrenAutoComplete extends AutoComplete {
 
     private static final String ERROR_MESSAGE = "Unable to read child resource suggestions for {}: {}";
 
     public ReadChildrenAutoComplete(Dispatcher dispatcher, StatementContext statementContext,
-                                    AddressTemplate template) {
+            AddressTemplate template) {
         this(dispatcher, statementContext, singleton(template));
     }
 
     public ReadChildrenAutoComplete(Dispatcher dispatcher, StatementContext statementContext,
-                                    Iterable<AddressTemplate> templates) {
+            Iterable<AddressTemplate> templates) {
         verifyTemplates(templates);
 
         ResultProcessor resultProcessor;
@@ -97,8 +110,8 @@ public class ReadChildrenAutoComplete extends AutoComplete {
                                 });
                     }
                 })
-                .renderItem(itemRenderer)
-                .build();
+                        .renderItem(itemRenderer)
+                        .build();
         init(options);
     }
 

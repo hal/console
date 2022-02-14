@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.messaging;
 
@@ -20,7 +20,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.Tabs;
@@ -36,6 +35,8 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import elemental2.dom.HTMLElement;
 
 import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
@@ -186,12 +187,12 @@ public class HaPolicyView extends HalViewImpl implements HaPolicyPresenter.MyVie
             if (haPolicy.master != null && policyForms.containsKey(haPolicy.master)) {
                 currentMasterForm = policyForms.get(haPolicy.master);
                 currentMasterForm.attach();
-                currentMasterForm.view(failSafeGet(modelNode, "configuration/master")); //NON-NLS
+                currentMasterForm.view(failSafeGet(modelNode, "configuration/master")); // NON-NLS
             }
             if (haPolicy.slave != null && policyForms.containsKey(haPolicy.slave)) {
                 currentSlaveForm = policyForms.get(haPolicy.slave);
                 currentSlaveForm.attach();
-                currentSlaveForm.view(failSafeGet(modelNode, "configuration/slave")); //NON-NLS
+                currentSlaveForm.view(failSafeGet(modelNode, "configuration/slave")); // NON-NLS
             }
 
         } else {

@@ -1,25 +1,27 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.ballroom;
 
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.flow.Progress;
+
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+
+import elemental2.dom.HTMLElement;
 
 import static elemental2.dom.DomGlobal.setTimeout;
 import static java.lang.Math.min;
@@ -42,11 +44,9 @@ public class ProgressElement implements IsElement, Progress {
         }
     }
 
-
     public enum Label {
         NONE, INLINE, LEFT
     }
-
 
     private static final String ARIA_VALUENOW = "aria-valuenow";
 
@@ -68,7 +68,7 @@ public class ProgressElement implements IsElement, Progress {
         determinate = true;
         root = div().css(progress)
                 .add(progressBarElement = div().css(progressBar)
-                        .attr(ROLE, "progress-bar") //NON-NLS
+                        .attr(ROLE, "progress-bar") // NON-NLS
                         .aria("valuenow", "0")
                         .aria("valuemin", "0")
                         .aria("valuemax", "100")
@@ -106,7 +106,7 @@ public class ProgressElement implements IsElement, Progress {
             progressBarElement.classList.remove(active);
             progressBarElement.setAttribute(ARIA_VALUENOW, "0");
             if (reverse) {
-                progressBarElement.style.width = width("100%"); //NON-NLS
+                progressBarElement.style.width = width("100%"); // NON-NLS
             } else {
                 progressBarElement.style.width = width(0);
             }

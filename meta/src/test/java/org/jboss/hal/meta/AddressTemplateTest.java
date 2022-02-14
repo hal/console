@@ -1,5 +1,19 @@
+/*
+ *  Copyright 2022 Red Hat
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.jboss.hal.meta;
-
 
 import java.util.List;
 
@@ -220,26 +234,26 @@ public class AddressTemplateTest {
     public void resolve() {
         AddressTemplate at = AddressTemplate.of("{a}/b={c}");
         ResourceAddress resolved = at.resolve(StatementContext.NOOP);
-        assertResolved(new String[][]{{"a", "a"}, {"b", "c"}}, resolved);
+        assertResolved(new String[][] { { "a", "a" }, { "b", "c" } }, resolved);
     }
 
     @Test
     public void resolveWildcards() {
         AddressTemplate at = AddressTemplate.of("a=*/c=*");
         ResourceAddress resolved = at.resolve(StatementContext.NOOP);
-        assertResolved(new String[][]{{"a", "*"}, {"c", "*"}}, resolved);
+        assertResolved(new String[][] { { "a", "*" }, { "c", "*" } }, resolved);
 
         resolved = at.resolve(StatementContext.NOOP, (String[]) null);
-        assertResolved(new String[][]{{"a", "*"}, {"c", "*"}}, resolved);
+        assertResolved(new String[][] { { "a", "*" }, { "c", "*" } }, resolved);
 
         resolved = at.resolve(StatementContext.NOOP, "b");
-        assertResolved(new String[][]{{"a", "b"}, {"c", "*"}}, resolved);
+        assertResolved(new String[][] { { "a", "b" }, { "c", "*" } }, resolved);
 
         resolved = at.resolve(StatementContext.NOOP, "b", "d");
-        assertResolved(new String[][]{{"a", "b"}, {"c", "d"}}, resolved);
+        assertResolved(new String[][] { { "a", "b" }, { "c", "d" } }, resolved);
 
         resolved = at.resolve(StatementContext.NOOP, "b", "d", "foo");
-        assertResolved(new String[][]{{"a", "b"}, {"c", "d"}}, resolved);
+        assertResolved(new String[][] { { "a", "b" }, { "c", "d" } }, resolved);
     }
 
     @Test

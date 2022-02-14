@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.core;
 
@@ -28,7 +28,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Function;
 
-import com.google.common.base.Strings;
 import org.jboss.hal.core.expression.Expression;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.ModelNode;
@@ -40,6 +39,8 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
 
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.groupingBy;
@@ -72,8 +73,8 @@ public class OperationFactory {
     }
 
     /**
-     * Creates a new instance with the specified name function. Use this constructor if you want to create change sets
-     * for complex attributes and need to adopt the {@code NAME} parameters of the DMR operations.
+     * Creates a new instance with the specified name function. Use this constructor if you want to create change sets for
+     * complex attributes and need to adopt the {@code NAME} parameters of the DMR operations.
      *
      * @param nameFn function which is applied to the {@code NAME} parameter of the operations created by this class.
      */
@@ -82,16 +83,16 @@ public class OperationFactory {
     }
 
     /**
-     * Turns a change-set into a composite operation containing {@linkplain org.jboss.hal.dmr.ModelDescriptionConstants#WRITE_ATTRIBUTE_OPERATION
-     * write-attribute} and {@linkplain org.jboss.hal.dmr.ModelDescriptionConstants#UNDEFINE_ATTRIBUTE_OPERATION
-     * undefine-attribute} operations.
+     * Turns a change-set into a composite operation containing
+     * {@linkplain org.jboss.hal.dmr.ModelDescriptionConstants#WRITE_ATTRIBUTE_OPERATION write-attribute} and
+     * {@linkplain org.jboss.hal.dmr.ModelDescriptionConstants#UNDEFINE_ATTRIBUTE_OPERATION undefine-attribute} operations.
      * <p>
      * The composite operation will contain {@linkplain org.jboss.hal.dmr.ModelDescriptionConstants#UNDEFINE_ATTRIBUTE_OPERATION
      * undefine-attribute} operations which reflect the alternative attributes as defined in the specified metadata.
      *
-     * @param address   the fq address used for the operations
+     * @param address the fq address used for the operations
      * @param changeSet the changed values
-     * @param metadata  the metadata which should contain the attribute definitions of the change-set
+     * @param metadata the metadata which should contain the attribute definitions of the change-set
      */
     public Composite fromChangeSet(ResourceAddress address, Map<String, Object> changeSet,
             Metadata metadata) {
@@ -188,23 +189,23 @@ public class OperationFactory {
 
         // handle the remaining attributes
         logger.debug("Process remaining attributes [{}]", String.join(", ", localChanges.keySet()));
-        localChanges.forEach((name, value) ->
-                operations.putIfAbsent(name, writeAttribute(address, name, value, resourceDescription, false)));
+        localChanges.forEach((name, value) -> operations.putIfAbsent(name,
+                writeAttribute(address, name, value, resourceDescription, false)));
         return new Composite(operations.values().stream().filter(Objects::nonNull).collect(toList()));
     }
 
     /**
-     * Creates a composite operation which resets the attributes of the specified resource. Only attributes which are
-     * nillable, w/o alternatives and not read-only will be reset. The composite contains {@linkplain
-     * org.jboss.hal.dmr.ModelDescriptionConstants#UNDEFINE_ATTRIBUTE_OPERATION undefine-attribute} operations for each
-     * attribute of type {@code EXPRESSION, LIST, OBJECT, PROPERTY} or {@code STRING} and {@linkplain
-     * org.jboss.hal.dmr.ModelDescriptionConstants#WRITE_ATTRIBUTE_OPERATION write-attribute} operations for attributes
-     * of type {@code BIG_DECIMAL, BIG_INTEGER, BOOLEAN, BYTES, DOUBLE, INT} or {@code LONG} if they have a default
+     * Creates a composite operation which resets the attributes of the specified resource. Only attributes which are nillable,
+     * w/o alternatives and not read-only will be reset. The composite contains
+     * {@linkplain org.jboss.hal.dmr.ModelDescriptionConstants#UNDEFINE_ATTRIBUTE_OPERATION undefine-attribute} operations for
+     * each attribute of type {@code EXPRESSION, LIST, OBJECT, PROPERTY} or {@code STRING} and
+     * {@linkplain org.jboss.hal.dmr.ModelDescriptionConstants#WRITE_ATTRIBUTE_OPERATION write-attribute} operations for
+     * attributes of type {@code BIG_DECIMAL, BIG_INTEGER, BOOLEAN, BYTES, DOUBLE, INT} or {@code LONG} if they have a default
      * value.
      *
-     * @param address    the fq address used for the operations
+     * @param address the fq address used for the operations
      * @param attributes the attributes to reset
-     * @param metadata   the metadata which should contain the attribute definitions of the change-set
+     * @param metadata the metadata which should contain the attribute definitions of the change-set
      * @return a composite to reset the attributes or an empty composite if no attributes could be reset.
      */
     Composite resetResource(ResourceAddress address, Set<String> attributes,
@@ -220,10 +221,9 @@ public class OperationFactory {
             ModelNode attributeDescription = attributesDescription.get(attribute);
             if (attributeDescription != null && attributeDescription.hasDefined(REQUIRES)) {
                 failSafeList(attributeDescription, REQUIRES).forEach(node -> requires.add(node.asString()));
-                        /*.map(ModelNode::asString)
-                        .forEach(requiresName -> {
-                            requires.add(requiresName);
-                        });*/
+                /*
+                 * .map(ModelNode::asString) .forEach(requiresName -> { requires.add(requiresName); });
+                 */
             }
         });
 

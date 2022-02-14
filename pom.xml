@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright 2015-2016 Red Hat, Inc, and individual contributors.
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~ https://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
+
+     Copyright 2022 Red Hat
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+         https://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -27,17 +29,25 @@
 
     <groupId>org.jboss.hal</groupId>
     <artifactId>hal-parent</artifactId>
-    <version>3.4.4.Final</version>
-    <name>HAL :: Parent :: Aggregator</name>
-    <description>The WildFly / EAP management console</description>
+    <version>3.5.0.Final</version>
     <packaging>pom</packaging>
+    <name>HAL :: Parent</name>
+    <description>The WildFly / EAP management console</description>
     <url>https://hal.github.io/</url>
+    <inceptionYear>2022</inceptionYear>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
     <organization>
-        <name>JBoss, a division of Red Hat</name>
-        <url>https://developer.jboss.org/</url>
+        <name>Red Hat</name>
+        <url>https://developers.redhat.com/</url>
     </organization>
-
     <developers>
         <developer>
             <name>Harald Pehl</name>
@@ -58,33 +68,72 @@
         </developer>
     </developers>
 
-    <licenses>
-        <license>
-            <name>Apache License 2.0</name>
-            <url>https://repository.jboss.org/licenses/apache-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-        <license>
-            <name>MIT License</name>
-            <url>https://repository.jboss.org/licenses/mit.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
     <scm>
-        <connection>scm:git@github.com:hal/console.git</connection>
-        <developerConnection>scm:git:git@github.com:hal/console.git</developerConnection>
-        <url>git@github.com:hal/console.git</url>
+        <connection>scm:git:${repo.scm.connection}</connection>
+        <developerConnection>scm:git:${repo.scm.connection}</developerConnection>
+        <url>${repo.scm.url}</url>
+        <tag>HEAD</tag>
     </scm>
-
     <issueManagement>
         <system>jira</system>
         <url>https://issues.jboss.org/browse/HAL</url>
     </issueManagement>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 
     <properties>
-        <!-- settings -->
-        <github.global.server>github</github.global.server>
+        <!-- Dependency versions -->
+        <version.checkstyle.config>1.0.8.Final</version.checkstyle.config>
+        <version.auto.service>1.0-rc4</version.auto.service>
+        <version.apt.tools>0.0.3</version.apt.tools>
+        <version.compile.testing>0.19</version.compile.testing>
+        <version.elemental>1.0.0-RC1</version.elemental>
+        <version.elemento>0.9.6-gwt2</version.elemento>
+        <version.gin>2.1.2</version.gin>
+        <version.guava>25.0-jre</version.guava>
+        <version.gwt>2.8.2</version.gwt>
+        <version.gwtp>1.6</version.gwtp>
+        <version.javax.enterprise>1.2</version.javax.enterprise>
+        <version.javax.inject>1</version.javax.inject>
+        <version.jaxen>1.2.0</version.jaxen>
+        <version.jboss.dmr>1.6.1.Final</version.jboss.dmr>
+        <version.jdom>2.0.2</version.jdom>
+        <version.junit>4.13.1</version.junit>
+        <version.mockito>2.18.3</version.mockito>
+        <version.node>v8.16.0</version.node>
+        <version.npm>6.9.0</version.npm>
+        <version.quarkus>2.7.1.Final</version.quarkus>
+        <version.rx.gwt>0.4</version.rx.gwt>
+        <version.slf4j>1.7.25</version.slf4j>
+        <version.slf4j.gwt>1.7.7.1</version.slf4j.gwt>
+        <version.validation>1.0.0.GA</version.validation>
+
+        <!-- Plugin versions -->
+        <version.build.helper.plugin>3.3.0</version.build.helper.plugin>
+        <version.checkstyle.plugin>3.1.1</version.checkstyle.plugin>
+        <version.degraph.plugin>3.3.1</version.degraph.plugin>
+        <version.enforcer.plugin>3.0.0-M3</version.enforcer.plugin>
+        <version.formatter.plugin>2.17.0</version.formatter.plugin>
+        <version.frontend.plugin>1.12.1</version.frontend.plugin>
+        <version.gwt.plugin>1.0.0</version.gwt.plugin>
+        <version.impsort.plugin>1.6.2</version.impsort.plugin>
+        <version.license.plugin>4.1</version.license.plugin>
+        <version.nexus.staging.plugin>1.6.8</version.nexus.staging.plugin>
+
+        <!-- Repos & URLs -->
+        <repo.scm.connection>git@github.com:hal/console.git</repo.scm.connection>
+        <repo.scm.url>https://github.com/hal/console</repo.scm.url>
+
+        <!-- Build related -->
+        <encoding>UTF-8</encoding>
         <grunt-task>dev</grunt-task>
         <gwt.devmode.hostname>localhost</gwt.devmode.hostname>
         <gwt.draftCompile>true</gwt.draftCompile>
@@ -93,82 +142,193 @@
         <gwt.moduleShortname>hal</gwt.moduleShortname>
         <gwt.moduleTemplate>${project.basedir}/src/main/module.gwt.xml</gwt.moduleTemplate>
         <gwt.optimize>0</gwt.optimize>
-        <gwt.skipCompilation>false</gwt.skipCompilation>
         <gwt.style>DETAILED</gwt.style>
         <hal.version>${project.version}</hal.version>
+        <java.version>11</java.version>
         <linkXRef>false</linkXRef>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.min.version>3.2.5</maven.min.version>
+        <project.build.sourceEncoding>${encoding}</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>${encoding}</project.reporting.outputEncoding>
+        <skip.gwt>false</skip.gwt>
         <theme.name>hal</theme.name>
-
-        <!-- plugin versions -->
-        <plugin.buildhelper.version>3.0.0</plugin.buildhelper.version>
-        <plugin.degraph.version>3.0.1</plugin.degraph.version>
-        <plugin.download.version>1.3.0</plugin.download.version>
-        <plugin.frontend.version>1.6</plugin.frontend.version>
-        <plugin.gwt.version>1.0-rc-9</plugin.gwt.version>
-        <plugin.processor.version>3.3.2</plugin.processor.version>
-        <plugin.reports.version>2.9</plugin.reports.version>
-        <plugin.github.site.version>0.12</plugin.github.site.version>
     </properties>
 
     <modules>
         <module>app</module>
         <module>ballroom</module>
         <module>bom</module>
-        <module>core</module>
+        <module>build-config</module>
+        <module>code-parent</module>
         <module>config</module>
+        <module>core</module>
         <module>db</module>
         <module>dmr</module>
         <module>flow</module>
+        <module>gwt-parent</module>
         <module>js</module>
         <module>meta</module>
-        <module>parent-with-dependencies</module>
-        <module>parent-with-gwt</module>
         <module>processors</module>
         <module>resources</module>
         <module>spi</module>
         <module>standalone</module>
-        <module>themes</module>
         <module>testsuite</module>
+        <module>themes</module>
     </modules>
 
+    <!-- No dependencies! Dependencies are managed in core-parent -->
+    <dependencies/>
+
     <build>
+        <!--
+            All plugins are declared and (partly) configured here.
+            Some of them are redefined in core-parent
+        -->
         <pluginManagement>
-            <!-- plugins ordered by artifactId -->
             <plugins>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>${plugin.buildhelper.version}</version>
-                </plugin>
+                <!-- Ordered by artifactID -->
                 <plugin>
                     <groupId>com.github.ferstl</groupId>
                     <artifactId>depgraph-maven-plugin</artifactId>
-                    <version>${plugin.degraph.version}</version>
+                    <version>${version.degraph.plugin}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>${version.build.helper.plugin}</version>
                 </plugin>
                 <plugin>
                     <groupId>com.github.eirslett</groupId>
                     <artifactId>frontend-maven-plugin</artifactId>
-                    <version>${plugin.frontend.version}</version>
+                    <version>${version.frontend.plugin}</version>
+                </plugin>
+                <plugin>
+                    <groupId>net.revelc.code.formatter</groupId>
+                    <artifactId>formatter-maven-plugin</artifactId>
+                    <version>${version.formatter.plugin}</version>
                 </plugin>
                 <plugin>
                     <groupId>net.ltgt.gwt.maven</groupId>
                     <artifactId>gwt-maven-plugin</artifactId>
-                    <version>${plugin.gwt.version}</version>
+                    <version>${version.gwt.plugin}</version>
+                    <extensions>true</extensions>
+                </plugin>
+                <plugin>
+                    <groupId>net.revelc.code</groupId>
+                    <artifactId>impsort-maven-plugin</artifactId>
+                    <version>${version.impsort.plugin}</version>
+                    <configuration>
+                        <groups>java.,javax.,org.,io.,com.</groups>
+                        <removeUnused>true</removeUnused>
+                        <staticAfter>true</staticAfter>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>com.mycila</groupId>
+                    <artifactId>license-maven-plugin</artifactId>
+                    <version>${version.license.plugin}</version>
+                    <configuration>
+                        <header>build-config/src/main/resources/etc/license.txt</header>
+                        <strictCheck>true</strictCheck>
+                        <aggregate>true</aggregate>
+                        <useDefaultExcludes>true</useDefaultExcludes>
+                        <mapping>
+                            <less>SLASHSTAR_STYLE</less>
+                            <rng>XML_STYLE</rng>
+                        </mapping>
+                        <excludes>
+                            <exclude>.sdkmanrc</exclude>
+                            <exclude>version.txt</exclude>
+                            <exclude>LICENSE</exclude>
+                            <exclude>README.md</exclude>
+                            <exclude>**/banner.txt</exclude>
+                            <exclude>**/Dockerfile.*</exclude>
+                            <exclude>**/Constants*.properties</exclude>
+                            <exclude>**/Messages*.properties</exclude>
+                            <exclude>**/previews/**/*.html</exclude>
+                            <exclude>**/public/css/**</exclude>
+                            <exclude>**/public/js/**</exclude>
+                            <exclude>**/*license*.txt</exclude>
+                            <exclude>**/*.base64</exclude>
+                            <exclude>**/*.dmr</exclude>
+                        </excludes>
+                    </configuration>
+                </plugin>
+                <!-- Not used, but declared to dismiss warnings -->
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>license-maven-plugin</artifactId>
+                    <version>2.0.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <configuration>
+                        <configLocation>wildfly-checkstyle/checkstyle.xml</configLocation>
+                        <consoleOutput>true</consoleOutput>
+                        <failsOnError>true</failsOnError>
+                        <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                        <excludes>**/*$logger.java,**/*$bundle.java</excludes>
+                        <useFile/>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.wildfly.checkstyle</groupId>
+                            <artifactId>wildfly-checkstyle-config</artifactId>
+                            <version>${version.checkstyle.config}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <configuration>
+                        <rules>
+                            <bannedRepositories>
+                                <message>To build this project, don't use maven repositories over HTTP. Please use HTTPS
+                                    in your settings.xml or run the build with property insecure.repositories=WARN
+                                </message>
+                                <level>ERROR</level>
+                                <bannedRepositories>
+                                    <bannedRepository>http://*</bannedRepository>
+                                </bannedRepositories>
+                                <bannedPluginRepositories>
+                                    <bannedPluginRepository>http://*</bannedPluginRepository>
+                                </bannedPluginRepositories>
+                            </bannedRepositories>
+                            <requireMavenVersion>
+                                <message>To build this project Maven ${maven.min.version} (or greater) is required.
+                                    Please install it.
+                                </message>
+                                <version>${maven.min.version}</version>
+                            </requireMavenVersion>
+                            <requireJavaVersion>
+                                <message>To build this project JDK ${maven.compiler.source} (or greater) is required.
+                                    Please install it.
+                                </message>
+                                <version>${maven.compiler.source}</version>
+                            </requireJavaVersion>
+                        </rules>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>io.quarkus.platform</groupId>
+                    <artifactId>quarkus-maven-plugin</artifactId>
+                    <version>${version.quarkus}</version>
                     <extensions>true</extensions>
                 </plugin>
             </plugins>
         </pluginManagement>
+
         <plugins>
+            <!-- Ordered by artifactID -->
             <plugin>
                 <groupId>com.github.ferstl</groupId>
                 <artifactId>depgraph-maven-plugin</artifactId>
                 <configuration>
                     <createImage>true</createImage>
-                    <customStyleConfiguration>build/degraph-style.json</customStyleConfiguration>
+                    <customStyleConfiguration>degraph-style.json</customStyleConfiguration>
                     <includes>
                         <include>org.jboss.hal:hal-console</include>
                         <include>org.jboss.hal:hal-ballroom</include>
@@ -196,20 +356,35 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>checkstyle</id>
-                        <phase>validate</phase>
+                        <id>license-format</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>license-check</id>
+                        <phase>verify</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
-                        <configuration>
-                            <configLocation>build/checkstyle.xml</configLocation>
-                            <encoding>UTF-8</encoding>
-                            <consoleOutput>true</consoleOutput>
-                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>enforcer-enforce</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -218,7 +393,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>unit-tests</id>
+                        <id>hal-tests</id>
                         <goals>
                             <goal>test</goal>
                         </goals>
@@ -231,15 +406,14 @@
 
     <profiles>
         <profile>
-            <id>i18n</id>
+            <id>native</id>
+            <activation>
+                <property>
+                    <name>native</name>
+                </property>
+            </activation>
             <properties>
-                <gwt.moduleTemplate>${project.basedir}/src/main/module-i18n.gwt.xml</gwt.moduleTemplate>
-            </properties>
-        </profile>
-        <profile>
-            <id>skip-gwt</id>
-            <properties>
-                <gwt.skipCompilation>true</gwt.skipCompilation>
+                <quarkus.package.type>native</quarkus.package.type>
             </properties>
         </profile>
         <profile>
@@ -260,23 +434,48 @@
             <id>release</id>
             <build>
                 <plugins>
+                    <!-- Semantically ordered -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-enforcer-plugin</artifactId>
+                        <configuration>
+                            <rules>
+                                <requireReleaseDeps>
+                                    <message>No Snapshots Allowed!</message>
+                                </requireReleaseDeps>
+                            </rules>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>enforce-no-snapshots</id>
+                                <id>attach-sources</id>
                                 <goals>
-                                    <goal>enforce</goal>
+                                    <goal>jar-no-fork</goal>
                                 </goals>
-                                <configuration>
-                                    <rules>
-                                        <requireReleaseDeps>
-                                            <message>No Snapshots Allowed!</message>
-                                        </requireReleaseDeps>
-                                    </rules>
-                                    <fail>true</fail>
-                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <configuration>
+                            <additionalOptions>
+                                <additionalOption>-html5</additionalOption>
+                            </additionalOptions>
+                            <detectLinks>true</detectLinks>
+                            <doclint>none</doclint>
+                            <failOnError>false</failOnError>
+                            <show>public</show>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
                             </execution>
                         </executions>
                     </plugin>
@@ -294,25 +493,51 @@
                         </executions>
                     </plugin>
                     <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-source-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>attach-sources</id>
-                                <goals>
-                                    <goal>jar-no-fork</goal>
-                                </goals>
-                            </execution>
-                        </executions>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>${version.nexus.staging.plugin}</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
         </profile>
         <profile>
+            <id>skip-gwt</id>
+            <properties>
+                <skip.gwt>true</skip.gwt>
+            </properties>
+        </profile>
+        <profile>
             <id>theme-eap</id>
             <properties>
+                <gwt.moduleTemplate>${project.basedir}/src/main/module-i18n.gwt.xml</gwt.moduleTemplate>
                 <theme.name>eap</theme.name>
             </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>net.ltgt.gwt.maven</groupId>
+                        <artifactId>gwt-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>generate-i18n-module</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>generate-module</goal>
+                                </goals>
+                                <configuration>
+                                    <moduleTemplate>${project.basedir}/src/main/module-i18n.gwt.xml</moduleTemplate>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
         <profile>
             <id>theme-hal</id>
@@ -333,26 +558,6 @@
 
     <repositories>
         <repository>
-            <id>sonatype-snapshots</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </repository>
-        <repository>
-            <id>google-snapshots</id>
-            <url>https://oss.sonatype.org/content/repositories/google-snapshots/</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </repository>
-        <repository>
             <id>jboss-nexus</id>
             <url>https://repository.jboss.org/nexus/content/groups/public</url>
             <snapshots>
@@ -363,17 +568,4 @@
             </releases>
         </repository>
     </repositories>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>sonatype-plugins</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </pluginRepository>
-    </pluginRepositories>
 </project>

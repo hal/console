@@ -1,26 +1,27 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.core.finder;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /** A segment inside a {@link FinderPath}. */
 public class FinderSegment<T> {
@@ -119,18 +120,17 @@ public class FinderSegment<T> {
 
     /**
      * @return {@code true} if this segment was initialized with a column which has an {@linkplain BreadcrumbItemHandler
-     * breadcrumb item handler} and either {@linkplain FinderColumn#getInitialItems() initial items}, an {@linkplain
-     * FinderColumn#getItemsProvider() items provider} or a {@linkplain FinderColumn#getBreadcrumbItemsProvider()
-     * breadcrumb items provider}.
+     *         breadcrumb item handler} and either {@linkplain FinderColumn#getInitialItems() initial items}, an
+     *         {@linkplain FinderColumn#getItemsProvider() items provider} or a
+     *         {@linkplain FinderColumn#getBreadcrumbItemsProvider() breadcrumb items provider}.
      */
     public boolean supportsDropdown() {
-        //noinspection SimplifiableIfStatement
+        // noinspection SimplifiableIfStatement
         if (column != null) {
             return ((column.getBreadcrumbItemHandler() != null || column.useFirstActionAsBreadcrumbHandler()) &&
                     ((column.getInitialItems() != null && !column.getInitialItems().isEmpty()) ||
                             column.getItemsProvider() != null ||
-                            column.getBreadcrumbItemsProvider() != null
-                    ));
+                            column.getBreadcrumbItemsProvider() != null));
         }
         return false;
     }
@@ -177,7 +177,7 @@ public class FinderSegment<T> {
                 if (actions != null && !actions.isEmpty()) {
                     breadcrumbItemHandler = new ItemActionBreadcrumbHandler<>(actions.get(0));
                 } else {
-                    //noinspection DuplicateStringLiteralInspection
+                    // noinspection DuplicateStringLiteralInspection
                     logger.error("Unable to get breadcrumb handler for segment '{}': " +
                             "Column '{}' was specified to use first item action as breadcrumb handler, " +
                             "but no actions were found.", this, column.getId());
@@ -189,13 +189,12 @@ public class FinderSegment<T> {
             } else {
                 // This method only gets called when supportsDropdown() returned true.
                 // So there has to be a handler
-                //noinspection DuplicateStringLiteralInspection
+                // noinspection DuplicateStringLiteralInspection
                 logger.error("Unable to get breadcrumb handler for segment '{}': " +
                         "No handler found for column '{}'", this, column.getId());
             }
         }
     }
-
 
     private static class ItemActionBreadcrumbHandler<T> implements BreadcrumbItemHandler<T> {
 
@@ -210,7 +209,6 @@ public class FinderSegment<T> {
             itemAction.handler.execute(item);
         }
     }
-
 
     public static class DropdownItem<T> {
 
@@ -232,7 +230,6 @@ public class FinderSegment<T> {
             return display.getTitle();
         }
     }
-
 
     @FunctionalInterface
     public interface DropdownCallback<T> {

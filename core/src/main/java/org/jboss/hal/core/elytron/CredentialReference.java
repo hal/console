@@ -1,25 +1,24 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.core.elytron;
 
 import java.util.function.Supplier;
+
 import javax.inject.Inject;
 
-import com.google.common.base.Strings;
-import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
@@ -45,13 +44,16 @@ import org.jboss.hal.spi.Callback;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
+import com.google.common.base.Strings;
+import com.google.web.bindery.event.shared.EventBus;
+
 import static elemental2.dom.DomGlobal.setTimeout;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.UIConstants.SHORT_TIMEOUT;
 
 /**
- * Provides building blocks for dealing with the {@code credential-reference} complex attribute used in several
- * resources across subsystems.
+ * Provides building blocks for dealing with the {@code credential-reference} complex attribute used in several resources across
+ * subsystems.
  */
 public class CredentialReference {
 
@@ -70,17 +72,16 @@ public class CredentialReference {
     }
 
     /**
-     * Creates a form for the {@code credential-reference} complex attribute of a resource. The form is setup as a
-     * singleton form to add, save, reset and remove the complex attribute.
+     * Creates a form for the {@code credential-reference} complex attribute of a resource. The form is setup as a singleton
+     * form to add, save, reset and remove the complex attribute.
      *
-     * @param baseId           base ID used for the generated form and add resource dialog
-     * @param metadata         the metadata of the resource which contains the {@code credential-reference}
-     *                         attribute
-     * @param alternativeName  the name of the alternative attribute
+     * @param baseId base ID used for the generated form and add resource dialog
+     * @param metadata the metadata of the resource which contains the {@code credential-reference} attribute
+     * @param alternativeName the name of the alternative attribute
      * @param alternativeValue the value of the alternative attribute
-     * @param address          the fully qualified address of the resource used for the CRUD actions
-     * @param callback         the callback executed after the {@code credential-reference} attributes has been added,
-     *                         saved, reset or removed
+     * @param address the fully qualified address of the resource used for the CRUD actions
+     * @param callback the callback executed after the {@code credential-reference} attributes has been added, saved, reset or
+     *        removed
      */
     public Form<ModelNode> form(String baseId, Metadata metadata, String alternativeName,
             Supplier<String> alternativeValue, Supplier<ResourceAddress> address, Callback callback) {
@@ -88,20 +89,18 @@ public class CredentialReference {
         return form(baseId, metadata, CREDENTIAL_REFERENCE, alternativeName, alternativeValue, address, callback);
     }
 
-
     /**
-     * Creates a form for the {@code credential-reference} complex attribute of a resource. The form is setup as a
-     * singleton form to add, save, reset and remove the complex attribute.
+     * Creates a form for the {@code credential-reference} complex attribute of a resource. The form is setup as a singleton
+     * form to add, save, reset and remove the complex attribute.
      *
-     * @param baseId           base ID used for the generated form and add resource dialog
-     * @param metadata         the metadata of the resource which contains the {@code credential-reference}
-     *                         attribute
-     * @param crName           the name of the credential-reference complex attribute
-     * @param alternativeName  the name of the alternative attribute
+     * @param baseId base ID used for the generated form and add resource dialog
+     * @param metadata the metadata of the resource which contains the {@code credential-reference} attribute
+     * @param crName the name of the credential-reference complex attribute
+     * @param alternativeName the name of the alternative attribute
      * @param alternativeValue the value of the alternative attribute
-     * @param address          the fully qualified address of the resource used for the CRUD actions
-     * @param callback         the callback executed after the {@code credential-reference} attributes has been added,
-     *                         saved, reset or removed
+     * @param address the fully qualified address of the resource used for the CRUD actions
+     * @param callback the callback executed after the {@code credential-reference} attributes has been added, saved, reset or
+     *        removed
      */
     public Form<ModelNode> form(String baseId, Metadata metadata, String crName, String alternativeName,
             Supplier<String> alternativeValue, Supplier<ResourceAddress> address, Callback callback) {
@@ -115,23 +114,23 @@ public class CredentialReference {
 
         if (crMetadata.getSecurityContext().isWritable()) {
             emptyStateBuilder.primaryAction(resources.constants().add(), () -> {
-                                if (alternativeName != null && alternativeValue != null &&
-                                        !Strings.isNullOrEmpty(alternativeValue.get())) {
-                                    String alternativeLabel = new LabelBuilder().label(alternativeName);
-                                    DialogFactory.showConfirmation(
-                                            resources.messages().addResourceTitle(Names.CREDENTIAL_REFERENCE),
-                                            resources.messages().credentialReferenceAddConfirmation(alternativeLabel),
-                                            () -> setTimeout(
-                                                    o -> addCredentialReference(baseId, crMetadata, credentialReferenceName,
-                                                            alternativeName,
-                                                            address, callback),
-                                                    SHORT_TIMEOUT));
-                                } else {
-                                    addCredentialReference(baseId, crMetadata, credentialReferenceName, null, address,
-                                            callback);
-                                }
-                            },
-                            Constraint.executable(metadata.getTemplate(), ADD))
+                if (alternativeName != null && alternativeValue != null &&
+                        !Strings.isNullOrEmpty(alternativeValue.get())) {
+                    String alternativeLabel = new LabelBuilder().label(alternativeName);
+                    DialogFactory.showConfirmation(
+                            resources.messages().addResourceTitle(Names.CREDENTIAL_REFERENCE),
+                            resources.messages().credentialReferenceAddConfirmation(alternativeLabel),
+                            () -> setTimeout(
+                                    o -> addCredentialReference(baseId, crMetadata, credentialReferenceName,
+                                            alternativeName,
+                                            address, callback),
+                                    SHORT_TIMEOUT));
+                } else {
+                    addCredentialReference(baseId, crMetadata, credentialReferenceName, null, address,
+                            callback);
+                }
+            },
+                    Constraint.executable(metadata.getTemplate(), ADD))
                     .description(resources.messages().noResource());
         } else {
             emptyStateBuilder.description(resources.constants().restricted());
@@ -140,34 +139,33 @@ public class CredentialReference {
 
         ModelNodeForm.Builder<ModelNode> formBuilder = new ModelNodeForm.Builder<>(
                 Ids.build(baseId, credentialReferenceName, Ids.FORM), crMetadata)
-                .include(STORE, ALIAS, CLEAR_TEXT, TYPE)
-                .unsorted()
-                .singleton(
-                        () -> {
-                            ResourceAddress fqAddress = address.get();
-                            Operation operation = null;
-                            if (fqAddress != null && crMetadata.getSecurityContext().isReadable()) {
-                                operation = new Operation.Builder(address.get(), READ_ATTRIBUTE_OPERATION)
-                                        .param(NAME, credentialReferenceName).build();
+                        .include(STORE, ALIAS, CLEAR_TEXT, TYPE)
+                        .unsorted()
+                        .singleton(
+                                () -> {
+                                    ResourceAddress fqAddress = address.get();
+                                    Operation operation = null;
+                                    if (fqAddress != null && crMetadata.getSecurityContext().isReadable()) {
+                                        operation = new Operation.Builder(address.get(), READ_ATTRIBUTE_OPERATION)
+                                                .param(NAME, credentialReferenceName).build();
+                                    }
+                                    return operation;
+                                },
+                                noCredentialReference)
+                        .onSave(((f, changedValues) -> {
+                            ResourceAddress fqa = address.get();
+                            if (fqa != null) {
+                                if (changedValues.isEmpty()) {
+                                    MessageEvent.fire(eventBus, Message.warning(resources.messages().noChanges()));
+                                    callback.execute();
+                                } else {
+                                    ca.save(credentialReferenceName, Names.CREDENTIAL_REFERENCE, fqa, f.getModel(), callback);
+                                }
+                            } else {
+                                MessageEvent.fire(eventBus,
+                                        Message.error(resources.messages().credentialReferenceAddressError()));
                             }
-                            return operation;
-                        },
-                        noCredentialReference)
-                .onSave(((f, changedValues) -> {
-                    ResourceAddress fqa = address.get();
-                    if (fqa != null) {
-                        if (changedValues.isEmpty()) {
-                            MessageEvent.fire(eventBus, Message.warning(resources.messages().noChanges()));
-                            callback.execute();
-                        } else {
-                            ca.save(credentialReferenceName, Names.CREDENTIAL_REFERENCE, fqa, f.getModel(), callback);
-                        }
-                    } else {
-                        MessageEvent.fire(eventBus,
-                                Message.error(resources.messages().credentialReferenceAddressError()));
-                    }
-                }));
-
+                        }));
 
         // some credential-reference attributes are nillable=false, so only nillable=true may be removed
         if (crMetadata.getDescription().get(NILLABLE).asBoolean()) {
@@ -210,24 +208,24 @@ public class CredentialReference {
 
             new AddResourceDialog(resources.messages().addResourceTitle(Names.CREDENTIAL_REFERENCE),
                     form, (name, model) -> {
-                if (alternativeName != null) {
-                    Operation undefine = new Operation.Builder(fqAddress, UNDEFINE_ATTRIBUTE_OPERATION)
-                            .param(NAME, alternativeName)
-                            .build();
-                    Operation write = new Operation.Builder(fqAddress, WRITE_ATTRIBUTE_OPERATION)
-                            .param(NAME, credentialReferenceName)
-                            .param(VALUE, model)
-                            .build();
-                    dispatcher.execute(new Composite(undefine, write), (CompositeResult result) -> {
-                        MessageEvent.fire(eventBus, Message.success(
-                                resources.messages().addSingleResourceSuccess(Names.CREDENTIAL_REFERENCE)));
-                        callback.execute();
-                    });
+                        if (alternativeName != null) {
+                            Operation undefine = new Operation.Builder(fqAddress, UNDEFINE_ATTRIBUTE_OPERATION)
+                                    .param(NAME, alternativeName)
+                                    .build();
+                            Operation write = new Operation.Builder(fqAddress, WRITE_ATTRIBUTE_OPERATION)
+                                    .param(NAME, credentialReferenceName)
+                                    .param(VALUE, model)
+                                    .build();
+                            dispatcher.execute(new Composite(undefine, write), (CompositeResult result) -> {
+                                MessageEvent.fire(eventBus, Message.success(
+                                        resources.messages().addSingleResourceSuccess(Names.CREDENTIAL_REFERENCE)));
+                                callback.execute();
+                            });
 
-                } else {
-                    ca.add(credentialReferenceName, Names.CREDENTIAL_REFERENCE, fqAddress, model, callback);
-                }
-            }).show();
+                        } else {
+                            ca.add(credentialReferenceName, Names.CREDENTIAL_REFERENCE, fqAddress, model, callback);
+                        }
+                    }).show();
 
         } else {
             MessageEvent.fire(eventBus,
@@ -236,8 +234,7 @@ public class CredentialReference {
     }
 
     /**
-     * Form validation which validates that only one of {@code credential-reference} and {@code <alternativeName>} is
-     * given.
+     * Form validation which validates that only one of {@code credential-reference} and {@code <alternativeName>} is given.
      */
     public static class AlternativeValidation<T extends ModelNode> implements FormValidation<T> {
 
@@ -265,7 +262,6 @@ public class CredentialReference {
         }
     }
 
-
     private static class CrFormValidation implements FormValidation<ModelNode> {
 
         private final String alternativeName;
@@ -291,13 +287,13 @@ public class CredentialReference {
     /**
      * When adding or updating the credential-reference, we need to follow the following rules:
      * <ul>
-     *     <li>either 'clear-text' must be specified on its own, or</li>
-     *     <li>'store' needs to be specified with at least one of
-     *         <ul>
-     *             <li>'clear-text' or</li>
-     *             <li>'alias'</li>
-     *         </ul>
-     *     </li>
+     * <li>either 'clear-text' must be specified on its own, or</li>
+     * <li>'store' needs to be specified with at least one of
+     * <ul>
+     * <li>'clear-text' or</li>
+     * <li>'alias'</li>
+     * </ul>
+     * </li>
      * </ul>
      * See also https://docs.wildfly.org/25/WildFly_Elytron_Security.html#automatic-updates-of-credential-stores
      */

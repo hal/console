@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.elytron;
 
@@ -19,9 +19,6 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.regexp.shared.RegExp;
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.ModelNodeItem;
 import org.jboss.hal.ballroom.form.TagsItem;
@@ -30,15 +27,26 @@ import org.jboss.hal.ballroom.form.TagsMapping;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.resources.Messages;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.regexp.shared.RegExp;
+
+import elemental2.dom.HTMLElement;
+
 import static elemental2.dom.DomGlobal.document;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.ballroom.form.Decoration.*;
+import static org.jboss.hal.ballroom.form.Decoration.DEFAULT;
+import static org.jboss.hal.ballroom.form.Decoration.DEPRECATED;
+import static org.jboss.hal.ballroom.form.Decoration.ENABLED;
+import static org.jboss.hal.ballroom.form.Decoration.INVALID;
+import static org.jboss.hal.ballroom.form.Decoration.REQUIRED;
+import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 
 /**
  * Form item which is used for some attributes in the Elytron subsystem which are defined as
+ *
  * <pre>
  * "attribute-name" => {
  *     "type" => LIST,
@@ -98,7 +106,7 @@ class CustomListItem extends TagsItem<ModelNode> implements ModelNodeItem {
 
     private static class MapMapping implements TagsMapping<ModelNode> {
 
-        private static final RegExp REGEX = RegExp.compile("^([\\w\\-\\.\\/]+)=(\\d+)$"); //NON-NLS
+        private static final RegExp REGEX = RegExp.compile("^([\\w\\-\\.\\/]+)=(\\d+)$"); // NON-NLS
         private String propAttribute;
         private String valueAttribute;
 

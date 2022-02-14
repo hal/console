@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.core.finder;
 
@@ -20,13 +20,14 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.resources.Resources;
+
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
@@ -111,9 +112,9 @@ public class ItemActionFactory {
     }
 
     /**
-     * Creates a 'remove' action which removes the specified resource from the given template. The template can contain
-     * a wildcard which is replaced by the resource name. The action wil bring up a confirmation dialog. If confirmed
-     * the resource is removed and {@link FinderColumn#refresh(FinderColumn.RefreshMode)} is called.
+     * Creates a 'remove' action which removes the specified resource from the given template. The template can contain a
+     * wildcard which is replaced by the resource name. The action wil bring up a confirmation dialog. If confirmed the resource
+     * is removed and {@link FinderColumn#refresh(FinderColumn.RefreshMode)} is called.
      */
     public <T> ItemAction<T> remove(String type, String name, AddressTemplate template, FinderColumn<T> column) {
         return remove(type, name, template, template, column);

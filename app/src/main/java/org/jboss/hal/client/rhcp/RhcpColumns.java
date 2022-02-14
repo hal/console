@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.rhcp;
 
@@ -24,8 +24,6 @@ import java.util.stream.StreamSupport;
 
 import javax.inject.Inject;
 
-import com.google.common.collect.Iterators;
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
@@ -37,6 +35,10 @@ import org.jboss.hal.core.finder.StaticItemColumn;
 import org.jboss.hal.js.JsonObject;
 import org.jboss.hal.spi.AsyncColumn;
 
+import com.google.common.collect.Iterators;
+
+import elemental2.dom.HTMLElement;
+
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
@@ -45,12 +47,11 @@ import static org.jboss.hal.client.rhcp.RhcpColumns.Decade.DECADES;
 import static org.jboss.hal.resources.CSS.listGroupItem;
 import static org.jboss.hal.resources.CSS.preview;
 
-@SuppressWarnings({"HardCodedStringLiteral", "DuplicateStringLiteralInspection", "SpellCheckingInspection"})
+@SuppressWarnings({ "HardCodedStringLiteral", "DuplicateStringLiteralInspection", "SpellCheckingInspection" })
 public class RhcpColumns {
 
     private static final String TITLE = "title";
     private static final String YEAR = "year";
-
 
     @AsyncColumn("rhcp-color")
     public static class Color extends StaticItemColumn {
@@ -64,11 +65,9 @@ public class RhcpColumns {
                             new StaticItem.Builder("Green").build(),
                             new StaticItem.Builder("Cyan").build(),
                             new StaticItem.Builder("Blue").build(),
-                            new StaticItem.Builder("Violet").build())
-            );
+                            new StaticItem.Builder("Violet").build()));
         }
     }
-
 
     @AsyncColumn("rhcp-temperature")
     public static class Temperature extends StaticItemColumn {
@@ -86,7 +85,6 @@ public class RhcpColumns {
         }
     }
 
-
     @AsyncColumn("rhcp-vegetable")
     public static class Vegetables extends StaticItemColumn {
 
@@ -103,7 +101,6 @@ public class RhcpColumns {
         }
     }
 
-
     @AsyncColumn("rhcp-spice")
     public static class Spice extends StaticItemColumn {
 
@@ -116,7 +113,6 @@ public class RhcpColumns {
                             new StaticItem.Builder("Sugar").build()));
         }
     }
-
 
     @AsyncColumn("rhcp-decade")
     public static class Decade extends StaticItemColumn {
@@ -141,7 +137,6 @@ public class RhcpColumns {
                     .collect(toList()));
         }
     }
-
 
     @AsyncColumn("rhcp-album")
     public static class Album extends FinderColumn<JsonObject> {
@@ -185,10 +180,10 @@ public class RhcpColumns {
                                             .add(span().textContent("More infos: "))
                                             .add(a(item.getString("url"))
                                                     .attr("target", "_blank")
-                                                    .textContent(item.getString("url")))).elements())));
+                                                    .textContent(item.getString("url"))))
+                                    .elements())));
         }
     }
-
 
     @AsyncColumn("rhcp-track")
     public static class Track extends FinderColumn<JsonObject> {

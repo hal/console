@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration;
 
@@ -19,7 +19,6 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Pages;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
@@ -37,6 +36,8 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
+import elemental2.dom.HTMLElement;
+
 import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.gwt.elemento.core.Elements.section;
@@ -48,7 +49,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
 @MbuiView
-@SuppressWarnings({"unused", "WeakerAccess", "DuplicateStringLiteralInspection"})
+@SuppressWarnings({ "unused", "WeakerAccess", "DuplicateStringLiteralInspection" })
 public abstract class SocketBindingGroupView extends MbuiViewImpl<SocketBindingGroupPresenter>
         implements SocketBindingGroupPresenter.MyView {
 
@@ -81,14 +82,14 @@ public abstract class SocketBindingGroupView extends MbuiViewImpl<SocketBindingG
 
         inboundTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(INBOUND.baseId, Ids.TABLE),
                 inboundMetadata)
-                .button(mbuiContext.tableButtonFactory().add(inboundTemplate,
-                        table -> presenter.addSocketBinding(INBOUND)))
-                .button(mbuiContext.tableButtonFactory().remove(inboundTemplate,
-                        table -> presenter.removeSocketBinding(INBOUND, table.selectedRow().getName())))
-                .column(NAME, (cell, type, row, meta) -> row.getName())
-                .column(PORT, (cell, type, row, meta) -> row.get(PORT).asString())
-                .column(new InlineAction<>(Names.CLIENT_MAPPINGS, row -> presenter.showClientMappings(row)))
-                .build();
+                        .button(mbuiContext.tableButtonFactory().add(inboundTemplate,
+                                table -> presenter.addSocketBinding(INBOUND)))
+                        .button(mbuiContext.tableButtonFactory().remove(inboundTemplate,
+                                table -> presenter.removeSocketBinding(INBOUND, table.selectedRow().getName())))
+                        .column(NAME, (cell, type, row, meta) -> row.getName())
+                        .column(PORT, (cell, type, row, meta) -> row.get(PORT).asString())
+                        .column(new InlineAction<>(Names.CLIENT_MAPPINGS, row -> presenter.showClientMappings(row)))
+                        .build();
 
         inboundForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(INBOUND.baseId, Ids.FORM), inboundMetadata)
                 .include(INTERFACE, PORT, FIXED_PORT, MULTICAST_ADDRESS, MULTICAST_PORT)
@@ -107,27 +108,27 @@ public abstract class SocketBindingGroupView extends MbuiViewImpl<SocketBindingG
 
         clientMappingTable = new ModelNodeTable.Builder<NamedNode>(
                 Ids.SOCKET_BINDING_GROUP_INBOUND_CLIENT_MAPPING_TABLE, clientMappingsMetadata)
-                .button(mbuiContext.tableButtonFactory().add(inboundTemplate,
-                        table -> presenter.addClientMapping(clientMappingsMetadata)))
-                .button(mbuiContext.tableButtonFactory().remove(inboundTemplate,
-                        table -> presenter.removeClientMapping(table.selectedRow().get(INDEX).asInt(-1))))
-                .column(SOURCE_NETWORK)
-                .column(Names.DESTINATION, (cell, type, row, meta) -> {
-                    String address = row.get(DESTINATION_ADDRESS).asString();
-                    if (row.hasDefined(DESTINATION_PORT)) {
-                        address += ":" + row.get(DESTINATION_PORT).asInt();
-                    }
-                    return address;
-                })
-                .build();
+                        .button(mbuiContext.tableButtonFactory().add(inboundTemplate,
+                                table -> presenter.addClientMapping(clientMappingsMetadata)))
+                        .button(mbuiContext.tableButtonFactory().remove(inboundTemplate,
+                                table -> presenter.removeClientMapping(table.selectedRow().get(INDEX).asInt(-1))))
+                        .column(SOURCE_NETWORK)
+                        .column(Names.DESTINATION, (cell, type, row, meta) -> {
+                            String address = row.get(DESTINATION_ADDRESS).asString();
+                            if (row.hasDefined(DESTINATION_PORT)) {
+                                address += ":" + row.get(DESTINATION_PORT).asInt();
+                            }
+                            return address;
+                        })
+                        .build();
 
         clientMappingForm = new ModelNodeForm.Builder<NamedNode>(Ids.SOCKET_BINDING_GROUP_INBOUND_CLIENT_MAPPING_FORM,
                 clientMappingsMetadata)
-                .include(SOURCE_NETWORK, DESTINATION_ADDRESS, DESTINATION_PORT)
-                .unsorted()
-                .onSave((form, changedValues) -> presenter.saveClientMapping(clientMappingsMetadata, form.getModel(),
-                        changedValues))
-                .build();
+                        .include(SOURCE_NETWORK, DESTINATION_ADDRESS, DESTINATION_PORT)
+                        .unsorted()
+                        .onSave((form, changedValues) -> presenter.saveClientMapping(clientMappingsMetadata, form.getModel(),
+                                changedValues))
+                        .build();
 
         HTMLElement clientMappingSection = section()
                 .add(h(1).textContent(Names.CLIENT_MAPPINGS))
@@ -143,7 +144,7 @@ public abstract class SocketBindingGroupView extends MbuiViewImpl<SocketBindingG
                 clientMappingSection);
 
         navigation.insertPrimary(Ids.build(INBOUND.baseId, Ids.ITEM),
-                "socket-binding-group-outbound-local-item", //NON-NLS
+                "socket-binding-group-outbound-local-item", // NON-NLS
                 Names.INBOUND, fontAwesome("arrow-circle-o-left"), inboundPages);
 
         registerAttachable(inboundTable, inboundForm, clientMappingTable, clientMappingForm);

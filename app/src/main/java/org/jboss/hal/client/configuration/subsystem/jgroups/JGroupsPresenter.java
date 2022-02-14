@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.jgroups;
 
@@ -21,11 +21,6 @@ import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.Form.FinishReset;
@@ -60,6 +55,12 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
+
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.annotations.NameToken;
+import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
 import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTemplates.JGROUPS_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTemplates.SELECTED_RELAY_TEMPLATE;
@@ -142,7 +143,6 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
         return finderPathFactory.configurationSubsystemPath(JGROUPS);
     }
 
-
     // ------------------------------------------------------ jgroups subsystem
 
     @Override
@@ -159,7 +159,7 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
             getView().updateRelays(relayNode);
 
             // stack / relay / remote-site
-            //noinspection HardCodedStringLiteral
+            // noinspection HardCodedStringLiteral
             List<NamedNode> remoteSite = asNamedNodes(failSafePropertyList(modelNode,
                     String.join("/", STACK, selectedStack, RELAY, "relay.RELAY2", JGROUPS_REMOTE_SITE)));
             getView().updateRemoteSite(remoteSite);
@@ -191,7 +191,8 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
         crud.readRecursive(JGROUPS_TEMPLATE, payload::accept);
     }
 
-    void saveSingleton(AddressTemplate template, Metadata metadata, Map<String, Object> changedValues, SafeHtml successMessage) {
+    void saveSingleton(AddressTemplate template, Metadata metadata, Map<String, Object> changedValues,
+            SafeHtml successMessage) {
         crud.saveSingleton(template.resolve(filterStatementContext), changedValues, metadata, successMessage,
                 this::reload);
     }
@@ -350,14 +351,20 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
 
         // stack resources
         void updateProtocols(List<NamedNode> model);
+
         void updateTransports(List<NamedNode> model);
+
         void updateRelays(List<NamedNode> model);
+
         void updateRemoteSite(List<NamedNode> model);
+
         void showStackInnerPage(String id);
 
         // channel resources
         void showChannelInnerPage(String id);
+
         void updateForks(List<NamedNode> model);
+
         void updateChannelProtocols(List<NamedNode> model);
     }
     // @formatter:on

@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.meta.security;
 
@@ -31,23 +31,22 @@ import static org.jboss.hal.meta.security.Target.ATTRIBUTE;
 import static org.jboss.hal.meta.security.Target.OPERATION;
 
 /**
- * Class to decide whether a single or a set of constraints are allowed according to a given security context. The
- * security context must be provided by a {@link SecurityContextResolver}. {@code isAllowed()} returns {@code true} if
- * the security context was resolved and the constraint is valid.
+ * Class to decide whether a single or a set of constraints are allowed according to a given security context. The security
+ * context must be provided by a {@link SecurityContextResolver}. {@code isAllowed()} returns {@code true} if the security
+ * context was resolved and the constraint is valid.
  * <p>
  * To hide or disable UI elements, use one of the following strategies:
  * <dl>
  * <dt>Eager filtering</dt>
- * <dd>If the security context is <strong>available</strong> when the UI elements are created, filter the elements
- * based on the outcome of {@code isAllowed()}. Add only allowed elements to the DOM.</dd>
+ * <dd>If the security context is <strong>available</strong> when the UI elements are created, filter the elements based on the
+ * outcome of {@code isAllowed()}. Add only allowed elements to the DOM.</dd>
  * <dt>Late hiding</dt>
- * <dd>If the security context is <strong>not</strong> available when the UI elements are created, store the
- * constraints as {@code data-constraint} attributes. Later when you have access to the security context
- * post-process the elements using one of the {@code processElements()} method from {@link ElementGuard}.</dd>
+ * <dd>If the security context is <strong>not</strong> available when the UI elements are created, store the constraints as
+ * {@code data-constraint} attributes. Later when you have access to the security context post-process the elements using one of
+ * the {@code processElements()} method from {@link ElementGuard}.</dd>
  * </dl>
  * <p>
- * If WildFly uses {@link AccessControlProvider#SIMPLE}, {@code isAllowed()} will <strong>always</strong>
- * return {@code true}.
+ * If WildFly uses {@link AccessControlProvider#SIMPLE}, {@code isAllowed()} will <strong>always</strong> return {@code true}.
  */
 public class AuthorisationDecision {
 
@@ -70,7 +69,6 @@ public class AuthorisationDecision {
     public static AuthorisationDecision from(Environment environment, SecurityContextResolver resolver) {
         return new AuthorisationDecision(environment, resolver);
     }
-
 
     // ------------------------------------------------------ instance
 

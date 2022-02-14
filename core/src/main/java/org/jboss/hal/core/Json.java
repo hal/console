@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.core;
 
@@ -20,16 +20,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.base.Strings;
-import elemental2.core.JsArray;
-import jsinterop.base.Any;
-import jsinterop.base.JsPropertyMap;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.Metadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
+
+import elemental2.core.JsArray;
+import jsinterop.base.Any;
+import jsinterop.base.JsPropertyMap;
 
 import static elemental2.core.Global.JSON;
 import static java.util.Collections.emptyList;
@@ -67,7 +69,6 @@ public final class Json {
             return emptyList();
         }
     }
-
 
     @SuppressWarnings("unchecked")
     public static ModelNode parseSingle(String json, Metadata metadata, Map<String, String> mappping) {
@@ -156,7 +157,6 @@ public final class Json {
                     map.forEach(key -> node.get(key).set(String.valueOf(map.getAny(key))));
                 }
                 break;
-
 
             case STRING:
                 node.set(value.asString());

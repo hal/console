@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.runtime.subsystem.ejb;
 
@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.Tabs;
@@ -40,6 +39,8 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
+
+import elemental2.dom.HTMLElement;
 
 import static org.jboss.gwt.elemento.core.Elements.h;
 import static org.jboss.gwt.elemento.core.Elements.p;
@@ -73,21 +74,22 @@ public class EjbView extends HalViewImpl implements EjbPresenter.MyView {
         }
 
         /**
-         *  "methods" is present in every bean type
-         *  "timers" is present in every type except STATEFUL
-         *  "remove-methods" is present only in STATEFUL
-         *  the metadata are the same regardless of type
+         * "methods" is present in every bean type "timers" is present in every type except STATEFUL "remove-methods" is present
+         * only in STATEFUL the metadata are the same regardless of type
          */
-        Metadata methodsMetadata = metadataRegistry.lookup(ejbDeploymentTemplate(EjbNode.Type.MDB)).forComplexAttribute("methods");
-        Metadata removeMethodsMetadata = metadataRegistry.lookup(ejbDeploymentTemplate(EjbNode.Type.STATEFUL)).forComplexAttribute("remove-methods");
-        Metadata timersMetadata = metadataRegistry.lookup(ejbDeploymentTemplate(EjbNode.Type.MDB)).forComplexAttribute("timers");
+        Metadata methodsMetadata = metadataRegistry.lookup(ejbDeploymentTemplate(EjbNode.Type.MDB))
+                .forComplexAttribute("methods");
+        Metadata removeMethodsMetadata = metadataRegistry.lookup(ejbDeploymentTemplate(EjbNode.Type.STATEFUL))
+                .forComplexAttribute("remove-methods");
+        Metadata timersMetadata = metadataRegistry.lookup(ejbDeploymentTemplate(EjbNode.Type.MDB))
+                .forComplexAttribute("timers");
         Metadata scheduleMetadata = timersMetadata.forComplexAttribute("schedule");
 
         // methods come in a property list, we need to add an identifier to the table
         methodsMetadata.getDescription().get(ATTRIBUTES).get(NAME);
 
         methodsTable = new ModelNodeTable.Builder<>("ejb-bean-methods-table", methodsMetadata)
-                .columns("name","execution-time", "invocations", "wait-time")
+                .columns("name", "execution-time", "invocations", "wait-time")
                 .build();
 
         removeMethodsTable = new ModelNodeTable.Builder<>("ejb-bean-remove-methods-table", removeMethodsMetadata)
@@ -106,7 +108,8 @@ public class EjbView extends HalViewImpl implements EjbPresenter.MyView {
                 .build();
 
         tabs = new Tabs(Ids.build("ejb", Ids.TAB_CONTAINER));
-        tabs.add(Ids.build("ejb-attributes", Ids.TAB), "Attributes", forms.values().stream().map(Form::element).collect(Collectors.toList()));
+        tabs.add(Ids.build("ejb-attributes", Ids.TAB), "Attributes",
+                forms.values().stream().map(Form::element).collect(Collectors.toList()));
         tabs.add(Ids.build("ejb-methods", Ids.TAB), "Methods", methodsTable.element());
         tabs.add(Ids.build("ejb-remove-methods", Ids.TAB), "Remove Methods", removeMethodsTable.element());
         tabs.add(Ids.build("ejb-timers", Ids.TAB), "Timers", timersTable.element(), scheduleHeader, scheduleForm.element());

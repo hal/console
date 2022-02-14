@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.infinispan;
 
@@ -20,8 +20,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import com.google.web.bindery.event.shared.EventBus;
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.ColumnAction;
 import org.jboss.hal.core.finder.ColumnActionFactory;
@@ -54,6 +52,10 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
+import com.google.web.bindery.event.shared.EventBus;
+
+import elemental2.dom.HTMLElement;
+
 import static java.util.Arrays.asList;
 import static java.util.Comparator.comparing;
 import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.*;
@@ -63,7 +65,7 @@ import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
 @AsyncColumn(Ids.CACHE_CONTAINER)
-@Requires(value = {CACHE_CONTAINER_ADDRESS, REMOTE_CACHE_CONTAINER_ADDRESS, REMOTE_CLUSTER_ADDRESS}, recursive = false)
+@Requires(value = { CACHE_CONTAINER_ADDRESS, REMOTE_CACHE_CONTAINER_ADDRESS, REMOTE_CLUSTER_ADDRESS }, recursive = false)
 public class CacheContainerColumn extends FinderColumn<CacheContainer> {
 
     private final Dispatcher dispatcher;
@@ -104,8 +106,7 @@ public class CacheContainerColumn extends FinderColumn<CacheContainer> {
                 .onPreview(CacheContainerPreview::new)
                 .useFirstActionAsBreadcrumbHandler()
                 .withFilter()
-                .showCount()
-        );
+                .showCount());
         this.dispatcher = dispatcher;
         this.crud = crud;
         this.eventBus = eventBus;
@@ -182,8 +183,7 @@ public class CacheContainerColumn extends FinderColumn<CacheContainer> {
                                             .with(NAME, item.getName())
                                             .build()),
                             itemActionFactory.remove(Names.CACHE_CONTAINER, item.getName(),
-                                    CACHE_CONTAINER_TEMPLATE, CacheContainerColumn.this)
-                    );
+                                    CACHE_CONTAINER_TEMPLATE, CacheContainerColumn.this));
                 }
             }
 
@@ -219,19 +219,19 @@ public class CacheContainerColumn extends FinderColumn<CacheContainer> {
         AddResourceDialog dialog = new AddResourceDialog(Ids.REMOTE_CACHE_CONTAINER_FORM,
                 resources.messages().addResourceTitle(Names.REMOTE_CACHE_CONTAINER), rccMetadata,
                 asList(DEFAULT_REMOTE_CLUSTER, SOCKET_BINDINGS), (name, model) -> {
-            String rcName = model.get(DEFAULT_REMOTE_CLUSTER).asString();
-            ModelNode socketBindings = model.remove(SOCKET_BINDINGS);
-            ResourceAddress rccAddress = REMOTE_CACHE_CONTAINER_TEMPLATE.resolve(statementContext, name);
-            ResourceAddress rcAddress = REMOTE_CLUSTER_TEMPLATE.resolve(statementContext, name, rcName);
-            List<Operation> operations = asList(new Operation.Builder(rccAddress, ADD).payload(model).build(),
-                    new Operation.Builder(rcAddress, ADD).param(SOCKET_BINDINGS, socketBindings).build());
-            dispatcher.execute(new Composite(operations), (CompositeResult result) -> {
-                MessageEvent.fire(eventBus,
-                        Message.success(resources.messages().addResourceSuccess(Names.REMOTE_CACHE_CONTAINER, name)));
-                refresh(Ids.remoteCacheContainer(name));
-            });
-        });
-        dialog.getForm().<String>getFormItem(NAME).addValidationHandler(
+                    String rcName = model.get(DEFAULT_REMOTE_CLUSTER).asString();
+                    ModelNode socketBindings = model.remove(SOCKET_BINDINGS);
+                    ResourceAddress rccAddress = REMOTE_CACHE_CONTAINER_TEMPLATE.resolve(statementContext, name);
+                    ResourceAddress rcAddress = REMOTE_CLUSTER_TEMPLATE.resolve(statementContext, name, rcName);
+                    List<Operation> operations = asList(new Operation.Builder(rccAddress, ADD).payload(model).build(),
+                            new Operation.Builder(rcAddress, ADD).param(SOCKET_BINDINGS, socketBindings).build());
+                    dispatcher.execute(new Composite(operations), (CompositeResult result) -> {
+                        MessageEvent.fire(eventBus,
+                                Message.success(resources.messages().addResourceSuccess(Names.REMOTE_CACHE_CONTAINER, name)));
+                        refresh(Ids.remoteCacheContainer(name));
+                    });
+                });
+        dialog.getForm().<String> getFormItem(NAME).addValidationHandler(
                 createUniqueValidationFromFilteredItems(CacheContainer::isRemote));
         dialog.show();
     }

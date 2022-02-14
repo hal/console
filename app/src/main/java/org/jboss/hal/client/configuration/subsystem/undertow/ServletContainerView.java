@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.undertow;
 
@@ -21,8 +21,6 @@ import java.util.function.Function;
 
 import javax.inject.Inject;
 
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
@@ -42,6 +40,10 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+
+import elemental2.dom.HTMLElement;
+
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.jboss.gwt.elemento.core.Elements.h;
@@ -60,7 +62,7 @@ import static org.jboss.hal.resources.CSS.pfIcon;
 
 public class ServletContainerView extends HalViewImpl implements ServletContainerPresenter.MyView {
 
-    private static final ServletContainerSetting[] NAVIGATION_ORDER = new ServletContainerSetting[]{
+    private static final ServletContainerSetting[] NAVIGATION_ORDER = new ServletContainerSetting[] {
             ServletContainerSetting.JSP, ServletContainerSetting.WEBSOCKETS, SESSIONS, COOKIE, CRAWLER
     };
 
@@ -83,14 +85,14 @@ public class ServletContainerView extends HalViewImpl implements ServletContaine
         Metadata configurationMetadata = metadataRegistry.lookup(SERVLET_CONTAINER_TEMPLATE);
         configurationForm = new ModelNodeForm.Builder<>(Ids.UNDERTOW_SERVLET_CONTAINER_CONFIGURATION_FORM,
                 configurationMetadata)
-                .onSave((form, changedValues) -> presenter.saveServletContainer(changedValues))
-                .prepareReset(form -> presenter.resetServletContainer(form))
-                .build();
+                        .onSave((form, changedValues) -> presenter.saveServletContainer(changedValues))
+                        .prepareReset(form -> presenter.resetServletContainer(form))
+                        .build();
 
         Metadata emptyMetadata = Metadata.empty();
 
         ModelNode mimeMappingDescription = failSafeGet(configurationMetadata.getDescription(),
-                "children/mime-mapping/description"); //NON-NLS
+                "children/mime-mapping/description"); // NON-NLS
         mimeMappingItem = new PropertiesItem(MIME_MAPPING, Names.MIME_MAPPING);
         mimeMappingForm = new ModelNodeForm.Builder<>(Ids.UNDERTOW_SERVLET_CONTAINER_MIME_MAPPING_FORM, emptyMetadata)
                 .unboundFormItem(mimeMappingItem, 0, SafeHtmlUtils.fromString(mimeMappingDescription.asString()))
@@ -100,7 +102,7 @@ public class ServletContainerView extends HalViewImpl implements ServletContaine
                 .build();
 
         ModelNode welcomeFileDescription = failSafeGet(configurationMetadata.getDescription(),
-                "children/welcome-file/description"); //NON-NLS
+                "children/welcome-file/description"); // NON-NLS
         welcomeFileItem = new ListItem(WELCOME_FILE, Names.WELCOME_FILE);
         welcomeFileForm = new ModelNodeForm.Builder<>(Ids.UNDERTOW_SERVLET_CONTAINER_WELCOME_FILE_FORM, emptyMetadata)
                 .unboundFormItem(welcomeFileItem, 0, SafeHtmlUtils.fromString(welcomeFileDescription.asString()))

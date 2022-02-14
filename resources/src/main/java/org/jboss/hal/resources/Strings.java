@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.resources;
 
@@ -100,12 +100,14 @@ public final class Strings {
     }
 
     /**
-     * <p>Strips any of a set of characters from the start and end of a String.
-     * This is similar to {@link String#trim()} but allows the characters
-     * to be stripped to be controlled.</p>
+     * <p>
+     * Strips any of a set of characters from the start and end of a String. This is similar to {@link String#trim()} but allows
+     * the characters to be stripped to be controlled.
+     * </p>
      *
-     * <p>A {@code null} input String returns {@code null}.
-     * An empty string ("") input returns the empty string.</p>
+     * <p>
+     * A {@code null} input String returns {@code null}. An empty string ("") input returns the empty string.
+     * </p>
      *
      * <pre>
      * StringUtils.strip(null, *)          = null
@@ -117,7 +119,7 @@ public final class Strings {
      * StringUtils.strip("  abcyx", "xyz") = "  abc"
      * </pre>
      *
-     * @param str        the String to remove characters from, may be null
+     * @param str the String to remove characters from, may be null
      * @param stripChars the characters to remove, null treated as whitespace
      *
      * @return the stripped String, {@code null} if null String input
@@ -131,13 +133,17 @@ public final class Strings {
     }
 
     /**
-     * <p>Strips any of a set of characters from the start of a String.</p>
+     * <p>
+     * Strips any of a set of characters from the start of a String.
+     * </p>
      *
-     * <p>A {@code null} input String returns {@code null}.
-     * An empty string ("") input returns the empty string.</p>
+     * <p>
+     * A {@code null} input String returns {@code null}. An empty string ("") input returns the empty string.
+     * </p>
      *
-     * <p>If the stripChars String is {@code null}, whitespace is
-     * stripped as defined by {@link Character#isWhitespace(char)}.</p>
+     * <p>
+     * If the stripChars String is {@code null}, whitespace is stripped as defined by {@link Character#isWhitespace(char)}.
+     * </p>
      *
      * <pre>
      * StringUtils.stripStart(null, *)          = null
@@ -150,7 +156,7 @@ public final class Strings {
      * StringUtils.stripStart("yxabc  ", "xyz") = "abc  "
      * </pre>
      *
-     * @param str        the String to remove characters from, may be null
+     * @param str the String to remove characters from, may be null
      * @param stripChars the characters to remove, null treated as whitespace
      *
      * @return the stripped String, {@code null} if null String input
@@ -176,13 +182,17 @@ public final class Strings {
     }
 
     /**
-     * <p>Strips any of a set of characters from the end of a String.</p>
+     * <p>
+     * Strips any of a set of characters from the end of a String.
+     * </p>
      *
-     * <p>A {@code null} input String returns {@code null}.
-     * An empty string ("") input returns the empty string.</p>
+     * <p>
+     * A {@code null} input String returns {@code null}. An empty string ("") input returns the empty string.
+     * </p>
      *
-     * <p>If the stripChars String is {@code null}, whitespace is
-     * stripped as defined by {@link Character#isWhitespace(char)}.</p>
+     * <p>
+     * If the stripChars String is {@code null}, whitespace is stripped as defined by {@link Character#isWhitespace(char)}.
+     * </p>
      *
      * <pre>
      * StringUtils.stripEnd(null, *)          = null
@@ -196,7 +206,7 @@ public final class Strings {
      * StringUtils.stripEnd("120.00", ".0")   = "12"
      * </pre>
      *
-     * @param str        the String to remove characters from, may be null
+     * @param str the String to remove characters from, may be null
      * @param stripChars the set of characters to remove, null treated as whitespace
      *
      * @return the stripped String, {@code null} if null String input

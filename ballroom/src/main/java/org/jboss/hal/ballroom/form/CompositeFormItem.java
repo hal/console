@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.ballroom.form;
 
@@ -19,14 +19,16 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.resources.Ids;
+
 import com.google.common.base.Strings;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLHRElement;
-import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.resources.Ids;
 
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.gwt.elemento.core.Elements.hr;
@@ -35,14 +37,13 @@ import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 import static org.jboss.hal.resources.CSS.separator;
 
 /**
- * A form item composed from a list of other form items. Extend from this class and add the form items which should be
- * part of the composite in the constructor <strong>before</strong> the composite form item is attached.
+ * A form item composed from a list of other form items. Extend from this class and add the form items which should be part of
+ * the composite in the constructor <strong>before</strong> the composite form item is attached.
  * <p>
  * The composite form item uses the following semantics:
  * <dl>
  * <dt>Layout</dt>
- * <dd>The form items are placed into a {@code div} element. In the readonly mode they're separated by {@code hr}
- * elements.</dd>
+ * <dd>The form items are placed into a {@code div} element. In the readonly mode they're separated by {@code hr} elements.</dd>
  * <dt>Empty</dt>
  * <dd>The composite form item is empty if <strong>all</strong> form items are empty.</dd>
  * <dt>Modified</dt>
@@ -50,8 +51,8 @@ import static org.jboss.hal.resources.CSS.separator;
  * <dt>Expressions</dt>
  * <dd>The composite form item does not support expressions.</dd>
  * <dt>Validation</dt>
- * <dd>The composite form item is valid if <strong>all</strong> form items are valid. Adding new validation handlers is
- * not supported.</dd>
+ * <dd>The composite form item is valid if <strong>all</strong> form items are valid. Adding new validation handlers is not
+ * supported.</dd>
  * <dt>Restricted</dt>
  * <dd>The composite form item is restricted if <strong>any of</strong> the form items is restricted.</dd>
  * <dt>Enabled</dt>
@@ -78,7 +79,7 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
         editingContainer = div().element();
         readOnlyContainer = div().element();
 
-        for (Iterator<FormItem> iterator = formItems.iterator(); iterator.hasNext(); ) {
+        for (Iterator<FormItem> iterator = formItems.iterator(); iterator.hasNext();) {
             FormItem formItem = iterator.next();
             if (formItem instanceof AbstractFormItem) {
                 AbstractFormItem afi = (AbstractFormItem) formItem;
@@ -286,7 +287,6 @@ public abstract class CompositeFormItem extends AbstractFormItem<ModelNode> impl
             formItem.setUndefined(undefined);
         }
     }
-
 
     private class FormItemChangeHandler implements ValueChangeHandler {
 

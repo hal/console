@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.core.mbui.form;
 
@@ -28,18 +28,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import elemental2.dom.HTMLElement;
-import jsinterop.annotations.JsFunction;
-import jsinterop.annotations.JsIgnore;
-import jsinterop.annotations.JsMethod;
-import jsinterop.annotations.JsProperty;
-import jsinterop.annotations.JsType;
-import jsinterop.base.JsPropertyMap;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.EmptyState;
@@ -73,6 +61,20 @@ import org.jboss.hal.spi.EsParam;
 import org.jboss.hal.spi.EsReturn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtml;
+
+import elemental2.dom.HTMLElement;
+import jsinterop.annotations.JsFunction;
+import jsinterop.annotations.JsIgnore;
+import jsinterop.annotations.JsMethod;
+import jsinterop.annotations.JsProperty;
+import jsinterop.annotations.JsType;
+import jsinterop.base.JsPropertyMap;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
@@ -149,7 +151,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         for (Property property : properties) {
 
             // any unbound form items for the current index?
-            for (Iterator<UnboundFormItem> iterator = builder.unboundFormItems.iterator(); iterator.hasNext(); ) {
+            for (Iterator<UnboundFormItem> iterator = builder.unboundFormItems.iterator(); iterator.hasNext();) {
                 UnboundFormItem unboundFormItem = iterator.next();
                 if (unboundFormItem.position == index) {
                     addFormItem(unboundFormItem.formItem);
@@ -297,7 +299,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
                     String name = formItem.getName();
                     int pos = name.indexOf('.');
                     if (pos > 0) {
-                        name = name.substring(0,pos);
+                        name = name.substring(0, pos);
                     }
                     formItem.setRestricted(!securityContext.isReadable(name));
                     // don't touch disabled form items
@@ -364,7 +366,6 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         return emptyOrDefault;
     }
 
-
     // ------------------------------------------------------ JS methods
 
     @JsProperty(name = "element")
@@ -372,13 +373,11 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         return element();
     }
 
-
     // ------------------------------------------------------ inner classes
 
-
     /**
-     * Builder to create forms based on resource metadata. By default the form includes all non-deprecated attributes
-     * with <code>"storage" =&gt; "configuration"</code>.
+     * Builder to create forms based on resource metadata. By default the form includes all non-deprecated attributes with
+     * <code>"storage" =&gt; "configuration"</code>.
      */
     @SuppressWarnings("unused")
     @JsType(namespace = "hal.ui", name = "FormBuilder")
@@ -409,7 +408,6 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         PrepareReset<T> prepareReset;
         PrepareRemove<T> prepareRemove;
         boolean panelForOptionalAttributes;
-
 
         // ------------------------------------------------------ configure required and optional settings
 
@@ -469,8 +467,8 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         }
 
         /**
-         * Use this flag if you just want to use the form to add model nodes. The attributes will be taken from the
-         * ATTRIBUTES child node.
+         * Use this flag if you just want to use the form to add model nodes. The attributes will be taken from the ATTRIBUTES
+         * child node.
          */
         @EsReturn("FormBuilder")
         public Builder<T> addOnly() {
@@ -531,13 +529,13 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         }
 
         /**
-         * Use this method if you want to manage a singleton resource. This will create a form with an {@link
-         * org.jboss.hal.ballroom.form.SingletonStateMachine}.
+         * Use this method if you want to manage a singleton resource. This will create a form with an
+         * {@link org.jboss.hal.ballroom.form.SingletonStateMachine}.
          * <p>
          * The specified operation is used to check whether the resource exists.
          * <p>
-         * If the resource does not exist, a default empty state is displayed. The empty state will contain a button
-         * which will trigger the specified add action.
+         * If the resource does not exist, a default empty state is displayed. The empty state will contain a button which will
+         * trigger the specified add action.
          */
         @JsIgnore
         public Builder<T> singleton(Supplier<org.jboss.hal.dmr.Operation> ping, Callback addAction) {
@@ -549,16 +547,15 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         }
 
         /**
-         * Use this method if you want to manage a singleton resource. This will create a form with an {@link
-         * org.jboss.hal.ballroom.form.SingletonStateMachine}.
+         * Use this method if you want to manage a singleton resource. This will create a form with an
+         * {@link org.jboss.hal.ballroom.form.SingletonStateMachine}.
          * <p>
          * The specified operation is used to check whether the resource exists.
          * <p>
-         * If the resource does not exist, the specified empty state is displayed. The empty state must have a button
-         * which triggers the creation of the singleton resource.
+         * If the resource does not exist, the specified empty state is displayed. The empty state must have a button which
+         * triggers the creation of the singleton resource.
          * <p>
-         * Please make sure that the primary action of the empty state has a {@linkplain Constraint constraint} attached
-         * to it.
+         * Please make sure that the primary action of the empty state has a {@linkplain Constraint constraint} attached to it.
          */
         @JsIgnore
         public Builder<T> singleton(Supplier<org.jboss.hal.dmr.Operation> ping,
@@ -627,15 +624,14 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         }
 
         /**
-         * By default the non-requried attributes are displayed together with the required attributes. Call this method
-         * to put the non-required attributes on a collapsible panel beneath the required attributes.
+         * By default the non-requried attributes are displayed together with the required attributes. Call this method to put
+         * the non-required attributes on a collapsible panel beneath the required attributes.
          */
         @JsIgnore
         public Builder<T> panelForOptionalAttributes() {
             this.panelForOptionalAttributes = true;
             return this;
         }
-
 
         // ------------------------------------------------------ build
 
@@ -703,9 +699,8 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         }
 
         private String formId() {
-            return "form(" + id + ")"; //NON-NLS
+            return "form(" + id + ")"; // NON-NLS
         }
-
 
         // ------------------------------------------------------ JS methods
 

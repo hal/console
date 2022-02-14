@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.runtime.subsystem.undertow;
 
@@ -20,9 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.LabelBuilder;
@@ -53,6 +50,11 @@ import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+
+import elemental2.dom.HTMLElement;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.*;
@@ -116,11 +118,11 @@ class DeploymentPreview extends PreviewContent<DeploymentResource> {
 
         noStatistics = new EmptyState.Builder(Ids.UNDERTOW_DEPLOYMENT_STATISTICS_DISABLED,
                 resources.constants().statisticsDisabledHeader())
-                .description(resources.messages().statisticsDisabled(Names.UNDERTOW))
-                .icon(fontAwesome("line-chart"))
-                .primaryAction(resources.constants().enableStatistics(), this::enableStatistics,
-                        Constraint.writable(WEB_SUBSYSTEM_TEMPLATE, STATISTICS_ENABLED))
-                .build();
+                        .description(resources.messages().statisticsDisabled(Names.UNDERTOW))
+                        .icon(fontAwesome("line-chart"))
+                        .primaryAction(resources.constants().enableStatistics(), this::enableStatistics,
+                                Constraint.writable(WEB_SUBSYSTEM_TEMPLATE, STATISTICS_ENABLED))
+                        .build();
 
         sessions = new Donut.Builder(Names.SESSIONS)
                 .add(ACTIVE_SESSIONS, resources.constants().activeSessions(), PatternFly.colors.green)
@@ -223,7 +225,7 @@ class DeploymentPreview extends PreviewContent<DeploymentResource> {
     private void injectUrls() {
         List<HTMLElement> linkContainers = new ArrayList<>();
         forEach(e -> {
-            List<HTMLElement> elements = stream(e.querySelectorAll("[data-" + LINK + "]")) //NON-NLS
+            List<HTMLElement> elements = stream(e.querySelectorAll("[data-" + LINK + "]")) // NON-NLS
                     .filter(htmlElements())
                     .map(asHtmlElement())
                     .collect(toList());
@@ -233,7 +235,7 @@ class DeploymentPreview extends PreviewContent<DeploymentResource> {
             String host = environment.isStandalone() ? Server.STANDALONE.getHost() : statementContext.selectedHost();
             String serverGroup = statementContext.selectedServerGroup();
             String server = environment.isStandalone() ? Server.STANDALONE.getName() : statementContext.selectedServer();
-            //noinspection Duplicates
+            // noinspection Duplicates
             serverActions.readUrl(environment.isStandalone(), host, serverGroup, server,
                     new AsyncCallback<ServerUrl>() {
                         @Override

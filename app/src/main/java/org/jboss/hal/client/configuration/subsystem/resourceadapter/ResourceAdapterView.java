@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.configuration.subsystem.resourceadapter;
 
@@ -47,8 +47,8 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 
 @MbuiView
-@SuppressWarnings({"WeakerAccess", "HardCodedStringLiteral", "UnusedParameters", "DuplicateStringLiteralInspection",
-        "unused"})
+@SuppressWarnings({ "WeakerAccess", "HardCodedStringLiteral", "UnusedParameters", "DuplicateStringLiteralInspection",
+        "unused" })
 public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPresenter>
         implements ResourceAdapterPresenter.MyView {
 
@@ -143,10 +143,10 @@ public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPr
         Metadata metadata = mbuiContext.metadataRegistry().lookup(CONNECTION_DEFINITIONS_TEMPLATE);
         AddResourceDialog dialog = new AddResourceDialog(Ids.RESOURCE_ADAPTER_CONNECTION_DEFINITION_ADD,
                 Names.CONNECTION_DEFINITION, metadata, (name, modelNode) -> {
-            ResourceAddress address = SELECTED_CONNECTION_DEFINITIONS_TEMPLATE
-                    .resolve(selectionAwareStatementContext, name);
-            mbuiContext.crud().add(Names.CONNECTION_DEFINITION, name, address, modelNode, (n, a) -> presenter.reload());
-        });
+                    ResourceAddress address = SELECTED_CONNECTION_DEFINITIONS_TEMPLATE
+                            .resolve(selectionAwareStatementContext, name);
+                    mbuiContext.crud().add(Names.CONNECTION_DEFINITION, name, address, modelNode, (n, a) -> presenter.reload());
+                });
         dialog.show();
     }
 
@@ -156,7 +156,7 @@ public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPr
                 name);
         Metadata metadata = mbuiContext.metadataRegistry().lookup(CONNECTION_DEFINITIONS_TEMPLATE);
         Map<String, String> properties = form.getFormItem(CONFIG_PROPERTIES) != null
-                ? form.<Map<String, String>>getFormItem(CONFIG_PROPERTIES).getValue()
+                ? form.<Map<String, String>> getFormItem(CONFIG_PROPERTIES).getValue()
                 : Collections.emptyMap();
         mbuiContext.po().saveWithProperties(Names.CONNECTION_DEFINITION, name, address, changedValues, metadata,
                 CONFIG_PROPERTIES, properties, () -> presenter.reload());
@@ -177,7 +177,7 @@ public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPr
     }
 
     void removeConnectionDefinition(Table<NamedNode> table) {
-        //noinspection ConstantConditions
+        // noinspection ConstantConditions
         String name = table.selectedRow().getName();
         mbuiContext.crud().remove(Names.CONNECTION_DEFINITION, name,
                 SELECTED_CONNECTION_DEFINITIONS_TEMPLATE.resolve(selectionAwareStatementContext, name),
@@ -188,9 +188,9 @@ public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPr
         Metadata metadata = mbuiContext.metadataRegistry().lookup(ADMIN_OBJECTS_TEMPLATE);
         AddResourceDialog dialog = new AddResourceDialog(Ids.RESOURCE_ADAPTER_ADMIN_OBJECT_ADD,
                 Names.ADMIN_OBJECT, metadata, (name, modelNode) -> {
-            ResourceAddress address = SELECTED_ADMIN_OBJECTS_TEMPLATE.resolve(selectionAwareStatementContext, name);
-            mbuiContext.crud().add(Names.ADMIN_OBJECT, name, address, modelNode, (n, a) -> presenter.reload());
-        });
+                    ResourceAddress address = SELECTED_ADMIN_OBJECTS_TEMPLATE.resolve(selectionAwareStatementContext, name);
+                    mbuiContext.crud().add(Names.ADMIN_OBJECT, name, address, modelNode, (n, a) -> presenter.reload());
+                });
         dialog.show();
     }
 
@@ -199,7 +199,7 @@ public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPr
         ResourceAddress address = SELECTED_ADMIN_OBJECTS_TEMPLATE.resolve(selectionAwareStatementContext, name);
         Metadata metadata = mbuiContext.metadataRegistry().lookup(ADMIN_OBJECTS_TEMPLATE);
         mbuiContext.po().saveWithProperties(Names.ADMIN_OBJECT, name, address, changedValues, metadata,
-                CONFIG_PROPERTIES, form.<Map<String, String>>getFormItem(CONFIG_PROPERTIES).getValue(),
+                CONFIG_PROPERTIES, form.<Map<String, String>> getFormItem(CONFIG_PROPERTIES).getValue(),
                 () -> presenter.reload());
     }
 
@@ -217,7 +217,7 @@ public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPr
     }
 
     void removeAdminObject(Table<NamedNode> table) {
-        //noinspection ConstantConditions
+        // noinspection ConstantConditions
         String name = table.selectedRow().getName();
         mbuiContext.crud().remove(Names.ADMIN_OBJECT, name,
                 SELECTED_ADMIN_OBJECTS_TEMPLATE.resolve(selectionAwareStatementContext, name),

@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.runtime.subsystem.elytron;
 
@@ -21,7 +21,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
@@ -39,6 +38,8 @@ import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+
+import elemental2.dom.HTMLElement;
 
 import static java.util.Arrays.asList;
 import static org.jboss.gwt.elemento.core.Elements.h;
@@ -86,28 +87,28 @@ public class SSLView extends HalViewImpl implements SSLPresenter.MyView {
         String changeAccDesc = certAuthorityMeta.forOperation(CHANGE_ACCOUNT_KEY).getDescription().getDescription();
         caaTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(CERTIFICATE_AUTHORITY_ACCOUNT, TABLE),
                 certAuthorityMeta)
-                .button(new Button<>(cons.create(), createAccDesc,
-                        table -> presenter.createAccount(table.selectedRow().getName()),
-                        Constraint.executable(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE, CREATE_ACCOUNT)))
+                        .button(new Button<>(cons.create(), createAccDesc,
+                                table -> presenter.createAccount(table.selectedRow().getName()),
+                                Constraint.executable(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE, CREATE_ACCOUNT)))
 
-                .button(new Button<>(cons.deactivate(), deactivateAccDesc,
-                        table -> presenter.deactivateAccount(table.selectedRow().getName()),
-                        Constraint.executable(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE, DEACTIVATE_ACCOUNT)))
+                        .button(new Button<>(cons.deactivate(), deactivateAccDesc,
+                                table -> presenter.deactivateAccount(table.selectedRow().getName()),
+                                Constraint.executable(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE, DEACTIVATE_ACCOUNT)))
 
-                .button(new Button<>(cons.update(), updateAccDesc,
-                        table -> presenter.updateAccount(table.selectedRow().getName()),
-                        Constraint.executable(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE, UPDATE_ACCOUNT)))
+                        .button(new Button<>(cons.update(), updateAccDesc,
+                                table -> presenter.updateAccount(table.selectedRow().getName()),
+                                Constraint.executable(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE, UPDATE_ACCOUNT)))
 
-                .button(new Button<>(cons.getMetadata(), metadataAccDesc,
-                        table -> presenter.getMetadata(table.selectedRow().getName(), this::updateCertificateMetadata),
-                        Constraint.executable(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE, GET_METADATA)))
+                        .button(new Button<>(cons.getMetadata(), metadataAccDesc,
+                                table -> presenter.getMetadata(table.selectedRow().getName(), this::updateCertificateMetadata),
+                                Constraint.executable(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE, GET_METADATA)))
 
-                .button(new Button<>(cons.changeAccountKey(), changeAccDesc,
-                        table -> presenter.changeAccountKey(table.selectedRow().getName()),
-                        Constraint.executable(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE, CHANGE_ACCOUNT_KEY)))
+                        .button(new Button<>(cons.changeAccountKey(), changeAccDesc,
+                                table -> presenter.changeAccountKey(table.selectedRow().getName()),
+                                Constraint.executable(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE, CHANGE_ACCOUNT_KEY)))
 
-                .column(NAME, (cell, type, row, meta) -> row.getName())
-                .build();
+                        .column(NAME, (cell, type, row, meta) -> row.getName())
+                        .build();
 
         caaMetadata = new PreTextItem(METADATA);
         caaMetadata.setEnabled(false);
@@ -225,7 +226,7 @@ public class SSLView extends HalViewImpl implements SSLPresenter.MyView {
                 String value = caaMetadataCache.get(account);
                 if (value != null) {
                     caaMetadata.setValue(value);
-                } else  {
+                } else {
                     caaMetadata.clearValue();
                 }
             }

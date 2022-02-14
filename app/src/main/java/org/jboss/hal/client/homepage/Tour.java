@@ -1,22 +1,30 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.homepage;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.jboss.hal.ballroom.Popover;
+import org.jboss.hal.ballroom.Popover.Placement;
+import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Resources;
+import org.jboss.hal.resources.UIConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
@@ -29,15 +37,9 @@ import com.gwtplatform.mvp.client.proxy.NavigationEvent;
 import com.gwtplatform.mvp.client.proxy.NavigationHandler;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+
 import elemental2.dom.Element;
 import elemental2.dom.HTMLButtonElement;
-import org.jboss.hal.ballroom.Popover;
-import org.jboss.hal.ballroom.Popover.Placement;
-import org.jboss.hal.resources.Ids;
-import org.jboss.hal.resources.Resources;
-import org.jboss.hal.resources.UIConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static elemental2.dom.DomGlobal.clearInterval;
 import static elemental2.dom.DomGlobal.document;
@@ -168,7 +170,6 @@ class Tour implements NavigationHandler {
         }
     }
 
-
     private static final String CLOSE_BUTTON = "<button type=\"button\" class=\"close\" aria-hidden=\"true\">" +
             "<span class=\"" + pfIcon("close") + "\"></span>" +
             "</button>";
@@ -179,7 +180,6 @@ class Tour implements NavigationHandler {
                     "<div class=\"popover-content\"></div>" +
                     "</div>");
     private final ButtonsTemplate BUTTONS_TEMPLATE = GWT.create(ButtonsTemplate.class);
-
 
     interface ButtonsTemplate extends SafeHtmlTemplates {
 
@@ -194,7 +194,6 @@ class Tour implements NavigationHandler {
                 "</div>")
         SafeHtml buttons(String backId, String back, String nextId, String next, String doneId, String done);
     }
-
 
     private class Step {
 
