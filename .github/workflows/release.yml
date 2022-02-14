@@ -9,7 +9,6 @@ jobs:
 
   deploy:
     name: Deploy Maven Artifacts
-    needs: verify
     runs-on: ubuntu-latest
     env:
       MVN: mvn --show-version --batch-mode
