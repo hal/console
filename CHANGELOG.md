@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [3.5.5] - 2022-02-15
+
 ### Added
 
 - Use PAT for release workflow
@@ -106,8 +108,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - in case of vulnerabilities
 -->
 
-[Unreleased]: https://github.com/hal/console/compare/v3.5.4.Final...HEAD
-[3.5.4]: https://github.com/hal/console/compare/v3.5.3...v3.5.4.Final
+[Unreleased]: https://github.com/hal/console/compare/v3.5.5.Final...HEAD
+[3.5.5]: https://github.com/hal/console/compare/v3.5.4...v3.5.5.Final
+[3.5.4]: https://github.com/hal/console/compare/v3.5.3...v3.5.4
 [3.5.3]: https://github.com/hal/console/compare/v3.5.2...v3.5.3
 [3.5.2]: https://github.com/hal/console/compare/v3.5.1...v3.5.2
 [3.5.1]: https://github.com/hal/console/compare/v3.5.0...v3.5.1
