@@ -127,3 +127,4 @@ git push --quiet --tags origin main && git push --quiet --tags upstream main
 git commit --quiet -am "Next is ${SNAPSHOT_VERSION}"
 msg "Push changes"
 git push --quiet origin main && git push --quiet upstream main
+msg "Done. Watch the release workflow at https://github.com/hal/console/actions/workflows/release.yml"
