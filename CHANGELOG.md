@@ -65,4 +65,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 -->
 
 [Unreleased]: https://github.com/hal/console/compare/v3.5.0.Final...HEAD
-[3.5.0.Final]: https://github.com/hal/console/compare/3.4.4.Final...v3.5.0.Final
+[3.5.0.Final]: https://github.com/hal/console/compare/v3.4.4.Final...v3.5.0.Final

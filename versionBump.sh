@@ -100,7 +100,7 @@ parse_params() {
 parse_params "$@"
 setup_colors
 
-msg "Update version to ${CYAN}${NEW_VERSION}${NOFORMAT}..."
+msg "Update version to ${CYAN}${NEW_VERSION}${NOFORMAT}"
 mvn --quiet versions:set -DnewVersion="${NEW_VERSION}" &> /dev/null
 msg "    ${YELLOW}✓${NOFORMAT} Maven POMs"
 sed -i '' "s/.*/$NEW_VERSION/" version.txt
@@ -108,4 +108,3 @@ msg "    ${YELLOW}✓${NOFORMAT} version.txt"
 sed -i '' "s/name=\"hal\.version\" value=\".*\"/name=\"hal.version\" value=\"$NEW_VERSION\"/" app/src/main/module.gwt.xml
 sed -i '' "s/name=\"hal\.version\" value=\".*\"/name=\"hal.version\" value=\"$NEW_VERSION\"/" app/src/main/module-i18n.gwt.xml
 msg "    ${YELLOW}✓${NOFORMAT} GWT modules"
-msg "Done"
