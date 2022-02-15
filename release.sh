@@ -42,7 +42,7 @@ cd "${script_dir}"
 usage() {
   cat <<EOF
 USAGE:
-    $(basename "${BASH_SOURCE[0]}") [FLAGS] <release-version> <next-snapshot>
+    $(basename "${BASH_SOURCE[0]}") [FLAGS] <release-version> <next-version>
 
 FLAGS:
     -h, --help          Prints help information
@@ -50,8 +50,8 @@ FLAGS:
     --no-color          Uses plain text output
 
 ARGS:
-    <release-version>   The release version (should end with '.Final')
-    <next-snapshot>     The next snapshot version  (should end with '-SNAPSHOT')
+    <release-version>   The release version (as semver)
+    <next-snapshot>     The next snapshot version  (as semver)
 EOF
   exit
 }
@@ -100,35 +100,58 @@ parse_params() {
   ARGS=("$@")
   [[ ${#ARGS[@]} -eq 2 ]] || die "Missing release and/or snapshot version"
   RELEASE_VERSION=${ARGS[0]}
-  TAG="v${RELEASE_VERSION}"
+  NEXT_VERSION=${ARGS[1]}
+
   SNAPSHOT_VERSION=${ARGS[1]}
-  [[ "${RELEASE_VERSION}" == *.Final ]] || die "Release version does not end with '.Final'"
-  [[ "${SNAPSHOT_VERSION}" == *-SNAPSHOT ]] || die "Snapshot version does not end with '-SNAPSHOT'"
+  [[ ${RELEASE_VERSION} =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || die "Release version is not a semantic version"
+  [[ ${NEXT_VERSION} =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || die "Next version is not a semantic version"
   return 0
 }
 
 parse_params "$@"
 setup_colors
 
-git diff-index --quiet HEAD || die "You have uncommitted changes"
+FINAL_VERSION="${RELEASE_VERSION}.Final"
+SNAPSHOT_VERSION="${NEXT_VERSION}-SNAPSHOT"
+TAG="v${RELEASE_VERSION}"
+
+#git diff-index --quiet HEAD || die "You have uncommitted changes"
 [[ $(git tag -l "${TAG}") ]] && die "Tag ${TAG} already defined"
 
-./versionBump.sh "${RELEASE_VERSION}"
+msg ""
+msg "Codebase is ready to be released."
+msg ""
+msg "If you decide to continue, this script will "
+msg ""
+msg "   1. Bump the version to ${CYAN}${FINAL_VERSION}${NOFORMAT}"
+msg "   2. Update the ${CYAN}changelog${NOFORMAT} (there should already be some content in it!)"
+msg "   3. Create a tag for ${CYAN}${TAG}${NOFORMAT}"
+msg "   4. ${CYAN}Commit${NOFORMAT} and ${CYAN}push${NOFORMAT} to upstream (which will trigger the ${CYAN}release workflow${NOFORMAT} at GitHub)"
+msg "   5. Bump the version to ${CYAN}${SNAPSHOT_VERSION}${NOFORMAT}"
+msg "   6. ${CYAN}Commit${NOFORMAT} and ${CYAN}push${NOFORMAT} to upstream"
+msg ""
+echo "Do you wish to continue?"
+select yn in "Yes" "No"; do
+    case $yn in
+        Yes ) break;;
+        No ) die "Aborted ";;
+    esac
+done
+
+msg ""
+./versionBump.sh "${FINAL_VERSION}"
 git commit --quiet -am "Bump to ${RELEASE_VERSION}"
 mvn --quiet -DskipModules keepachangelog:release &> /dev/null
 sed -E -i '' 's/\[([0-9]+\.[0-9]+\.[0-9]+)\.Final\]/[\1]/g' CHANGELOG.md
 msg "Update changelog"
 git commit --quiet -am "Update changelog"
 msg "Push changes"
-git push --quiet origin main &> /dev/null
 git push --quiet upstream main &> /dev/null
 git tag "${TAG}"
 msg "Push tag"
-git push --quiet --tags origin main &> /dev/null
 git push --quiet --tags upstream main &> /dev/null
 ./versionBump.sh "${SNAPSHOT_VERSION}"
-git commit --quiet -am "Next is ${SNAPSHOT_VERSION}"
+git commit --quiet -am "Next is ${NEXT_VERSION}"
 msg "Push changes"
-git push --quiet origin main &> /dev/null
 git push --quiet upstream main &> /dev/null
 msg "Done. Watch the release workflow at https://github.com/hal/console/actions/workflows/release.yml"

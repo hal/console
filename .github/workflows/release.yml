@@ -118,7 +118,7 @@ jobs:
         with:
           path: ./CHANGELOG.md
           validation_depth: 0
-          version: ${{ steps.get-version.outputs.major }}.${{ steps.get-version.outputs.minor }}.${{ steps.get-version.outputs.patch }}
+          version: ${{ steps.get-version.outputs.version-without-v }}
       - name: Create Release
         id: create-release
         uses: actions/create-release@v1
