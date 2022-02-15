@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [3.5.1.Final] - 2022-02-15
+
 ### Added 
 
 - Add release script
@@ -64,5 +66,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - in case of vulnerabilities
 -->
 
-[Unreleased]: https://github.com/hal/console/compare/v3.5.0.Final...HEAD
-[3.5.0.Final]: https://github.com/hal/console/compare/v3.4.4.Final...v3.5.0.Final
+[Unreleased]: https://github.com/hal/console/compare/v3.5.1.Final...HEAD
+[3.5.1.Final]: https://github.com/hal/console/compare/v3.5.0.Final...v3.5.1.Final
+[3.5.0.Final]: https://github.com/hal/console/compare/vTemplate...v3.5.0.Final
