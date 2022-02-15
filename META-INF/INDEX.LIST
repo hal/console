@@ -1,19 +1,19 @@
 JarIndex-Version: 1.0
 
-hal-console-3.5.1.Final-resources.jar
+hal-console-3.5.2.Final-resources.jar
 META-INF
 META-INF/maven
 META-INF/maven/org.jboss.hal
 META-INF/maven/org.jboss.hal/hal-console
 css
 deferredjs
-deferredjs/70BF794B7F538DD0E77319E812EA4800
+deferredjs/E673401E9429EFC4A19FE7E7E362E79F
 fonts
 img
 js
 previews
 3789120344D343BB6552246E629B1169.cache.txt
-70BF794B7F538DD0E77319E812EA4800.cache.js
+E673401E9429EFC4A19FE7E7E362E79F.cache.js
 apple-touch-icon.png
 clear.cache.gif
 compilation-mappings.txt
