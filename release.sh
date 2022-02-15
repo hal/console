@@ -129,5 +129,6 @@ git push --quiet --tags upstream main &> /dev/null
 ./versionBump.sh "${SNAPSHOT_VERSION}"
 git commit --quiet -am "Next is ${SNAPSHOT_VERSION}"
 msg "Push changes"
-git push --quiet origin main && git push --quiet upstream main
+git push --quiet origin main &> /dev/null
+git push --quiet upstream main &> /dev/null
 msg "Done. Watch the release workflow at https://github.com/hal/console/actions/workflows/release.yml"
