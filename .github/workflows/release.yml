@@ -102,7 +102,7 @@ jobs:
           clean: true
 
   release:
-    name: Create Release
+    name: Create GitHub Release
     needs: deploy
     runs-on: ubuntu-latest
     steps:
@@ -117,10 +117,9 @@ jobs:
         uses: mindsers/changelog-reader-action@v2
         with:
           path: ./CHANGELOG.md
-          validation_depth: 0
           version: ${{ steps.get-version.outputs.version-without-v }}
-      - name: Create Release
-        id: create-release
+      - name: Create GitHub Release
+        id: create-gh-release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
