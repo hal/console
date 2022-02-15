@@ -5,7 +5,7 @@ Specification-Title: HAL :: Console
 Specification-Version: 3.5
 Specification-Vendor: Red Hat
 Implementation-Title: HAL :: Console
-Implementation-Version: 3.5.2.Final
+Implementation-Version: 3.5.3.Final
 Implementation-Vendor: Red Hat
 Implementation-URL: https://hal.github.io/hal-code-parent/hal-gwt-parent
  /hal-console/
@@ -16,7 +16,7 @@ Os-Name: Linux
 Os-Version: 5.11.0-1028-azure
 Scm-Connection: scm:git:git@github.com:hal/console.git/hal-code-parent/h
  al-gwt-parent/hal-console
-Scm-Revision: 028b8b16c1fb0e1379c37d3afcb4a7026ad8fb6c
+Scm-Revision: 7799a278356601eaec1ea560ffd8777d8f73fdd1
 Scm-Url: https://github.com/hal/console/hal-code-parent/hal-gwt-parent/h
  al-console
 
