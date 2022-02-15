@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Added 
+
+- Add release script
+
+### Fixed
+
+- Fix release workflow
+
 ## [3.5.0.Final] - 2022-02-14
 
 ### Added

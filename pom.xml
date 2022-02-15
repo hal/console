@@ -32,7 +32,7 @@
     <version>3.5.0.Final</version>
     <packaging>pom</packaging>
     <name>HAL :: Parent</name>
-    <description>The WildFly / EAP management console</description>
+    <description>WildFly / EAP management console</description>
     <url>https://hal.github.io/</url>
     <inceptionYear>2022</inceptionYear>
 
@@ -125,6 +125,7 @@
         <version.frontend.plugin>1.12.1</version.frontend.plugin>
         <version.gwt.plugin>1.0.0</version.gwt.plugin>
         <version.impsort.plugin>1.6.2</version.impsort.plugin>
+        <version.keepachangelog>2.1.1</version.keepachangelog>
         <version.license.plugin>4.1</version.license.plugin>
         <version.nexus.staging.plugin>1.6.8</version.nexus.staging.plugin>
 
@@ -223,6 +224,11 @@
                         <removeUnused>true</removeUnused>
                         <staticAfter>true</staticAfter>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>co.enear.maven.plugins</groupId>
+                    <artifactId>keepachangelog-maven-plugin</artifactId>
+                    <version>${version.keepachangelog}</version>
                 </plugin>
                 <plugin>
                     <groupId>com.mycila</groupId>
