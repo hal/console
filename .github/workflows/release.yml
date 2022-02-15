@@ -25,7 +25,7 @@ jobs:
           cache: maven
       - name: Package
         id: package
-        run: $MVN package -P prod,release,theme-wildfly
+        run: $MVN package -P prod,theme-wildfly
       - name: Set up Maven Settings
         id: setup-maven-settings
         uses: actions/setup-java@v2
