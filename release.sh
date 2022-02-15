@@ -146,9 +146,9 @@ sed -E -i '' 's/\[([0-9]+\.[0-9]+\.[0-9]+)\.Final\]/[\1]/g' CHANGELOG.md
 msg "Update changelog"
 git commit --quiet -am "Update changelog"
 msg "Push changes"
-git push --quiet upstream main &> /dev/null
 git tag "${TAG}"
 msg "Push tag"
+git push --quiet upstream main &> /dev/null
 git push --quiet --tags upstream main &> /dev/null
 ./versionBump.sh "${SNAPSHOT_VERSION}"
 git commit --quiet -am "Next is ${NEXT_VERSION}"

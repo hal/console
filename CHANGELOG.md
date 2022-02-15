@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Changed 
+
+- Optimise release script
+
 ## [3.5.4] - 2022-02-15
 
 ### Added
@@ -15,7 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Fixed
 
-- Fixed release workflow
+- Fix release workflow
 
 ## [3.5.3] - 2022-02-15
 
@@ -25,7 +29,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Fixed
 
-- Fixed release script
+- Fix release script
 
 ## [3.5.2] - 2022-02-15
 
@@ -35,7 +39,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Fixed
 
-- Fixed release script
+- Fix release script
 - Fix release workflow
 
 ## [3.5.1] - 2022-02-15
