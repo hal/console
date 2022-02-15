@@ -63,9 +63,6 @@ jobs:
         run: |
           VERSION=$( mvn help:evaluate -Dexpression=project.version --non-recursive --quiet -DforceStdout )
           echo "::set-output name=version::$VERSION"
-      - name: Quarantine
-        id: quarantine
-        run: xattr -r -d com.apple.quarantine ${GRAALVM_HOME}/../..
       - name: Install Native Image
         id: install-native-image
         run: gu install native-image
