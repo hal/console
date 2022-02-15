@@ -116,6 +116,7 @@ git diff-index --quiet HEAD || die "You have uncommitted changes"
 ./versionBump.sh "${RELEASE_VERSION}"
 git commit --quiet -am "Bump to ${RELEASE_VERSION}"
 mvn --quiet -DskipModules keepachangelog:release &> /dev/null
+sed -E -i '' 's/\[([0-9]+\.[0-9]+\.[0-9]+)\.Final\]/[\1]/g' CHANGELOG.md
 msg "Update changelog"
 git commit --quiet -am "Update changelog"
 msg "Push changes"

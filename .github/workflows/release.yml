@@ -117,7 +117,8 @@ jobs:
         uses: mindsers/changelog-reader-action@v2
         with:
           path: ./CHANGELOG.md
-          version: ${{ steps.get-version.outputs.version-without-v }}
+          validation_depth: 0
+          version: ${{ steps.get-version.outputs.major }}.${{ steps.get-version.outputs.minor }}.${{ steps.get-version.outputs.patch }}
       - name: Create Release
         id: create-release
         uses: actions/create-release@v1
