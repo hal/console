@@ -46,7 +46,7 @@ jobs:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
 
   standalone:
-    name: Build Sandalone Console
+    name: Build Standalone Console
     needs: deploy
     runs-on: ubuntu-latest
     env:
@@ -122,7 +122,7 @@ jobs:
         id: create-gh-release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
         with:
           tag_name: ${{ steps.get-version.outputs.version }}
           release_name: HAL ${{ steps.get-version.outputs.version-without-v }}.Final

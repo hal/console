@@ -7,6 +7,7 @@ on:
 jobs:
 
   linux:
+    name: Linux Binary
     runs-on: ubunti-latest
     env:
       MVN: mvn --show-version --batch-mode
@@ -43,6 +44,7 @@ jobs:
           asset_content_type: application/octet-stream
 
   macos:
+    name: macOS Binary
     runs-on: macos-latest
     env:
       MVN: mvn --show-version --batch-mode
@@ -83,6 +85,7 @@ jobs:
 
   windows:
     runs-on: window-2019
+    name: Windows Binary
     env:
       MVN: mvn --show-version --batch-mode
     steps:

@@ -140,11 +140,11 @@ variables using the console and call the `toString()` method on the respective o
 
 # Scripts
 
-This repository contains various scripts to automate tasks.
+This repository contains some scripts to automate various development tasks.
 
 ## `depgraph.sh`
 
-Generates a visual dependency graph which is part of HAL's official site: https://hal.github.io/
+Generates a visual dependency graph.
 
 ## `format.sh`
 
