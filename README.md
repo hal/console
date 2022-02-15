@@ -164,6 +164,10 @@ Validates the codebase by applying the following maven goals:
 - [`formatter-maven-plugin:validate`](https://code.revelc.net/formatter-maven-plugin/validate-mojo.html)
 - [`impsort-maven-plugin:check`](https://code.revelc.net/impsort-maven-plugin/check-mojo.html)
 
+## `release.sh`
+
+Releases a new HAL version.
+
 ## `versionBump.sh`
 
 Bumps the version to the specified version number.
