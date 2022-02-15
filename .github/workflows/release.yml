@@ -126,7 +126,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ steps.get-version.outputs.version }}
-          release_name: HAL ${{ steps.get-version.outputs.version-without-v }}
+          release_name: HAL ${{ steps.get-version.outputs.version-without-v }}.Final
           body: ${{ steps.read-changelog.outputs.changes }}
           draft: false
           prerelease: false
