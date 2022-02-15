@@ -115,14 +115,16 @@ git diff-index --quiet HEAD || die "You have uncommitted changes"
 
 ./versionBump.sh "${RELEASE_VERSION}"
 git commit --quiet -am "Bump to ${RELEASE_VERSION}"
-mvn --quiet -DskipModules keepachangelog:release  &> /dev/null
+mvn --quiet -DskipModules keepachangelog:release &> /dev/null
 msg "Update changelog"
 git commit --quiet -am "Update changelog"
 msg "Push changes"
-git push --quiet origin main && git push --quiet upstream main
+git push --quiet origin main &> /dev/null
+git push --quiet upstream main &> /dev/null
 git tag "${TAG}"
 msg "Push tag"
-git push --quiet --tags origin main && git push --quiet --tags upstream main
+git push --quiet --tags origin main &> /dev/null
+git push --quiet --tags upstream main &> /dev/null
 ./versionBump.sh "${SNAPSHOT_VERSION}"
 git commit --quiet -am "Next is ${SNAPSHOT_VERSION}"
 msg "Push changes"
