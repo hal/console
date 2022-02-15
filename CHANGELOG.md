@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [3.5.2] - 2022-02-15
+
 ### Changed
 
 - Update documentation
@@ -15,7 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Fixed release script
 - Fix release workflow
 
-## [3.5.1.Final] - 2022-02-15
+## [3.5.1] - 2022-02-15
 
 ### Added 
 
@@ -25,7 +27,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - Fix release workflow
 
-## [3.5.0.Final] - 2022-02-14
+## [3.5.0] - 2022-02-14
 
 ### Added
 
@@ -75,6 +77,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - in case of vulnerabilities
 -->
 
-[Unreleased]: https://github.com/hal/console/compare/v3.5.1.Final...HEAD
-[3.5.1.Final]: https://github.com/hal/console/compare/v3.5.0.Final...v3.5.1.Final
-[3.5.0.Final]: https://github.com/hal/console/compare/vTemplate...v3.5.0.Final
+[Unreleased]: https://github.com/hal/console/compare/v3.5.2.Final...HEAD
+[3.5.2]: https://github.com/hal/console/compare/v3.5.1.Final...v3.5.2.Final
+[3.5.1]: https://github.com/hal/console/compare/v3.5.0.Final...v3.5.1.Final
+[3.5.0]: https://github.com/hal/console/compare/vTemplate...v3.5.0.Final
