@@ -108,8 +108,8 @@
         <version.jdom>2.0.2</version.jdom>
         <version.junit>4.13.1</version.junit>
         <version.mockito>2.18.3</version.mockito>
-        <version.node>v8.16.0</version.node>
-        <version.npm>6.9.0</version.npm>
+        <version.node>v16.14.0</version.node>
+<!--        <version.npm>6.9.0</version.npm>-->
         <version.quarkus>2.7.1.Final</version.quarkus>
         <version.rx.gwt>0.4</version.rx.gwt>
         <version.slf4j>1.7.25</version.slf4j>

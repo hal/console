@@ -13,7 +13,7 @@ jobs:
       - name: Checkout
         id: checkout
         uses: actions/checkout@v2
-      - name: Setup GraalVM environment
+      - name: Setup GraalVM
         id: setup-graalvm
         uses: DeLaGuardo/setup-graalvm@5.0
         with:
@@ -30,16 +30,6 @@ jobs:
       - name: Build
         id: build
         run: $MVN package --projects standalone --also-make -P native,prod,theme-hal
-      - name: Upload
-        id: upload
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./standalone/target/hal-standalone-${{ steps.read-version.outputs.version }}-runner
-          asset_name: quarkus-ls-${{ github.event.release.tag_name }}-win64.exe
-          asset_content_type: application/octet-stream
 
   macos:
     name: macOS Binary
@@ -50,7 +40,7 @@ jobs:
       - name: Checkout
         id: checkout
         uses: actions/checkout@v2
-      - name: Setup GraalVM environment
+      - name: Setup GraalVM
         id: setup-graalvm
         uses: DeLaGuardo/setup-graalvm@5.0
         with:
@@ -67,16 +57,6 @@ jobs:
       - name: Build
         id: build
         run: $MVN package --projects standalone --also-make -P native,prod,theme-hal
-      - name: Upload
-        id: upload
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./standalone/target/hal-standalone-${{ steps.read-version.outputs.version }}-runner
-          asset_name: quarkus-ls-${{ github.event.release.tag_name }}-win64.exe
-          asset_content_type: application/octet-stream
 
   windows:
     runs-on: window-2019
@@ -87,7 +67,7 @@ jobs:
       - name: Checkout
         id: checkout
         uses: actions/checkout@v2
-      - name: Setup GraalVM environment
+      - name: Setup GraalVM
         id: setup-graalvm
         uses: DeLaGuardo/setup-graalvm@5.0
         with:
@@ -107,13 +87,3 @@ jobs:
       - name: Build
         id: build
         run: cmd /c 'call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvars64.bat" && mvn package -Pnative'
-      - name: Upload
-        id: upload
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./standalone/target/hal-standalone-${{ steps.read-version.outputs.version }}-runner.exe
-          asset_name: quarkus-ls-${{ github.event.release.tag_name }}-win64.exe
-          asset_content_type: application/octet-stream
