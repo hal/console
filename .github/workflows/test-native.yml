@@ -22,7 +22,7 @@ jobs:
       - name: Read Version
         id: read-version
         run: |
-          $version = .\mvnw.cmd help:evaluate -Dexpression=project.version --non-recursive --quiet -DforceStdout
+          $version = &".\mvnw.cmd help:evaluate -Dexpression=project.version --non-recursive --quiet -DforceStdout" | Out-String
           echo "::set-output name=version::${version}"
       - name: Install Native Image
         id: install-native-image
