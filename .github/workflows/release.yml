@@ -86,7 +86,7 @@ jobs:
           fi
       - name: Package Latest
         id: package-latest
-        if: steps.check-latest.latest == 'true'
+        if: steps.check-latest.outputs.latest == 'true'
         run: $MVN package --projects standalone --also-make -P native,prod,theme-hal -Dquarkus.native.container-build=true -Dquarkus.container-image.push=true -Dquarkus.container-image.image=quay.io/halconsole/hal:latest '-Dquarkus.jib.labels."org.opencontainers.image.revision"='$GITHUB_SHA
 
   publish:

@@ -1,8 +1,6 @@
-name: Build Native Binaries
+name: Test Native Binaries Build
 
-on:
-  release:
-    types: [created]
+on: workflow_dispatch
 
 jobs:
 
