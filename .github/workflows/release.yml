@@ -52,6 +52,9 @@ jobs:
     env:
       MVN: mvn --show-version --batch-mode
     steps:
+      - name: Get Version
+        id: get-version
+        uses: battila7/get-version-action@v2.2.1
       - name: Checkout
         id: checkout
         uses: actions/checkout@v2
@@ -69,8 +72,21 @@ jobs:
           registry: quay.io
           username: ${{ secrets.QUAY_USERNAME }}
           password: ${{ secrets.QUAY_ROBOT_TOKEN }}
-      - name: Package
-        id: package
+      - name: Package Tag
+        id: package-tag
+        run: $MVN package --projects standalone --also-make -P native,prod,theme-hal -Dquarkus.native.container-build=true -Dquarkus.container-image.push=true -Dquarkus.container-image.image=quay.io/halconsole/hal:${{ steps.get-version.outputs.version-without-v }}.Final '-Dquarkus.jib.labels."org.opencontainers.image.revision"='$GITHUB_SHA
+      - name: Check Latest
+        id: check-latest
+        run: |
+          LATEST_TAG=$( git tag | sort -V | tail -1 )
+          if [ "$LATEST_TAG" = ${{ steps.get-version.outputs.version }} ]; then
+            echo "::set-output name=latest::true"
+          else
+            echo "::set-output name=latest::false"
+          fi
+      - name: Package Latest
+        id: package-latest
+        if: steps.check-latest.latest == 'true'
         run: $MVN package --projects standalone --also-make -P native,prod,theme-hal -Dquarkus.native.container-build=true -Dquarkus.container-image.push=true -Dquarkus.container-image.image=quay.io/halconsole/hal:latest '-Dquarkus.jib.labels."org.opencontainers.image.revision"='$GITHUB_SHA
 
   publish:
@@ -124,6 +140,7 @@ jobs:
         env:
           # Don't use ${{ secrets.GITHUB_TOKEN }}
           # This doesn't trigger the release event
+          # which is necessary for native.yml workflow
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
         with:
           tag_name: ${{ steps.get-version.outputs.version }}

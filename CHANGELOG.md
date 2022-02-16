@@ -6,9 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Added
+
+- Publish HAL standalone container as `:<version>` and `:latest` if `<version` is the latest version.
+
 ### Changed
 
 - Optimise release script
+
+### Fixed 
+
+- Fix native binary generation
 
 ## [3.5.5] - 2022-02-15
 
