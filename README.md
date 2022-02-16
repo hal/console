@@ -20,7 +20,7 @@ For more information on how to build, debug and run the console, take a look at 
 
 # Contributing
 
-This is an open source project. That means that everybody can [contribute](CONTRIBUTING.md). It's not hard to get started. So start contributing today!
+This is an open source project. That means that everybody can contribute. It's not hard to get started. So start [contributing](CONTRIBUTING.md) today!
 
 # Licenses
 
