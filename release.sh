@@ -101,12 +101,18 @@ parse_params() {
   [[ ${#ARGS[@]} -eq 2 ]] || die "Missing release and/or snapshot version"
   RELEASE_VERSION=${ARGS[0]}
   NEXT_VERSION=${ARGS[1]}
-
-  SNAPSHOT_VERSION=${ARGS[1]}
-  [[ ${RELEASE_VERSION} =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || die "Release version is not a semantic version"
-  [[ ${NEXT_VERSION} =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || die "Next version is not a semantic version"
   return 0
 }
+
+is_semver() {
+    local version
+    version="$1"
+    if [[ ! ${version} =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        return 1
+    fi
+}
+
+version_gt() { test "$(echo "$@" | tr " " "\n" | sort -V | head -n 1)" != "$1"; }
 
 parse_params "$@"
 setup_colors
@@ -115,7 +121,9 @@ FINAL_VERSION="${RELEASE_VERSION}.Final"
 SNAPSHOT_VERSION="${NEXT_VERSION}-SNAPSHOT"
 TAG="v${RELEASE_VERSION}"
 
-[[ "${RELEASE_VERSION}" = "${NEXT_VERSION}" ]] && die "Release and next version must be different"
+is_semver "${RELEASE_VERSION}" || die "Release version is not a semantic version"
+is_semver "${NEXT_VERSION}" || die "Next version is not a semantic version"
+version_gt "${NEXT_VERSION}" "${RELEASE_VERSION}" || die "Next version must be greater than release version"
 git diff-index --quiet HEAD || die "You have uncommitted changes"
 [[ $(git tag -l "${TAG}") ]] && die "Tag ${TAG} already defined"
 
