@@ -6,11 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Fixed 
+
+- Fix native build
+- Fix release workflow
+
 ## [3.5.6] - 2022-02-16
 
 ### Added
 
-- Publish HAL standalone container as `:<version>` and `:latest` if `<version` is the latest version.
+- Publish HAL standalone container as `:<version>` and `:latest` if `<version>` is the latest version.
 
 ### Changed
 
