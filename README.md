@@ -12,7 +12,7 @@ In a nutshell the console uses the following technical stack:
 
 - Java 11
 - [GWT](https://www.gwtproject.org/)
-- [GWTP](https://dev.arcbees.com/gwtp/)
+- [GWTP](https://github.com/ArcBees/GWTP)
 - [Elemento](https://github.com/hal/elemento)
 - [RxGWT](https://github.com/intendia-oss/rxgwt)
 - [PouchDB](https://pouchdb.com/)
