@@ -7,7 +7,7 @@ jobs:
     name: Verify Codebase
     runs-on: ubuntu-latest
     env:
-      MVN: mvn --show-version --batch-mode
+      MVN: ./mvnw --show-version --batch-mode
     steps:
       - name: Checkout
         id: checkout

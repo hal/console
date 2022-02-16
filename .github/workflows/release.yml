@@ -11,7 +11,7 @@ jobs:
     name: Deploy Maven Artifacts
     runs-on: ubuntu-latest
     env:
-      MVN: mvn --show-version --batch-mode
+      MVN: ./mvnw --show-version --batch-mode
     steps:
       - name: Checkout
         id: checkout
@@ -50,7 +50,7 @@ jobs:
     needs: deploy
     runs-on: ubuntu-latest
     env:
-      MVN: mvn --show-version --batch-mode
+      MVN: ./mvnw --show-version --batch-mode
     steps:
       - name: Get Version
         id: get-version
@@ -94,7 +94,7 @@ jobs:
     needs: deploy
     runs-on: ubuntu-latest
     env:
-      MVN: mvn --show-version --batch-mode
+      MVN: ./mvnw --show-version --batch-mode
     steps:
       - name: Checkout
         id: checkout

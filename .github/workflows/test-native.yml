@@ -4,65 +4,11 @@ on: workflow_dispatch
 
 jobs:
 
-  linux:
-    name: Linux Binary
-    runs-on: ubuntu-latest
-    env:
-      MVN: mvn --show-version --batch-mode
-    steps:
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v2
-      - name: Setup GraalVM
-        id: setup-graalvm
-        uses: DeLaGuardo/setup-graalvm@5.0
-        with:
-          graalvm: 22.0.0.2
-          java: java11
-      - name: Read Version
-        id: read-version
-        run: |
-          VERSION=$( mvn help:evaluate -Dexpression=project.version --non-recursive --quiet -DforceStdout )
-          echo "::set-output name=version::$VERSION"
-      - name: Install Native Image
-        id: install-native-image
-        run: gu install native-image
-      - name: Build
-        id: build
-        run: $MVN package --projects standalone --also-make -P native,prod,theme-hal
-
-  macos:
-    name: macOS Binary
-    runs-on: macos-latest
-    env:
-      MVN: mvn --show-version --batch-mode
-    steps:
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v2
-      - name: Setup GraalVM
-        id: setup-graalvm
-        uses: DeLaGuardo/setup-graalvm@5.0
-        with:
-          graalvm: 22.0.0.2
-          java: java11
-      - name: Read Version
-        id: read-version
-        run: |
-          VERSION=$( mvn help:evaluate -Dexpression=project.version --non-recursive --quiet -DforceStdout )
-          echo "::set-output name=version::$VERSION"
-      - name: Install Native Image
-        id: install-native-image
-        run: gu install native-image
-      - name: Build
-        id: build
-        run: $MVN package --projects standalone --also-make -P native,prod,theme-hal
-
   windows:
     runs-on: windows-2019
     name: Windows Binary
     env:
-      MVN: mvn --show-version --batch-mode
+      MVN: mvnw.cmd --show-version --batch-mode
     steps:
       - name: Checkout
         id: checkout
@@ -76,8 +22,9 @@ jobs:
       - name: Read Version
         id: read-version
         run: |
-          VERSION=$( mvn help:evaluate -Dexpression=project.version --non-recursive --quiet -DforceStdout )
-          echo "::set-output name=version::$VERSION"
+          $version = (mvnw.cmd help:evaluate -Dexpression=project.version --non-recursive --quiet -DforceStdout) | Out-String
+          echo "::set-output name=version::$version"
+        shell: powershell
       - name: Install Native Image
         id: install-native-image
         run: gu.cmd install native-image
@@ -86,4 +33,7 @@ jobs:
         uses: al-cheb/configure-pagefile-action@v1.2
       - name: Build
         id: build
-        run: cmd /c 'call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvars64.bat" && mvn package -Pnative'
+        run: cmd /c 'call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvars64.bat" && mvnw.cmd package -Pnative'
+      - name: Output
+        id: output
+        run: cmd /c 'dir standalone\target'

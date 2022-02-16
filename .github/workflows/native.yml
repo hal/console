@@ -10,7 +10,7 @@ jobs:
     name: Linux Binary
     runs-on: ubuntu-latest
     env:
-      MVN: mvn --show-version --batch-mode
+      MVN: ./mvnw --show-version --batch-mode
     steps:
       - name: Checkout
         id: checkout
@@ -24,7 +24,7 @@ jobs:
       - name: Read Version
         id: read-version
         run: |
-          VERSION=$( mvn help:evaluate -Dexpression=project.version --non-recursive --quiet -DforceStdout )
+          VERSION=$( ./mvnw help:evaluate -Dexpression=project.version --non-recursive --quiet -DforceStdout )
           echo "::set-output name=version::$VERSION"
       - name: Install Native Image
         id: install-native-image
@@ -61,7 +61,7 @@ jobs:
       - name: Read Version
         id: read-version
         run: |
-          VERSION=$( mvn help:evaluate -Dexpression=project.version --non-recursive --quiet -DforceStdout )
+          VERSION=$( ./mvnw help:evaluate -Dexpression=project.version --non-recursive --quiet -DforceStdout )
           echo "::set-output name=version::$VERSION"
       - name: Install Native Image
         id: install-native-image
@@ -98,7 +98,7 @@ jobs:
       - name: Read Version
         id: read-version
         run: |
-          VERSION=$( mvn help:evaluate -Dexpression=project.version --non-recursive --quiet -DforceStdout )
+          VERSION=$( mvnw.cmd help:evaluate -Dexpression=project.version --non-recursive --quiet -DforceStdout )
           echo "::set-output name=version::$VERSION"
       - name: Install Native Image
         id: install-native-image
