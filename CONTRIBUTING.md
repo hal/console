@@ -1,4 +1,4 @@
-First off, thank you for considering contributing to HAL. It's people like you that make HAL such a great tool. HAL is an open source project and we love to receive contributions from our community — you! There are many ways to contribute, from writing tutorials or blog posts, improving the documentation, submitting bug reports and feature requests or writing code which can be incorporated into HAL itself.
+First off, thank you for considering contributing to HAL. It's people like you that make HAL such a great tool. HAL is an open source project, and we love to receive contributions from our community — you! There are many ways to contribute, from writing tutorials or blog posts, improving the documentation, submitting bug reports and feature requests or writing code which can be incorporated into HAL itself.
 
 We expect all contributors and users to follow our [Code of Conduct](CODE_OF_CONDUCT.md) when communicating through project channels. These include, but are not limited to: chat, issues, code.
 
@@ -7,10 +7,6 @@ We expect all contributors and users to follow our [Code of Conduct](CODE_OF_CON
 ## Create a GitHub account
 
 If you don't have one already, head to https://github.com/
-
-## Git Flow
-
-We use [Git Flow](https://github.com/nvie/gitflow) to manage branches. Although it's no requirement, it helps if you've read and understood the [basic ideas](https://nvie.com/posts/a-successful-git-branching-model/) behind Git Flow. The most important fact is that development happens in the `develop` branch and that the latest stable version is always available in branch `master`.
 
 ## Fork HAL
 
@@ -33,12 +29,12 @@ git remote add upstream git://github.com/hal/console.git
 
 # Development Process
 
-This is the typical process you would follow to submit any changes to Elemento.
+This is the typical process you would follow to submit any changes to HAL.
 
 ## Pulling updates from upstream
 
 ```bash
-git pull --rebase upstream develop
+git pull --rebase upstream main
 ```
 
 > Note that --rebase will automatically move your local commits, if you have
@@ -60,10 +56,10 @@ git checkout -b my_cool_feature
 
 ## Make the changes
 
-Make whatever code changes, including new tests to verify your change, are necessary and ensure that the build and tests pass. Make sure your code changes apply to the checkstyle rules defined at [build/checkstyle.xml](build/checkstyle.xml):
+Make whatever code changes, including new tests to verify your change, are necessary and ensure that the build and tests pass. Make sure your code changes apply to the rules defined in [build-config](build-config/src/main/resources/etc):
 
 ```bash
-mvn clean install
+mvn clean verify
 ```
 
 > If you're making non code changes, the above step is not required.
@@ -76,12 +72,12 @@ Add whichever files were changed into 'staging' before performing a commit:
 git commit
 ```
 
-## Rebase changes against develop
+## Rebase changes against main
 
-Once all your commits for the issue have been made against your local topic branch, we need to rebase it against develop in upstream to ensure that your commits are added on top of the current state of develop. This will make it easier to incorporate your changes into the develop branch, especially if there has been any significant time passed since you rebased at the beginning.
+Once all your commits for the issue have been made against your local topic branch, we need to rebase it against branch main in upstream to ensure that your commits are added on top of the current state of main. This will make it easier to incorporate your changes into the main branch, especially if there has been any significant time passed since you rebased at the beginning.
 
 ```bash
-git pull --rebase upstream develop
+git pull --rebase upstream main
 ```
 
 ## Push to your repo
@@ -98,11 +94,11 @@ Now your updates are in your GitHub repo, you will need to notify the project th
 
  * Send a pull request, by clicking the pull request link while in your repository fork
  * After review a maintainer will merge your pull request, update/resolve associated issues, and reply when complete
- * Lastly, switch back to develop from your topic branch and pull the updates
+ * Lastly, switch back to branch main from your topic branch and pull the updates
 
 ```bash
-git checkout develop
-git pull upstream develop
+git checkout main
+git pull upstream main
 ```
 
  * You may also choose to update your origin on GitHub as well

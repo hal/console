@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Removed
+
+- Remove test workflow for native binaries
+
 ## [3.5.9] - 2022-02-16
 
 ### Changed
