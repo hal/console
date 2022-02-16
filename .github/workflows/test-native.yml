@@ -30,6 +30,9 @@ jobs:
       - name: Configure Pagefile
         id: configure-pagefile
         uses: al-cheb/configure-pagefile-action@v1.2
+      - name: Setup MSVC
+        id: setup-msvc
+        uses: ilammy/msvc-dev-cmd@v1.10.0
       - name: Build
         id: build
         run: |

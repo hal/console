@@ -84,7 +84,7 @@ jobs:
     runs-on: windows-2019
     name: Windows Binary
     env:
-      MVN: mvn --show-version --batch-mode
+      MVN: .\mvnw.cmd --show-version --batch-mode
     steps:
       - name: Checkout
         id: checkout
@@ -98,8 +98,8 @@ jobs:
       - name: Read Version
         id: read-version
         run: |
-          VERSION=$( mvnw.cmd help:evaluate -Dexpression=project.version --non-recursive --quiet -DforceStdout )
-          echo "::set-output name=version::$VERSION"
+          $version = ".\mvnw.cmd help:evaluate -Dexpression=project.version --non-recursive --quiet -DforceStdout" | Out-String
+          echo "::set-output name=version::${version}"
       - name: Install Native Image
         id: install-native-image
         run: gu.cmd install native-image
@@ -108,7 +108,9 @@ jobs:
         uses: al-cheb/configure-pagefile-action@v1.2
       - name: Build
         id: build
-        run: cmd /c 'call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvars64.bat" && mvn package -Pnative'
+        run: |
+          "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
+          .\mvnw.cmd package -Pnative
       - name: Upload
         id: upload
         uses: actions/upload-release-asset@v1
