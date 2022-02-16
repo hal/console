@@ -2,9 +2,11 @@
 
 HAL is the project name for the WildFly and JBoss EAP management console. It's part of every WildFly and JBoss EAP installation. To get started simply fire up your browser and open http://localhost:9990.
 
+In addition, you can start HAL in [standalone mode](https://hal.github.io/documentation/get-started/#standalone-mode) and connect to arbitrary WildFly and JBoss EAP instances. [Native binaries](https://hal.github.io/documentation/get-started/#native-binary) are available for Linux, macOS and Windows. Finally, [container images](https://hal.github.io/documentation/get-started/#container) are available at https://quay.io/repository/halconsole/hal. 
+
 # Technical Stack
 
-HAL is a client side RIA without any server side dependencies. It is a GWT application - which means it's written almost completely in Java. GWT is used to transpile the Java code into a bunch of JavaScript, HTML and CSS files. HAL uses some external JavaScript libraries as well. These dependencies are managed using [NPM](https://npmjs.org/) which is in turn integrated into the Maven build using the [`maven-frontend-plugin`](https://github.com/eirslett/frontend-maven-plugin).
+HAL is a client side RIA without any server side dependencies. It is a GWT application - which means it's written almost completely in Java. GWT is used to transpile the Java code into a bunch of JavaScript, HTML and CSS files.
 
 In a nutshell the console uses the following technical stack:
 
@@ -16,7 +18,7 @@ In a nutshell the console uses the following technical stack:
 - [PouchDB](https://pouchdb.com/)
 - [PatternFly](https://www.patternfly.org/)
 
-For more information on how to build, debug and run the console, take a look at the HAL community site at https://hal.github.io.
+For more information on how to [build](https://hal.github.io/development/build-run/#build), [debug](https://hal.github.io/development/build-run/#debug) and [run](https://hal.github.io/documentation/get-started/) the console, take a look at the HAL community site at https://hal.github.io.
 
 # Contributing
 
