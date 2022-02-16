@@ -8,7 +8,7 @@ jobs:
     runs-on: windows-2019
     name: Windows Binary
     env:
-      MVN: mvnw.cmd --show-version --batch-mode
+      MVN: .\mvnw.cmd --show-version --batch-mode
     steps:
       - name: Checkout
         id: checkout
@@ -22,7 +22,7 @@ jobs:
       - name: Read Version
         id: read-version
         run: |
-          $version = (mvnw.cmd help:evaluate -Dexpression=project.version --non-recursive --quiet -DforceStdout) | Out-String
+          $version = (.\mvnw.cmd help:evaluate -Dexpression=project.version --non-recursive --quiet -DforceStdout) | Out-String
           echo "::set-output name=version::$version"
         shell: powershell
       - name: Install Native Image
@@ -33,7 +33,7 @@ jobs:
         uses: al-cheb/configure-pagefile-action@v1.2
       - name: Build
         id: build
-        run: cmd /c 'call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvars64.bat" && mvnw.cmd package -Pnative'
+        run: cmd /c 'call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvars64.bat" && .\mvnw.cmd package -Pnative'
       - name: Output
         id: output
         run: cmd /c 'dir standalone\target'
