@@ -2,7 +2,7 @@
 
 HAL is the project name for the WildFly and JBoss EAP management console. It's part of every WildFly and JBoss EAP installation. To get started simply fire up your browser and open http://localhost:9990.
 
-In addition, you can start HAL in [standalone mode](https://hal.github.io/documentation/get-started/#standalone-mode) and connect to arbitrary WildFly and JBoss EAP instances. [Native binaries](https://hal.github.io/documentation/get-started/#native-binary) are available for Linux, macOS and Windows. Finally, [container images](https://hal.github.io/documentation/get-started/#container) are available at https://quay.io/repository/halconsole/hal. 
+In addition, you can start HAL in [standalone mode](https://hal.github.io/documentation/get-started/#standalone-mode) and connect to arbitrary WildFly and JBoss EAP instances. [Native binaries](https://hal.github.io/documentation/get-started/#native-binary) are available for Linux, macOS and Windows. [Container images](https://hal.github.io/documentation/get-started/#container) are available at https://quay.io/repository/halconsole/hal and the latest HAL version is hosted at https://hal.github.io/console/.  
 
 # Technical Stack
 
