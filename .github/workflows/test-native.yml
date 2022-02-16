@@ -6,7 +6,7 @@ jobs:
 
   linux:
     name: Linux Binary
-    runs-on: ubunti-latest
+    runs-on: ubuntu-latest
     env:
       MVN: mvn --show-version --batch-mode
     steps:
@@ -59,7 +59,7 @@ jobs:
         run: $MVN package --projects standalone --also-make -P native,prod,theme-hal
 
   windows:
-    runs-on: window-2019
+    runs-on: windows-2019
     name: Windows Binary
     env:
       MVN: mvn --show-version --batch-mode

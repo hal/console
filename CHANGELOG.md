@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Upgrades
+
+- Upgrade Node to 16.14.0
+
 ### Fixed
 
 - Fix native build
@@ -116,6 +120,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Changed
 
 - for changes in existing functionality
+
+### Upgrades
+
+- for dependency upgrades
 
 ### Deprecated
 
