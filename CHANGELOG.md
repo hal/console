@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [3.5.6] - 2022-02-16
+
 ### Added
 
 - Publish HAL standalone container as `:<version>` and `:latest` if `<version` is the latest version.
@@ -121,10 +123,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - in case of vulnerabilities
 -->
 
-[Unreleased]: https://github.com/hal/console/compare/v3.5.5.Final...HEAD
-[3.5.5]: https://github.com/hal/console/compare/v3.5.4...v3.5.5.Final
+[Unreleased]: https://github.com/hal/console/compare/v3.5.6.Final...HEAD
+[3.5.6]: https://github.com/hal/console/compare/v3.5.5...v3.5.6.Final
+[3.5.5]: https://github.com/hal/console/compare/v3.5.4...v3.5.5
 [3.5.4]: https://github.com/hal/console/compare/v3.5.3...v3.5.4
 [3.5.3]: https://github.com/hal/console/compare/v3.5.2...v3.5.3
 [3.5.2]: https://github.com/hal/console/compare/v3.5.1...v3.5.2
 [3.5.1]: https://github.com/hal/console/compare/v3.5.0...v3.5.1
-[3.5.0]: https://github.com/hal/console/releases/tag/v3.5.0
+[3.5.0]: https://github.com/hal/console/compare/vTemplate...v3.5.0
