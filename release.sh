@@ -115,7 +115,8 @@ FINAL_VERSION="${RELEASE_VERSION}.Final"
 SNAPSHOT_VERSION="${NEXT_VERSION}-SNAPSHOT"
 TAG="v${RELEASE_VERSION}"
 
-#git diff-index --quiet HEAD || die "You have uncommitted changes"
+[[ "${RELEASE_VERSION}" = "${NEXT_VERSION}" ]] && die "Release and next version must be different"
+git diff-index --quiet HEAD || die "You have uncommitted changes"
 [[ $(git tag -l "${TAG}") ]] && die "Tag ${TAG} already defined"
 
 msg ""

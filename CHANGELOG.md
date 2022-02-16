@@ -12,7 +12,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Changed
 
-- Optimise release script
+- Verify versions are different in release script
+- Optimise Git operations in release script
 
 ### Fixed 
 
