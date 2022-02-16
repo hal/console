@@ -106,6 +106,9 @@ jobs:
       - name: Configure Pagefile
         id: configure-pagefile
         uses: al-cheb/configure-pagefile-action@v1.2
+      - name: Setup MSVC
+        id: setup-msvc
+        uses: ilammy/msvc-dev-cmd@v1.10.0
       - name: Build
         id: build
         run: |
@@ -118,6 +121,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./standalone/target/hal-standalone-${{ steps.read-version.outputs.version }}-runner.exe
+          asset_path: .\standalone\target\hal-standalone-${{ steps.read-version.outputs.version }}-runner.exe
           asset_name: halconsole-${{ steps.read-version.outputs.version }}-win64.exe
           asset_content_type: application/octet-stream
