@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [3.5.10] - 2022-02-16
+
 ### Updated
 
 - Update README.md
@@ -159,8 +161,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - in case of vulnerabilities
 -->
 
-[Unreleased]: https://github.com/hal/console/compare/v3.5.9.Final...HEAD
-[3.5.9]: https://github.com/hal/console/compare/v3.5.8...v3.5.9.Final
+[Unreleased]: https://github.com/hal/console/compare/v3.5.10.Final...HEAD
+[3.5.10]: https://github.com/hal/console/compare/v3.5.9...v3.5.10.Final
+[3.5.9]: https://github.com/hal/console/compare/v3.5.8...v3.5.9
 [3.5.8]: https://github.com/hal/console/compare/v3.5.7...v3.5.8
 [3.5.7]: https://github.com/hal/console/compare/v3.5.6...v3.5.7
 [3.5.6]: https://github.com/hal/console/compare/v3.5.5...v3.5.6
