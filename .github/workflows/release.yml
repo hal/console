@@ -140,7 +140,7 @@ jobs:
         env:
           # Don't use ${{ secrets.GITHUB_TOKEN }}
           # This doesn't trigger the release event
-          # which is necessary for native.yml workflow
+          # which is necessary for the native.yml workflow
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
         with:
           tag_name: ${{ steps.get-version.outputs.version }}
