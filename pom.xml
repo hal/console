@@ -101,7 +101,7 @@
         <version.guava>25.0-jre</version.guava>
         <version.gwt>2.8.2</version.gwt>
         <version.gwtp>1.6</version.gwtp>
-        <version.javax.enterprise>1.2</version.javax.enterprise>
+        <version.javax.enterprise>2.0.SP1</version.javax.enterprise>
         <version.javax.inject>1</version.javax.inject>
         <version.jaxen>1.2.0</version.jaxen>
         <version.jboss.dmr>1.6.1.Final</version.jboss.dmr>
