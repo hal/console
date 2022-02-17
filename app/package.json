@@ -11,7 +11,7 @@
     "bootstrap-select": "^1.13.10",
     "bootstrap-slider": "^10.6.1",
     "bootstrap-switch": "~3.3.5",
-    "c3": "^0.7.1",
+    "c3": "^0.7.20",
     "d3": "^5.9.2",
     "datatables.net": "^1.10.19",
     "datatables.net-buttons": "^1.5.6",
