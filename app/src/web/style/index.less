@@ -1,0 +1,63 @@
+/*
+ *  Copyright 2022 Red Hat
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+// Keep the order (unless you know what you're doing)
+
+@nav-pf-vertical-width: 230px;
+
+// External Dependencies
+@import "/node_modules/bootstrap/less/bootstrap.less";
+@import "/node_modules/bootstrap-select/less/bootstrap-select.less";
+@import "/node_modules/bootstrap-switch/src/less/bootstrap3/bootstrap-switch.less";
+@import "/node_modules/font-awesome/less/font-awesome.less";
+@import "/node_modules/patternfly/dist/less/patternfly.less";
+@import "/node_modules/patternfly/dist/less/patternfly-additions.less";
+@import "/node_modules/patternfly-bootstrap-combobox/less/combobox.less";
+@import (less) "/node_modules/c3/c3.min.css";
+@import "/node_modules/patternfly/dist/less/charts.less"; // has to be imported after c3, do not move
+@import (less) "/node_modules/google-code-prettify/bin/prettify.min.css";
+
+// HAL
+@import "tagmanager.less";
+@import "variables.less";
+//noinspection CssUnknownTarget
+@import "theme:colors.less";
+@import "mixins.less";
+@import "layout.less";
+@import "icons.less";
+@import "verticalnav.less";
+@import "finder.less";
+@import "autocomplete.less";
+@import "form.less";
+@import "search.less";
+@import "editor.less";
+@import "tabs.less";
+@import "table.less";
+@import "tree.less";
+@import "listview.less";
+@import "dialog.less";
+@import "wizard.less";
+@import "metrics.less";
+@import "logfile.less";
+@import "macroeditor.less";
+@import "modelbrowser.less";
+@import "topology.less";
+@import "tour.less";
+@import "bootstrap.less";
+@import "homepage.less";
+@import "header.less";
+@import "footer.less";
+@import "console.less";

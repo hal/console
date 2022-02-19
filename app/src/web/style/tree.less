@@ -15,7 +15,7 @@
  */
 /**
  * jsTree
- * Override default theme at "../../node_modules/jstree/src/themes/default/style.less"
+ * Override default theme at "/node_modules/jstree/src/themes/default/style.less"
  */
 @theme-name: hal;
 @hovered-bg-color: @hover-color;
@@ -32,7 +32,7 @@
 @mobile-wholerow-bordert: rgba(255, 255, 255, 0.7);
 @mobile-wholerow-borderb: rgba(64, 64, 64, 0.2);
 @responsive: false;
-@image-path: "../img/";
+@image-path: "/node_modules/jstree/src/themes/default/";
 @base-height: 40px;
 
 /*
@@ -41,8 +41,8 @@
  * all calculations must be enclosed in ()!
  */
 @import "jstree/mixins.less";
-@import "../../node_modules/jstree/src/themes/base.less";
-@import "../../node_modules/jstree/src/themes/main.less";
+@import "/node_modules/jstree/src/themes/base.less";
+@import "/node_modules/jstree/src/themes/main.less";
 
 .tree-container {
   margin-top: @margin-small;

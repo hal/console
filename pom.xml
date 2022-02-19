@@ -134,7 +134,6 @@
 
         <!-- Build related -->
         <encoding>UTF-8</encoding>
-        <grunt-task>dev</grunt-task>
         <gwt.devmode.hostname>localhost</gwt.devmode.hostname>
         <gwt.draftCompile>true</gwt.draftCompile>
         <gwt.failOnError>true</gwt.failOnError>
@@ -149,6 +148,7 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.min.version>3.2.5</maven.min.version>
+        <npm.script>dev</npm.script>
         <project.build.sourceEncoding>${encoding}</project.build.sourceEncoding>
         <project.reporting.outputEncoding>${encoding}</project.reporting.outputEncoding>
         <skip.gwt>false</skip.gwt>
@@ -239,6 +239,7 @@
                         <aggregate>true</aggregate>
                         <useDefaultExcludes>true</useDefaultExcludes>
                         <mapping>
+                            <parcelrc>DOUBLESLASH_STYLE</parcelrc>
                             <less>SLASHSTAR_STYLE</less>
                             <rng>XML_STYLE</rng>
                         </mapping>
@@ -247,6 +248,7 @@
                             <exclude>version.txt</exclude>
                             <exclude>LICENSE</exclude>
                             <exclude>README.md</exclude>
+                            <exclude>**/.parcel-cache/**</exclude>
                             <exclude>**/banner.txt</exclude>
                             <exclude>**/Dockerfile.*</exclude>
                             <exclude>**/Constants*.properties</exclude>
@@ -432,7 +434,7 @@
                 <gwt.logLevel>INFO</gwt.logLevel>
                 <gwt.optimize>0</gwt.optimize>
                 <gwt.style>OBFUSCATED</gwt.style>
-                <grunt-task>prod</grunt-task>
+                <npm.script>prod-${theme.name}</npm.script>
             </properties>
         </profile>
         <profile>

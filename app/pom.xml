@@ -194,18 +194,19 @@
                 <artifactId>frontend-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>install-node-and-npm</id>
+                        <id>install-node-and-yarn</id>
+                        <phase>generate-resources</phase>
                         <goals>
                             <goal>install-node-and-npm</goal>
                         </goals>
                         <configuration>
                             <nodeVersion>${version.node}</nodeVersion>
-                            <!--                    <npmVersion>${version.npm}</npmVersion>-->
                             <skip>${skip.gwt}</skip>
                         </configuration>
                     </execution>
                     <execution>
                         <id>npm-install</id>
+                        <phase>generate-resources</phase>
                         <goals>
                             <goal>npm</goal>
                         </goals>
@@ -215,12 +216,13 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>grunt build</id>
+                        <id>npm-parcel</id>
+                        <phase>generate-resources</phase>
                         <goals>
-                            <goal>grunt</goal>
+                            <goal>npm</goal>
                         </goals>
                         <configuration>
-                            <arguments>${grunt-task} --theme=${theme.name}</arguments>
+                            <arguments>run ${npm.script}</arguments>
                             <skip>${skip.gwt}</skip>
                         </configuration>
                     </execution>
@@ -266,6 +268,18 @@
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/assembly/resources.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>webroot</id>
                         <phase>package</phase>
                         <goals>
@@ -275,52 +289,6 @@
                             <descriptors>
                                 <descriptor>src/assembly/webroot.xml</descriptor>
                             </descriptors>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-clean-plugin</artifactId>
-                <configuration>
-                    <filesets>
-                        <fileset>
-                            <directory>src/main/resources/org/jboss/hal/public</directory>
-                            <includes>
-                                <include>*.ico</include>
-                                <include>*.png</include>
-                            </includes>
-                        </fileset>
-                        <fileset>
-                            <directory>src/main/resources/org/jboss/hal/public/css</directory>
-                        </fileset>
-                        <fileset>
-                            <directory>src/main/resources/org/jboss/hal/public/fonts</directory>
-                        </fileset>
-                        <fileset>
-                            <directory>src/main/resources/org/jboss/hal/public/img</directory>
-                        </fileset>
-                        <fileset>
-                            <directory>src/main/resources/org/jboss/hal/public/js</directory>
-                        </fileset>
-                    </filesets>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>resource-jar</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <classifier>resources</classifier>
-                            <classesDirectory>
-                                ${project.build.directory}/${project.build.finalName}/${gwt.moduleShortname}
-                            </classesDirectory>
                         </configuration>
                     </execution>
                 </executions>
