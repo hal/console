@@ -1,0 +1,13 @@
+{
+  "name": "parcel-resolver-theme",
+  "description": "Parcel theme resolver for HAL",
+  "private": true,
+  "main": "index.js",
+  "engines": {
+    "parcel": ">=2.0.0"
+  },
+  "devDependencies": {
+    "@parcel/diagnostic": "^2.3.1",
+    "parcel": "^2.0.0"
+  }
+}

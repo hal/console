@@ -26,7 +26,6 @@ class Ace {
     static native ModeList require(String module);
 
     static native void init() /*-{
-        $wnd.ace.config.set('basePath', 'js');
         $wnd.ace.config.setDefaultValue("session", "useWorker", false);
     }-*/;
 
