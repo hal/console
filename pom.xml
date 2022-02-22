@@ -98,7 +98,7 @@
         <version.elemental>1.1.0</version.elemental>
         <version.elemento>0.9.6-gwt2</version.elemento>
         <version.gin>2.1.2</version.gin>
-        <version.guava>25.0-jre</version.guava>
+        <version.guava>31.0.1-jre</version.guava>
         <version.gwt>2.9.0</version.gwt>
         <version.gwtp>1.6</version.gwtp>
         <version.javax.enterprise>1.2</version.javax.enterprise>
