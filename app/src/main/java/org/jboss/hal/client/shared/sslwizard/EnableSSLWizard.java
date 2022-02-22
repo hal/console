@@ -456,7 +456,7 @@ public class EnableSSLWizard {
                                         String label = resources.constants().reload() + " " + serverName;
                                         SafeHtml description;
                                         StringBuilder location = new StringBuilder(
-                                                "https://" + window.location.hostname + ":");
+                                                "https://" + window.location.getHostname() + ":");
                                         if (environment.isStandalone()) {
                                             location.append(context.securePort);
                                             description = resources.messages()
@@ -467,7 +467,7 @@ public class EnableSSLWizard {
                                                     .enableSSLResultsSuccessDomain(location.toString());
                                         }
                                         // extracts the url search path, so the url shows the view the user is located
-                                        String urlSuffix = window.location.href;
+                                        String urlSuffix = window.location.getHref();
                                         urlSuffix = urlSuffix.substring(urlSuffix.indexOf("//") + 2);
                                         urlSuffix = urlSuffix.substring(urlSuffix.indexOf("/"));
                                         location.append(urlSuffix);

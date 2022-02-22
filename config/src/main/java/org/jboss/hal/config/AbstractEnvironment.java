@@ -54,7 +54,7 @@ public abstract class AbstractEnvironment implements Environment {
         this.instanceInfo = new InstanceInfo();
         this.roles = new Roles();
         this.devMode = System.getProperty("superdevmode", "").equals("on");
-        String pathname = window.location.pathname;
+        String pathname = window.location.getPathname();
         this.productionMode = pathname.equals("/") || pathname.endsWith("index.html");
         this.operationMode = STANDALONE;
         this.name = null;

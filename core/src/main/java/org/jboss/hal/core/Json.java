@@ -96,7 +96,7 @@ public final class Json {
                 ModelNode attributeDescription = findAttributeDescription(dmrName, attributeDescriptions);
                 if (attributeDescription != null) {
                     if (map.has(jsonName)) {
-                        Any any = map.getAsAny(jsonName);
+                        Any any = map.getAny(jsonName);
                         ModelNode value = anyValue(jsonName, dmrName, attributeDescription, any);
                         if (value.isDefined()) {
                             node.get(dmrName).set(value);
@@ -154,7 +154,7 @@ public final class Json {
                         && attributeDescription.get(VALUE_TYPE).asType().equals(ModelType.STRING);
                 if (stringValueType) {
                     JsPropertyMap<Object> map = value.asPropertyMap();
-                    map.forEach(key -> node.get(key).set(String.valueOf(map.getAsAny(key))));
+                    map.forEach(key -> node.get(key).set(String.valueOf(map.getAny(key))));
                 }
                 break;
 

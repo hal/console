@@ -26,7 +26,6 @@ import com.google.web.bindery.event.shared.HandlerRegistration;
 import com.google.web.bindery.event.shared.HandlerRegistrations;
 
 import elemental2.core.JsRegExp;
-import elemental2.core.RegExpResult;
 import elemental2.dom.DragEvent;
 import elemental2.dom.HTMLElement;
 import jsinterop.base.JsPropertyMap;
@@ -51,15 +50,14 @@ public final class JsHelper {
     public static String requestParameter(String name) {
         String validName = name.replaceAll("[\\[\\]]", "\\$&");
         JsRegExp valueRegExp = new JsRegExp("[?&]" + validName + "(=([^&#]*)|&|#|$)");
-        RegExpResult results = valueRegExp.exec(window.location.search);
-        // String[] results = valueRegExp.exec(window.location.search);
+        String[] results = valueRegExp.exec(window.location.getSearch());
         if (results == null || results.length < 2) {
             return null;
         }
-        if (results.getAt(2) == null) {
+        if (results[2] == null) {
             return null;
         }
-        return decodeURIComponent(results.getAt(2).replace('+', ' '));
+        return decodeURIComponent(results[2].replace('+', ' '));
     }
 
     public static native boolean supportsAdvancedUpload() /*-{

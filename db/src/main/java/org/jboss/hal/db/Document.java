@@ -35,6 +35,6 @@ public interface Document extends JsPropertyMap<Object> {
 
     @JsOverlay
     default String getId() {
-        return getAsAny("_id").asString();
+        return getAny("_id").asString();
     }
 }

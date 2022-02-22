@@ -244,6 +244,7 @@ public class EndpointManager {
                     .error(() -> logger.error("Error, could not initialize keycloak authentication."));
 
             keycloakHolder.setKeycloak(kc);
+            return null;
         };
         document.head.appendChild(script);
     }

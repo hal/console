@@ -50,7 +50,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import elemental2.core.JsRegExp;
-import elemental2.core.RegExpResult;
 import elemental2.dom.CSSProperties.MarginBottomUnionType;
 import elemental2.dom.HTMLElement;
 
@@ -211,12 +210,12 @@ class RestResourcePreview extends PreviewContent<RestResource> {
     }
 
     private List<String> extractParams(String url) {
-        RegExpResult match;
+        String[] match;
         List<String> params = new ArrayList<>();
         do {
             match = REGEX.exec(url);
             if (match != null) {
-                params.add(match.getAt(1));
+                params.add(match[1]);
             }
         } while (match != null);
         return params;

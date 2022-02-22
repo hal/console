@@ -10,9 +10,6 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-    ignore:
-      - dependency-name: "javax.inject:javax.inject"
-        versions: ["1"]
 
   - package-ecosystem: "npm"
     directory: "/app"

@@ -102,28 +102,6 @@
                 <version>${version.elemento}</version>
             </dependency>
 
-            <!-- CDI -->
-            <dependency>
-                <groupId>javax.inject</groupId>
-                <artifactId>javax.inject</artifactId>
-                <version>${version.javax.inject}</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.enterprise</groupId>
-                <artifactId>cdi-api</artifactId>
-                <version>${version.javax.enterprise}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>javax.interceptor</groupId>
-                        <artifactId>javax.interceptor-api</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>javax.el</groupId>
-                        <artifactId>javax.el-api</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
             <!-- Annotation Processing -->
             <dependency>
                 <groupId>org.jboss.auto</groupId>
