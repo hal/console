@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import elemental2.dom.Element;
+import elemental2.dom.Event;
 import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLElement;
 import jsinterop.annotations.JsMethod;
@@ -432,7 +433,7 @@ public class VerticalNavigation implements Attachable {
                     Elements.setVisible(pane.element(), pane.id.equals(id));
                 }
             }
-            show.element().click();
+            show.element().dispatchEvent(new Event("click"));
             if (callbacks.containsKey(id)) {
                 callbacks.get(id).execute();
             }

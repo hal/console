@@ -353,12 +353,12 @@ public class StandaloneServerPresenter
                                     if (reload.getValue() != null && reload.getValue()) {
                                         String port = flowContext.get(PORT).toString();
                                         // extracts the url search path, so the reload shows the same view the use is on
-                                        String urlSuffix = window.location.getHref();
+                                        String urlSuffix = window.location.href;
                                         urlSuffix = urlSuffix.substring(urlSuffix.indexOf("//") + 2);
                                         urlSuffix = urlSuffix.substring(urlSuffix.indexOf("/"));
                                         // the location to redirect the browser to the unsecure URL
                                         // TODO Replace hardcoded scheme
-                                        String location = "http://" + window.location.getHostname() + ":" + port + urlSuffix;
+                                        String location = "http://" + window.location.hostname + ":" + port + urlSuffix;
                                         reloadServer(null, location);
                                     } else {
                                         reload();

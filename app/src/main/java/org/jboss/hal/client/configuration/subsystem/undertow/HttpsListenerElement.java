@@ -30,7 +30,7 @@ import org.jboss.hal.resources.Resources;
 
 import elemental2.dom.Element;
 import elemental2.dom.HTMLButtonElement;
-import elemental2.dom.NodeList;
+import elemental2.dom.HTMLCollection;
 
 import static org.jboss.gwt.elemento.core.Elements.button;
 import static org.jboss.gwt.elemento.core.Elements.h;
@@ -96,7 +96,7 @@ class HttpsListenerElement extends ListenerElement {
     public void attach() {
         super.attach();
 
-        NodeList<Element> elems = table.element().getElementsByClassName(halTableButtons);
+        HTMLCollection<Element> elems = table.element().getElementsByClassName(halTableButtons);
         if (elems.length > 0) {
             Element tableButtonsElement = elems.item(0);
             tableButtonsElement.appendChild(enableSslButton);

@@ -50,6 +50,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import elemental2.core.JsRegExp;
+import elemental2.core.RegExpResult;
 import elemental2.dom.CSSProperties.MarginBottomUnionType;
 import elemental2.dom.HTMLElement;
 
@@ -59,12 +60,37 @@ import static elemental2.dom.DomGlobal.window;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
-import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.gwt.elemento.core.Elements.a;
+import static org.jboss.gwt.elemento.core.Elements.asHtmlElement;
+import static org.jboss.gwt.elemento.core.Elements.br;
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.hr;
+import static org.jboss.gwt.elemento.core.Elements.htmlElements;
+import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.gwt.elemento.core.Elements.pre;
+import static org.jboss.gwt.elemento.core.Elements.span;
+import static org.jboss.gwt.elemento.core.Elements.stream;
+import static org.jboss.gwt.elemento.core.Elements.strong;
 import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CONSUMES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.JAVA_METHOD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PRODUCES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESOURCE_METHODS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESOURCE_PATH;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REST_RESOURCE_PATHS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SUB_RESOURCE_LOCATORS;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.GET;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.clickable;
+import static org.jboss.hal.resources.CSS.langJava;
+import static org.jboss.hal.resources.CSS.marginLeft5;
+import static org.jboss.hal.resources.CSS.panelBody;
+import static org.jboss.hal.resources.CSS.panelDefault;
+import static org.jboss.hal.resources.CSS.panelHeading;
+import static org.jboss.hal.resources.CSS.panelTitle;
+import static org.jboss.hal.resources.CSS.prettyPrint;
+import static org.jboss.hal.resources.CSS.restResources;
 import static org.jboss.hal.resources.Strings.abbreviateFqClassName;
 
 class RestResourcePreview extends PreviewContent<RestResource> {
@@ -185,12 +211,12 @@ class RestResourcePreview extends PreviewContent<RestResource> {
     }
 
     private List<String> extractParams(String url) {
-        String[] match;
+        RegExpResult match;
         List<String> params = new ArrayList<>();
         do {
             match = REGEX.exec(url);
             if (match != null) {
-                params.add(match[1]);
+                params.add(match.getAt(1));
             }
         } while (match != null);
         return params;

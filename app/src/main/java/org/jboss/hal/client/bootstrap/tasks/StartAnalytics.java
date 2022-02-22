@@ -65,7 +65,7 @@ public class StartAnalytics implements BootstrapTask {
 
     @Override
     public Completable call(FlowContext context) {
-        String pathname = window.location.getPathname();
+        String pathname = window.location.pathname;
         boolean testSuite = pathname.endsWith("ts.html");
         boolean collectUserData = settings.get(COLLECT_USER_DATA).asBoolean();
         if (!testSuite && collectUserData) {

@@ -277,9 +277,9 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
     }
 
     void reconnect() {
-        String url = window.location.getProtocol()
-                + "//" + window.location.getHost()
-                + window.location.getPathname()
+        String url = window.location.protocol
+                + "//" + window.location.host
+                + window.location.pathname
                 + "?" + EndpointManager.CONNECT_PARAMETER;
         window.location.assign(url);
     }

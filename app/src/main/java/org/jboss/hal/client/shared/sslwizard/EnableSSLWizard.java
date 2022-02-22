@@ -47,8 +47,43 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
 
 import static elemental2.dom.DomGlobal.window;
-import static org.jboss.hal.client.shared.sslwizard.AbstractConfiguration.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.client.shared.sslwizard.AbstractConfiguration.CAA_ALIAS;
+import static org.jboss.hal.client.shared.sslwizard.AbstractConfiguration.CAA_DOMAIN_NAMES;
+import static org.jboss.hal.client.shared.sslwizard.AbstractConfiguration.CAA_NAME;
+import static org.jboss.hal.client.shared.sslwizard.AbstractConfiguration.CAA_STAGING;
+import static org.jboss.hal.client.shared.sslwizard.AbstractConfiguration.KEY_STORE_PATH;
+import static org.jboss.hal.client.shared.sslwizard.AbstractConfiguration.PRIVATE_KEY_ALIAS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ALIAS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CERTIFICATE_AUTHORITY_ACCOUNT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CLEAR_TEXT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CREDENTIAL_REFERENCE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DISTINGUISHED_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.GENERATE_KEY_PAIR;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.IMPORT_CERTIFICATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.KEY_MANAGER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.KEY_STORE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.OBTAIN_CERTIFICATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PATH;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROTOCOLS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RELATIVE_TO;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUIRED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURE_PORT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURE_SOCKET_BINDING;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURITY_REALM;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_SSL_CONTEXT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SSL_CONTEXT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STORE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TRUST_CACERTS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TRUST_MANAGER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEFINE_ATTRIBUTE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VALIDATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VALIDITY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.WANT_CLIENT_AUTH;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION;
 import static org.jboss.hal.flow.Flow.series;
 
 public class EnableSSLWizard {
@@ -421,7 +456,7 @@ public class EnableSSLWizard {
                                         String label = resources.constants().reload() + " " + serverName;
                                         SafeHtml description;
                                         StringBuilder location = new StringBuilder(
-                                                "https://" + window.location.getHostname() + ":");
+                                                "https://" + window.location.hostname + ":");
                                         if (environment.isStandalone()) {
                                             location.append(context.securePort);
                                             description = resources.messages()
@@ -432,7 +467,7 @@ public class EnableSSLWizard {
                                                     .enableSSLResultsSuccessDomain(location.toString());
                                         }
                                         // extracts the url search path, so the url shows the view the user is located
-                                        String urlSuffix = window.location.getHref();
+                                        String urlSuffix = window.location.href;
                                         urlSuffix = urlSuffix.substring(urlSuffix.indexOf("//") + 2);
                                         urlSuffix = urlSuffix.substring(urlSuffix.indexOf("/"));
                                         location.append(urlSuffix);
