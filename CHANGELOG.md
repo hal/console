@@ -9,8 +9,50 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Changed
 
 - [HAL-1542](https://issues.redhat.com/browse/HAL-1542): Replace Grunt with Parcel
+- [HAL-1590](https://issues.redhat.com/browse/HAL-1590): Add form for OCSP in Elytron Trust Manager
+- [HAL-1591](https://issues.redhat.com/browse/HAL-1591): Add 'global directory' to EE settings
+- [HAL-1593](https://issues.redhat.com/browse/HAL-1593): Configure the certificate authority used by a certificate-authority-account
+- [HAL-1594](https://issues.redhat.com/browse/HAL-1594): Add section for evidence decoders in Elytron
+- [HAL-1596](https://issues.redhat.com/browse/HAL-1596): Expose runtime attributes of jms-bridge
 - [HAL-1623](https://issues.redhat.com/browse/HAL-1623): Upgrade JavaScript dependencies
+- [HAL-1623](https://issues.redhat.com/browse/HAL-1623): Upgrade JavaScript dependencies 
+- [HAL-1709](https://issues.redhat.com/browse/HAL-1709): Add option to start stopped servers in suspended mode
+- [HAL-1769](https://issues.redhat.com/browse/HAL-1769): remove unneeded validation from credential reference
 - Update developer related documentation 
+
+### Upgrades
+
+0bde28026 Merge pull request #535 from hal/dependabot/maven/org.mockito-mockito-core-4.3.1
+90a3d6e4b Merge pull request #515 from hal/dependabot/maven/version.elemental-1.1.0
+21873619a Bump mockito-core from 2.18.3 to 4.3.1
+823bab0e6 Configure ingore rules for dependabot
+65b17d309 Merge pull request #533 from hal/dependabot/maven/com.google.gwt-gwt-2.9.0
+8d8b5beb9 Upgrade GWT to 2.9.0 and Elemental to 1.1.0
+68c228960 Bump gwt from 2.8.2 to 2.9.0
+0f464d6f4 Merge pull request #521 from hal/dependabot/npm_and_yarn/app/jquery-3.6.0
+4db4f4648 Merge pull request #532 from hal/dependabot/maven/net.revelc.code.formatter-formatter-maven-plugin-2.17.1
+0ef4391d3 Bump formatter-maven-plugin from 2.17.0 to 2.17.1
+a5cf24c11 Merge pull request #531 from hal/dependabot/maven/com.google.auto.service-auto-service-1.0.1
+2ac6b0b97 Merge pull request #525 from hal/dependabot/npm_and_yarn/app/parcel/transformer-less-2.3.2
+d9033e408 Bump jquery from 3.4.1 to 3.6.0 in /app
+13c3d380b Bump @parcel/transformer-less from 2.3.1 to 2.3.2 in /app
+6b3324d1b Merge pull request #513 from hal/dependabot/github_actions/battila7/get-version-action-2.3.0
+0c7688cdc Bump auto-service from 1.0-rc4 to 1.0.1
+bd8aba827 Merge pull request #516 from hal/dependabot/github_actions/JamesIves/github-pages-deploy-action-4.2.5
+bdd7b6810 Merge pull request #529 from hal/dependabot/maven/version.slf4j-1.7.36
+b6630a75b Merge pull request #527 from hal/dependabot/npm_and_yarn/app/parcel-2.3.2
+e05fc0a5c Bump parcel from 2.3.1 to 2.3.2 in /app
+de890bec6 Bump version.slf4j from 1.7.25 to 1.7.36
+2fcc7ac40 Merge pull request #522 from hal/dependabot/maven/junit-junit-4.13.2
+e4783f6ee Merge pull request #523 from hal/dependabot/maven/org.sonatype.plugins-nexus-staging-maven-plugin-1.6.11
+70b40f08a Fix EAP build
+09748e37c Merge pull request #524 from hpehl/HAL-1542
+e7a90d029 (origin/HAL-1542, HAL-1542) HAL-1542: Migration to Parcel
+2270d4481 Bump nexus-staging-maven-plugin from 1.6.8 to 1.6.11
+0dcfd8151 Bump junit from 4.13.1 to 4.13.2
+36b219d51 Bump version.elemental from 1.0.0-RC1 to 1.1.0
+1161985bd Bump JamesIves/github-pages-deploy-action from 4.2.3 to 4.2.5
+85d867ad6 Bump battila7/get-version-action from 2.2.1 to 2.3.0
 
 ## [3.5.10] - 2022-02-16
 
