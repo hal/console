@@ -845,7 +845,11 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     SafeHtml startServerGroupError(String name);
 
+    SafeHtml startServerGroupInSuspendedModeSuccess(String name);
+
     SafeHtml startServerGroupSuccess(String name);
+
+    SafeHtml startServerInSuspendedModeSuccess(String name);
 
     SafeHtml startServerSuccess(String name);
 
