@@ -327,6 +327,12 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/runtime/management-operations.html")
     ExternalTextResource runtimeManagementOperations();
 
+    @Source("previews/runtime/messaging.html")
+    ExternalTextResource runtimeMessaging();
+
+    @Source("previews/runtime/messaging-jms-bridge.html")
+    ExternalTextResource runtimeMessagingJmsBridge();
+
     @Source("previews/runtime/messaging-server.html")
     ExternalTextResource runtimeMessagingServer();
 

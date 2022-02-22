@@ -1,0 +1,5 @@
+<h2>Apache ActiveMQ Artemis</h2>
+<p>Apache ActiveMQ Artemis is an open source project for an asynchronous messaging system. It is high performance, embeddable, clustered and supports multiple protocols. ${build.shortName} uses Apache ActiveMQ Artemis as its JMS broker and is configured using the messaging-activemq subsystem. This fully replaces the HornetQ broker but retains protocol compatibility with previous versions.</p>
+
+The core ActiveMQ Artemis is JMS-agnostic and provides a non-JMS API, which is referred to as the core API. ActiveMQ Artemis also provides a JMS client API which uses a facade layer to implement the JMS semantics on top of the core API. Essentially, JMS interactions are translated into core API operations on the client side using the JMS client API. From there, all operations are sent using the core client API and Apache ActiveMQ Artemis wire format. The server itself only uses the core API. For more details on the core API and its concepts, refer to the
+<a target="_blank" href=http://activemq.apache.org/artemis/docs/1.1.0/using-core.html">ActiveMQ Artemis documentation</a>.
