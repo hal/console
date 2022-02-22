@@ -54,7 +54,7 @@ jobs:
     steps:
       - name: Get Version
         id: get-version
-        uses: battila7/get-version-action@v2.2.1
+        uses: battila7/get-version-action@v2.3.0
       - name: Checkout
         id: checkout
         uses: actions/checkout@v2
@@ -124,7 +124,7 @@ jobs:
     steps:
       - name: Get Version
         id: get-version
-        uses: battila7/get-version-action@v2.2.1
+        uses: battila7/get-version-action@v2.3.0
       - name: Checkout
         id: checkout
         uses: actions/checkout@v2
