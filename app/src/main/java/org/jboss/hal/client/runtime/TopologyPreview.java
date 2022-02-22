@@ -761,7 +761,8 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         }
         if (serverGroup.hasServers(server -> server.isStopped() || server.isFailed())) {
             actions.add(actionLink(event -> serverGroupActions.start(serverGroup), resources.constants().start()));
-            actions.add(actionLink(event -> serverGroupActions.startInSuspendedMode(serverGroup), resources.constants().startInSuspendedMode()));
+            actions.add(actionLink(event -> serverGroupActions.startInSuspendedMode(serverGroup),
+                    resources.constants().startInSuspendedMode()));
         }
         // add kill link regardless of state to destroy and kill servers which might show a wrong state
         actions.add(actionLink(event -> serverGroupActions.destroy(serverGroup), resources.constants().destroy()));
@@ -840,7 +841,8 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
 
         if (!server.isStarted()) {
             actions.add(actionLink(event -> serverActions.start(server), resources.constants().start()));
-            actions.add(actionLink(event -> serverActions.startInSuspendedMode(server), resources.constants().startInSuspendedMode()));
+            actions.add(actionLink(event -> serverActions.startInSuspendedMode(server),
+                    resources.constants().startInSuspendedMode()));
         } else {
             actions.add(actionLink(event -> serverActions.editUrl(server, () -> {
                 if (isVisible()) {
