@@ -102,11 +102,11 @@
         <version.gwt>2.8.2</version.gwt>
         <version.gwtp>1.6</version.gwtp>
         <version.javax.enterprise>1.2</version.javax.enterprise>
-        <version.javax.inject>1</version.javax.inject>
+        <version.javax.inject>1.0-PFD-1</version.javax.inject>
         <version.jaxen>1.2.0</version.jaxen>
         <version.jboss.dmr>1.6.1.Final</version.jboss.dmr>
         <version.jdom>2.0.2</version.jdom>
-        <version.junit>4.13.1</version.junit>
+        <version.junit>4.13.2</version.junit>
         <version.mockito>2.18.3</version.mockito>
         <version.node>v16.14.0</version.node>
         <version.quarkus>2.7.1.Final</version.quarkus>
@@ -126,7 +126,7 @@
         <version.impsort.plugin>1.6.2</version.impsort.plugin>
         <version.keepachangelog>2.1.1</version.keepachangelog>
         <version.license.plugin>4.1</version.license.plugin>
-        <version.nexus.staging.plugin>1.6.8</version.nexus.staging.plugin>
+        <version.nexus.staging.plugin>1.6.11</version.nexus.staging.plugin>
 
         <!-- Repos & URLs -->
         <repo.scm.connection>git@github.com:hal/console.git</repo.scm.connection>
@@ -139,7 +139,7 @@
         <gwt.failOnError>true</gwt.failOnError>
         <gwt.logLevel>FINE</gwt.logLevel>
         <gwt.moduleShortname>hal</gwt.moduleShortname>
-        <gwt.moduleTemplate>${project.basedir}/src/main/module.gwt.xml</gwt.moduleTemplate>
+        <gwt.moduleTemplate>src/main/module.gwt.xml</gwt.moduleTemplate>
         <gwt.optimize>0</gwt.optimize>
         <gwt.style>DETAILED</gwt.style>
         <hal.version>${project.version}</hal.version>
@@ -434,7 +434,7 @@
                 <gwt.logLevel>INFO</gwt.logLevel>
                 <gwt.optimize>0</gwt.optimize>
                 <gwt.style>OBFUSCATED</gwt.style>
-                <npm.script>prod-${theme.name}</npm.script>
+                <npm.script>prod</npm.script>
             </properties>
         </profile>
         <profile>
@@ -529,29 +529,8 @@
         <profile>
             <id>theme-eap</id>
             <properties>
-                <gwt.moduleTemplate>${project.basedir}/src/main/module-i18n.gwt.xml</gwt.moduleTemplate>
                 <theme.name>eap</theme.name>
             </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>net.ltgt.gwt.maven</groupId>
-                        <artifactId>gwt-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>generate-i18n-module</id>
-                                <phase>generate-resources</phase>
-                                <goals>
-                                    <goal>generate-module</goal>
-                                </goals>
-                                <configuration>
-                                    <moduleTemplate>${project.basedir}/src/main/module-i18n.gwt.xml</moduleTemplate>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
         <profile>
             <id>theme-hal</id>
