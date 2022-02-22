@@ -418,5 +418,100 @@
 
         </item>
 
+        <!-- ================ -->
+        <!-- Evidence Decoder -->
+        <!-- ================ -->
+
+        <item id="mappers-decoders-evidence-decoder-item" title="Evidence Decoder" icon="fa fa-link">
+            <sub-item id="mappers-decoders-aggregate-evidence-decoder-item" title="Aggregate Evidence Decoder">
+                <metadata address="/{selected.profile}/subsystem=elytron/aggregate-evidence-decoder=*">
+                    <h1>Aggregate Evidence Decoder</h1>
+                    <p>${metadata.getDescription().getDescription()}</p>
+                    <table id="mappers-decoders-aggregate-evidence-decoder-table" title="Aggregate Evidence Decoder"
+                           form-ref="mappers-decoders-aggregate-evidence-decoder-form">
+                        <actions>
+                            <action handler-ref="add-resource"/>
+                            <action handler-ref="remove-resource" scope="selected"
+                                    name-resolver="${table.selectedRow().getName()}"/>
+                        </actions>
+                        <columns>
+                            <column name="name" value="${row.getName()}"/>
+                        </columns>
+                    </table>
+                    <form id="mappers-decoders-aggregate-evidence-decoder-form" title="Aggregate Evidence Decoder"
+                          auto-save="true"
+                          name-resolver="${form.getModel().getName()}">
+                        <attributes>
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
+            <sub-item id="mappers-decoders-custom-evidence-decoder-item" title="Custom Evidence Decoder">
+                <metadata address="/{selected.profile}/subsystem=elytron/custom-evidence-decoder=*">
+                    <h1>Custom Evidence Decoder</h1>
+                    <p>${metadata.getDescription().getDescription()}</p>
+                    <table id="mappers-decoders-custom-evidence-decoder-table" title="Custom Evidence Decoder"
+                           form-ref="mappers-decoders-custom-evidence-decoder-form">
+                        <actions>
+                            <action handler-ref="add-resource"/>
+                            <action handler-ref="remove-resource" scope="selected"
+                                    name-resolver="${table.selectedRow().getName()}"/>
+                        </actions>
+                        <columns>
+                            <column name="name" value="${row.getName()}"/>
+                        </columns>
+                    </table>
+                    <form id="mappers-decoders-custom-evidence-decoder-form" title="Custom Evidence Decoder"
+                          auto-save="true"
+                          name-resolver="${form.getModel().getName()}">
+                        <attributes>
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
+            <sub-item id="mappers-decoders-x500-subject-evidence-decoder-item" title="X500 Subject Evidence Decoder">
+                <metadata address="/{selected.profile}/subsystem=elytron/x500-subject-evidence-decoder=*">
+                    <h1>X500 Subject Evidence Decoder</h1>
+                    <p>${metadata.getDescription().getDescription()}</p>
+                    <table id="mappers-decoders-x500-subject-evidence-decoder-table" title="X500 Subject Evidence Decoder"
+                           form-ref="mappers-decoders-x500-subject-evidence-decoder-form">
+                        <actions>
+                            <action handler-ref="add-resource"/>
+                            <action handler-ref="remove-resource" scope="selected"
+                                    name-resolver="${table.selectedRow().getName()}"/>
+                        </actions>
+                        <columns>
+                            <column name="name" value="${row.getName()}"/>
+                        </columns>
+                    </table>
+                    <!-- this element has no attributes, form isn't necessary -->
+                </metadata>
+            </sub-item>
+            <sub-item id="mappers-decoders-x509-subject-alt-name-evidence-decoder-item" title="X509 Subject Alt Name Evidence Decoder">
+                <metadata address="/{selected.profile}/subsystem=elytron/x509-subject-alt-name-evidence-decoder=*">
+                    <h1>X509 Subject Alt Name Evidence Decoder</h1>
+                    <p>${metadata.getDescription().getDescription()}</p>
+                    <table id="mappers-decoders-x509-subject-alt-name-evidence-decoder-table" title="X509 Subject Alt Name Evidence Decoder"
+                           form-ref="mappers-decoders-x509-subject-alt-name-evidence-decoder-form">
+                        <actions>
+                            <action handler-ref="add-resource"/>
+                            <action handler-ref="remove-resource" scope="selected"
+                                    name-resolver="${table.selectedRow().getName()}"/>
+                        </actions>
+                        <columns>
+                            <column name="name" value="${row.getName()}"/>
+                        </columns>
+                    </table>
+                    <form id="mappers-decoders-x509-subject-alt-name-evidence-decoder-form" title="X509 Subject Alt Name Evidence Decoder"
+                          auto-save="true"
+                          name-resolver="${form.getModel().getName()}">
+                        <attributes>
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
+
+        </item>
+
     </vertical-navigation>
 </view>

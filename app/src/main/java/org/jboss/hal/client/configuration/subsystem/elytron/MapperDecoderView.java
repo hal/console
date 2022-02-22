@@ -65,6 +65,8 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
     @MbuiElement("mappers-decoders-add-prefix-role-mapper-form") Form<NamedNode> addPrefixRoleMapperForm;
     @MbuiElement("mappers-decoders-add-suffix-role-mapper-table") Table<NamedNode> addSuffixRoleMapperTable;
     @MbuiElement("mappers-decoders-add-suffix-role-mapper-form") Form<NamedNode> addSuffixRoleMapperForm;
+    @MbuiElement("mappers-decoders-aggregate-evidence-decoder-table") Table<NamedNode> aggregateEvidenceDecoderTable;
+    @MbuiElement("mappers-decoders-aggregate-evidence-decoder-form") Form<NamedNode> aggregateEvidenceDecoderForm;
     @MbuiElement("mappers-decoders-aggregate-principal-decoder-table") Table<NamedNode> aggregatePrincipalDecoderTable;
     @MbuiElement("mappers-decoders-aggregate-principal-decoder-form") Form<NamedNode> aggregatePrincipalDecoderForm;
     @MbuiElement("mappers-decoders-aggregate-role-mapper-table") Table<NamedNode> aggregateRoleMapperTable;
@@ -78,6 +80,8 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
     @MbuiElement("mappers-decoders-constant-role-mapper-form") Form<NamedNode> constantRoleMapperForm;
     @MbuiElement("mappers-decoders-custom-permission-mapper-table") Table<NamedNode> customPermissionMapperTable;
     @MbuiElement("mappers-decoders-custom-permission-mapper-form") Form<NamedNode> customPermissionMapperForm;
+    @MbuiElement("mappers-decoders-custom-evidence-decoder-table") Table<NamedNode> customEvidenceDecoderTable;
+    @MbuiElement("mappers-decoders-custom-evidence-decoder-form") Form<NamedNode> customEvidenceDecoderForm;
     @MbuiElement("mappers-decoders-custom-principal-decoder-table") Table<NamedNode> customPrincipalDecoderTable;
     @MbuiElement("mappers-decoders-custom-principal-decoder-form") Form<NamedNode> customPrincipalDecoderForm;
     @MbuiElement("mappers-decoders-custom-role-decoder-table") Table<NamedNode> customRoleDecoderTable;
@@ -95,6 +99,9 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
     @MbuiElement("mappers-decoders-simple-role-decoder-form") Form<NamedNode> simpleRoleDecoderForm;
     @MbuiElement("mappers-decoders-x500-attribute-principal-decoder-table") Table<NamedNode> x500AttributePrincipalDecoderTable;
     @MbuiElement("mappers-decoders-x500-attribute-principal-decoder-form") Form<NamedNode> x500AttributePrincipalDecoderForm;
+    @MbuiElement("mappers-decoders-x500-subject-evidence-decoder-table") Table<NamedNode> x500SubjectEvidenceDecoderTable;
+    @MbuiElement("mappers-decoders-x509-subject-alt-name-evidence-decoder-table") Table<NamedNode> x509SubjectAltNameEvidenceDecoderTable;
+    @MbuiElement("mappers-decoders-x509-subject-alt-name-evidence-decoder-form") Form<NamedNode> x509SubjectAltNameEvidenceDecoderForm;
     // @formatter:on
 
     MapperDecoderView(MbuiContext mbuiContext) {
@@ -188,6 +195,12 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
     }
 
     @Override
+    public void updateAggregateEvidenceDecoder(List<NamedNode> model) {
+        aggregateEvidenceDecoderForm.clear();
+        aggregateEvidenceDecoderTable.update(model);
+    }
+
+    @Override
     public void updateAggregatePrincipalDecoder(List<NamedNode> model) {
         aggregatePrincipalDecoderForm.clear();
         aggregatePrincipalDecoderTable.update(model);
@@ -220,6 +233,12 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
     public void updateConstantRoleMapper(List<NamedNode> model) {
         constantRoleMapperForm.clear();
         constantRoleMapperTable.update(model);
+    }
+
+    @Override
+    public void updateCustomEvidenceDecoder(List<NamedNode> model) {
+        customEvidenceDecoderForm.clear();
+        customEvidenceDecoderTable.update(model);
     }
 
     @Override
@@ -279,6 +298,17 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
     public void updateX500AttributePrincipalDecoder(List<NamedNode> model) {
         x500AttributePrincipalDecoderForm.clear();
         x500AttributePrincipalDecoderTable.update(model);
+    }
+
+    @Override
+    public void updateX500SubjectEvidenceDecoder(List<NamedNode> model) {
+        x500SubjectEvidenceDecoderTable.update(model);
+    }
+
+    @Override
+    public void updateX509SubjectAltNameEvidenceDecoder(List<NamedNode> model) {
+        x509SubjectAltNameEvidenceDecoderForm.clear();
+        x509SubjectAltNameEvidenceDecoderTable.update(model);
     }
 
     @Override

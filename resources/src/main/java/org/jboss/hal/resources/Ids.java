@@ -200,6 +200,7 @@ public interface Ids {
     String ELYTRON = "elytron";
     String ELYTRON_ADD_PREFIX_ROLE_MAPPER = "elytron-add-prefix-role-mapper";
     String ELYTRON_ADD_SUFFIX_ROLE_MAPPER = "elytron-add-suffix-role-mapper";
+    String ELYTRON_AGGREGATE_EVIDENCE_DECODER = "elytron-aggregate-evidence-decoder";
     String ELYTRON_AGGREGATE_HTTP_SERVER_MECHANISM_FACTORY = "elytron-aggregate-http-server-mechanism-factory";
     String ELYTRON_AGGREGATE_PRINCIPAL_DECODER = "elytron-aggregate-principal-decoder";
     String ELYTRON_AGGREGATE_PRINCIPAL_TRANSFORMER = "elytron-aggregate-principal-transformer";
@@ -225,6 +226,7 @@ public interface Ids {
     String ELYTRON_CONSTANT_ROLE_MAPPER = "elytron-constant-role-mapper";
     String ELYTRON_CREDENTIAL_STORE = "elytron-credential-store";
     String ELYTRON_CUSTOM_CREDENTIAL_SECURITY_FACTORY = "elytron-custom-credential-security-factory";
+    String ELYTRON_CUSTOM_EVIDENCE_DECODER = "elytron-custom-evidence-decoder";
     String ELYTRON_CUSTOM_MODIFIABLE_REALM = "elytron-custom-modifiable-realm";
     String ELYTRON_CUSTOM_PERMISSION_MAPPER = "elytron-custom-permission-mapper";
     String ELYTRON_CUSTOM_POLICY_EMPTY = "elytron-custom-policy-empty";
@@ -302,6 +304,8 @@ public interface Ids {
     String ELYTRON_TOKEN_REALM = "elytron-token-realm";
     String ELYTRON_TRUST_MANAGER = "elytron-trust-manager";
     String ELYTRON_X500_ATTRIBUTE_PRINCIPAL_DECODER = "elytron-x500-attribute-principal-decoder";
+    String ELYTRON_X500_SUBJECT_EVIDENCE_DECODER = "elytron-x500-subject-evidence-decoder";
+    String ELYTRON_X509_SUBJECT_ALT_NAME_EVIDENCE_DECODER = "elytron-x509-subject-alt-name-evidence-decoder";
     String EMPTY = "empty";
     String ENABLE_SSL = "enable-ssl";
     String ENDPOINT = "endpoint";

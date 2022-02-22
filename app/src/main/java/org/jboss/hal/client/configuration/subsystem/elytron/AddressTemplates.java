@@ -29,6 +29,7 @@ public interface AddressTemplates {
     String ADD_SUFFIX_ROLE_MAPPER_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/add-suffix-role-mapper=*";
     String AGGREGATE_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS
             + "/aggregate-http-server-mechanism-factory=*";
+    String AGGREGATE_EVIDENCE_DECODER_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/aggregate-evidence-decoder=*";
     String AGGREGATE_PRINCIPAL_DECODER_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/aggregate-principal-decoder=*";
     String AGGREGATE_PRINCIPAL_TRANSFORMER_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/aggregate-principal-transformer=*";
     String AGGREGATE_PROVIDERS_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/aggregate-providers=*";
@@ -56,6 +57,7 @@ public interface AddressTemplates {
     String CONSTANT_TRANSFORMER_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/constant-principal-transformer=*";
     String CREDENTIAL_STORE_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/credential-store=*";
     String CUSTOM_CREDENTIAL_SECURITY_FACTORY_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/custom-credential-security-factory=*";
+    String CUSTOM_EVIDENCE_DECODER_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/custom-evidence-decoder=*";
     String CUSTOM_MODIFIABLE_REALM_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/custom-modifiable-realm=*";
     String CUSTOM_PERMISSION_MAPPER_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/custom-permission-mapper=*";
     String CUSTOM_PRINCIPAL_DECODER_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/custom-principal-decoder=*";
@@ -126,6 +128,9 @@ public interface AddressTemplates {
     String TRUST_MANAGER_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/trust-manager=*";
 
     String X500_ATTRIBUTE_PRINCIPAL_DECODER_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/x500-attribute-principal-decoder=*";
+    String X500_SUBJECT_EVIDENCE_DECODER_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/x500-subject-evidence-decoder=*";
+    String X509_SUBJECT_ALT_NAME_EVIDENCE_DECODER_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS
+            + "/x509-subject-alt-name-evidence-decoder=*";
 
     // ------------------------------------------------------ templates (a-z)
 
@@ -133,6 +138,7 @@ public interface AddressTemplates {
     AddressTemplate ADD_SUFFIX_ROLE_MAPPER_TEMPLATE = AddressTemplate.of(ADD_SUFFIX_ROLE_MAPPER_ADDRESS);
     AddressTemplate AGGREGATE_HTTP_SERVER_MECHANISM_FACTORY_TEMPLATE = AddressTemplate
             .of(AGGREGATE_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS);
+    AddressTemplate AGGREGATE_EVIDENCE_DECODER_TEMPLATE = AddressTemplate.of(AGGREGATE_EVIDENCE_DECODER_ADDRESS);
     AddressTemplate AGGREGATE_PRINCIPAL_DECODER_TEMPLATE = AddressTemplate.of(AGGREGATE_PRINCIPAL_DECODER_ADDRESS);
     AddressTemplate AGGREGATE_PRINCIPAL_TRANSFORMER_TEMPLATE = AddressTemplate.of(AGGREGATE_PRINCIPAL_TRANSFORMER_ADDRESS);
     AddressTemplate AGGREGATE_PROVIDERS_TEMPLATE = AddressTemplate.of(AGGREGATE_PROVIDERS_ADDRESS);
@@ -159,6 +165,7 @@ public interface AddressTemplates {
     AddressTemplate CREDENTIAL_STORE_TEMPLATE = AddressTemplate.of(CREDENTIAL_STORE_ADDRESS);
     AddressTemplate CUSTOM_CREDENTIAL_SECURITY_FACTORY_TEMPLATE = AddressTemplate
             .of(CUSTOM_CREDENTIAL_SECURITY_FACTORY_ADDRESS);
+    AddressTemplate CUSTOM_EVIDENCE_DECODER_TEMPLATE = AddressTemplate.of(CUSTOM_EVIDENCE_DECODER_ADDRESS);
     AddressTemplate CUSTOM_MODIFIABLE_REALM_TEMPLATE = AddressTemplate.of(CUSTOM_MODIFIABLE_REALM_ADDRESS);
     AddressTemplate CUSTOM_PERMISSION_MAPPER_TEMPLATE = AddressTemplate.of(CUSTOM_PERMISSION_MAPPER_ADDRESS);
     AddressTemplate CUSTOM_PRINCIPAL_DECODER_TEMPLATE = AddressTemplate.of(CUSTOM_PRINCIPAL_DECODER_ADDRESS);
@@ -228,5 +235,8 @@ public interface AddressTemplates {
     AddressTemplate TRUST_MANAGER_TEMPLATE = AddressTemplate.of(TRUST_MANAGER_ADDRESS);
 
     AddressTemplate X500_ATTRIBUTE_PRINCIPAL_DECODER_TEMPLATE = AddressTemplate.of(X500_ATTRIBUTE_PRINCIPAL_DECODER_ADDRESS);
+    AddressTemplate X500_SUBJECT_EVIDENCE_DECODER_TEMPLATE = AddressTemplate.of(X500_SUBJECT_EVIDENCE_DECODER_ADDRESS);
+    AddressTemplate X509_SUBJECT_ALT_NAME_EVIDENCE_DECODER_TEMPLATE = AddressTemplate
+            .of(X509_SUBJECT_ALT_NAME_EVIDENCE_DECODER_ADDRESS);
     // @formatter:on
 }
