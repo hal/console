@@ -106,7 +106,7 @@
         <version.jaxen>1.2.0</version.jaxen>
         <version.jboss.dmr>1.6.1.Final</version.jboss.dmr>
         <version.jdom>2.0.2</version.jdom>
-        <version.junit>4.13.1</version.junit>
+        <version.junit>4.13.2</version.junit>
         <version.mockito>2.18.3</version.mockito>
         <version.node>v16.14.0</version.node>
         <version.quarkus>2.7.1.Final</version.quarkus>
