@@ -17,6 +17,7 @@ In a nutshell the console uses the following technical stack:
 - [RxGWT](https://github.com/intendia-oss/rxgwt)
 - [PouchDB](https://pouchdb.com/)
 - [PatternFly](https://www.patternfly.org/)
+- [Maven](https://maven.apache.org/) and [Parcel](https://parceljs.org/) 
 
 For more information on how to [build](https://hal.github.io/development/build-run/#build), [debug](https://hal.github.io/development/build-run/#debug) and [run](https://hal.github.io/documentation/get-started/) the console, take a look at the HAL community site at https://hal.github.io.
 

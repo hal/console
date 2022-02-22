@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Changed
+
+- [HAL-1542](https://issues.redhat.com/browse/HAL-1542): Replace Grunt with Parcel
+- [HAL-1623](https://issues.redhat.com/browse/HAL-1623): Upgrade JavaScript dependencies
+- Update developer related documentation 
+
 ## [3.5.10] - 2022-02-16
 
 ### Updated

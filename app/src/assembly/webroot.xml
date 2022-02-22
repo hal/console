@@ -25,7 +25,7 @@
     <includeBaseDirectory>false</includeBaseDirectory>
     <fileSets>
         <fileSet>
-            <directory>${project.build.directory}/parcel</directory>
+            <directory>${project.build.directory}/bundle</directory>
             <outputDirectory>webroot</outputDirectory>
         </fileSet>
         <fileSet>

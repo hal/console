@@ -17,13 +17,13 @@ const path = require("path");
 const {Resolver} = require("@parcel/plugin");
 
 /*
- * Resolves theme dependencies starting with 'theme:'. The current theme is taken from the environment variable
- * `THEME` with a fallback of "hal" if not defined.
+ * Resolves theme dependencies starting with 'theme:'. The current theme is taken from the
+ * environment variable `THEME` with a fallback of "hal" if not defined.
  *
  * The resolver can handle relative and absolute dependencies:
  *
  * 1. Relative dependencies:
- *    The dependency is expected to be in `/themes/<current-theme>/<resolve-from-path>`
+ *    The dependency is expected to be in `/themes/<current-theme>/<relative-to-importing-file>`
  *
  * 2. Absolute dependencies:
  *    The dependency is expected to be in `/themes/<current-theme>/<absolute-path>`

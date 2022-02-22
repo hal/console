@@ -223,6 +223,9 @@
                         </goals>
                         <configuration>
                             <arguments>run ${npm.script}</arguments>
+                            <environmentVariables>
+                                <THEME>${theme.name}</THEME>
+                            </environmentVariables>
                             <skip>${skip.gwt}</skip>
                         </configuration>
                     </execution>
@@ -330,4 +333,33 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>theme-eap</id>
+            <properties>
+                <gwt.moduleTemplate>${project.basedir}/src/main/module-i18n.gwt.xml</gwt.moduleTemplate>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>net.ltgt.gwt.maven</groupId>
+                        <artifactId>gwt-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>generate-i18n-module</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>generate-module</goal>
+                                </goals>
+                                <configuration>
+                                    <moduleTemplate>${project.basedir}/src/main/module-i18n.gwt.xml</moduleTemplate>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
