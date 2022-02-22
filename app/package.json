@@ -42,7 +42,7 @@
     "jstree": "^3.3.12",
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.34",
-    "node-fetch": "2.6.7",
+    "node-fetch": "3.2.0",
     "patternfly": "^3.59.5",
     "pouchdb-browser": "^7.2.2",
     "zeroclipboard": "^2.3.0"
