@@ -206,6 +206,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                         () -> presenter.reload(TRUST_MANAGER.resource,
                                 nodes -> updateResourceElement(TRUST_MANAGER.resource, nodes)))
                         .addComplexObjectAttribute("certificate-revocation-list")
+                        .addComplexObjectAttribute("ocsp")
                         .build(),
                 Ids.ELYTRON_SSL_ITEM,
                 Ids.build(TRUST_MANAGER.baseId, Ids.ITEM),
