@@ -19,11 +19,39 @@ In a nutshell the console uses the following technical stack:
 - [PatternFly](https://www.patternfly.org/)
 - [Maven](https://maven.apache.org/) and [Parcel](https://parceljs.org/) 
 
+# Build
+
+To start from scratch, use the following commands to clone and build HAL:
+
+```shell
+git clone git@github.com:hal/console.git
+cd console
+./mvnw verify
+```
+
 For more information on how to [build](https://hal.github.io/development/build-run/#build), [debug](https://hal.github.io/development/build-run/#debug) and [run](https://hal.github.io/documentation/get-started/) the console, take a look at the HAL community site at https://hal.github.io.
+
+# Issue Tracking
+
+Bugs and features are tracked within the HAL Jira project at https://issues.jboss.org/browse/HAL
 
 # Contributing
 
 This is an open source project. That means that everybody can contribute. It's not hard to get started. So start [contributing](CONTRIBUTING.md) today!
+
+# Branches
+
+All recent development happens in the branch `main`. There are additional branches mainly used for maintenance:
+
+| Branch | Description                                       |
+|--------|---------------------------------------------------|
+| main   | Main branch used for development                  |
+| 3.3.x  | Branch used for WildFly 23.x - 26.x and EAP 7.4.x |
+| 3.2.x  | Branch used for WildDly 17.x - 22.x and EAP 7.3.x |
+| 3.1.x  | Branch used for WildDly 16.x and EAP 7.2.x        |
+| 3.0.x  | Branch used for WildFly 13.x - 15.x and EAP 7.2.x |
+
+See [branches](https://hal.github.io/development/branches/) for all details. 
 
 # Licenses
 

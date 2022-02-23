@@ -6,19 +6,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
-### Changed
+### Added
 
-- [HAL-1542](https://issues.redhat.com/browse/HAL-1542): Replace Grunt with Parcel
 - [HAL-1590](https://issues.redhat.com/browse/HAL-1590): Add form for OCSP in Elytron Trust Manager
 - [HAL-1591](https://issues.redhat.com/browse/HAL-1591): Add 'global directory' to EE settings
 - [HAL-1593](https://issues.redhat.com/browse/HAL-1593): Configure the certificate authority used by a certificate-authority-account
 - [HAL-1594](https://issues.redhat.com/browse/HAL-1594): Add section for evidence decoders in Elytron
 - [HAL-1596](https://issues.redhat.com/browse/HAL-1596): Expose runtime attributes of jms-bridge
-- [HAL-1623](https://issues.redhat.com/browse/HAL-1623): Upgrade JavaScript dependencies
-- [HAL-1623](https://issues.redhat.com/browse/HAL-1623): Upgrade JavaScript dependencies 
 - [HAL-1709](https://issues.redhat.com/browse/HAL-1709): Add option to start stopped servers in suspended mode
-- [HAL-1769](https://issues.redhat.com/browse/HAL-1769): remove unneeded validation from credential reference
+
+### Changed
+
+- [HAL-1542](https://issues.redhat.com/browse/HAL-1542): Replace Grunt with Parcel
+- [HAL-1623](https://issues.redhat.com/browse/HAL-1623): Upgrade JavaScript dependencies
 - Update developer related documentation 
+
+### Fixed
+
+- [HAL-1769](https://issues.redhat.com/browse/HAL-1769): Remove unneeded validation from credential reference
+- [HAL-1770](https://issues.redhat.com/browse/HAL-1770): Content of Deployment is not displayed
 
 ### Upgrades
 
@@ -26,13 +32,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Bump Mockito from 2.18.3 to 4.3.1
 - Bump SLF4J from 1.7.25 to 1.7.36
 - Bump GWT from 2.8.2 to 2.9.0
-- Bump auto-service from 1.0-rc4 to 1.0.1
-- Bump formatter-maven-plugin from 2.17.0 to 2.17.1
-- Bump nexus-staging-maven-plugin from 1.6.8 to 1.6.11
+- Bump Auto-Service from 1.0-rc4 to 1.0.1
 - Bump jQuery from 3.4.1 to 3.6.0
 - Bump Parcel from 2.3.1 to 2.3.2
-- Bump JamesIves/github-pages-deploy-action from 4.2.3 to 4.2.5
-- Bump battila7/get-version-action from 2.2.1 to 2.3.0
 
 ## [3.5.10] - 2022-02-16
 
@@ -168,10 +170,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - for changes in existing functionality
 
-### Upgrades
-
-- for dependency upgrades
-
 ### Deprecated
 
 - for soon-to-be removed features
@@ -187,6 +185,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Security
 
 - in case of vulnerabilities
+
+### Upgrades
+
+- for dependency upgrades
 -->
 
 [Unreleased]: https://github.com/hal/console/compare/v3.5.10.Final...HEAD
