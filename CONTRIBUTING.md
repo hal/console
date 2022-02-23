@@ -2,6 +2,8 @@ First off, thank you for considering contributing to HAL. It's people like you t
 
 We expect all contributors and users to follow our [Code of Conduct](CODE_OF_CONDUCT.md) when communicating through project channels. These include, but are not limited to: chat, issues, code.
 
+All recent development happens in the branch `main`. There are additional [branches](https://hal.github.io/development/branches/) mainly used for maintenance.
+
 # One time setup
 
 ## Create a GitHub account
