@@ -53,12 +53,37 @@ import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.gwt.elemento.core.Elements.section;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
-import static org.jboss.hal.client.configuration.subsystem.ee.AddressTemplates.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.client.configuration.subsystem.ee.AddressTemplates.CONTEXT_SERVICE_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.ee.AddressTemplates.EE_SUBSYSTEM_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.ee.AddressTemplates.GLOBAL_DIRECTORY_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.ee.AddressTemplates.MANAGED_EXECUTOR_SCHEDULED_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.ee.AddressTemplates.MANAGED_EXECUTOR_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.ee.AddressTemplates.MANAGED_THREAD_FACTORY_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CONTEXT_SERVICE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.GLOBAL_DIRECTORY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.GLOBAL_MODULES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MANAGED_EXECUTOR_SERVICE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MANAGED_SCHEDULED_EXECUTOR_SERVICE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MANAGED_THREAD_FACTORY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PATH;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.QUERY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RELATIVE_TO;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SELECT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVICE;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
-import static org.jboss.hal.resources.Ids.*;
+import static org.jboss.hal.resources.Ids.EE_ATTRIBUTES_FORM;
+import static org.jboss.hal.resources.Ids.EE_ATTRIBUTES_ITEM;
+import static org.jboss.hal.resources.Ids.EE_CONTEXT_SERVICE;
+import static org.jboss.hal.resources.Ids.EE_DEFAULT_BINDINGS_FORM;
+import static org.jboss.hal.resources.Ids.EE_DEFAULT_BINDINGS_ITEM;
+import static org.jboss.hal.resources.Ids.EE_GLOBAL_MODULES_ITEM;
+import static org.jboss.hal.resources.Ids.EE_MANAGED_EXECUTOR;
+import static org.jboss.hal.resources.Ids.EE_MANAGED_EXECUTOR_SCHEDULED;
+import static org.jboss.hal.resources.Ids.EE_MANAGED_THREAD_FACTORY;
+import static org.jboss.hal.resources.Ids.EE_SERVICES_ITEM;
 
 public class EEView extends HalViewImpl implements EEPresenter.MyView {
 
@@ -98,6 +123,7 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
         Metadata eeMetadata = metadataRegistry.lookup(AddressTemplates.EE_SUBSYSTEM_TEMPLATE);
 
         ModelNodeForm<ModelNode> eeAttributesForm = new ModelNodeForm.Builder<>(EE_ATTRIBUTES_FORM, eeMetadata)
+                .exclude(GLOBAL_MODULES)
                 .onSave((f, changedValues) -> presenter.save(AddressTemplates.EE_SUBSYSTEM_TEMPLATE, changedValues,
                         eeMetadata, resources.messages()
                                 .modifyResourceSuccess(Names.EE, resources.constants().deploymentAttributes())))
