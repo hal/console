@@ -35,14 +35,12 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
 
 public class WorkerChannel {
 
+    // provided by app/src/web/script/index.js
     @JsType(isNative = true, namespace = GLOBAL, name = "window")
     static class WorkerProvider {
 
         @JsProperty static Worker metadataChannel;
     }
-
-    private static final String CHANNEL = "metadataChannel";
-    private static final String WORKER_JS = "js/worker.js";
 
     private final ResourceDescriptionDatabase resourceDescriptionDatabase;
     private final SecurityContextDatabase securityContextDatabase;
