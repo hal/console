@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [3.5.11] - 2022-02-24
+
 ### Added
 
 - [HAL-1590](https://issues.redhat.com/browse/HAL-1590): Add form for OCSP in Elytron Trust Manager
@@ -191,8 +193,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - for dependency upgrades
 -->
 
-[Unreleased]: https://github.com/hal/console/compare/v3.5.10.Final...HEAD
-[3.5.10]: https://github.com/hal/console/compare/v3.5.9...v3.5.10.Final
+[Unreleased]: https://github.com/hal/console/compare/v3.5.11.Final...HEAD
+[3.5.11]: https://github.com/hal/console/compare/v3.5.10...v3.5.11.Final
+[3.5.10]: https://github.com/hal/console/compare/v3.5.9...v3.5.10
 [3.5.9]: https://github.com/hal/console/compare/v3.5.8...v3.5.9
 [3.5.8]: https://github.com/hal/console/compare/v3.5.7...v3.5.8
 [3.5.7]: https://github.com/hal/console/compare/v3.5.6...v3.5.7
