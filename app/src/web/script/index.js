@@ -71,4 +71,4 @@ window.PouchDB = require("pouchdb-browser").default;
 window.ZeroClipboard = require("zeroclipboard");
 
 // TODO Web worker
-window.metadataChannel = new Worker(new URL('./worker.js', import.meta.url), {type: 'module'});
+window.metadataChannel = new Worker(new URL("./worker.js", import.meta.url), {type: "module"});

@@ -26,6 +26,7 @@ import org.jboss.hal.meta.security.SecurityContext;
 import org.jboss.hal.meta.security.SecurityContextDatabase;
 
 import elemental2.dom.Worker;
+import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
@@ -34,6 +35,13 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
 
 public class WorkerChannel {
 
+    @JsType(isNative = true, namespace = GLOBAL, name = "window")
+    static class WorkerProvider {
+
+        @JsProperty static Worker metadataChannel;
+    }
+
+    private static final String CHANNEL = "metadataChannel";
     private static final String WORKER_JS = "js/worker.js";
 
     private final ResourceDescriptionDatabase resourceDescriptionDatabase;
@@ -45,7 +53,7 @@ public class WorkerChannel {
             SecurityContextDatabase securityContextDatabase) {
         this.resourceDescriptionDatabase = resourceDescriptionDatabase;
         this.securityContextDatabase = securityContextDatabase;
-        this.worker = Browser.isIE() ? null : new Worker(WORKER_JS);
+        this.worker = Browser.isIE() ? null : WorkerProvider.metadataChannel;
     }
 
     void postResourceDescription(ResourceAddress address, ResourceDescription resourceDescription, boolean recursive) {

@@ -13,10 +13,10 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-const PouchDB = require("pouchdb-browser");
+self.importScripts("pouchdb.min.js");
 
 self.addEventListener("message", function (e) {
-    var db = new PouchDB(e.data.database);
+    let db = new PouchDB(e.data.database);
     db.get(e.data.document._id)
         .then(function (doc) {
             // update existing document
@@ -29,7 +29,7 @@ self.addEventListener("message", function (e) {
                     error("Unable to put " + e.data.database + e.data.document._id + ": " + error);
                 });
         })
-        .catch(function (err) {
+        .catch(function () {
             // put new document
             db.put(e.data.document)
                 .then(function (response) {
@@ -52,7 +52,7 @@ self.error = function (message) {
 };
 
 self.timestamp = function () {
-    var d = new Date();
+    let d = new Date();
     return d.getHours().toString().padStart(2, "0") + ":" +
         d.getMinutes().toString().padStart(2, "0") + ":" +
         d.getSeconds().toString().padStart(2, "0") + "." +

@@ -12,13 +12,17 @@
     "src/web/ts.html"
   ],
   "scripts": {
+    "prewatch": "copyfiles -f node_modules/pouchdb/dist/pouchdb.min.js target/gwt/devmode/war/hal",
     "watch": "parcel watch --public-url \"./\" --dist-dir target/gwt/devmode/war/hal",
+    "predev": "copyfiles -f node_modules/pouchdb/dist/pouchdb.min.js target/gwt/devmode/war/hal",
     "dev": "parcel build --public-url \"./\" --dist-dir target/gwt/devmode/war/hal --no-optimize",
+    "preprod": "copyfiles -f node_modules/pouchdb/dist/pouchdb.min.js target/bundle",
     "prod": "parcel build --public-url \"./\" --dist-dir target/bundle"
   },
   "devDependencies": {
     "@parcel/reporter-cli": "^2.3.1",
     "@parcel/transformer-less": "^2.3.2",
+    "copyfiles": "^2.4.1",
     "parcel": "^2.3.2",
     "parcel-resolver-ignore": "^2.0.0",
     "parcel-resolver-theme": "file:local_modules/parcel-resolver-theme"
@@ -27,7 +31,7 @@
     "ace-builds": "^1.4.14",
     "bootstrap": "~3.4.1",
     "bootstrap-select": "^1.13.18",
-    "bootstrap-switch": "^3.4.0",
+    "bootstrap-switch": "~3.3.5",
     "c3": "^0.7.20",
     "d3": "5.9.7",
     "datatables.net": "^1.10.19",
@@ -43,7 +47,14 @@
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.34",
     "patternfly": "^3.59.5",
+    "pouchdb": "^7.2.2",
     "pouchdb-browser": "^7.2.2",
     "zeroclipboard": "^2.3.0"
+  },
+  "dependenciesComments": {
+    "bootstrap-switch": "Please use version '~3.3.5', since 3.4.x would require Bootstrap 4.x"
+  },
+  "overrides": {
+    "node-fetch": "2.6.7"
   }
 }
