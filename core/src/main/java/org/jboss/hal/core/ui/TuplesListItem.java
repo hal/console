@@ -211,7 +211,7 @@ public class TuplesListItem extends TagsItem<ModelNode> implements ModelNodeItem
             ModelNode tuple = new ModelNode();
             String[] attrValues = tag.split(SEPARATOR, -1);
             for (int i = 0; i < attributeNames.length; i++) {
-                if (!attrValues[i].isEmpty()) {
+                if (!attrValues[i].isEmpty() && !attrValues[i].equals(BLANK)) {
                     tuple.get(attributeNames[i]).set(attrValues[i]);
                 }
             }
