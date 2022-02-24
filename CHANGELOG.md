@@ -24,6 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Fixed
 
 - [HAL-1769](https://issues.redhat.com/browse/HAL-1769): Remove unneeded validation from credential reference
+- [HAL-1774](https://issues.redhat.com/browse/HAL-1774): Adding global modules in EE fails
 
 ### Upgrades
 
