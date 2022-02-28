@@ -84,6 +84,7 @@ public class LabelBuilder {
             .put("microprofile", "MicroProfile")
             .put("oauth2", "OAuth 2")
             .put("ocsp", "OCSP")
+            .put("openapi", "OpenAPI")
             .put("otp", "OTP")
             .put("rdn", "RDN")
             .put("sar", "SAR")
