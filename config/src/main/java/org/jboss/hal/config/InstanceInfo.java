@@ -17,14 +17,9 @@ package org.jboss.hal.config;
 
 import org.jboss.hal.resources.Names;
 
-import jsinterop.annotations.JsIgnore;
-import jsinterop.annotations.JsProperty;
-import jsinterop.annotations.JsType;
-
 /**
  * Contains information about the server instance the console is connected to or loaded from (taken from the root resource).
  */
-@JsType
 public class InstanceInfo {
 
     private String productName;
@@ -32,7 +27,6 @@ public class InstanceInfo {
     private String releaseName;
     private String releaseVersion;
 
-    @JsIgnore
     InstanceInfo() {
         this.productName = Names.NOT_AVAILABLE;
         this.productVersion = Names.NOT_AVAILABLE;
@@ -41,30 +35,25 @@ public class InstanceInfo {
     }
 
     /** @return the product name. */
-    @JsProperty(name = "productName")
     public String productName() {
         return productName;
     }
 
     /** @return the product version. */
-    @JsProperty(name = "productVersion")
     public String productVersion() {
         return productVersion;
     }
 
     /** @return the release name. */
-    @JsProperty(name = "releaseName")
     public String releaseName() {
         return releaseName;
     }
 
     /** @return the release version. */
-    @JsProperty(name = "releaseVersion")
     public String releaseVersion() {
         return releaseVersion;
     }
 
-    @JsIgnore
     public void update(String productName, String productVersion,
             String releaseName, String releaseVersion) {
         this.productName = productName;

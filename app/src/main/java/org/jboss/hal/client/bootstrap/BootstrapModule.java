@@ -24,7 +24,6 @@ import org.jboss.hal.client.bootstrap.tasks.InitializationTasks;
 import org.jboss.hal.client.bootstrap.tasks.LoadSettings;
 import org.jboss.hal.client.bootstrap.tasks.ReadAuthentication;
 import org.jboss.hal.client.bootstrap.tasks.ReadEnvironment;
-import org.jboss.hal.client.bootstrap.tasks.ReadExtensions;
 import org.jboss.hal.client.bootstrap.tasks.ReadHostNames;
 import org.jboss.hal.client.bootstrap.tasks.RegisterStaticCapabilities;
 import org.jboss.hal.client.bootstrap.tasks.SetTitle;
@@ -49,7 +48,6 @@ public class BootstrapModule extends AbstractGinModule {
         bind(LoadSettings.class).in(Singleton.class);
         bind(ReadAuthentication.class).in(Singleton.class);
         bind(ReadEnvironment.class).in(Singleton.class);
-        bind(ReadExtensions.class).in(Singleton.class);
         bind(RegisterStaticCapabilities.class).in(Singleton.class);
         bind(StartAnalytics.class).in(Singleton.class);
         bind(SetTitle.class).in(Singleton.class);

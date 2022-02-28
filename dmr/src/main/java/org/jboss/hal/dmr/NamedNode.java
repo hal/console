@@ -17,21 +17,14 @@ package org.jboss.hal.dmr;
 
 import org.jboss.hal.spi.NamedObject;
 
-import jsinterop.annotations.JsIgnore;
-import jsinterop.annotations.JsMethod;
-import jsinterop.annotations.JsProperty;
-import jsinterop.annotations.JsType;
-
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 /** A model node with a name. */
-@JsType
 public class NamedNode extends ModelNode implements NamedObject {
 
     private final String name;
     private final ModelNode node;
 
-    @JsIgnore
     public NamedNode(ModelNode node) {
         this(node.hasDefined(NAME) ? node.get(NAME).asString()
                 : ModelDescriptionConstants.UNDEFINED + "_" + System
@@ -39,12 +32,10 @@ public class NamedNode extends ModelNode implements NamedObject {
                 node);
     }
 
-    @JsIgnore
     public NamedNode(Property property) {
         this(property.getName(), property.getValue());
     }
 
-    @JsIgnore
     public NamedNode(String name, ModelNode node) {
         this.name = name;
         this.node = node;
@@ -53,7 +44,6 @@ public class NamedNode extends ModelNode implements NamedObject {
     }
 
     @Override
-    @JsIgnore
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -74,7 +64,6 @@ public class NamedNode extends ModelNode implements NamedObject {
     }
 
     @Override
-    @JsIgnore
     public int hashCode() {
         int result = super.hashCode();
         result = 31 * result + name.hashCode();
@@ -93,7 +82,6 @@ public class NamedNode extends ModelNode implements NamedObject {
     /**
      * @return the name of this named node
      */
-    @JsProperty
     public String getName() {
         return get(NAME).asString();
     }
@@ -105,7 +93,6 @@ public class NamedNode extends ModelNode implements NamedObject {
     /**
      * @return the model node of this named node
      */
-    @JsProperty(name = "modelNode")
     public ModelNode asModelNode() {
         return node;
     }
@@ -113,12 +100,5 @@ public class NamedNode extends ModelNode implements NamedObject {
     public void update(ModelNode node) {
         set(node);
         setName(name); // restore name!
-    }
-
-    // ------------------------------------------------------ JS methods
-
-    @JsMethod(name = "create")
-    public static NamedNode jsCreate(String name) {
-        return new NamedNode(name, new ModelNode());
     }
 }

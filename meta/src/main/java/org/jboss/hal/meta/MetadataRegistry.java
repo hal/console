@@ -21,14 +21,8 @@ import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.description.ResourceDescriptionRegistry;
 import org.jboss.hal.meta.security.SecurityContextRegistry;
-import org.jboss.hal.spi.EsParam;
-
-import jsinterop.annotations.JsIgnore;
-import jsinterop.annotations.JsMethod;
-import jsinterop.annotations.JsType;
 
 /** Registry for existing resource {@link Metadata}. */
-@JsType
 public class MetadataRegistry implements Registry<Metadata> {
 
     private final ResourceDescriptionRegistry resourceDescriptionRegistry;
@@ -36,7 +30,6 @@ public class MetadataRegistry implements Registry<Metadata> {
     private final Capabilities capabilities;
 
     @Inject
-    @JsIgnore
     public MetadataRegistry(ResourceDescriptionRegistry resourceDescriptionRegistry,
             SecurityContextRegistry securityContextRegistry,
             Capabilities capabilities) {
@@ -46,7 +39,6 @@ public class MetadataRegistry implements Registry<Metadata> {
     }
 
     @Override
-    @JsIgnore
     public Metadata lookup(AddressTemplate template) throws MissingMetadataException {
         ResourceDescription resourceDescription = resourceDescriptionRegistry.lookup(template);
         return new Metadata(template, () -> securityContextRegistry.lookup(template), resourceDescription,
@@ -54,47 +46,8 @@ public class MetadataRegistry implements Registry<Metadata> {
     }
 
     @Override
-    @JsIgnore
     public boolean contains(AddressTemplate template) {
         return securityContextRegistry.contains(template) &&
                 resourceDescriptionRegistry.contains(template);
-    }
-
-    // ------------------------------------------------------ JS methods
-
-    /**
-     * Checks whether there's a metadata for the specified template.
-     *
-     * @param template The address template to check.
-     *
-     * @return true if the registry contains metadata for the given template, false otherwise
-     */
-    @JsMethod(name = "contains")
-    public boolean jsContains(@EsParam("AddressTemplate|String") Object template) {
-        if (template instanceof String) {
-            return contains(AddressTemplate.of(((String) template)));
-        } else if (template instanceof AddressTemplate) {
-            return contains(((AddressTemplate) template));
-        }
-        return false;
-    }
-
-    /**
-     * Returns metadata associated with the specified address template.
-     *
-     * @param template The address template to lookup.
-     *
-     * @return the metadata for the specified template
-     *
-     * @throws MissingMetadataException if no metadata for the given template exists
-     */
-    @JsMethod(name = "lookup")
-    public Metadata jsLookup(@EsParam("AddressTemplate|String") Object template) throws MissingMetadataException {
-        if (template instanceof String) {
-            return lookup(AddressTemplate.of(((String) template)));
-        } else if (template instanceof AddressTemplate) {
-            return lookup(((AddressTemplate) template));
-        }
-        throw new IllegalArgumentException("Use MetadataRegistry.lookup(String|AddressTemplate)");
     }
 }

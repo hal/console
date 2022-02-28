@@ -20,15 +20,9 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.jboss.hal.resources.Ids;
-import org.jboss.hal.spi.EsReturn;
 import org.jboss.hal.spi.NamedObject;
 
-import jsinterop.annotations.JsIgnore;
-import jsinterop.annotations.JsProperty;
-import jsinterop.annotations.JsType;
-
 /** A standard or scoped role used when RBAC is turned on. */
-@JsType
 public class Role implements NamedObject {
 
     /** Has all permissions except cannot read or write resources related to the administrative audit logging system. */
@@ -69,12 +63,10 @@ public class Role implements NamedObject {
     private final SortedSet<String> scope;
     private boolean includeAll;
 
-    @JsIgnore
     public Role(String name) {
         this(name, null, Type.STANDARD, Collections.emptySet());
     }
 
-    @JsIgnore
     public Role(String name, Role baseRole, Type type,
             Iterable<String> scope) {
         this.name = name;
@@ -88,7 +80,6 @@ public class Role implements NamedObject {
     }
 
     @Override
-    @JsIgnore
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -106,7 +97,6 @@ public class Role implements NamedObject {
     }
 
     @Override
-    @JsIgnore
     public int hashCode() {
         return name.hashCode();
     }
@@ -123,61 +113,43 @@ public class Role implements NamedObject {
     }
 
     /** @return the unique ID of this role. */
-    @JsProperty
     public String getId() {
         return Ids.role(name);
     }
 
     /** @return true if this is a standard role, false otherwise. */
-    @JsProperty
     public boolean isStandard() {
         return type == Type.STANDARD;
     }
 
     /** @return true if this is a scoped role, false otherwise. */
-    @JsProperty
     public boolean isScoped() {
         return type != Type.STANDARD;
     }
 
     /** @return the name of this role. */
-    @JsProperty
     public String getName() {
         return name;
     }
 
     /** @return the base role if this is a scoped role, null otherwise. */
-    @JsProperty
     public Role getBaseRole() {
         return baseRole;
     }
 
-    @JsIgnore
     public Type getType() {
         return type;
     }
 
-    @JsIgnore
     public SortedSet<String> getScope() {
         return scope;
     }
 
-    @JsIgnore
     public boolean isIncludeAll() {
         return includeAll;
     }
 
-    @JsIgnore
     public void setIncludeAll(boolean includeAll) {
         this.includeAll = includeAll;
-    }
-
-    // ------------------------------------------------------ JS methods
-
-    /** @return the scopes if this is a scoped role, an empty array otherwise. */
-    @JsProperty(name = "scope")
-    @EsReturn("string[]")
-    public String[] jsScope() {
-        return getScope().toArray(new String[getScope().size()]);
     }
 }

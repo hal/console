@@ -37,17 +37,11 @@ import org.jboss.hal.meta.description.ResourceDescriptionRegistry;
 import org.jboss.hal.meta.resource.RequiredResources;
 import org.jboss.hal.meta.security.SecurityContextDatabase;
 import org.jboss.hal.meta.security.SecurityContextRegistry;
-import org.jboss.hal.spi.EsParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Stopwatch;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-
-import jsinterop.annotations.JsFunction;
-import jsinterop.annotations.JsIgnore;
-import jsinterop.annotations.JsMethod;
-import jsinterop.annotations.JsType;
 
 import static java.util.Collections.singleton;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -58,7 +52,6 @@ import static org.jboss.hal.flow.Flow.series;
  * Reads resource {@linkplain Metadata metadata} using read-resource-description operations and stores it into the
  * {@link MetadataRegistry}. If you're sure the metadata is present, use the {@link MetadataRegistry} instead.
  */
-@JsType(namespace = "hal.meta")
 public class MetadataProcessor {
 
     /** Recursive depth for the r-r-d operations. Keep this small - some browsers choke on too big payload size */
@@ -82,7 +75,6 @@ public class MetadataProcessor {
     private final WorkerChannel workerChannel;
 
     @Inject
-    @JsIgnore
     public MetadataProcessor(Environment environment,
             Dispatcher dispatcher,
             StatementContext statementContext,
@@ -107,7 +99,6 @@ public class MetadataProcessor {
         this.workerChannel = workerChannel;
     }
 
-    @JsIgnore
     public void process(String id, Progress progress, AsyncCallback<Void> callback) {
         Set<String> resources = requiredResources.getResources(id);
         boolean recursive = requiredResources.isRecursive(id);
@@ -122,7 +113,6 @@ public class MetadataProcessor {
         }
     }
 
-    @JsIgnore
     public void lookup(AddressTemplate template, Progress progress, MetadataCallback callback) {
         logger.debug("Lookup metadata for {}", template);
         processInternal(singleton(template), false, progress, new AsyncCallback<Void>() {
@@ -180,45 +170,6 @@ public class MetadataProcessor {
                         }
                     });
         }
-    }
-
-    // ------------------------------------------------------ JS methods
-
-    /**
-     * Reads the metadata for the template and passes it to the callback. If the metadata has been already processed, it's
-     * passed directly to the callback.
-     *
-     * @param template The address template to lookup.
-     * @param callback The callback which receives the metadata.
-     */
-    @JsMethod(name = "lookup")
-    public void jsLookup(@EsParam("AddressTemplate|String") Object template,
-            @EsParam("function(metadata: Metadata)") JsMetadataCallback callback) {
-        MetadataCallback mc = new MetadataCallback() {
-            @Override
-            public void onMetadata(Metadata metadata) {
-                callback.onMetadata(metadata);
-            }
-
-            @Override
-            public void onError(Throwable error) {
-                logger.error("Unable to lookup metadata for {}: {}", template, error.getMessage());
-            }
-        };
-        if (template instanceof String) {
-            lookup(AddressTemplate.of(((String) template)), Progress.NOOP, mc);
-        } else if (template instanceof AddressTemplate) {
-            lookup((AddressTemplate) template, Progress.NOOP, mc);
-        } else {
-            throw new IllegalArgumentException(
-                    "Illegal 1st argument: Use MetadataProcessor((AddressTemplate|string), function(Metadata))");
-        }
-    }
-
-    @JsFunction
-    public interface JsMetadataCallback {
-
-        void onMetadata(Metadata metadata);
     }
 
     public interface MetadataCallback {

@@ -49,8 +49,6 @@ import com.google.common.collect.Iterables;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
 
-import jsinterop.annotations.JsIgnore;
-
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.StreamSupport.stream;
@@ -102,7 +100,6 @@ public class ComplexAttributeOperations {
      *        the resource address for the operation
      * @param callback the callback executed after the resource has been added
      */
-    @JsIgnore
     public void add(String id, String resource, String complexAttribute, String type, AddressTemplate template,
             Callback callback) {
         lookupAndAdd(id, complexAttribute, type, template, emptyList(),
@@ -123,7 +120,6 @@ public class ComplexAttributeOperations {
      * @param attributes additional attributes which should be part of the add resource dialog
      * @param callback the callback executed after the resource has been added
      */
-    @JsIgnore
     public void add(String id, String resource, String complexAttribute, String type, AddressTemplate template,
             Iterable<String> attributes, Callback callback) {
         lookupAndAdd(id, complexAttribute, type, template, attributes,
@@ -143,7 +139,6 @@ public class ComplexAttributeOperations {
      *        the resource address for the operation
      * @param callback the callback executed after the resource has been added
      */
-    @JsIgnore
     public void listAdd(String id, String resource, String complexAttribute, String type, AddressTemplate template,
             Callback callback) {
         lookupAndAdd(id, complexAttribute, type, template, emptyList(),
@@ -165,7 +160,6 @@ public class ComplexAttributeOperations {
      * @param attributes additional attributes which should be part of the add resource dialog
      * @param callback the callback executed after the resource has been added
      */
-    @JsIgnore
     public void listAdd(String id, String resource, String complexAttribute, String type, AddressTemplate template,
             Iterable<String> attributes, Callback callback) {
         lookupAndAdd(id, complexAttribute, type, template, attributes,
@@ -210,7 +204,6 @@ public class ComplexAttributeOperations {
      * @param payload the optional payload for the complex attribute (may be null or undefined)
      * @param callback the callback executed after the resource has been added
      */
-    @JsIgnore
     public void add(String resource, String complexAttribute, String type, AddressTemplate template,
             @Nullable ModelNode payload, Callback callback) {
         ResourceAddress address = template.resolve(statementContext, resource);
@@ -227,7 +220,6 @@ public class ComplexAttributeOperations {
      * @param payload the optional payload for the complex attribute (may be null or undefined)
      * @param callback the callback executed after the resource has been added
      */
-    @JsIgnore
     public void add(String complexAttribute, String type, ResourceAddress address, @Nullable ModelNode payload,
             Callback callback) {
         Operation operation = new Operation.Builder(address, WRITE_ATTRIBUTE_OPERATION)
@@ -252,7 +244,6 @@ public class ComplexAttributeOperations {
      * @param payload the optional payload for the complex attribute (may be null or undefined)
      * @param callback the callback executed after the resource has been added
      */
-    @JsIgnore
     public void listAdd(String resource, String complexAttribute, String type, AddressTemplate template,
             @Nullable ModelNode payload, Callback callback) {
         ResourceAddress address = template.resolve(statementContext, resource);
@@ -282,7 +273,6 @@ public class ComplexAttributeOperations {
      * @param changedValues the changed values / payload for the operation
      * @param callback the callback executed after the resource has been saved
      */
-    @JsIgnore
     public void save(String resource, String complexAttribute, String type, AddressTemplate template,
             Map<String, Object> changedValues, Callback callback) {
         metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback(eventBus, resources) {
@@ -310,7 +300,6 @@ public class ComplexAttributeOperations {
      * @param changedValues the changed values / payload for the operation
      * @param callback the callback executed after the resource has been saved
      */
-    @JsIgnore
     public void save(String resource, String complexAttribute, String type, int index, AddressTemplate template,
             Map<String, Object> changedValues, Callback callback) {
         metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback(eventBus, resources) {
@@ -333,7 +322,6 @@ public class ComplexAttributeOperations {
      * @param payload the optional payload for the complex attribute (may be null or undefined)
      * @param callback the callback executed after the resource has been added
      */
-    @JsIgnore
     public void save(String complexAttribute, String type, ResourceAddress address, @Nullable ModelNode payload,
             Callback callback) {
         Operation operation = new Operation.Builder(address, WRITE_ATTRIBUTE_OPERATION)
@@ -361,7 +349,6 @@ public class ComplexAttributeOperations {
      * @param metadata the metadata for the complex attribute
      * @param callback the callback executed after the resource has been saved
      */
-    @JsIgnore
     public void save(String complexAttribute, String type, ResourceAddress address, Map<String, Object> changedValues,
             Metadata metadata, Callback callback) {
         Composite operations = operationFactory(complexAttribute).fromChangeSet(address, changedValues, metadata);
@@ -382,7 +369,6 @@ public class ComplexAttributeOperations {
      * @param metadata the metadata for the complex attribute
      * @param callback the callback executed after the resource has been saved
      */
-    @JsIgnore
     public void save(String complexAttribute, String type, int index, ResourceAddress address,
             Map<String, Object> changedValues, Metadata metadata, Callback callback) {
         Composite operations = operationFactory(complexAttribute, index).fromChangeSet(address, changedValues,
@@ -406,7 +392,6 @@ public class ComplexAttributeOperations {
      * @param form the form which should be reset
      * @param callback the callback executed after the resource has been saved
      */
-    @JsIgnore
     public <T> void reset(String resource, String complexAttribute, String type, AddressTemplate template, Form<T> form,
             Callback callback) {
         metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback(eventBus, resources) {
@@ -432,7 +417,6 @@ public class ComplexAttributeOperations {
      * @param form the form which should be reset
      * @param callback the callback executed after the resource has been saved
      */
-    @JsIgnore
     public <T> void reset(String resource, String complexAttribute, String type, AddressTemplate template,
             Metadata metadata, Form<T> form, Callback callback) {
         Set<String> attributes = stream(form.getBoundFormItems().spliterator(), false)
@@ -456,7 +440,6 @@ public class ComplexAttributeOperations {
      * @param form the form which should be reset
      * @param callback the callback executed after the resource has been saved
      */
-    @JsIgnore
     public <T> void reset(String complexAttribute, String type, ResourceAddress address, Metadata metadata,
             Form<T> form, Callback callback) {
         Set<String> attributes = stream(form.getBoundFormItems().spliterator(), false)
@@ -496,7 +479,6 @@ public class ComplexAttributeOperations {
      *        the resource address for the operation
      * @param callback the callback executed after the complex attribute has been undefined
      */
-    @JsIgnore
     public void remove(String resource, String complexAttribute, String type, AddressTemplate template,
             Callback callback) {
         ResourceAddress address = template.resolve(statementContext, resource);
@@ -512,7 +494,6 @@ public class ComplexAttributeOperations {
      * @param address the fq address for the operation
      * @param callback the callback executed after the complex attribute has been undefined
      */
-    @JsIgnore
     public void remove(String complexAttribute, String type, ResourceAddress address, Callback callback) {
         Operation operation = new Operation.Builder(address, UNDEFINE_ATTRIBUTE_OPERATION)
                 .param(NAME, complexAttribute)
@@ -539,7 +520,6 @@ public class ComplexAttributeOperations {
      *        the resource address for the operation
      * @param callback the callback executed after the complex attribute has been undefined
      */
-    @JsIgnore
     public void remove(String resource, String complexAttribute, String type, int index, AddressTemplate template,
             Callback callback) {
         ResourceAddress address = template.resolve(statementContext, resource);
@@ -558,7 +538,6 @@ public class ComplexAttributeOperations {
      * @param address the fq address for the operation
      * @param callback the callback executed after the complex attribute has been undefined
      */
-    @JsIgnore
     public void remove(String complexAttribute, String type, int index, ResourceAddress address, Callback callback) {
         Operation operation = new Operation.Builder(address, LIST_REMOVE_OPERATION)
                 .param(NAME, complexAttribute)

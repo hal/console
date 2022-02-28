@@ -42,7 +42,6 @@ import org.jboss.hal.dmr.macro.Macros;
 import org.jboss.hal.dmr.macro.RecordingEvent;
 import org.jboss.hal.dmr.macro.RecordingEvent.RecordingHandler;
 import org.jboss.hal.resources.Resources;
-import org.jboss.hal.spi.EsParam;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.slf4j.Logger;
@@ -57,10 +56,6 @@ import elemental2.dom.File;
 import elemental2.dom.FormData;
 import elemental2.dom.FormData.AppendValueUnionType;
 import elemental2.dom.XMLHttpRequest;
-import jsinterop.annotations.JsFunction;
-import jsinterop.annotations.JsIgnore;
-import jsinterop.annotations.JsMethod;
-import jsinterop.annotations.JsType;
 import rx.Single;
 import rx.SingleSubscriber;
 
@@ -85,7 +80,6 @@ import static org.jboss.hal.dmr.dispatch.RequestHeader.CONTENT_TYPE;
 import static org.jboss.hal.dmr.dispatch.RequestHeader.X_MANAGEMENT_CLIENT_NAME;
 
 /** Executes operations against the management endpoint. */
-@JsType(namespace = "hal.dmr")
 public class Dispatcher implements RecordingHandler {
 
     static final String APPLICATION_DMR_ENCODED = "application/dmr-encoded";
@@ -97,7 +91,6 @@ public class Dispatcher implements RecordingHandler {
 
     private static boolean pendingLifecycleAction = false;
 
-    @JsIgnore
     public static void setPendingLifecycleAction(boolean value) {
         pendingLifecycleAction = value;
         logger.debug("Dispatcher.pendingLifecycleAction = {}", pendingLifecycleAction);
@@ -113,7 +106,6 @@ public class Dispatcher implements RecordingHandler {
     private final OnError exceptionCallback;
 
     @Inject
-    @JsIgnore
     public Dispatcher(Environment environment, Endpoints endpoints, Settings settings,
             EventBus eventBus, ResponseHeadersProcessors responseHeadersProcessors,
             Macros macros, Resources resources) {
@@ -143,22 +135,18 @@ public class Dispatcher implements RecordingHandler {
 
     // ------------------------------------------------------ execute composite
 
-    @JsIgnore
     public void execute(Composite operations, Consumer<CompositeResult> success) {
         dmr(operations, payload -> success.accept(compositeResult(payload)), failedCallback, exceptionCallback);
     }
 
-    @JsIgnore
     public void execute(Composite operations, Consumer<CompositeResult> success, OnFail fail) {
         dmr(operations, payload -> success.accept(compositeResult(payload)), fail, exceptionCallback);
     }
 
-    @JsIgnore
     public void execute(Composite operations, Consumer<CompositeResult> success, OnFail fail, OnError error) {
         dmr(operations, payload -> success.accept(compositeResult(payload)), fail, error);
     }
 
-    @JsIgnore
     public Single<CompositeResult> execute(Composite operations) {
         // noinspection Convert2MethodRef
         return dmr(operations).map(payload -> compositeResult(payload));
@@ -170,22 +158,18 @@ public class Dispatcher implements RecordingHandler {
 
     // ------------------------------------------------------ execute operation
 
-    @JsIgnore
     public void execute(Operation operation, Consumer<ModelNode> success) {
         dmr(operation, payload -> success.accept(payload.get(RESULT)), failedCallback, exceptionCallback);
     }
 
-    @JsIgnore
     public void execute(Operation operation, Consumer<ModelNode> success, OnFail fail) {
         dmr(operation, payload -> success.accept(payload.get(RESULT)), fail, exceptionCallback);
     }
 
-    @JsIgnore
     public void execute(Operation operation, Consumer<ModelNode> success, OnFail fail, OnError error) {
         dmr(operation, payload -> success.accept(payload.get(RESULT)), fail, error);
     }
 
-    @JsIgnore
     public Single<ModelNode> execute(Operation operation) {
         return dmr(operation).map(payload -> payload.get(RESULT));
     }
@@ -195,7 +179,6 @@ public class Dispatcher implements RecordingHandler {
      * retrieve the "result" payload as the other execute methods does. You should use this execute method if the response node
      * you want is not in the "result" attribute.
      */
-    @JsIgnore
     public void executeDMR(Operation operation, Consumer<ModelNode> success, OnFail fail, OnError error) {
         dmr(operation, success, fail, error);
     }
@@ -227,7 +210,6 @@ public class Dispatcher implements RecordingHandler {
 
     // ------------------------------------------------------ upload
 
-    @JsIgnore
     public void upload(File file, Operation operation, Consumer<ModelNode> success) {
         SingleSubscriber<ModelNode> subscriber = new SingleSubscriber<ModelNode>() {
             @Override
@@ -247,7 +229,6 @@ public class Dispatcher implements RecordingHandler {
         upload(file, operation).subscribe(subscriber);
     }
 
-    @JsIgnore
     public Single<ModelNode> upload(File file, Operation operation) {
         Operation uploadOperation = runAs(operation);
 
@@ -283,7 +264,6 @@ public class Dispatcher implements RecordingHandler {
 
     // ------------------------------------------------------ download
 
-    @JsIgnore
     public void download(Operation operation, Consumer<String> success) {
         Operation downloadOperation = runAs(operation);
         String url = downloadUrl(downloadOperation);
@@ -303,7 +283,6 @@ public class Dispatcher implements RecordingHandler {
         // Downloads are not supported in macros!
     }
 
-    @JsIgnore
     public String downloadUrl(Operation operation) {
         return operationUrl(operation) + "&useStreamAsResponse"; // NON-NLS
     }
@@ -478,7 +457,6 @@ public class Dispatcher implements RecordingHandler {
     // ------------------------------------------------------ macro recording
 
     @Override
-    @JsIgnore
     public void onRecording(RecordingEvent event) {
         if (event.getAction() == Action.START && macros.current() == null) {
             MacroOptions options = event.getOptions();
@@ -522,31 +500,6 @@ public class Dispatcher implements RecordingHandler {
         }
     }
 
-    // ------------------------------------------------------ JS methods
-
-    /**
-     * Executes the specified composite operation.
-     *
-     * @param composite The composite operation to execute.
-     * @param callback The callback receiving the result.
-     */
-    @JsMethod(name = "executeComposite")
-    public void jsExecuteComposite(Composite composite,
-            @EsParam("function(result: CompositeResult)") JsCompositeCallback callback) {
-        dmr(composite, payload -> callback.onSuccess(compositeResult(payload)), failedCallback, exceptionCallback);
-    }
-
-    /**
-     * Executes the specified operation. The callback contains just the result w/o surrounding nodes like "outcome".
-     *
-     * @param operation The operation to execute.
-     * @param callback The callback receiving the result.
-     */
-    @JsMethod(name = "execute")
-    public void jsExecute(Operation operation, @EsParam("function(result: ModelNode)") JsOperationCallback callback) {
-        dmr(operation, payload -> callback.onSuccess(payload.get(RESULT)), failedCallback, exceptionCallback);
-    }
-
     // ------------------------------------------------------ Keycloak methods
 
     /** Obtains the bearer token from keycloak object attached to the window. */
@@ -578,18 +531,6 @@ public class Dispatcher implements RecordingHandler {
     private interface OnLoad {
 
         void onLoad(XMLHttpRequest xhr);
-    }
-
-    @JsFunction
-    public interface JsOperationCallback {
-
-        void onSuccess(ModelNode result);
-    }
-
-    @JsFunction
-    public interface JsCompositeCallback {
-
-        void onSuccess(CompositeResult result);
     }
 
     public enum HttpMethod {

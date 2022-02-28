@@ -23,16 +23,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import org.jboss.hal.js.Json;
-import org.jboss.hal.js.JsonObject;
-import org.jboss.hal.spi.EsReturn;
-
 import com.google.common.base.CharMatcher;
-
-import jsinterop.annotations.JsIgnore;
-import jsinterop.annotations.JsMethod;
-import jsinterop.annotations.JsProperty;
-import jsinterop.annotations.JsType;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.FAILURE_DESCRIPTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.OUTCOME;
@@ -43,7 +34,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SUCCESS;
  *
  * @author <a href="mailto:david.lloyd@redhat.com">David M. Lloyd</a>
  */
-@JsType
 public class ModelNode implements Cloneable {
 
     /**
@@ -75,7 +65,6 @@ public class ModelNode implements Cloneable {
     private boolean protect = false;
     private ModelValue value;
 
-    @JsIgnore
     public ModelNode() {
         this.value = ModelValue.UNDEFINED;
     }
@@ -88,7 +77,6 @@ public class ModelNode implements Cloneable {
      * Prevent further modifications to this node and its sub-nodes. Note that copies of this node made after this method call
      * will not be protected.
      */
-    @JsIgnore
     public void protect() {
         if (!protect) {
             protect = true;
@@ -104,7 +92,6 @@ public class ModelNode implements Cloneable {
      *
      * @throws IllegalArgumentException if no conversion is possible
      */
-    @JsIgnore
     public long asLong() throws IllegalArgumentException {
         return value.asLong();
     }
@@ -117,7 +104,6 @@ public class ModelNode implements Cloneable {
      *
      * @return the long value
      */
-    @JsIgnore
     public long asLong(long defVal) {
         return value.asLong(defVal);
     }
@@ -142,7 +128,6 @@ public class ModelNode implements Cloneable {
      *
      * @return the int value
      */
-    @JsIgnore
     public int asInt(int defVal) {
         return value.asInt(defVal);
     }
@@ -167,7 +152,6 @@ public class ModelNode implements Cloneable {
      *
      * @return the boolean value
      */
-    @JsIgnore
     public boolean asBoolean(boolean defVal) {
         return value.asBoolean(defVal);
     }
@@ -190,7 +174,6 @@ public class ModelNode implements Cloneable {
      *
      * @throws IllegalArgumentException if no conversion is possible
      */
-    @JsIgnore
     public double asDouble() throws IllegalArgumentException {
         return value.asDouble();
     }
@@ -203,7 +186,6 @@ public class ModelNode implements Cloneable {
      *
      * @return the int value
      */
-    @JsIgnore
     public double asDouble(double defVal) {
         return value.asDouble(defVal);
     }
@@ -216,7 +198,6 @@ public class ModelNode implements Cloneable {
      *
      * @throws IllegalArgumentException if no conversion is possible
      */
-    @JsIgnore
     public ModelType asType() throws IllegalArgumentException {
         return value.asType();
     }
@@ -229,7 +210,6 @@ public class ModelNode implements Cloneable {
      *
      * @throws IllegalArgumentException if no conversion is possible
      */
-    @JsIgnore
     public BigDecimal asBigDecimal() throws IllegalArgumentException {
         return value.asBigDecimal();
     }
@@ -242,7 +222,6 @@ public class ModelNode implements Cloneable {
      *
      * @throws IllegalArgumentException if no conversion is possible
      */
-    @JsIgnore
     public BigInteger asBigInteger() throws IllegalArgumentException {
         return value.asBigInteger();
     }
@@ -255,7 +234,6 @@ public class ModelNode implements Cloneable {
      *
      * @throws IllegalArgumentException if no conversion is possible
      */
-    @JsIgnore
     public byte[] asBytes() throws IllegalArgumentException {
         return value.asBytes();
     }
@@ -282,7 +260,6 @@ public class ModelNode implements Cloneable {
      *
      * @throws IllegalArgumentException if no conversion is possible
      */
-    @JsIgnore
     public List<Property> asPropertyList() throws IllegalArgumentException {
         return value.asPropertyList();
     }
@@ -312,7 +289,6 @@ public class ModelNode implements Cloneable {
      *
      * @throws IllegalArgumentException if no conversion is possible
      */
-    @JsIgnore
     public Object as(ModelType type) {
         Object result;
         switch (type) {
@@ -370,7 +346,6 @@ public class ModelNode implements Cloneable {
      *
      * @return true if this node's value is defined, false otherwise
      */
-    @JsProperty
     public boolean isDefined() {
         return getType() != ModelType.UNDEFINED;
     }
@@ -382,7 +357,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsMethod(name = "setNumber")
     public ModelNode set(int newValue) {
         checkProtect();
         value = new IntModelValue(newValue);
@@ -396,7 +370,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
     public ModelNode set(long newValue) {
         checkProtect();
         value = new LongModelValue(newValue);
@@ -410,7 +383,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
     public ModelNode set(double newValue) {
         checkProtect();
         value = new DoubleModelValue(newValue);
@@ -424,7 +396,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsMethod(name = "setBoolean")
     public ModelNode set(boolean newValue) {
         checkProtect();
         value = BooleanModelValue.valueOf(newValue);
@@ -454,7 +425,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsMethod(name = "setString")
     public ModelNode set(String newValue) {
         if (newValue == null) {
             throw new IllegalArgumentException(NEW_VALUE_IS_NULL);
@@ -464,7 +434,6 @@ public class ModelNode implements Cloneable {
         return this;
     }
 
-    @JsIgnore
     public ModelNode set(ModelType type, Object propValue) {
         if (type.equals(ModelType.STRING)) {
             set((String) propValue);
@@ -497,7 +466,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
     public ModelNode set(BigDecimal newValue) {
         if (newValue == null) {
             throw new IllegalArgumentException(NEW_VALUE_IS_NULL);
@@ -514,7 +482,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
     public ModelNode set(BigInteger newValue) {
         if (newValue == null) {
             throw new IllegalArgumentException(NEW_VALUE_IS_NULL);
@@ -531,7 +498,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsMethod(name = "setNode")
     public ModelNode set(ModelNode newValue) {
         if (newValue == null) {
             throw new IllegalArgumentException(NEW_VALUE_IS_NULL);
@@ -548,7 +514,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
     public ModelNode set(byte[] newValue) {
         if (newValue == null) {
             throw new IllegalArgumentException(NEW_VALUE_IS_NULL);
@@ -568,7 +533,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
     public ModelNode set(ModelType newValue) {
         if (newValue == null) {
             throw new IllegalArgumentException(NEW_VALUE_IS_NULL);
@@ -585,7 +549,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsMethod(name = "setProperty")
     public ModelNode set(Property newValue) {
         if (newValue == null) {
             throw new IllegalArgumentException(NEW_VALUE_IS_NULL);
@@ -602,7 +565,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
     public ModelNode set(String propertyName, ModelNode propertyValue) {
         checkProtect();
         value = new PropertyModelValue(propertyName, propertyValue);
@@ -617,7 +579,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
     public ModelNode set(String propertyName, int propertyValue) {
         checkProtect();
         ModelNode node = new ModelNode();
@@ -634,7 +595,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
     public ModelNode set(String propertyName, long propertyValue) {
         checkProtect();
         ModelNode node = new ModelNode();
@@ -651,7 +611,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
     public ModelNode set(String propertyName, double propertyValue) {
         checkProtect();
         ModelNode node = new ModelNode();
@@ -668,7 +627,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
     public ModelNode set(String propertyName, boolean propertyValue) {
         checkProtect();
         ModelNode node = new ModelNode();
@@ -685,7 +643,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
     public ModelNode set(String propertyName, String propertyValue) {
         checkProtect();
         ModelNode node = new ModelNode();
@@ -702,7 +659,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
     public ModelNode setExpression(String propertyName, String propertyValue) {
         checkProtect();
         ModelNode node = new ModelNode();
@@ -719,7 +675,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
     public ModelNode set(String propertyName, BigDecimal propertyValue) {
         checkProtect();
         ModelNode node = new ModelNode();
@@ -736,7 +691,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
     public ModelNode set(String propertyName, BigInteger propertyValue) {
         checkProtect();
         ModelNode node = new ModelNode();
@@ -753,7 +707,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
     public ModelNode set(String propertyName, byte[] propertyValue) {
         checkProtect();
         ModelNode node = new ModelNode();
@@ -770,7 +723,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
     public ModelNode set(String propertyName, ModelType propertyValue) {
         checkProtect();
         ModelNode node = new ModelNode();
@@ -786,7 +738,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
     public ModelNode set(Collection<ModelNode> newValue) {
         if (newValue == null) {
             throw new IllegalArgumentException(NEW_VALUE_IS_NULL);
@@ -871,7 +822,6 @@ public class ModelNode implements Cloneable {
      *
      * @throws NoSuchElementException if the element does not exist
      */
-    @JsIgnore
     public ModelNode require(String name) throws NoSuchElementException {
         return value.requireChild(name);
     }
@@ -887,7 +837,6 @@ public class ModelNode implements Cloneable {
      *
      * @throws NoSuchElementException if the element does not exist
      */
-    @JsIgnore
     public ModelNode remove(String name) throws NoSuchElementException {
         return value.removeChild(name);
     }
@@ -904,7 +853,6 @@ public class ModelNode implements Cloneable {
      *
      * @throws IllegalArgumentException if this node does not support getting a child with the given index
      */
-    @JsIgnore
     public ModelNode get(int index) {
         ModelValue value = this.value;
         if (value == ModelValue.UNDEFINED) {
@@ -926,7 +874,6 @@ public class ModelNode implements Cloneable {
      *
      * @throws NoSuchElementException if the element does not exist
      */
-    @JsIgnore
     public ModelNode require(int index) {
         return value.requireChild(index);
     }
@@ -939,7 +886,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
     public ModelNode add(int newValue) {
         add().set(newValue);
         return this;
@@ -953,7 +899,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
     public ModelNode add(long newValue) {
         add().set(newValue);
         return this;
@@ -967,7 +912,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
     public ModelNode add(double newValue) {
         add().set(newValue);
         return this;
@@ -981,7 +925,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
     public ModelNode add(boolean newValue) {
         add().set(newValue);
         return this;
@@ -995,7 +938,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
     public ModelNode addExpression(String newValue) {
         add().setExpression(newValue);
         return this;
@@ -1009,7 +951,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
     public ModelNode add(String newValue) {
         add().set(newValue);
         return this;
@@ -1023,7 +964,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
     public ModelNode add(BigDecimal newValue) {
         add().set(newValue);
         return this;
@@ -1037,7 +977,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
     public ModelNode add(BigInteger newValue) {
         add().set(newValue);
         return this;
@@ -1051,7 +990,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
     public ModelNode add(ModelNode newValue) {
         add().set(newValue);
         return this;
@@ -1065,7 +1003,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
     public ModelNode add(byte[] newValue) {
         add().set(newValue);
         return this;
@@ -1080,7 +1017,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
     public ModelNode add(String propertyName, int propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
@@ -1095,7 +1031,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
     public ModelNode add(String propertyName, long propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
@@ -1110,7 +1045,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
     public ModelNode add(String propertyName, double propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
@@ -1125,7 +1059,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
     public ModelNode add(String propertyName, boolean propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
@@ -1140,7 +1073,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
     public ModelNode add(String propertyName, String propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
@@ -1155,7 +1087,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
     public ModelNode add(String propertyName, BigDecimal propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
@@ -1170,7 +1101,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
     public ModelNode add(String propertyName, BigInteger propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
@@ -1185,7 +1115,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
     public ModelNode add(String propertyName, ModelNode propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
@@ -1200,7 +1129,6 @@ public class ModelNode implements Cloneable {
      *
      * @return this node
      */
-    @JsIgnore
     public ModelNode add(String propertyName, byte[] propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
@@ -1228,7 +1156,6 @@ public class ModelNode implements Cloneable {
      *
      * @return the new node
      */
-    @JsIgnore
     public ModelNode addEmptyList() {
         ModelNode node = add();
         node.setEmptyList();
@@ -1241,7 +1168,6 @@ public class ModelNode implements Cloneable {
      *
      * @return the new node
      */
-    @JsIgnore
     public ModelNode addEmptyObject() {
         ModelNode node = add();
         node.setEmptyObject();
@@ -1255,7 +1181,6 @@ public class ModelNode implements Cloneable {
      *
      * @return {@code true} if there is a (possibly undefined) node at the given index
      */
-    @JsIgnore
     public boolean has(int index) {
         return value.has(index);
     }
@@ -1281,7 +1206,6 @@ public class ModelNode implements Cloneable {
      * @return {@code true} if there is a node at the given index and its {@link #getType() type} is not
      *         {@link ModelType#UNDEFINED}
      */
-    @JsIgnore
     public boolean hasDefined(int index) {
         return value.has(index) && get(index).isDefined();
     }
@@ -1304,7 +1228,6 @@ public class ModelNode implements Cloneable {
      *
      * @return the key set
      */
-    @JsIgnore
     public Set<String> keys() {
         return value.getKeys();
     }
@@ -1316,7 +1239,6 @@ public class ModelNode implements Cloneable {
      *
      * @return the entry list
      */
-    @JsIgnore
     public List<ModelNode> asList() {
         return value.asList();
     }
@@ -1331,7 +1253,6 @@ public class ModelNode implements Cloneable {
      *
      * @throws IllegalArgumentException if a node does not support getting a child with the given name path
      */
-    @JsIgnore
     public ModelNode get(String... names) {
         ModelNode current = this;
         for (String part : names) {
@@ -1358,12 +1279,10 @@ public class ModelNode implements Cloneable {
      *
      * @return The JSON string.
      */
-    @JsIgnore
     public String toJSONString(boolean compact) {
         return value.toJSONString(compact);
     }
 
-    @JsIgnore
     public String toJSONString() {
         return value.toJSONString(false);
     }
@@ -1380,7 +1299,6 @@ public class ModelNode implements Cloneable {
      *
      * @return the resolved copy
      */
-    @JsIgnore
     public ModelNode resolve() {
         ModelNode newNode = new ModelNode();
         newNode.value = value.resolve();
@@ -1395,7 +1313,6 @@ public class ModelNode implements Cloneable {
      * @return {@code true} if they are equal, {@code false} otherwise
      */
     @Override
-    @JsIgnore
     public boolean equals(Object other) {
         return other instanceof ModelNode && equals((ModelNode) other);
     }
@@ -1407,7 +1324,6 @@ public class ModelNode implements Cloneable {
      *
      * @return {@code true} if they are equal, {@code false} otherwise
      */
-    @JsIgnore
     public boolean equals(ModelNode other) {
         return this == other || other != null && other.value.equals(value);
     }
@@ -1418,7 +1334,6 @@ public class ModelNode implements Cloneable {
      *
      * @return the hash code
      */
-    @JsIgnore
     @Override
     public int hashCode() {
         return value.hashCode();
@@ -1429,7 +1344,6 @@ public class ModelNode implements Cloneable {
      *
      * @return the clone
      */
-    @JsIgnore
     public ModelNode clone() {
         ModelNode clone = new ModelNode();
         clone.value = value.copy();
@@ -1449,7 +1363,6 @@ public class ModelNode implements Cloneable {
      *
      * @return the node type
      */
-    @JsIgnore
     public ModelType getType() {
         return value.getType();
     }
@@ -1459,7 +1372,6 @@ public class ModelNode implements Cloneable {
      *
      * @param out the target to which the content should be written
      */
-    @JsIgnore
     public void writeExternal(DataOutput out) {
         ModelValue value = this.value;
         ModelType type = value.getType();
@@ -1539,13 +1451,11 @@ public class ModelNode implements Cloneable {
     }
 
     /** @return {@code true} if this node has an outcome and the outcome does not equal "success" */
-    @JsProperty
     public boolean isFailure() {
         return hasDefined(OUTCOME) && !get(OUTCOME).asString().equals(SUCCESS);
     }
 
     /** @return the failure description or "No failure-description provided" */
-    @JsProperty
     public String getFailureDescription() {
         if (hasDefined(FAILURE_DESCRIPTION)) {
             StringBuilder failure = new StringBuilder();
@@ -1554,52 +1464,5 @@ public class ModelNode implements Cloneable {
         } else {
             return "No failure-description provided";
         }
-    }
-
-    // ------------------------------------------------------ JS methods
-
-    /**
-     * Creates a new undefined model node
-     *
-     * @return the new model node
-     */
-    @JsMethod(name = "create")
-    public static ModelNode jsCreate() {
-        return new ModelNode();
-    }
-
-    /**
-     * @return the model node as JSON
-     */
-    @JsMethod(name = "getJSON")
-    @EsReturn("json")
-    public JsonObject jsGetJSONString() {
-        return Json.parse(toJSONString(true));
-    }
-
-    /**
-     * @return this model node as an {@link Property} array
-     */
-    @JsMethod(name = "asProperties")
-    @EsReturn("Property[]")
-    public Property[] jsAsProperties() {
-        List<Property> properties = value.asPropertyList();
-        if (properties != null) {
-            return properties.toArray(new Property[properties.size()]);
-        }
-        return new Property[0];
-    }
-
-    /**
-     * @return this model node as an array.
-     */
-    @JsMethod(name = "asList")
-    @EsReturn("ModelNode[]")
-    public ModelNode[] jsAsList() {
-        List<ModelNode> modelNodes = value.asList();
-        if (modelNodes != null) {
-            return modelNodes.toArray(new ModelNode[modelNodes.size()]);
-        }
-        return new ModelNode[0];
     }
 }

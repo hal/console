@@ -19,9 +19,6 @@ import java.util.Iterator;
 
 import com.google.common.base.Splitter;
 
-import jsinterop.annotations.JsIgnore;
-import jsinterop.annotations.JsType;
-
 /**
  * Version identifier for bundles and packages.
  *
@@ -37,7 +34,6 @@ import jsinterop.annotations.JsType;
  * <p>
  * <code>Version</code> objects are immutable.
  */
-@JsType(namespace = "hal.config")
 public class Version implements Comparable {
 
     private static final String SEPARATOR = ".";
@@ -45,7 +41,7 @@ public class Version implements Comparable {
     /**
      * The empty version "0.0.0". Equivalent to calling <code>new Version(0,0,0)</code>.
      */
-    @JsIgnore public static final Version EMPTY_VERSION = new Version(0, 0, 0);
+    public static final Version EMPTY_VERSION = new Version(0, 0, 0);
 
     /**
      * Parses a version identifier from the specified string.
@@ -90,7 +86,6 @@ public class Version implements Comparable {
      *
      * @throws IllegalArgumentException If the numerical components are negative.
      */
-    @JsIgnore
     public Version(int major, int minor, int micro) {
         this(major, minor, micro, null);
     }
@@ -106,7 +101,6 @@ public class Version implements Comparable {
      *
      * @throws IllegalArgumentException If the numerical components are negative or the qualifier string is invalid.
      */
-    @JsIgnore
     public Version(int major, int minor, int micro, String qualifier) {
         if (qualifier == null) {
             qualifier = ""; //$NON-NLS-1$
@@ -141,7 +135,6 @@ public class Version implements Comparable {
      *
      * @throws IllegalArgumentException If <code>version</code> is improperly formatted.
      */
-    @JsIgnore
     public Version(String version) {
         int major;
         int minor = 0;
@@ -252,7 +245,6 @@ public class Version implements Comparable {
      *
      * @return The string representation of this version identifier.
      */
-    @JsIgnore
     public String toString() {
         String base = major + SEPARATOR + minor + SEPARATOR + micro;
         if (qualifier.length() == 0) {
@@ -267,7 +259,6 @@ public class Version implements Comparable {
      *
      * @return An integer which is a hash code value for this object.
      */
-    @JsIgnore
     public int hashCode() {
         return (major << 24) + (minor << 16) + (micro << 8) + qualifier.hashCode();
     }
@@ -284,7 +275,6 @@ public class Version implements Comparable {
      * @return <code>true</code> if <code>object</code> is a <code>Version</code> and is equal to this object;
      *         <code>false</code> otherwise.
      */
-    @JsIgnore
     public boolean equals(Object object) {
         if (object == this) { // quicktest
             return true;
@@ -320,7 +310,6 @@ public class Version implements Comparable {
      *
      * @throws ClassCastException If the specified object is not a <code>Version</code>.
      */
-    @JsIgnore
     public int compareTo(Object object) {
         if (object == this) { // quicktest
             return 0;
@@ -355,7 +344,6 @@ public class Version implements Comparable {
      *
      * @see #compareTo(Version other)
      */
-    @JsIgnore
     public boolean greaterThan(Version other) {
         return compareTo(other) > 0;
     }
@@ -369,7 +357,6 @@ public class Version implements Comparable {
      *
      * @see #compareTo(Version other)
      */
-    @JsIgnore
     public boolean greaterThanOrEqualTo(Version other) {
         return compareTo(other) >= 0;
     }
@@ -383,7 +370,6 @@ public class Version implements Comparable {
      *
      * @see #compareTo(Version other)
      */
-    @JsIgnore
     public boolean lessThan(Version other) {
         return compareTo(other) < 0;
     }
@@ -397,7 +383,6 @@ public class Version implements Comparable {
      *
      * @see #compareTo(Version other)
      */
-    @JsIgnore
     public boolean lessThanOrEqualTo(Version other) {
         return compareTo(other) <= 0;
     }

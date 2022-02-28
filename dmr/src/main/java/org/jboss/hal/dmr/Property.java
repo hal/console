@@ -15,17 +15,11 @@
  */
 package org.jboss.hal.dmr;
 
-import jsinterop.annotations.JsConstructor;
-import jsinterop.annotations.JsIgnore;
-import jsinterop.annotations.JsProperty;
-import jsinterop.annotations.JsType;
-
 /**
  * Represents a DMR property.
  *
  * @author <a href="mailto:david.lloyd@redhat.com">David M. Lloyd</a>
  */
-@JsType
 public class Property implements Cloneable {
 
     private final String name;
@@ -37,7 +31,6 @@ public class Property implements Cloneable {
      * @param name The name of the property.
      * @param value The value of the property.
      */
-    @JsConstructor
     public Property(String name, ModelNode value) {
         if (name == null) {
             throw new IllegalArgumentException("name is null");
@@ -52,7 +45,6 @@ public class Property implements Cloneable {
     /**
      * @return the name of the property
      */
-    @JsProperty
     public String getName() {
         return name;
     }
@@ -60,12 +52,10 @@ public class Property implements Cloneable {
     /**
      * @return the value of the property
      */
-    @JsProperty
     public ModelNode getValue() {
         return value;
     }
 
-    @JsIgnore
     public Property clone() {
         return new Property(name, value.clone());
     }
