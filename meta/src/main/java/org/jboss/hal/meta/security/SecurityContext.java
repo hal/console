@@ -17,14 +17,13 @@ package org.jboss.hal.meta.security;
 
 import org.jboss.hal.dmr.ModelNode;
 
-import jsinterop.annotations.JsIgnore;
-import jsinterop.annotations.JsProperty;
-import jsinterop.annotations.JsType;
-
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.EXECUTE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.OPERATIONS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.WRITE;
 
 /** Represents the RBAC related payload from the read-resource-description operation. */
-@JsType(namespace = "hal.meta")
 @SuppressWarnings("SimplifiableIfStatement")
 public class SecurityContext extends ModelNode {
 
@@ -84,7 +83,6 @@ public class SecurityContext extends ModelNode {
         }
     };
 
-    @JsIgnore
     public SecurityContext(ModelNode payload) {
         set(payload);
     }
@@ -92,7 +90,6 @@ public class SecurityContext extends ModelNode {
     /**
      * @return whether the security context is readable
      */
-    @JsProperty
     public boolean isReadable() {
         return get(READ).asBoolean();
     }
@@ -100,7 +97,6 @@ public class SecurityContext extends ModelNode {
     /**
      * @return whether the security context is writable
      */
-    @JsProperty
     public boolean isWritable() {
         return get(WRITE).asBoolean();
     }

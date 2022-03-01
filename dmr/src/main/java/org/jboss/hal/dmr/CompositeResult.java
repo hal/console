@@ -20,19 +20,11 @@ import java.util.LinkedHashMap;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.jboss.hal.spi.EsReturn;
-
-import jsinterop.annotations.JsIgnore;
-import jsinterop.annotations.JsProperty;
-import jsinterop.annotations.JsType;
-
 /** Represents the result of a composite operation. */
-@JsType
 public class CompositeResult implements Iterable<ModelNode> {
 
     private final LinkedHashMap<String, ModelNode> steps;
 
-    @JsIgnore
     public CompositeResult(ModelNode steps) {
         this.steps = new LinkedHashMap<>();
         if (steps.isDefined()) {
@@ -47,7 +39,6 @@ public class CompositeResult implements Iterable<ModelNode> {
      *
      * @return the related step result
      */
-    @JsIgnore
     public ModelNode step(int index) {
         return step("step-" + (index + 1)); // NON-NLS
     }
@@ -65,36 +56,21 @@ public class CompositeResult implements Iterable<ModelNode> {
     }
 
     @Override
-    @JsIgnore
     public Iterator<ModelNode> iterator() {
         return steps.values().iterator();
     }
 
     /** @return the number of steps */
-    @JsProperty(name = "size")
     public int size() {
         return steps.size();
     }
 
     /** @return whether this composite result contains steps */
-    @JsProperty
     public boolean isEmpty() {
         return steps.isEmpty();
     }
 
-    @JsIgnore
     public Stream<ModelNode> stream() {
         return StreamSupport.stream(spliterator(), false);
-    }
-
-    // ------------------------------------------------------ JS methods
-
-    /**
-     * @return the steps of this composite result
-     */
-    @JsProperty(name = "steps")
-    @EsReturn("ModelNode[]")
-    public ModelNode[] jsSteps() {
-        return steps.values().toArray(new ModelNode[steps.values().size()]);
     }
 }

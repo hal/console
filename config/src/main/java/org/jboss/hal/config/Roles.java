@@ -22,20 +22,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.jboss.hal.spi.EsReturn;
-
-import jsinterop.annotations.JsIgnore;
-import jsinterop.annotations.JsProperty;
-import jsinterop.annotations.JsType;
-
 import static java.util.Comparator.comparing;
 
 /** Provides access to all standard and scoped roles. */
-@JsType
 public class Roles implements Iterable<Role> {
 
-    @JsIgnore public static final Comparator<Role> STANDARD_FIRST = comparing(Role::getType);
-    @JsIgnore public static final Comparator<Role> BY_NAME = comparing(Role::getName);
+    public static final Comparator<Role> STANDARD_FIRST = comparing(Role::getType);
+    public static final Comparator<Role> BY_NAME = comparing(Role::getName);
 
     private final Map<String, Role> lookup;
     private final Set<Role> standardRoles;
@@ -47,7 +40,6 @@ public class Roles implements Iterable<Role> {
         this.scopedRoles = new HashSet<>();
     }
 
-    @JsIgnore
     public void add(Role role) {
         if (role != null) {
             lookup.put(role.getId(), role);
@@ -59,12 +51,10 @@ public class Roles implements Iterable<Role> {
         }
     }
 
-    @JsIgnore
     public void addAll(Iterable<Role> roles) {
         roles.forEach(this::add);
     }
 
-    @JsIgnore
     public void clear() {
         lookup.clear();
         standardRoles.clear();
@@ -83,48 +73,16 @@ public class Roles implements Iterable<Role> {
         return null;
     }
 
-    @JsIgnore
     public Set<Role> standardRoles() {
         return standardRoles;
     }
 
-    @JsIgnore
     public Set<Role> scopedRoles() {
         return scopedRoles;
     }
 
     @Override
-    @JsIgnore
     public Iterator<Role> iterator() {
         return lookup.values().iterator();
-    }
-
-    // ------------------------------------------------------ JS methods
-
-    /**
-     * @return all roles (standard and scoped).
-     */
-    @JsProperty(name = "all")
-    @EsReturn("Role[]")
-    public Role[] jsAll() {
-        return lookup.values().toArray(new Role[lookup.values().size()]);
-    }
-
-    /**
-     * @return standard roles.
-     */
-    @JsProperty(name = "standardRoles")
-    @EsReturn("Role[]")
-    public Role[] jsStandardRoles() {
-        return standardRoles.toArray(new Role[standardRoles.size()]);
-    }
-
-    /**
-     * @return scoped roles or an empty array if no scoped roles are defined.
-     */
-    @JsProperty(name = "scopedRoles")
-    @EsReturn("Role[]")
-    public Role[] jsScopedRoles() {
-        return scopedRoles.toArray(new Role[scopedRoles.size()]);
     }
 }

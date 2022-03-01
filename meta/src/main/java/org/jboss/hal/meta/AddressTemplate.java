@@ -32,12 +32,8 @@ import org.jboss.hal.spi.EsParam;
 
 import com.google.common.collect.Lists;
 
-import jsinterop.annotations.JsIgnore;
-import jsinterop.annotations.JsMethod;
-import jsinterop.annotations.JsProperty;
-import jsinterop.annotations.JsType;
-
 import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -69,7 +65,6 @@ import static java.util.stream.Collectors.toList;
  * AddressTemplate a4 = AddressTemplate.of("{selected.profile}/subsystem=mail/mail-session=*");
  * </pre>
  */
-@JsType(namespace = "hal.meta")
 public final class AddressTemplate implements Iterable<String> {
 
     /**
@@ -79,7 +74,6 @@ public final class AddressTemplate implements Iterable<String> {
     public static final String EQUALS = "=";
 
     /** Creates a new address template from a well known placeholder. */
-    @JsIgnore
     public static AddressTemplate of(StatementContext.Expression placeholder) {
         return AddressTemplate.of(String.join("/", placeholder.expression()));
     }
@@ -88,13 +82,11 @@ public final class AddressTemplate implements Iterable<String> {
      * Creates a new address template from a placeholder and an encoded string template. '/' characters inside values must have
      * been encoded using {@link ModelNodeHelper#encodeValue(String)}.
      */
-    @JsIgnore
     public static AddressTemplate of(StatementContext.Expression placeholder, String template) {
         return AddressTemplate.of(String.join("/", placeholder.expression(), withoutSlash(template)));
     }
 
     /** Creates a new address template from two placeholders. */
-    @JsIgnore
     public static AddressTemplate of(StatementContext.Expression placeholder1,
             StatementContext.Expression placeholder2) {
         return AddressTemplate.of(
@@ -105,7 +97,6 @@ public final class AddressTemplate implements Iterable<String> {
      * Creates a new address template from two placeholders and an encoded string template. '/' characters inside values must
      * have been encoded using {@link ModelNodeHelper#encodeValue(String)}.
      */
-    @JsIgnore
     public static AddressTemplate of(StatementContext.Expression placeholder1, StatementContext.Expression placeholder2,
             String template) {
         return AddressTemplate.of(
@@ -120,7 +111,6 @@ public final class AddressTemplate implements Iterable<String> {
     /**
      * Turns a resource address into an address template which is the opposite of {@link #resolve(StatementContext, String...)}.
      */
-    @JsIgnore
     public static AddressTemplate of(ResourceAddress address) {
         return of(address, null);
     }
@@ -130,7 +120,6 @@ public final class AddressTemplate implements Iterable<String> {
      * Use the {@link Unresolver} function to specify how the segments of the resource address are "unresolved". It is called
      * for each segment of the specified resource address.
      */
-    @JsIgnore
     public static AddressTemplate of(ResourceAddress address, Unresolver unresolver) {
         int index = 0;
         boolean first = true;
@@ -176,7 +165,7 @@ public final class AddressTemplate implements Iterable<String> {
 
     // ------------------------------------------------------ template methods
 
-    @JsIgnore public static final String OPTIONAL = "opt://";
+    public static final String OPTIONAL = "opt://";
     private static final String BLANK = "_blank";
 
     private final String template;
@@ -220,12 +209,11 @@ public final class AddressTemplate implements Iterable<String> {
     }
 
     private String join(boolean optional, List<Token> tokens) {
-        String path = String.join("/", tokens.stream().map(Token::toString).collect(toList()));
+        String path = tokens.stream().map(Token::toString).collect(joining("/"));
         return optional ? OPTIONAL + path : path;
     }
 
     @Override
-    @JsIgnore
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -240,7 +228,6 @@ public final class AddressTemplate implements Iterable<String> {
     }
 
     @Override
-    @JsIgnore
     public int hashCode() {
         int result = template.hashCode();
         result = 31 * result + (optional ? 1 : 0);
@@ -258,7 +245,6 @@ public final class AddressTemplate implements Iterable<String> {
     /**
      * @return true if this template contains no tokens, false otherwise
      */
-    @JsProperty
     public boolean isEmpty() {
         return tokens.isEmpty();
     }
@@ -266,13 +252,11 @@ public final class AddressTemplate implements Iterable<String> {
     /**
      * @return the number of tokens
      */
-    @JsProperty(name = "size")
     public int size() {
         return tokens.size();
     }
 
     @Override
-    @JsIgnore
     public Iterator<String> iterator() {
         return tokens.stream().map(Token::toString).collect(toList()).iterator();
     }
@@ -285,13 +269,11 @@ public final class AddressTemplate implements Iterable<String> {
      * @param template the encoded template to append (makes no difference whether it starts with '/' or not)
      * @return a new template
      */
-    @JsIgnore
     public AddressTemplate append(String template) {
         String slashTemplate = template.startsWith("/") ? template : "/" + template;
         return AddressTemplate.of(this.template + slashTemplate);
     }
 
-    @JsIgnore
     public AddressTemplate append(AddressTemplate template) {
         return append(template.toString());
     }
@@ -305,7 +287,6 @@ public final class AddressTemplate implements Iterable<String> {
      * @throws IndexOutOfBoundsException for an illegal endpoint index value (<tt>fromIndex &lt; 0 || toIndex &gt; size
      *                                   || fromIndex &gt; toIndex</tt>)
      */
-    @JsIgnore
     public AddressTemplate subTemplate(int fromIndex, int toIndex) {
         LinkedList<Token> subTokens = new LinkedList<>(this.tokens.subList(fromIndex, toIndex));
         return AddressTemplate.of(join(this.optional, subTokens));
@@ -314,7 +295,6 @@ public final class AddressTemplate implements Iterable<String> {
     /**
      * @return the parent address template or the root template
      */
-    @JsProperty
     public AddressTemplate getParent() {
         if (isEmpty() || size() == 1) {
             return AddressTemplate.of("/");
@@ -332,7 +312,6 @@ public final class AddressTemplate implements Iterable<String> {
      * @param wildcards more wildcards (optional)
      * @return a new (still unresolved) address template with the wildcards replaced by the specified values.
      */
-    @JsIgnore
     public AddressTemplate replaceWildcards(String wildcard, String... wildcards) {
         List<String> allWildcards = new ArrayList<>();
         allWildcards.add(wildcard);
@@ -355,7 +334,6 @@ public final class AddressTemplate implements Iterable<String> {
     /**
      * @return the name of the first segment or null if this address template is empty.
      */
-    @JsProperty(name = "firstName")
     public String firstName() {
         if (!tokens.isEmpty() && tokens.getFirst().hasKey()) {
             return tokens.getFirst().getKey();
@@ -366,7 +344,6 @@ public final class AddressTemplate implements Iterable<String> {
     /**
      * @return the value of the first segment or null if this address template is empty.
      */
-    @JsProperty(name = "firstValue")
     public String firstValue() {
         if (!tokens.isEmpty() && tokens.getFirst().hasKey()) {
             return tokens.getFirst().getValue();
@@ -377,7 +354,6 @@ public final class AddressTemplate implements Iterable<String> {
     /**
      * @return the name of the last segment or null if this address template is empty.
      */
-    @JsProperty(name = "lastName")
     public String lastName() {
         if (!tokens.isEmpty() && tokens.getLast().hasKey()) {
             return tokens.getLast().getKey();
@@ -388,7 +364,6 @@ public final class AddressTemplate implements Iterable<String> {
     /**
      * @return the value of the last segment or null if this address template is empty.
      */
-    @JsProperty(name = "lastValue")
     public String lastValue() {
         if (!tokens.isEmpty() && tokens.getLast().hasKey()) {
             return tokens.getLast().getValue();
@@ -396,7 +371,6 @@ public final class AddressTemplate implements Iterable<String> {
         return null;
     }
 
-    @JsIgnore
     public boolean isOptional() {
         return optional;
     }
@@ -404,7 +378,6 @@ public final class AddressTemplate implements Iterable<String> {
     /**
      * @return the address template
      */
-    @JsProperty
     String getTemplate() {
         return template;
     }
@@ -419,7 +392,7 @@ public final class AddressTemplate implements Iterable<String> {
      *        right
      * @return a fully qualified resource address which might be empty, but which does not contain any tokens
      */
-    public ResourceAddress resolve(StatementContext context, @EsParam("...string") String... wildcards) {
+    public ResourceAddress resolve(StatementContext context, String... wildcards) {
         if (isEmpty()) {
             return ResourceAddress.root();
         }
@@ -506,7 +479,6 @@ public final class AddressTemplate implements Iterable<String> {
      * @param address The address to append.
      * @return a new address template with the specified address added at the end.
      */
-    @JsMethod(name = "append")
     public AddressTemplate jsAppend(@EsParam("string|AddressTemplate") Object address) {
         if (address instanceof String) {
             return append(((String) address));

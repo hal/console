@@ -27,7 +27,6 @@ import java.util.TreeMap;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.gwt.elemento.core.IsElement;
 import org.jboss.hal.ballroom.Attachable;
-import org.jboss.hal.ballroom.JsCallback;
 import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.ballroom.dialog.Modal.ModalOptions;
 import org.jboss.hal.resources.Constants;
@@ -40,18 +39,41 @@ import com.google.gwt.core.client.GWT;
 
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLElement;
-import jsinterop.annotations.JsFunction;
-import jsinterop.annotations.JsIgnore;
-import jsinterop.annotations.JsMethod;
-import jsinterop.annotations.JsType;
 
 import static elemental2.dom.DomGlobal.document;
-import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.gwt.elemento.core.Elements.button;
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.setVisible;
+import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.ballroom.dialog.Modal.$;
-import static org.jboss.hal.resources.CSS.*;
-import static org.jboss.hal.resources.UIConstants.*;
+import static org.jboss.hal.resources.CSS.btn;
+import static org.jboss.hal.resources.CSS.btnDefault;
+import static org.jboss.hal.resources.CSS.btnHal;
+import static org.jboss.hal.resources.CSS.btnPrimary;
+import static org.jboss.hal.resources.CSS.close;
+import static org.jboss.hal.resources.CSS.fade;
+import static org.jboss.hal.resources.CSS.modal;
+import static org.jboss.hal.resources.CSS.modalBody;
+import static org.jboss.hal.resources.CSS.modalContent;
+import static org.jboss.hal.resources.CSS.modalDialog;
+import static org.jboss.hal.resources.CSS.modalFooter;
+import static org.jboss.hal.resources.CSS.modalHeader;
+import static org.jboss.hal.resources.CSS.modalLg;
+import static org.jboss.hal.resources.CSS.modalMd;
+import static org.jboss.hal.resources.CSS.modalMx;
+import static org.jboss.hal.resources.CSS.modalTitle;
+import static org.jboss.hal.resources.CSS.modelSm;
+import static org.jboss.hal.resources.CSS.pfIcon;
+import static org.jboss.hal.resources.CSS.pullLeft;
+import static org.jboss.hal.resources.UIConstants.DIALOG;
+import static org.jboss.hal.resources.UIConstants.HASH;
+import static org.jboss.hal.resources.UIConstants.LABEL;
+import static org.jboss.hal.resources.UIConstants.LABELLED_BY;
+import static org.jboss.hal.resources.UIConstants.ROLE;
+import static org.jboss.hal.resources.UIConstants.TABINDEX;
 
 /**
  * A modal dialog with optional secondary and primary buttons. Only one dialog can be open at a time. The buttons can be placed
@@ -64,10 +86,9 @@ import static org.jboss.hal.resources.UIConstants.*;
  * define the placement by yourself use negative numbers to place the buttons on the left side and positive numbers for the
  * right side. On each side the buttons are ordered according to the placement.
  */
-@JsType(namespace = "hal.ui")
 public class Dialog implements IsElement {
 
-    @JsIgnore public static final int PRIMARY_POSITION = 200;
+    public static final int PRIMARY_POSITION = 200;
     private static final int SECONDARY_POSITION = 100;
     private static final String SELECTOR_ID = HASH + Ids.HAL_MODAL;
     private static final Constants CONSTANTS = GWT.create(Constants.class);
@@ -102,7 +123,6 @@ public class Dialog implements IsElement {
         initEventHandler();
     }
 
-    @JsIgnore
     public static boolean isOpen() {
         return open;
     }
@@ -135,12 +155,10 @@ public class Dialog implements IsElement {
     }
 
     @Override
-    @JsIgnore
     public HTMLElement element() {
         return root;
     }
 
-    @JsIgnore
     public void registerAttachable(Attachable first, Attachable... rest) {
         attachables.add(first);
         if (rest != null) {
@@ -211,12 +229,10 @@ public class Dialog implements IsElement {
 
     // ------------------------------------------------------ properties
 
-    @JsIgnore
     public void setTitle(String title) {
         Dialog.title.textContent = title;
     }
 
-    @JsIgnore
     public HTMLButtonElement getButton(int position) {
         return buttons.get(position);
     }
@@ -236,7 +252,6 @@ public class Dialog implements IsElement {
     /**
      * A button callback which returns a boolean to indicate whether the dialog should be closed or stay open.
      */
-    @JsFunction
     @FunctionalInterface
     public interface ResultCallback {
 
@@ -264,7 +279,6 @@ public class Dialog implements IsElement {
 
     // ------------------------------------------------------ dialog builder
 
-    @JsType(namespace = "hal.ui", name = "DialogBuilder")
     public static class Builder {
 
         // mandatory attributes
@@ -279,7 +293,6 @@ public class Dialog implements IsElement {
         private boolean fadeIn;
         private Callback closed;
 
-        @JsIgnore
         public Builder(String title) {
             this.title = title;
             this.elements = new ArrayList<>();
@@ -314,7 +327,6 @@ public class Dialog implements IsElement {
         /**
          * Shortcut for a dialog with a 'Yes' and 'No' button. Clicking on yes will execute the specified callback.
          */
-        @JsIgnore
         @SuppressWarnings("WeakerAccess")
         public Builder yesNo(Callback yesCallback) {
             buttons.clear();
@@ -326,7 +338,6 @@ public class Dialog implements IsElement {
         /**
          * Shortcut for a dialog with a 'Ok' and 'Cancel' button. Clicking on ok will execute the specified callback.
          */
-        @JsIgnore
         @SuppressWarnings("WeakerAccess")
         public Builder okCancel(Callback okCallback) {
             buttons.clear();
@@ -338,7 +349,6 @@ public class Dialog implements IsElement {
         /**
          * Adds a primary with label 'Save' and position {@value #PRIMARY_POSITION}.
          */
-        @JsIgnore
         public Builder primary(ResultCallback callback) {
             return primary(CONSTANTS.save(), callback);
         }
@@ -347,7 +357,6 @@ public class Dialog implements IsElement {
             return primary(PRIMARY_POSITION, label, callback);
         }
 
-        @JsIgnore
         public Builder primary(int position, String label, ResultCallback callback) {
             buttons.put(position, new Button(label, callback, null, true));
             return this;
@@ -360,7 +369,6 @@ public class Dialog implements IsElement {
         /**
          * Adds a secondary button with label 'Cancel' and position {@value #SECONDARY_POSITION}
          */
-        @JsIgnore
         public Builder secondary(ResultCallback callback) {
             return secondary(CONSTANTS.cancel(), callback);
         }
@@ -369,45 +377,38 @@ public class Dialog implements IsElement {
             return secondary(SECONDARY_POSITION, label, callback);
         }
 
-        @JsIgnore
         public Builder secondary(int position, String label, ResultCallback callback) {
             buttons.put(position, new Button(label, callback, null, false));
             return this;
         }
 
-        @JsIgnore
         public Builder size(Size size) {
             this.size = size;
             return this;
         }
 
-        @JsIgnore
         @SuppressWarnings("SameParameterValue")
         public Builder closeIcon(boolean closeIcon) {
             this.closeIcon = closeIcon;
             return this;
         }
 
-        @JsIgnore
         @SuppressWarnings("SameParameterValue")
         public Builder closeOnEsc(boolean closeOnEsc) {
             this.closeOnEsc = closeOnEsc;
             return this;
         }
 
-        @JsIgnore
         public Builder closed(Callback closed) {
             this.closed = closed;
             return this;
         }
 
-        @JsIgnore
         public Builder fadeIn(boolean fadeIn) {
             this.fadeIn = fadeIn;
             return this;
         }
 
-        @JsIgnore
         public Builder add(HTMLElement... elements) {
             if (elements != null) {
                 this.elements.addAll(Arrays.asList(elements));
@@ -415,7 +416,6 @@ public class Dialog implements IsElement {
             return this;
         }
 
-        @JsIgnore
         public Builder add(Iterable<HTMLElement> elements) {
             if (elements != null) {
                 Iterables.addAll(this.elements, elements);
@@ -426,23 +426,5 @@ public class Dialog implements IsElement {
         public Dialog build() {
             return new Dialog(this);
         }
-
-        // ------------------------------------------------------ JS methods
-
-        @JsMethod(name = "add")
-        public Builder jsAdd(HTMLElement element) {
-            return add(element);
-        }
-
-        @JsMethod(name = "okCancel")
-        public Builder jsOkCancel(JsCallback okCallback) {
-            return okCancel(okCallback::execute);
-        }
-
-        @JsMethod(name = "size")
-        public Builder jsSize(String size) {
-            return size(Size.valueOf(size));
-        }
-
     }
 }

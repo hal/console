@@ -36,7 +36,6 @@ import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.AbstractForm;
 import org.jboss.hal.ballroom.form.AddOnlyStateMachine;
 import org.jboss.hal.ballroom.form.ExistingStateMachine;
-import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.FormItemProvider;
 import org.jboss.hal.ballroom.form.ReadOnlyStateMachine;
@@ -57,7 +56,6 @@ import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Messages;
 import org.jboss.hal.spi.Callback;
-import org.jboss.hal.spi.EsParam;
 import org.jboss.hal.spi.EsReturn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,23 +66,24 @@ import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
 
-import elemental2.dom.HTMLElement;
-import jsinterop.annotations.JsFunction;
-import jsinterop.annotations.JsIgnore;
-import jsinterop.annotations.JsMethod;
-import jsinterop.annotations.JsProperty;
-import jsinterop.annotations.JsType;
-import jsinterop.base.JsPropertyMap;
-
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.jboss.hal.ballroom.form.Form.State.EMPTY;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ACCESS_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.OPERATIONS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_WRITE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUEST_PROPERTIES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUIRED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUIRES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeBoolean;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
-import static org.jboss.hal.js.JsHelper.asJsMap;
 
 public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
 
@@ -259,7 +258,6 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
     }
 
     @Override
-    @JsMethod
     public void attach() {
         super.attach();
 
@@ -366,13 +364,6 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         return emptyOrDefault;
     }
 
-    // ------------------------------------------------------ JS methods
-
-    @JsProperty(name = "element")
-    public HTMLElement jsElement() {
-        return element();
-    }
-
     // ------------------------------------------------------ inner classes
 
     /**
@@ -380,7 +371,6 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
      * <code>"storage" =&gt; "configuration"</code>.
      */
     @SuppressWarnings("unused")
-    @JsType(namespace = "hal.ui", name = "FormBuilder")
     public static class Builder<T extends ModelNode> {
 
         private static final String ILLEGAL_COMBINATION = "Illegal combination in ";
@@ -411,7 +401,6 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
 
         // ------------------------------------------------------ configure required and optional settings
 
-        @JsIgnore
         public Builder(String id, Metadata metadata) {
             this.id = id;
             this.metadata = metadata;
@@ -430,37 +419,31 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
             this.attributePath = ATTRIBUTES;
         }
 
-        @JsIgnore
         public Builder<T> include(String[] attributes) {
             includes.addAll(asList(attributes));
             return this;
         }
 
-        @JsIgnore
         public Builder<T> include(Iterable<String> attributes) {
             Iterables.addAll(includes, attributes);
             return this;
         }
 
-        @JsIgnore
         public Builder<T> include(String first, String... rest) {
             includes.addAll(Lists.asList(first, rest));
             return this;
         }
 
-        @JsIgnore
         public Builder<T> exclude(String[] attributes) {
             excludes.addAll(asList(attributes));
             return this;
         }
 
-        @JsIgnore
         public Builder<T> exclude(Iterable<String> attributes) {
             Iterables.addAll(excludes, attributes);
             return this;
         }
 
-        @JsIgnore
         public Builder<T> exclude(String first, String... rest) {
             excludes.addAll(Lists.asList(first, rest));
             return this;
@@ -537,7 +520,6 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
          * If the resource does not exist, a default empty state is displayed. The empty state will contain a button which will
          * trigger the specified add action.
          */
-        @JsIgnore
         public Builder<T> singleton(Supplier<org.jboss.hal.dmr.Operation> ping, Callback addAction) {
             EmptyState emptyState = new EmptyState.Builder(Ids.build(id, Ids.EMPTY), CONSTANTS.noResource())
                     .description(MESSAGES.noResource())
@@ -557,7 +539,6 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
          * <p>
          * Please make sure that the primary action of the empty state has a {@linkplain Constraint constraint} attached to it.
          */
-        @JsIgnore
         public Builder<T> singleton(Supplier<org.jboss.hal.dmr.Operation> ping,
                 EmptyState emptyState) {
             this.singleton = true;
@@ -571,24 +552,20 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
             return this;
         }
 
-        @JsIgnore
         public Builder<T> customFormItem(String attribute, FormItemProvider provider) {
             includes.add(attribute);
             providers.put(attribute, provider);
             return this;
         }
 
-        @JsIgnore
         public Builder<T> unboundFormItem(FormItem formItem) {
             return unboundFormItem(formItem, -1, null);
         }
 
-        @JsIgnore
         public Builder<T> unboundFormItem(FormItem formItem, int position) {
             return unboundFormItem(formItem, position, null);
         }
 
-        @JsIgnore
         public Builder<T> unboundFormItem(FormItem formItem, int position, SafeHtml helpText) {
             this.unboundFormItems.add(new UnboundFormItem(formItem, position, helpText));
             return this;
@@ -599,25 +576,21 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
             return this;
         }
 
-        @JsIgnore
         public Builder<T> onSave(SaveCallback<T> saveCallback) {
             this.saveCallback = saveCallback;
             return this;
         }
 
-        @JsIgnore
         public Builder<T> onCancel(CancelCallback<T> cancelCallback) {
             this.cancelCallback = cancelCallback;
             return this;
         }
 
-        @JsIgnore
         public Builder<T> prepareReset(PrepareReset<T> prepareReset) {
             this.prepareReset = prepareReset;
             return this;
         }
 
-        @JsIgnore
         public Builder<T> prepareRemove(PrepareRemove<T> removeCallback) {
             this.prepareRemove = removeCallback;
             return this;
@@ -627,7 +600,6 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
          * By default the non-requried attributes are displayed together with the required attributes. Call this method to put
          * the non-required attributes on a collapsible panel beneath the required attributes.
          */
-        @JsIgnore
         public Builder<T> panelForOptionalAttributes() {
             this.panelForOptionalAttributes = true;
             return this;
@@ -700,36 +672,6 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
 
         private String formId() {
             return "form(" + id + ")"; // NON-NLS
-        }
-
-        // ------------------------------------------------------ JS methods
-
-        /** Includes the specified attributes */
-        @JsMethod(name = "include")
-        @EsReturn("FormBuilder")
-        public Builder<T> jsInclude(@EsParam("string[]") String[] attributes) {
-            return include(asList(attributes));
-        }
-
-        /** Excludes the specified attributes */
-        @JsMethod(name = "exclude")
-        @EsReturn("FormBuilder")
-        public Builder<T> jsExclude(@EsParam("string[]") String[] attributes) {
-            return exclude(asList(attributes));
-        }
-
-        /** Calls the specified callback when the save button was clicked and no validation errors occurred. */
-        @JsMethod(name = "onSave")
-        @EsReturn("FormBuilder")
-        public Builder<T> jsOnSave(JsSaveCallback<T> callback) {
-            this.saveCallback = (form, changedValues) -> callback.onSave(form, asJsMap(changedValues));
-            return this;
-        }
-
-        @JsFunction
-        interface JsSaveCallback<T> {
-
-            void onSave(Form<T> form, JsPropertyMap<Object> changedValues);
         }
     }
 }

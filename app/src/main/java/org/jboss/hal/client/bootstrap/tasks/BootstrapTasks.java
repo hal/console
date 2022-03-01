@@ -29,7 +29,6 @@ public class BootstrapTasks {
             ReadHostNames readHostNames,
             FindDomainController findDomainController,
             RegisterStaticCapabilities registerStaticCapabilities,
-            ReadExtensions readExtensions,
             LoadSettings loadSettings,
             SetTitle setTitle,
             StartAnalytics startAnalytics) {
@@ -39,7 +38,6 @@ public class BootstrapTasks {
                 readHostNames,
                 findDomainController,
                 registerStaticCapabilities,
-                readExtensions,
                 loadSettings,
                 setTitle,
                 startAnalytics,

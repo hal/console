@@ -19,16 +19,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import jsinterop.annotations.JsIgnore;
-import jsinterop.annotations.JsMethod;
-import jsinterop.annotations.JsProperty;
-import jsinterop.annotations.JsType;
-
 /**
  * Represents a fully qualified DMR address ready to be put into a DMR operation. The address consists of 0-n segments with a
  * name and a value for each segment.
  */
-@JsType
 public class ResourceAddress extends ModelNode {
 
     /** @return the empty (root) address */
@@ -75,12 +69,10 @@ public class ResourceAddress extends ModelNode {
         return ra;
     }
 
-    @JsIgnore
     public ResourceAddress() {
         setEmptyList();
     }
 
-    @JsIgnore
     public ResourceAddress(ModelNode address) {
         set(address);
     }
@@ -93,7 +85,6 @@ public class ResourceAddress extends ModelNode {
      *
      * @return this address with the specified segment added
      */
-    @JsMethod(name = "addSegment")
     public ResourceAddress add(String propertyName, String propertyValue) {
         add().set(propertyName, propertyValue);
         return this;
@@ -106,7 +97,6 @@ public class ResourceAddress extends ModelNode {
      *
      * @return this address with the specified address added
      */
-    @JsMethod(name = "addAddress")
     public ResourceAddress add(ResourceAddress address) {
         if (address != null) {
             for (Property property : address.asPropertyList()) {
@@ -117,7 +107,6 @@ public class ResourceAddress extends ModelNode {
     }
 
     /** @return the value of the first segment or null if this address is empty. */
-    @JsProperty(name = "firstValue")
     public String firstValue() {
         List<Property> properties = asPropertyList();
         if (!properties.isEmpty()) {
@@ -127,7 +116,6 @@ public class ResourceAddress extends ModelNode {
     }
 
     /** @return the name of the last segment or null if this address is empty. */
-    @JsProperty(name = "lastName")
     public String lastName() {
         List<Property> properties = asPropertyList();
         if (!properties.isEmpty()) {
@@ -137,7 +125,6 @@ public class ResourceAddress extends ModelNode {
     }
 
     /** @return the value of the last segment or null if this address is empty. */
-    @JsProperty(name = "lastValue")
     public String lastValue() {
         List<Property> properties = asPropertyList();
         if (!properties.isEmpty()) {
@@ -147,7 +134,6 @@ public class ResourceAddress extends ModelNode {
     }
 
     /** @return the parent address or the root address if this address has no parent. */
-    @JsProperty
     public ResourceAddress getParent() {
         if (this.equals(root()) || asList().isEmpty()) {
             return this;
@@ -158,13 +144,11 @@ public class ResourceAddress extends ModelNode {
     }
 
     /** @return the number of segments. */
-    @JsProperty(name = "size")
     public int size() {
         return isDefined() ? asList().size() : 0;
     }
 
     /** @return whether this address is empty. */
-    @JsProperty
     public boolean isEmpty() {
         return size() == 0;
     }

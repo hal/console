@@ -31,7 +31,15 @@ import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.gwt.elemento.core.Elements.a;
 import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.gwt.elemento.core.Elements.h;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.collapse;
+import static org.jboss.hal.resources.CSS.in;
+import static org.jboss.hal.resources.CSS.panel;
+import static org.jboss.hal.resources.CSS.panelBody;
+import static org.jboss.hal.resources.CSS.panelCollapse;
+import static org.jboss.hal.resources.CSS.panelDefault;
+import static org.jboss.hal.resources.CSS.panelGroup;
+import static org.jboss.hal.resources.CSS.panelHeading;
+import static org.jboss.hal.resources.CSS.panelTitle;
 
 public class Accordion implements IsElement {
 

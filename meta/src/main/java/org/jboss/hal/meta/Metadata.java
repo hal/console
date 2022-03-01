@@ -29,28 +29,30 @@ import org.slf4j.LoggerFactory;
 
 import com.google.gwt.resources.client.TextResource;
 
-import jsinterop.annotations.JsIgnore;
-import jsinterop.annotations.JsProperty;
-import jsinterop.annotations.JsType;
-
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HAL_LABEL;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NILLABLE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.OPERATIONS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUEST_PROPERTIES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUIRED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.WRITE;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.meta.AddressTemplate.ROOT;
 import static org.jboss.hal.meta.security.SecurityContext.RWX;
 
 /** Simple data struct for common metadata. Used to keep the method signatures small and tidy. */
-@JsType
 public class Metadata {
 
     private static final Logger logger = LoggerFactory.getLogger(Metadata.class);
 
-    @JsIgnore
     public static Metadata empty() {
         return new Metadata(ROOT, () -> RWX, new ResourceDescription(new ModelNode()),
                 new Capabilities(null));
     }
 
-    @JsIgnore
     public static Metadata staticDescription(TextResource description) {
         return Metadata.staticDescription(StaticResourceDescription.from(description));
     }
@@ -58,7 +60,6 @@ public class Metadata {
     /**
      * Constructs a Metadata with read-write-execution permissions and a non-working Capabilities object.
      */
-    @JsIgnore
     public static Metadata staticDescription(ResourceDescription description) {
         return new Metadata(ROOT, () -> RWX, new ResourceDescription(description), new Capabilities(null));
     }
@@ -67,7 +68,6 @@ public class Metadata {
      * Constructs a Metadata with read-write-execution permissions and a working Capabilities object based on the environment
      * object.
      */
-    @JsIgnore
     public static Metadata staticDescription(ResourceDescription description, Environment environment) {
         return new Metadata(ROOT, () -> RWX, new ResourceDescription(description), new Capabilities(environment));
     }
@@ -77,7 +77,6 @@ public class Metadata {
     private final ResourceDescription description;
     private final Capabilities capabilities;
 
-    @JsIgnore
     public Metadata(AddressTemplate template, Supplier<SecurityContext> securityContext,
             ResourceDescription description, Capabilities capabilities) {
         this.template = template;
@@ -87,7 +86,6 @@ public class Metadata {
     }
 
     /** Copies attributes from this description to the specified metadata */
-    @JsIgnore
     public void copyAttribute(String attribute, Metadata destination) {
         Property p = getDescription().findAttribute(ATTRIBUTES, attribute);
         if (p != null) {
@@ -99,14 +97,12 @@ public class Metadata {
      * Makes the specified attribute writable. This is necessary if you copy attributes from a complex attribute to another
      * metadata. Without adjustment the copied attributes are read-only in the destination metadata.
      */
-    @JsIgnore
     public void makeWritable(String attribute) {
         getSecurityContext().get(ATTRIBUTES).get(attribute).get(READ).set(true);
         getSecurityContext().get(ATTRIBUTES).get(attribute).get(WRITE).set(true);
     }
 
     /** Shortcut for {@link #copyAttribute(String, Metadata)} and {@link #makeWritable(String)} */
-    @JsIgnore
     public void copyComplexAttributeAttributes(Iterable<String> attributes, Metadata destination) {
         for (String attribute : attributes) {
             copyAttribute(attribute, destination);
@@ -118,7 +114,6 @@ public class Metadata {
      * Creates a new metadata instance based on this metadata with the attributes taken from the specified complex attribute.
      * The resource description will only include the attributes but no operations!
      */
-    @JsIgnore
     public Metadata forComplexAttribute(String name) {
         return forComplexAttribute(name, false);
     }
@@ -130,7 +125,6 @@ public class Metadata {
      * @param prefixLabel if {@code true} the labels of the attributes of the complex attribute are prefixed with name of the
      *        complex attribute.
      */
-    @JsIgnore
     public Metadata forComplexAttribute(String name, boolean prefixLabel) {
         ModelNode payload = new ModelNode();
         payload.get(DESCRIPTION).set(failSafeGet(description, ATTRIBUTES + "/" + name + "/" + DESCRIPTION));
@@ -184,7 +178,6 @@ public class Metadata {
         return new Metadata(template, () -> attributeContext, new ResourceDescription(payload), capabilities);
     }
 
-    @JsIgnore
     public Metadata forOperation(String name) {
         ModelNode payload = new ModelNode();
         payload.get(DESCRIPTION).set(failSafeGet(description, OPERATIONS + "/" + name + "/" + DESCRIPTION));
@@ -221,13 +214,11 @@ public class Metadata {
     }
 
     /** @return the address template */
-    @JsProperty
     public AddressTemplate getTemplate() {
         return template;
     }
 
     /** @return the security context */
-    @JsProperty
     public SecurityContext getSecurityContext() {
         if (securityContext != null && securityContext.get() != null) {
             return securityContext.get();
@@ -238,12 +229,10 @@ public class Metadata {
     }
 
     /** @return the resource description */
-    @JsProperty
     public ResourceDescription getDescription() {
         return description;
     }
 
-    @JsIgnore
     public Capabilities getCapabilities() {
         return capabilities;
     }

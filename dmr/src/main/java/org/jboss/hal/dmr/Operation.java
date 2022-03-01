@@ -19,22 +19,20 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.jboss.hal.spi.EsParam;
 import org.jboss.hal.spi.EsReturn;
-
-import jsinterop.annotations.JsIgnore;
-import jsinterop.annotations.JsMethod;
-import jsinterop.annotations.JsProperty;
-import jsinterop.annotations.JsType;
 
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.stream.Collectors.toSet;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADDRESS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.OP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.OPERATION_HEADERS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESOLVE_EXPRESSION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ROLES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.WHOAMI;
 
 /**
  * Represents a DMR operation.
  */
-@JsType
 public class Operation extends ModelNode {
 
     private final String name;
@@ -43,7 +41,6 @@ public class Operation extends ModelNode {
     private final ModelNode header;
     private final Set<String> roles;
 
-    @JsIgnore
     public Operation(ModelNode modelNode) {
         this.name = modelNode.get(OP).asString();
         this.address = new ResourceAddress(modelNode.get(ADDRESS));
@@ -100,7 +97,6 @@ public class Operation extends ModelNode {
     /**
      * @return the name of the operation
      */
-    @JsProperty
     public String getName() {
         return get(OP).asString();
     }
@@ -108,7 +104,6 @@ public class Operation extends ModelNode {
     /**
      * @return the address of the operation
      */
-    @JsProperty
     public ResourceAddress getAddress() {
         return address;
     }
@@ -116,7 +111,6 @@ public class Operation extends ModelNode {
     /**
      * @return the parameters of the operation
      */
-    @JsProperty
     public ModelNode getParameter() {
         return parameter;
     }
@@ -124,22 +118,18 @@ public class Operation extends ModelNode {
     /**
      * @return the header of the operation
      */
-    @JsProperty
     public ModelNode getHeader() {
         return header;
     }
 
-    @JsIgnore
     public boolean hasParameter() {
         return parameter.isDefined() && !parameter.asList().isEmpty();
     }
 
-    @JsIgnore
     public Set<String> getRoles() {
         return roles;
     }
 
-    @JsIgnore
     public Operation runAs(Set<String> runAs) {
         return new Operation(name, address, parameter, header, newHashSet(runAs));
     }
@@ -189,7 +179,6 @@ public class Operation extends ModelNode {
     /**
      * A builder for operations.
      */
-    @JsType(name = "OperationBuilder")
     public static class Builder {
 
         private final String name;
@@ -198,12 +187,10 @@ public class Operation extends ModelNode {
         private final ModelNode header;
         private final Set<String> roles;
 
-        @JsIgnore
         public Builder(ResourceAddress address, String name) {
             this(address, name, false);
         }
 
-        @JsIgnore
         public Builder(ResourceAddress address, String name, boolean resolveExpression) {
             this.address = address;
             this.name = name;
@@ -215,37 +202,31 @@ public class Operation extends ModelNode {
             }
         }
 
-        @JsIgnore
         public Builder param(String name, boolean value) {
             parameter.get(name).set(value);
             return this;
         }
 
-        @JsIgnore
         public Builder param(String name, int value) {
             parameter.get(name).set(value);
             return this;
         }
 
-        @JsIgnore
         public Builder param(String name, long value) {
             parameter.get(name).set(value);
             return this;
         }
 
-        @JsIgnore
         public Builder param(String name, double value) {
             parameter.get(name).set(value);
             return this;
         }
 
-        @JsIgnore
         public Builder param(String name, String value) {
             parameter.get(name).set(value);
             return this;
         }
 
-        @JsIgnore
         public Builder param(String name, String[] values) {
             for (String value : values) {
                 parameter.get(name).add(value);
@@ -253,19 +234,16 @@ public class Operation extends ModelNode {
             return this;
         }
 
-        @JsIgnore
         public Builder param(String name, ModelNode value) {
             parameter.get(name).set(value);
             return this;
         }
 
-        @JsIgnore
         public Builder header(String name, String value) {
             header.get(name).set(value);
             return this;
         }
 
-        @JsIgnore
         public Builder header(String name, boolean value) {
             header.get(name).set(value);
             return this;
@@ -288,48 +266,6 @@ public class Operation extends ModelNode {
          */
         public Operation build() {
             return new Operation(name, address, parameter, header, roles);
-        }
-
-        // ------------------------------------------------------ JS methods
-
-        /**
-         * Add a parameter to the operation
-         *
-         * @param name The name of the parameter.
-         * @param value The value of the parameter.
-         * @return this builder
-         */
-        @JsMethod(name = "param")
-        @EsReturn("OperationBuilder")
-        public Builder jsParam(String name, @EsParam("boolean|int|string") Object value) {
-            if (value instanceof Boolean) {
-                param(name, ((Boolean) value));
-            } else if (value instanceof Integer) {
-                param(name, ((Integer) value));
-            } else if (value instanceof String) {
-                param(name, ((String) value));
-            } else if (value instanceof ModelNode) {
-                param(name, ((ModelNode) value));
-            }
-            return this;
-        }
-
-        /**
-         * Add a header to the operation
-         *
-         * @param name The name of the header.
-         * @param value The value of the header.
-         * @return this builder
-         */
-        @JsMethod(name = "header")
-        @EsReturn("OperationBuilder")
-        public Builder jsHeader(String name, @EsParam("boolean|int|string") Object value) {
-            if (value instanceof Boolean) {
-                header(name, ((Boolean) value));
-            } else if (value instanceof String) {
-                header(name, ((String) value));
-            }
-            return this;
         }
     }
 }

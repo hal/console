@@ -15,16 +15,15 @@
  */
 package org.jboss.hal.meta;
 
-import jsinterop.annotations.JsIgnore;
-import jsinterop.annotations.JsProperty;
-import jsinterop.annotations.JsType;
-
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_CONFIG;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 
 /**
  * Contains global state which is updated as you navigate in the console. In standalone mode most of the methods return null.
  */
-@JsType
 public interface StatementContext {
 
     @SuppressWarnings("HardCodedStringLiteral")
@@ -67,7 +66,7 @@ public interface StatementContext {
         }
     }
 
-    @JsIgnore StatementContext NOOP = new StatementContext() {
+    StatementContext NOOP = new StatementContext() {
 
         @Override
         public String resolve(String placeholder, AddressTemplate template) {
@@ -111,34 +110,26 @@ public interface StatementContext {
     };
 
     /** Resolves a single value. */
-    @JsIgnore
     String resolve(String placeholder, AddressTemplate template);
 
     /** Resolves a tuple. */
-    @JsIgnore
     String[] resolveTuple(String placeholder, AddressTemplate template);
 
     /** @return the domain controller */
-    @JsProperty(name = "domainController")
     String domainController();
 
     /** @return the selected profile */
-    @JsProperty(name = "selectedProfile")
     String selectedProfile();
 
     /** @return the selected server group */
-    @JsProperty(name = "selectedServerGroup")
     String selectedServerGroup();
 
     /** @return the selected host */
-    @JsProperty(name = "selectedHost")
     String selectedHost();
 
     /** @return the selected server config */
-    @JsProperty(name = "selectedServerConfig")
     String selectedServerConfig();
 
     /** @return the selected server */
-    @JsProperty(name = "selectedServer")
     String selectedServer();
 }

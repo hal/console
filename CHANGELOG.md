@@ -8,7 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Added
 
-Add code scanning workflow
+- Add code scanning workflow
+- Add label builder rule for 'OpenAPI'
+
+### Removed
+
+- [HAL-1775](https://issues.redhat.com/browse/HAL-1775): Remove annotations and documentation for extension API
 
 ## [3.5.11] - 2022-02-24
 

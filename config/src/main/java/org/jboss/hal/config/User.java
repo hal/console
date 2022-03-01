@@ -18,17 +18,10 @@ package org.jboss.hal.config;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.jboss.hal.spi.EsReturn;
-
-import jsinterop.annotations.JsIgnore;
-import jsinterop.annotations.JsProperty;
-import jsinterop.annotations.JsType;
-
 import static org.jboss.hal.config.Role.ADMINISTRATOR;
 import static org.jboss.hal.config.Role.SUPER_USER;
 
 /** Holds information about an user. */
-@JsType
 public class User {
 
     private static final User current = new User("Unknown", new HashSet<>(), false); // NON-NLS
@@ -49,34 +42,28 @@ public class User {
     }
 
     /** @return the user name. */
-    @JsProperty
     public String getName() {
         return name;
     }
 
-    @JsIgnore
     public void setName(String name) {
         this.name = name;
     }
 
-    @JsIgnore
     public Set<Role> getRoles() {
         return roles;
     }
 
-    @JsIgnore
     public void refreshRoles(Set<Role> roles) {
         this.roles.clear();
         this.roles.addAll(roles);
     }
 
-    @JsIgnore
     public void addRole(Role role) {
         roles.add(role);
     }
 
     /** @return true if this user belongs to the role SuperUser, false otherwise. */
-    @JsProperty
     public boolean isSuperuser() {
         for (Role role : roles) {
             if (SUPER_USER.equals(role)) {
@@ -87,7 +74,6 @@ public class User {
     }
 
     /** @return true if this user belongs to the role Administrator, false otherwise. */
-    @JsProperty
     public boolean isAdministrator() {
         for (Role role : roles) {
             if (ADMINISTRATOR.equals(role)) {
@@ -103,14 +89,5 @@ public class User {
 
     public void setAuthenticated(boolean authenticated) {
         this.authenticated = authenticated;
-    }
-
-    // ------------------------------------------------------ JS methods
-
-    /** @return the roles of this user. */
-    @JsProperty(name = "roles")
-    @EsReturn("Role[]")
-    public Role[] jsRoles() {
-        return roles.toArray(new Role[roles.size()]);
     }
 }
