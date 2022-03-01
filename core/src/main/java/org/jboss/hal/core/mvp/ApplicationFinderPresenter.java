@@ -31,7 +31,7 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
  * information from {@link #finderPath()} and fires a {@link FinderContextEvent} in {@link #onReset()}.
  */
 public abstract class ApplicationFinderPresenter<V extends HalView, Proxy_ extends ProxyPlace<?>>
-        extends ApplicationPresenter<V, Proxy_> implements HasFinderPath, SupportsExternalMode {
+        extends ApplicationPresenter<V, Proxy_> implements HasFinderPath, SupportsExternalMode, Refreshable {
 
     private static final Logger logger = LoggerFactory.getLogger(ApplicationFinderPresenter.class);
 

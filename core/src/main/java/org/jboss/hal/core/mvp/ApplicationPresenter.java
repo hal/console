@@ -77,6 +77,9 @@ public abstract class ApplicationPresenter<V extends HalView, Proxy_ extends Pro
         if (this instanceof SupportsExpertMode) {
             builder.expertModeAddress(((SupportsExpertMode) this).resourceAddress());
         }
+        if (this instanceof Refreshable) {
+            builder.refresh(true);
+        }
         return builder.build();
     }
 
