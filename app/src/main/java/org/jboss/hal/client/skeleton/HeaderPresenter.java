@@ -73,6 +73,7 @@ import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
+import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 
 import static elemental2.dom.DomGlobal.location;
@@ -340,6 +341,11 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
             } else {
                 getView().hideSwitchMode();
             }
+            if (event.isRefresh()) {
+                getView().showRefresh();
+            } else {
+                getView().hideRefresh();
+            }
         }
     }
 
@@ -418,6 +424,11 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
         placeManager.revealPlace(placeRequest);
     }
 
+    void refresh() {
+        placeManager.revealPlace(placeManager.getCurrentPlaceRequest());
+        DomGlobal.console.log("Refresh clicked");
+    }
+
     // ------------------------------------------------------ inner classes
 
     // @formatter:off
@@ -463,6 +474,10 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
         void showExternal(PlaceRequest placeRequest);
 
         void hideExternal();
+
+        void showRefresh();
+
+        void hideRefresh();
     }
     // @formatter:on
 }

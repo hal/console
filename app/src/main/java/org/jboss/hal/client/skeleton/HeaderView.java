@@ -109,6 +109,7 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
     private final HTMLElement switchModeLink;
     private final HTMLElement switchModeIcon;
     private final HTMLElement externalLink;
+    private final HTMLElement refreshLink;
 
     private PlaceRequest backPlaceRequest;
     private Map<String, PlaceRequest> tlcPlaceRequests;
@@ -119,6 +120,7 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
     private HandlerRegistration switchModeHandler;
     private List<HandlerRegistration> handlers;
     private List<HandlerRegistration> breadcrumbHandlers;
+    private HandlerRegistration refreshHandler;
 
     @Inject
     public HeaderView(Environment environment, Places places, AccessControl ac, Resources resources) {
@@ -259,6 +261,10 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
                                         .add(externalLink = a().css(clickable)
                                                 .title(resources.constants().openInExternalWindow())
                                                 .add(span().css(fontAwesome("external-link", large)))
+                                                .element())
+                                        .add(refreshLink = a().css(clickable)
+                                                .title(resources.constants().refresh())
+                                                .add(span().css(fontAwesome("refresh", large)))
                                                 .element())
                                         .element())
                                 .element()))
@@ -750,5 +756,19 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
     @Override
     public void hideExternal() {
         setVisible(externalLink, false);
+    }
+
+    @Override
+    public void showRefresh() {
+        setVisible(refreshLink, true);
+        if (refreshHandler != null) {
+            refreshHandler.removeHandler();
+        }
+        refreshHandler = bind(refreshLink, click, event -> presenter.refresh());
+    }
+
+    @Override
+    public void hideRefresh() {
+        setVisible(refreshLink, false);
     }
 }
