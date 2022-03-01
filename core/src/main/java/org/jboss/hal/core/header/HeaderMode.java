@@ -37,5 +37,5 @@ public class HeaderMode {
     @Order(6)
     @Optional boolean supportsExternal;
     @Order(7)
-    @Optional boolean refresh;
+    @Optional boolean refreshable;
 }

@@ -59,12 +59,13 @@ public abstract class ApplicationPresenter<V extends HalView, Proxy_ extends Pro
 
     /**
      * Returns a {@link HeaderModeEvent}. The payload of the event depends on the implemented interfaces:
+     *
      * <ul>
      * <li>{@link HasTitle}: the title as returned by {@link HasTitle#getTitle()}</li>
      * <li>{@link SupportsExternalMode}: a flag indicating support to open the presenter in an external tab / window</li>
      * <li>{@link SupportsExpertMode}: the resource address as returned by {@link SupportsExpertMode#resourceAddress()}</li>
+     * <li>{@link Refreshable}: a flag indicating support to refresh the presenter</li>
      * </ul>
-     * <p>
      */
     protected HeaderModeEvent headerMode() {
         HeaderModeEvent.Builder builder = new HeaderModeEvent.Builder(PresenterType.APPLICATION);
@@ -78,7 +79,7 @@ public abstract class ApplicationPresenter<V extends HalView, Proxy_ extends Pro
             builder.expertModeAddress(((SupportsExpertMode) this).resourceAddress());
         }
         if (this instanceof Refreshable) {
-            builder.refresh(true);
+            builder.refreshable(true);
         }
         return builder.build();
     }

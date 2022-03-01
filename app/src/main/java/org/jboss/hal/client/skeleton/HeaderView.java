@@ -66,20 +66,76 @@ import elemental2.dom.HTMLLIElement;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.StreamSupport.stream;
-import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.gwt.elemento.core.Elements.a;
+import static org.jboss.gwt.elemento.core.Elements.b;
+import static org.jboss.gwt.elemento.core.Elements.button;
+import static org.jboss.gwt.elemento.core.Elements.div;
 import static org.jboss.gwt.elemento.core.Elements.i;
+import static org.jboss.gwt.elemento.core.Elements.li;
 import static org.jboss.gwt.elemento.core.Elements.nav;
+import static org.jboss.gwt.elemento.core.Elements.ol;
+import static org.jboss.gwt.elemento.core.Elements.setVisible;
+import static org.jboss.gwt.elemento.core.Elements.span;
+import static org.jboss.gwt.elemento.core.Elements.ul;
 import static org.jboss.gwt.elemento.core.EventType.bind;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.hal.client.skeleton.HeaderPresenter.MAX_BREADCRUMB_VALUE_LENGTH;
 import static org.jboss.hal.config.AccessControlProvider.RBAC;
 import static org.jboss.hal.config.Settings.Key.RUN_AS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.active;
+import static org.jboss.hal.resources.CSS.arrow;
+import static org.jboss.hal.resources.CSS.back;
+import static org.jboss.hal.resources.CSS.badge;
+import static org.jboss.hal.resources.CSS.breadcrumbTools;
+import static org.jboss.hal.resources.CSS.caret;
+import static org.jboss.hal.resources.CSS.clickable;
+import static org.jboss.hal.resources.CSS.collapse;
+import static org.jboss.hal.resources.CSS.divider;
+import static org.jboss.hal.resources.CSS.drawerPfTrigger;
+import static org.jboss.hal.resources.CSS.drawerPfTriggerIcon;
+import static org.jboss.hal.resources.CSS.dropdown;
+import static org.jboss.hal.resources.CSS.dropdownMenu;
+import static org.jboss.hal.resources.CSS.dropdownToggle;
+import static org.jboss.hal.resources.CSS.fontAwesome;
+import static org.jboss.hal.resources.CSS.halBreadcrumb;
+import static org.jboss.hal.resources.CSS.halHeaderCollapse;
+import static org.jboss.hal.resources.CSS.hidden;
+import static org.jboss.hal.resources.CSS.iconBar;
+import static org.jboss.hal.resources.CSS.logo;
+import static org.jboss.hal.resources.CSS.logoText;
+import static org.jboss.hal.resources.CSS.logoTextFirst;
+import static org.jboss.hal.resources.CSS.logoTextLast;
+import static org.jboss.hal.resources.CSS.marginRight5;
 import static org.jboss.hal.resources.CSS.nav;
+import static org.jboss.hal.resources.CSS.navItemIconic;
+import static org.jboss.hal.resources.CSS.navbar;
+import static org.jboss.hal.resources.CSS.navbarBrand;
+import static org.jboss.hal.resources.CSS.navbarCollapse;
+import static org.jboss.hal.resources.CSS.navbarDefault;
+import static org.jboss.hal.resources.CSS.navbarFixedTop;
+import static org.jboss.hal.resources.CSS.navbarHeader;
+import static org.jboss.hal.resources.CSS.navbarNav;
+import static org.jboss.hal.resources.CSS.navbarPf;
+import static org.jboss.hal.resources.CSS.navbarPrimary;
+import static org.jboss.hal.resources.CSS.navbarToggle;
+import static org.jboss.hal.resources.CSS.navbarUtility;
+import static org.jboss.hal.resources.CSS.pfIcon;
+import static org.jboss.hal.resources.CSS.srOnly;
+import static org.jboss.hal.resources.CSS.static_;
+import static org.jboss.hal.resources.CSS.valueDropdown;
+import static org.jboss.hal.resources.CSS.warningTriangleO;
 import static org.jboss.hal.resources.FontAwesomeSize.large;
 import static org.jboss.hal.resources.Strings.abbreviateMiddle;
-import static org.jboss.hal.resources.UIConstants.*;
+import static org.jboss.hal.resources.UIConstants.BODY;
+import static org.jboss.hal.resources.UIConstants.COLLAPSE;
+import static org.jboss.hal.resources.UIConstants.CONTAINER;
+import static org.jboss.hal.resources.UIConstants.DROPDOWN;
+import static org.jboss.hal.resources.UIConstants.HASH;
+import static org.jboss.hal.resources.UIConstants.PLACEMENT;
+import static org.jboss.hal.resources.UIConstants.TARGET;
+import static org.jboss.hal.resources.UIConstants.TOGGLE;
+import static org.jboss.hal.resources.UIConstants.TOOLTIP;
 
 public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
 
@@ -111,15 +167,15 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
     private final HTMLElement externalLink;
     private final HTMLElement refreshLink;
 
-    private PlaceRequest backPlaceRequest;
-    private Map<String, PlaceRequest> tlcPlaceRequests;
-    private Map<String, HTMLElement> tlc;
+    private final Map<String, PlaceRequest> tlcPlaceRequests;
+    private final Map<String, HTMLElement> tlc;
+    private final ToastNotifications toastNotifications;
+    private final NotificationDrawer notificationDrawer;
+    private final List<HandlerRegistration> handlers;
+    private final List<HandlerRegistration> breadcrumbHandlers;
     private HeaderPresenter presenter;
-    private ToastNotifications toastNotifications;
-    private NotificationDrawer notificationDrawer;
+    private PlaceRequest backPlaceRequest;
     private HandlerRegistration switchModeHandler;
-    private List<HandlerRegistration> handlers;
-    private List<HandlerRegistration> breadcrumbHandlers;
     private HandlerRegistration refreshHandler;
 
     @Inject
@@ -253,6 +309,10 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
                                                 .element())
                                         .element())
                                 .add(breadcrumbToolsItem = li().css(breadcrumbTools)
+                                        .add(refreshLink = a().css(clickable)
+                                                .title(resources.constants().refresh())
+                                                .add(span().css(fontAwesome("refresh", large)))
+                                                .element())
                                         .add(switchModeLink = a().css(clickable)
                                                 .title(resources.constants().openInModelBrowser())
                                                 .add(switchModeIcon = span().css(fontAwesome("sitemap", large))
@@ -261,10 +321,6 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
                                         .add(externalLink = a().css(clickable)
                                                 .title(resources.constants().openInExternalWindow())
                                                 .add(span().css(fontAwesome("external-link", large)))
-                                                .element())
-                                        .add(refreshLink = a().css(clickable)
-                                                .title(resources.constants().refresh())
-                                                .add(span().css(fontAwesome("refresh", large)))
                                                 .element())
                                         .element())
                                 .element()))
@@ -711,7 +767,7 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
         }
     }
 
-    // ------------------------------------------------------ breadcrumb tools
+    // ------------------------------------------------------ normal / expert mode
 
     @Override
     public void showExpertMode(ResourceAddress address) {
@@ -745,6 +801,8 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
     public void hideSwitchMode() {
         setVisible(switchModeLink, false);
     }
+
+    // ------------------------------------------------------ external / refresh
 
     @Override
     public void showExternal(PlaceRequest placeRequest) {

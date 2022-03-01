@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Added
 
+- [HAL-1415](https://issues.redhat.com/browse/HAL-1415): Add a global refresh icon to the header
 - Add code scanning workflow
 - Add label builder rule for 'OpenAPI'
 

@@ -341,7 +341,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
             } else {
                 getView().hideSwitchMode();
             }
-            if (event.isRefresh()) {
+            if (event.isRefreshable()) {
                 getView().showRefresh();
             } else {
                 getView().hideRefresh();
