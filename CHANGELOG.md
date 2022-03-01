@@ -11,6 +11,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Add code scanning workflow
 - Add label builder rule for 'OpenAPI'
 
+### Upgrades
+
+- Bump datatables.net from 1.11.4 to 1.11.5
+
 ### Removed
 
 - [HAL-1775](https://issues.redhat.com/browse/HAL-1775): Remove annotations and documentation for extension API
