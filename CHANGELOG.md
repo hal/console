@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Upgrades
 
 - Bump datatables.net from 1.11.4 to 1.11.5
+- Bump Quarkus from 2.7.2.Final to 2.7.3.Final
 
 ### Removed
 
