@@ -68,7 +68,7 @@ require("./tagmanager");
 window.c3 = require("c3");
 window.d3 = require("d3");
 window.PouchDB = require("pouchdb-browser").default;
-window.ZeroClipboard = require("zeroclipboard");
+window.ClipboardJS = require("clipboard");
 
 // TODO Web worker
 window.metadataChannel = new Worker(new URL("./worker.js", import.meta.url), {type: "module"});

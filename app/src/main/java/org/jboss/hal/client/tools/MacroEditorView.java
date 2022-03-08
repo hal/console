@@ -53,7 +53,16 @@ import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.ballroom.Skeleton.MARGIN_BIG;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.btn;
+import static org.jboss.hal.resources.CSS.btnDefault;
+import static org.jboss.hal.resources.CSS.copy;
+import static org.jboss.hal.resources.CSS.fontAwesome;
+import static org.jboss.hal.resources.CSS.macroEditor;
+import static org.jboss.hal.resources.CSS.marginRight5;
+import static org.jboss.hal.resources.CSS.noMacros;
+import static org.jboss.hal.resources.CSS.pfIcon;
+import static org.jboss.hal.resources.CSS.px;
+import static org.jboss.hal.resources.CSS.vh;
 
 public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter.MyView {
 
@@ -69,6 +78,7 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
     private final AceEditor editor;
     private final HTMLButtonElement copyToClipboard;
     private final HTMLElement row;
+    private Clipboard clipboard;
     private MacroEditorPresenter presenter;
 
     @Inject
@@ -84,7 +94,8 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
                 .build();
         empty.element().classList.add(noMacros);
 
-        ItemRenderer<Macro> itemRenderer = macro -> new ItemDisplay<Macro>() {
+        // Don't optimize! GWT compiler doesn't like diamond operators :-(
+        @SuppressWarnings("Convert2Diamond") ItemRenderer<Macro> itemRenderer = macro -> new ItemDisplay<Macro>() {
             @Override
             public String getTitle() {
                 return macro.getName();
@@ -135,8 +146,6 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
                         .title(resources.constants().copyToClipboard())
                         .add(span().css(fontAwesome("clipboard"))).element())
                 .add(editor).element();
-        Clipboard clipboard = new Clipboard(copyToClipboard);
-        clipboard.onCopy(event -> copyToClipboard(event.client));
 
         row = row()
                 .add(column(4)
@@ -158,11 +167,26 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
             adjustEditorHeight();
             return null;
         };
+
+        Clipboard.Options options = new Clipboard.Options();
+        options.text = element -> dataProvider.getSelectionInfo().getSingleSelection().asCli();
+        clipboard = new Clipboard(copyToClipboard, options);
+        clipboard.on("success", event -> {
+            Tooltip tooltip = Tooltip.element(copyToClipboard);
+            tooltip.hide()
+                    .setTitle(resources.constants().copied())
+                    .show()
+                    .onHide(() -> tooltip.setTitle(resources.constants().copyToClipboard()));
+            setTimeout((o) -> tooltip.hide(), 3000);
+        });
     }
 
     @Override
     public void detach() {
         super.detach();
+        if (clipboard != null) {
+            clipboard.destroy();
+        }
         window.onresize = null;
     }
 
@@ -216,17 +240,5 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
 
     private void loadMacro(Macro macro) {
         editor.getEditor().getSession().setValue(macro.asCli());
-    }
-
-    private void copyToClipboard(Clipboard clipboard) {
-        if (dataProvider.getSelectionInfo().getSingleSelection() != null) {
-            clipboard.setText(dataProvider.getSelectionInfo().getSingleSelection().asCli());
-            Tooltip tooltip = Tooltip.element(copyToClipboard);
-            tooltip.hide()
-                    .setTitle(resources.constants().copied())
-                    .show()
-                    .onHide(() -> tooltip.setTitle(resources.constants().copyToClipboard()));
-            setTimeout((o) -> tooltip.hide(), 1000);
-        }
     }
 }

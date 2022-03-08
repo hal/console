@@ -18,44 +18,53 @@ package org.jboss.hal.ballroom;
 import elemental2.dom.HTMLElement;
 import jsinterop.annotations.JsConstructor;
 import jsinterop.annotations.JsFunction;
-import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.resources.UIConstants.OBJECT;
 
 /**
- * Clipboard implementation based on <a href="https://zeroclipboard.github.io/">ZeroClipboard</a>.
+ * Clipboard implementation based on <a href="https://clipboardjs.com/">clipboardjs</a>.
  *
- * @see <a href="https://zeroclipboard.github.io/">https://zeroclipboard.github.io/</a>
+ * @see <a href="https://clipboardjs.com/">https://clipboardjs.com/</a>
  */
-@JsType(name = "ZeroClipboard", namespace = GLOBAL, isNative = true)
+@JsType(name = "ClipboardJS", namespace = GLOBAL, isNative = true)
 public class Clipboard {
 
     @JsConstructor
     @SuppressWarnings("UnusedParameters")
-    public Clipboard(HTMLElement element) {
+    public Clipboard(HTMLElement element, Options options) {
     }
 
-    native void on(String event, ClipboardHandler handler);
+    public native void on(String type, Handler handler);
 
-    @JsOverlay
-    public final void onCopy(ClipboardHandler handler) {
-        on("copy", handler);
-    }
-
-    public native void setText(String text);
+    public native void destroy();
 
     @JsFunction
     @FunctionalInterface
-    public interface ClipboardHandler {
+    public interface Handler {
 
-        void handleEvent(ClipboardEvent event);
+        void handle(Event event);
+    }
+
+    @JsFunction
+    @FunctionalInterface
+    public interface TextProvider {
+
+        String provideText(HTMLElement element);
     }
 
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
-    public static class ClipboardEvent {
+    public static class Options {
 
-        public Clipboard client;
+        public TextProvider text;
+    }
+
+    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+    public static class Event {
+
+        public String action;
+        public String text;
+        public HTMLElement trigger;
     }
 }
