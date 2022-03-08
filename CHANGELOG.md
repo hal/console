@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Add code scanning workflow
 - Add label builder rule for 'OpenAPI'
 
+### Changed
+
+- [HAL-1777](https://issues.redhat.com/browse/HAL-1777): Replace ZeroClipboard with clipboardjs
+
 ### Upgrades
 
 - Bump datatables.net from 1.11.4 to 1.11.5
@@ -187,14 +191,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - for changes in existing functionality
 
-### Deprecated
-
-- for soon-to-be removed features
-
-### Removed
-
-- for now removed features
-
 ### Fixed
 
 - for any bug fixes
@@ -202,6 +198,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Security
 
 - in case of vulnerabilities
+
+### Deprecated
+
+- for soon-to-be removed features
+
+### Removed
+
+- for now removed features
 
 ### Upgrades
 
