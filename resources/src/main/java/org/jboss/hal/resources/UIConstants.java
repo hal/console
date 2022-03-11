@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.resources;
 
-/** UI related constants used in more than one place. */
+/** UI related constants used in more than one place (not related to i18n). */
 public interface UIConstants {
 
     /** The time in milliseconds after one modal dialog is closed and the next one is shown. */
