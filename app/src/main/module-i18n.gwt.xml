@@ -39,6 +39,18 @@
 
     <set-configuration-property name="CssResource.enableGss" value="true"/>
 
+    <!-- We do our own log setup -->
+    <replace-with class="com.google.gwt.logging.client.LogConfiguration.LogConfigurationImplNull">
+        <when-type-is class="com.google.gwt.logging.client.LogConfiguration.LogConfigurationImplNull"/>
+    </replace-with>
+    <replace-with class="org.jboss.hal.client.logging.LogHandler">
+        <when-type-is class="com.google.gwt.logging.client.ConsoleLogHandler"/>
+    </replace-with>
+    <set-property name="gwt.logging.enabled" value="TRUE"/>
+    <set-property name="gwt.logging.logLevel" value="FINE"/>
+    <set-property name="user.agent" value="gecko1_8,safari"/>
+
+    <!-- Multiple locales -->
     <extend-property name="locale" values="en,de,es,fr,pt_BR,zh_Hans,ja"/>
     <set-property-fallback name="locale" value="en"/>
     <set-property name="locale" value="en,de,es,fr,pt_BR,zh_Hans,ja"/>
@@ -58,15 +70,4 @@
         }
         return locale_value;
     </property-provider>
-
-    <!-- We do our own log setup -->
-    <replace-with class="com.google.gwt.logging.client.LogConfiguration.LogConfigurationImplNull">
-        <when-type-is class="com.google.gwt.logging.client.LogConfiguration.LogConfigurationImplNull"/>
-    </replace-with>
-    <replace-with class="org.jboss.hal.client.logging.LogHandler">
-        <when-type-is class="com.google.gwt.logging.client.ConsoleLogHandler"/>
-    </replace-with>
-    <set-property name="gwt.logging.enabled" value="TRUE"/>
-    <set-property name="gwt.logging.logLevel" value="FINE"/>
-    <set-property name="user.agent" value="gecko1_8,safari"/>
 </module>
