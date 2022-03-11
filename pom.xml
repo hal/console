@@ -411,6 +411,12 @@
 
     <profiles>
         <profile>
+            <id>i18n</id>
+            <properties>
+                <gwt.moduleTemplate>src/main/module-i18n.gwt.xml</gwt.moduleTemplate>
+            </properties>
+        </profile>
+        <profile>
             <id>native</id>
             <activation>
                 <property>
