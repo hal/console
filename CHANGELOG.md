@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - [HAL-1415](https://issues.redhat.com/browse/HAL-1415): Add a global refresh icon to the header
 - [HAL-1776](https://issues.redhat.com/browse/HAL-1776): I18n for data tables
+- [HAL-1778](https://issues.redhat.com/browse/HAL-1778): Fix various i18n issues
 - Add missing `i18n` maven profile
 - Add code scanning workflow
 - Add label builder rule for 'OpenAPI'
