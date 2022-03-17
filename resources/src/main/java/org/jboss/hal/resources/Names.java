@@ -235,7 +235,7 @@ public interface Names {
     String MESSAGE_DRIVEN_BEAN = "Message Driven Bean";
     String MESSAGING = "Messaging";
     String MESSAGING_REMOTE_ACTIVEMQ = "Remote ActiveMQ";
-    String MICROPROFILE_CONFIG = "Microprofile Config";
+    String MICROPROFILE_CONFIG = "MicroProfile Config";
     String MICROPROFILE_HEALTH = "MicroProfile Health";
     String MICROPROFILE_METRICS = "MicroProfile Metrics";
     String MIME_MAPPING = "Mime Mapping";
