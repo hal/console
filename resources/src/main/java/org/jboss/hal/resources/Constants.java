@@ -413,6 +413,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String pause();
     String pending();
     String perPage();
+    String period();
     String pin();
     String ping();
     String platform();

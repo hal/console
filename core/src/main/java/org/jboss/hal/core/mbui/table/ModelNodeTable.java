@@ -37,6 +37,7 @@ import org.jboss.hal.ballroom.table.Scope;
 import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.Core;
 import org.jboss.hal.core.CrudOperations.AddCallback;
+import org.jboss.hal.core.NameI18n;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.AddressTemplate;
@@ -71,6 +72,12 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
         this.metadata = builder.metadata;
         this.identifier = null;
         this.identifierChecked = false;
+
+        for (Column<T> column : options.columns) {
+            if (NameI18n.shouldBeLocalized(column)) {
+                NameI18n.localize(column);
+            }
+        }
     }
 
     @Override

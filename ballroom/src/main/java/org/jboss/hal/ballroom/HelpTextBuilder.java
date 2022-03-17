@@ -36,7 +36,14 @@ import static org.jboss.hal.ballroom.HelpTextBuilder.RestartMode.ALL_SERVICES;
 import static org.jboss.hal.ballroom.HelpTextBuilder.RestartMode.NO_SERVICES;
 import static org.jboss.hal.ballroom.HelpTextBuilder.RestartMode.RESOURCE_SERVICES;
 import static org.jboss.hal.ballroom.HelpTextBuilder.RestartMode.UNKNOWN;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ALTERNATIVES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CAPABILITY_REFERENCE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.EXPRESSIONS_ALLOWED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NILLABLE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUIRES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESTART_REQUIRED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.UNIT;
 
 /**
  * Class to build a help text from an attribute description. Besides the description itself includes information about
@@ -115,9 +122,10 @@ public class HelpTextBuilder {
         }
         if (!textModules.isEmpty()) {
             help.appendHtmlConstant("<br/>");
+            SafeHtml period = SafeHtmlUtils.fromString(CONSTANTS.period() + " ");
             for (SafeHtml html : textModules) {
                 help.append(html);
-                help.append(SafeHtmlUtils.fromString(". "));
+                help.append(period);
             }
         }
 

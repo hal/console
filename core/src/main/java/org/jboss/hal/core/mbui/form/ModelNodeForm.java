@@ -55,6 +55,7 @@ import org.jboss.hal.ballroom.form.ReadOnlyStateMachine;
 import org.jboss.hal.ballroom.form.SingletonStateMachine;
 import org.jboss.hal.ballroom.form.StateMachine;
 import org.jboss.hal.core.Core;
+import org.jboss.hal.core.NameI18n;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
@@ -152,6 +153,9 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
             for (Iterator<UnboundFormItem> iterator = builder.unboundFormItems.iterator(); iterator.hasNext(); ) {
                 UnboundFormItem unboundFormItem = iterator.next();
                 if (unboundFormItem.position == index) {
+                    if (NameI18n.shouldBeLocalized(unboundFormItem.formItem)) {
+                        NameI18n.localize(unboundFormItem.formItem);
+                    }
                     addFormItem(unboundFormItem.formItem);
                     markAsUnbound(unboundFormItem.formItem.getName());
                     if (unboundFormItem.helpText != null) {
@@ -172,6 +176,9 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
                 formItem = builder.defaultFormItemProvider.createFrom(property);
             }
             if (formItem != null) {
+                if (NameI18n.shouldBeLocalized(formItem)) {
+                    NameI18n.localize(formItem);
+                }
                 addFormItem(formItem);
                 if (attribute.hasDefined(DESCRIPTION)) {
                     SafeHtml helpText = helpTextBuilder.helpText(property);
@@ -185,6 +192,9 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
 
         // add remaining unbound form items
         for (UnboundFormItem unboundFormItem : builder.unboundFormItems) {
+            if (NameI18n.shouldBeLocalized(unboundFormItem.formItem)) {
+                NameI18n.localize(unboundFormItem.formItem);
+            }
             addFormItem(unboundFormItem.formItem);
             markAsUnbound(unboundFormItem.formItem.getName());
             if (unboundFormItem.helpText != null) {

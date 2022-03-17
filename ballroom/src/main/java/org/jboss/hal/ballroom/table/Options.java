@@ -41,8 +41,42 @@ public class Options<T> {
     public int pageLength;
     public boolean searching;
     public Api.Select select;
+    public Language language;
     // not part of the DataTables API, but used internally
     String id;
     Map<String, InlineActionHandler<T>> columnActionHandler;
     public Map<Integer, String> buttonConstraints;
+
+    @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+    public static class Language {
+
+        public Aria aria;
+        public String decimal;
+        public String emptyTable;
+        public String info;
+        public String infoEmpty;
+        public String infoFiltered;
+        public String lengthMenu;
+        public String loadingRecords;
+        public Paginate paginate;
+        public String processing;
+        public String thousands;
+        public String zeroRecords;
+
+        @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+        public static class Aria {
+
+            public String sortAscending;
+            public String sortDescending;
+        }
+
+        @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
+        public static class Paginate {
+
+            public String first;
+            public String previous;
+            public String next;
+            public String last;
+        }
+    }
 }
