@@ -90,8 +90,8 @@ public final class Format {
         StringBuilder sb = new StringBuilder();
         if (day > 0) {
             sb.append(day)
-              .append(SPACE)
-              .append(day > 1 ? CONSTANTS.days() : CONSTANTS.day());
+                    .append(SPACE)
+                    .append(day > 1 ? CONSTANTS.days() : CONSTANTS.day());
         }
         // prints 0 hour in case days exists. Otherwise prints 2 days, 34 min, sounds weird.
         if (hour > 0 || (day > 0)) {
@@ -99,24 +99,24 @@ public final class Format {
                 sb.append(COMMA);
             }
             sb.append(hour)
-              .append(SPACE)
-              .append(hour > 1 ? CONSTANTS.hours() : CONSTANTS.hour());
+                    .append(SPACE)
+                    .append(hour > 1 ? CONSTANTS.hours() : CONSTANTS.hour());
         }
         if (min > 0) {
             if (sb.length() > 0) {
                 sb.append(COMMA);
             }
             sb.append(min)
-              .append(SPACE)
-              .append(min > 1 ? CONSTANTS.minutes() : CONSTANTS.minute());
+                    .append(SPACE)
+                    .append(min > 1 ? CONSTANTS.minutes() : CONSTANTS.minute());
         }
         if (sec > 0) {
             if (sb.length() > 0) {
                 sb.append(COMMA);
             }
             sb.append(sec)
-              .append(SPACE)
-              .append(sec > 1 ? CONSTANTS.seconds() : CONSTANTS.second());
+                    .append(SPACE)
+                    .append(sec > 1 ? CONSTANTS.seconds() : CONSTANTS.second());
         }
         return sb.toString();
     }
