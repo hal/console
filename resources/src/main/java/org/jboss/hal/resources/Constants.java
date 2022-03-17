@@ -198,6 +198,38 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String data();
 
+    String dataTablesSortAscending();
+
+    String dataTablesSortDescending();
+
+    String dataTablesDecimal();
+
+    String dataTablesEmptyTable();
+
+    String dataTablesInfo();
+
+    String dataTablesInfoEmpty();
+
+    String dataTablesInfoFiltered();
+
+    String dataTablesLengthMenu();
+
+    String dataTablesLoadingRecords();
+
+    String dataTablesFirst();
+
+    String dataTablesLast();
+
+    String dataTablesNext();
+
+    String dataTablesPrevious();
+
+    String dataTablesProcessing();
+
+    String dataTablesThousands();
+
+    String dataTablesZeroRecords();
+
     String day();
 
     String days();
@@ -807,6 +839,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String pending();
 
     String perPage();
+
+    String period();
 
     String pin();
 

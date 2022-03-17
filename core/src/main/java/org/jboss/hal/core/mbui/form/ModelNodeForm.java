@@ -42,6 +42,7 @@ import org.jboss.hal.ballroom.form.ReadOnlyStateMachine;
 import org.jboss.hal.ballroom.form.SingletonStateMachine;
 import org.jboss.hal.ballroom.form.StateMachine;
 import org.jboss.hal.core.Core;
+import org.jboss.hal.core.NameI18n;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
@@ -85,6 +86,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeBoolean;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
 
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
@@ -97,7 +99,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
     private final Map<String, ModelNode> attributeDescriptions;
     private final ResourceDescription resourceDescription;
     private final String attributePath;
-    private Metadata metadata;
+    private final Metadata metadata;
 
     protected ModelNodeForm(Builder<T> builder) {
         super(builder.id, builder.stateMachine(),
@@ -153,6 +155,9 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
             for (Iterator<UnboundFormItem> iterator = builder.unboundFormItems.iterator(); iterator.hasNext();) {
                 UnboundFormItem unboundFormItem = iterator.next();
                 if (unboundFormItem.position == index) {
+                    if (NameI18n.shouldBeLocalized(unboundFormItem.formItem)) {
+                        NameI18n.localize(unboundFormItem.formItem);
+                    }
                     addFormItem(unboundFormItem.formItem);
                     markAsUnbound(unboundFormItem.formItem.getName());
                     if (unboundFormItem.helpText != null) {
@@ -173,6 +178,9 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
                 formItem = builder.defaultFormItemProvider.createFrom(property);
             }
             if (formItem != null) {
+                if (NameI18n.shouldBeLocalized(formItem)) {
+                    NameI18n.localize(formItem);
+                }
                 addFormItem(formItem);
                 if (attribute.hasDefined(DESCRIPTION)) {
                     SafeHtml helpText = helpTextBuilder.helpText(property);
@@ -186,6 +194,9 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
 
         // add remaining unbound form items
         for (UnboundFormItem unboundFormItem : builder.unboundFormItems) {
+            if (NameI18n.shouldBeLocalized(unboundFormItem.formItem)) {
+                NameI18n.localize(unboundFormItem.formItem);
+            }
             addFormItem(unboundFormItem.formItem);
             markAsUnbound(unboundFormItem.formItem.getName());
             if (unboundFormItem.helpText != null) {
@@ -370,7 +381,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
      * Builder to create forms based on resource metadata. By default the form includes all non-deprecated attributes with
      * <code>"storage" =&gt; "configuration"</code>.
      */
-    @SuppressWarnings("unused")
+    @SuppressWarnings({ "rawtypes", "unused", "UnusedReturnValue" })
     public static class Builder<T extends ModelNode> {
 
         private static final String ILLEGAL_COMBINATION = "Illegal combination in ";

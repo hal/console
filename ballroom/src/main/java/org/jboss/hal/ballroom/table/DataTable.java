@@ -27,7 +27,10 @@ import org.jboss.hal.ballroom.table.Api.DrawCallback;
 import org.jboss.hal.ballroom.table.Api.SelectCallback;
 import org.jboss.hal.meta.security.AuthorisationDecision;
 import org.jboss.hal.meta.security.ElementGuard;
+import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.UIConstants;
+
+import com.google.gwt.core.client.GWT;
 
 import elemental2.dom.Element;
 import elemental2.dom.HTMLElement;
@@ -86,6 +89,7 @@ import static org.jboss.hal.resources.UIConstants.data;
  */
 public class DataTable<T> implements Table<T> {
 
+    private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final String DESELECT = "deselect";
     private static final String DRAW = "draw";
     private static final String ROW = "row";
@@ -106,6 +110,29 @@ public class DataTable<T> implements Table<T> {
                 button.table = this;
             }
         }
+        initConstants();
+    }
+
+    private void initConstants() {
+        this.options.language = new Options.Language();
+        this.options.language.aria = new Options.Language.Aria();
+        this.options.language.paginate = new Options.Language.Paginate();
+        this.options.language.aria.sortAscending = CONSTANTS.dataTablesSortAscending();
+        this.options.language.aria.sortDescending = CONSTANTS.dataTablesSortDescending();
+        this.options.language.decimal = CONSTANTS.dataTablesDecimal();
+        this.options.language.emptyTable = CONSTANTS.dataTablesEmptyTable();
+        this.options.language.info = CONSTANTS.dataTablesInfo();
+        this.options.language.infoEmpty = CONSTANTS.dataTablesInfoEmpty();
+        this.options.language.infoFiltered = CONSTANTS.dataTablesInfoFiltered();
+        this.options.language.lengthMenu = CONSTANTS.dataTablesLengthMenu();
+        this.options.language.loadingRecords = CONSTANTS.dataTablesLoadingRecords();
+        this.options.language.paginate.first = CONSTANTS.dataTablesFirst();
+        this.options.language.paginate.last = CONSTANTS.dataTablesLast();
+        this.options.language.paginate.next = CONSTANTS.dataTablesNext();
+        this.options.language.paginate.previous = CONSTANTS.dataTablesPrevious();
+        this.options.language.processing = CONSTANTS.dataTablesProcessing();
+        this.options.language.thousands = CONSTANTS.dataTablesThousands();
+        this.options.language.zeroRecords = CONSTANTS.dataTablesZeroRecords();
     }
 
     @Override
