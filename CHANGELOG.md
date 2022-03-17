@@ -10,7 +10,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - [HAL-1415](https://issues.redhat.com/browse/HAL-1415): Add a global refresh icon to the header
 - [HAL-1776](https://issues.redhat.com/browse/HAL-1776): I18n for data tables
-- [HAL-1778](https://issues.redhat.com/browse/HAL-1778): Fix various i18n issues
 - Add missing `i18n` maven profile
 - Add code scanning workflow
 - Add label builder rule for 'OpenAPI'
@@ -19,6 +18,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - [HAL-1777](https://issues.redhat.com/browse/HAL-1777): Replace ZeroClipboard with clipboardjs
 
+### Fixed 
+
+- [HAL-1778](https://issues.redhat.com/browse/HAL-1778): Fix various i18n issues
+- Fix left margin for recording icon in footer
+
 ### Removed
 
 - [HAL-1775](https://issues.redhat.com/browse/HAL-1775): Remove annotations and documentation for extension API
@@ -26,7 +30,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Upgrades
 
 - Bump datatables.net from 1.11.4 to 1.11.5
-- Bump Quarkus from 2.7.2.Final to 2.7.3.Final
+- Bump Quarkus from 2.7.2.Final to 2.7.5.Final
 - Bump mockito-core from 4.3.1 to 4.4.0
 
 ## [3.5.11] - 2022-02-24
