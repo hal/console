@@ -22,6 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - [HAL-1778](https://issues.redhat.com/browse/HAL-1778): Fix various i18n issues
 - Fix left margin for recording icon in footer
+- Fix human readable duration
 
 ### Removed
 
