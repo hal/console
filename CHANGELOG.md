@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Added
 
 - [HAL-1415](https://issues.redhat.com/browse/HAL-1415): Add a global refresh icon to the header
+- [HAL-1733](https://issues.redhat.com/browse/HAL-1733): Treat 'installed-driver-list' and 'find-non-progressing-operation' as read-only operations
 - [HAL-1776](https://issues.redhat.com/browse/HAL-1776): I18n for data tables
 - Add missing `i18n` maven profile
 - Add code scanning workflow
