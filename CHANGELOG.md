@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [3.5.12] - 2022-03-18
+
 ### Added
 
 - [HAL-1415](https://issues.redhat.com/browse/HAL-1415): Add a global refresh icon to the header
@@ -222,8 +224,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - for dependency upgrades
 -->
 
-[Unreleased]: https://github.com/hal/console/compare/v3.5.11.Final...HEAD
-[3.5.11]: https://github.com/hal/console/compare/v3.5.10...v3.5.11.Final
+[Unreleased]: https://github.com/hal/console/compare/v3.5.12.Final...HEAD
+[3.5.12]: https://github.com/hal/console/compare/v3.5.11...v3.5.12.Final
+[3.5.11]: https://github.com/hal/console/compare/v3.5.10...v3.5.11
 [3.5.10]: https://github.com/hal/console/compare/v3.5.9...v3.5.10
 [3.5.9]: https://github.com/hal/console/compare/v3.5.8...v3.5.9
 [3.5.8]: https://github.com/hal/console/compare/v3.5.7...v3.5.8
