@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Fixed 
+
+- Fix regression introduced by [HAL-1733](https://issues.redhat.com/browse/HAL-1733) 
+
 ## [3.5.12] - 2022-03-18
 
 ### Added

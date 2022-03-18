@@ -16,6 +16,8 @@
 package org.jboss.hal.dmr.dispatch;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -94,8 +96,8 @@ public class Dispatcher implements RecordingHandler {
 
     private static boolean pendingLifecycleAction = false;
 
-    private static final Set<String> READ_ONLY_OPERATIONS = Set.of(QUERY, FIND_NON_PROGRESSING_OPERATION,
-            INSTALLED_DRIVER_LIST);
+    private static final Set<String> READ_ONLY_OPERATIONS = new HashSet<>(Arrays.asList(QUERY, FIND_NON_PROGRESSING_OPERATION,
+            INSTALLED_DRIVER_LIST));
     private static final Predicate<Operation> READ_ONLY = operation -> operation.getName().startsWith("read")
             || READ_ONLY_OPERATIONS.contains(operation.getName());
 
