@@ -434,6 +434,7 @@ public interface ModelDescriptionConstants {
     String INIT = "init";
     String INPUT_ARGUMENTS = "input-arguments";
     String INPUT_STREAM_INDEX = "input-stream-index";
+    String INSTALLED_DRIVER_LIST = "installed-driver-list";
     String INSTANCE_COUNT = "instance-count";
     String INSTANCE_ID = "instance-id";
     String INTERFACE = "interface";
