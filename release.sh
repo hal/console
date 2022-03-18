@@ -153,7 +153,7 @@ msg "Update changelog"
 mvn --quiet -DskipModules keepachangelog:release &> /dev/null
 # Maven plugin keepachangelog:release uses the project version from the POM (1.2.3.Final),
 # but action mindsers/changelog-reader-action in release.yml requires a semantic version (1.2.3).
-# So replace 1.2.3.Final -> 1.2.3
+# So replace [1.2.3.Final] -> [1.2.3] and v1.2.3.Final -> v1.2.3
 sed -E -i '' -e 's/\[([0-9]+\.[0-9]+\.[0-9]+)\.Final\]/[\1]/g' -e 's/v([0-9]+\.[0-9]+\.[0-9]+)\.Final/v\1/g' CHANGELOG.md
 msg "Push changes"
 git commit --quiet -am "Release ${RELEASE_VERSION}"
