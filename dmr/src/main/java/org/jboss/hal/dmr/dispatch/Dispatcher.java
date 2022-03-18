@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import javax.inject.Inject;
 
@@ -65,7 +66,9 @@ import static elemental2.dom.DomGlobal.navigator;
 import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.config.Settings.Key.RUN_AS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.FIND_NON_PROGRESSING_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INSTALLED_DRIVER_LIST;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.OP;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.QUERY;
@@ -90,6 +93,11 @@ public class Dispatcher implements RecordingHandler {
     private static final Logger logger = LoggerFactory.getLogger(Dispatcher.class);
 
     private static boolean pendingLifecycleAction = false;
+
+    private static final Set<String> READ_ONLY_OPERATIONS = Set.of(QUERY, FIND_NON_PROGRESSING_OPERATION,
+            INSTALLED_DRIVER_LIST);
+    private static final Predicate<Operation> READ_ONLY = operation -> operation.getName().startsWith("read")
+            || READ_ONLY_OPERATIONS.contains(operation.getName());
 
     public static void setPendingLifecycleAction(boolean value) {
         pendingLifecycleAction = value;
@@ -211,6 +219,7 @@ public class Dispatcher implements RecordingHandler {
     // ------------------------------------------------------ upload
 
     public void upload(File file, Operation operation, Consumer<ModelNode> success) {
+        // noinspection Convert2Diamond
         SingleSubscriber<ModelNode> subscriber = new SingleSubscriber<ModelNode>() {
             @Override
             public void onSuccess(ModelNode modelNode) {
@@ -490,13 +499,13 @@ public class Dispatcher implements RecordingHandler {
         if (operation instanceof Composite) {
             Composite composite = (Composite) operation;
             for (Operation op : composite) {
-                if (!op.getName().startsWith("read")) {
+                if (!READ_ONLY.test(op)) {
                     return false;
                 }
             }
             return true;
         } else {
-            return operation.getName().startsWith("read") || operation.getName().equals(QUERY);
+            return READ_ONLY.test(operation);
         }
     }
 
