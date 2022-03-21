@@ -174,6 +174,15 @@ public abstract class ConnectionView extends MbuiViewImpl<ConnectionPresenter>
                 new ReadChildrenAutoComplete(mbuiContext.dispatcher(), presenter.statementContext, templates));
         pooledConnectionFactoryForm.getFormItem(CONNECTORS).registerSuggestHandler(
                 new ReadChildrenAutoComplete(mbuiContext.dispatcher(), presenter.statementContext, templates));
+
+        connectionFactoryForm.getFormItem(DISCOVERY_GROUP).registerSuggestHandler(
+                new ReadChildrenAutoComplete(mbuiContext.dispatcher(), presenter.statementContext, asList(
+                        SELECTED_SERVER_TEMPLATE.append(JGROUPS_DISCOVERY_GROUP + EQ_WILDCARD),
+                        SELECTED_SERVER_TEMPLATE.append(SOCKET_DISCOVERY_GROUP + EQ_WILDCARD))));
+        pooledConnectionFactoryForm.getFormItem(DISCOVERY_GROUP).registerSuggestHandler(
+                new ReadChildrenAutoComplete(mbuiContext.dispatcher(), presenter.statementContext, asList(
+                        SELECTED_SERVER_TEMPLATE.append(JGROUPS_DISCOVERY_GROUP + EQ_WILDCARD),
+                        SELECTED_SERVER_TEMPLATE.append(SOCKET_DISCOVERY_GROUP + EQ_WILDCARD))));
     }
 
     @Override

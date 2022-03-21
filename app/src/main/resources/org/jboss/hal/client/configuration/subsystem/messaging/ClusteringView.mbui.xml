@@ -20,79 +20,141 @@
 <view>
     <vertical-navigation id="messaging-clustering-vertical-navigation">
         <item id="messaging-broadcast-group-item" title="Broadcast Group" icon="fa fa-video-camera">
-            <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/broadcast-group=*">
-                <h1>Broadcast Group</h1>
-                <p>${metadata.getDescription().getDescription()}</p>
-                <table id="messaging-broadcast-group-table" title="Broadcast Group"
-                       form-ref="messaging-broadcast-group-form">
-                    <actions>
-                        <action title="${mbuiContext.resources().constants().add()}"
-                                handler="${presenter.addBroadcastGroup(ServerSubResource.BROADCAST_GROUP)}" constraint="add"/>
-                        <action title="${mbuiContext.resources().constants().remove()}"
-                                handler="${presenter.remove(ServerSubResource.BROADCAST_GROUP, table.selectedRow())}"
-                                scope="selected" constraint="remove"/>
-                    </actions>
-                    <columns>
-                        <column name="name" value="${row.getName()}"/>
-                    </columns>
-                </table>
-                <form id="messaging-broadcast-group-form" title="Broadcast Group"
-                      on-save="${presenter.save(ServerSubResource.BROADCAST_GROUP, form, changedValues)}"
-                      prepare-reset="${presenter.reset(ServerSubResource.BROADCAST_GROUP, form)}">
-                    <attributes>
-                        <attribute name="broadcast-period"/>
-                        <attribute name="connectors"/>
-                        <attribute name="jgroups-cluster"/>
-                        <attribute name="jgroups-channel"/>
-                        <attribute name="jgroups-stack"/>
-                        <attribute name="socket-binding">
-                            <suggest-handler>
-                                <templates>
-                                    <template address="/socket-binding-group=*/socket-binding=*"/>
-                                </templates>
-                            </suggest-handler>
-                        </attribute>
-                    </attributes>
-                </form>
-            </metadata>
+            <sub-item id="msg-jgroups-broadcast-group-item" title="JGroups Broadcast Group">
+                <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/jgroups-broadcast-group=*">
+                    <h1>JGroups Broadcast Group</h1>
+                    <p>${metadata.getDescription().getDescription()}</p>
+                    <table id="messaging-jgroups-broadcast-group-table" title="JGroups Broadcast Group"
+                           form-ref="messaging-jgroups-broadcast-group-form">
+                        <actions>
+                            <action title="${mbuiContext.resources().constants().add()}"
+                                    handler="${presenter.add(ServerSubResource.JGROUPS_BROADCAST_GROUP)}"
+                                    constraint="add"/>
+                            <action title="${mbuiContext.resources().constants().remove()}"
+                                    handler="${presenter.remove(ServerSubResource.JGROUPS_BROADCAST_GROUP, table.selectedRow())}"
+                                    scope="selected" constraint="remove"/>
+                        </actions>
+                        <columns>
+                            <column name="name" value="${row.getName()}"/>
+                        </columns>
+                    </table>
+                    <form id="messaging-jgroups-broadcast-group-form" title="JGroups Broadcast Group"
+                          on-save="${presenter.save(ServerSubResource.JGROUPS_BROADCAST_GROUP, form, changedValues)}"
+                          prepare-reset="${presenter.reset(ServerSubResource.JGROUPS_BROADCAST_GROUP, form)}">
+                        <attributes>
+                            <attribute name="broadcast-period"/>
+                            <attribute name="connectors"/>
+                            <attribute name="jgroups-cluster"/>
+                            <attribute name="jgroups-channel"/>
+                            <attribute name="jgroups-stack"/>
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
+            <sub-item id="msg-socket-broadcast-group-item" title="Socket Broadcast Group">
+                <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/socket-broadcast-group=*">
+                    <h1>Socket Broadcast Group</h1>
+                    <p>${metadata.getDescription().getDescription()}</p>
+                    <table id="messaging-socket-broadcast-group-table" title="Socket Broadcast Group"
+                           form-ref="messaging-socket-broadcast-group-form">
+                        <actions>
+                            <action title="${mbuiContext.resources().constants().add()}"
+                                    handler="${presenter.add(ServerSubResource.SOCKET_BROADCAST_GROUP)}"
+                                    constraint="add"/>
+                            <action title="${mbuiContext.resources().constants().remove()}"
+                                    handler="${presenter.remove(ServerSubResource.SOCKET_BROADCAST_GROUP, table.selectedRow())}"
+                                    scope="selected" constraint="remove"/>
+                        </actions>
+                        <columns>
+                            <column name="name" value="${row.getName()}"/>
+                        </columns>
+                    </table>
+                    <form id="messaging-socket-broadcast-group-form" title="Socket Broadcast Group"
+                          on-save="${presenter.save(ServerSubResource.SOCKET_BROADCAST_GROUP, form, changedValues)}"
+                          prepare-reset="${presenter.reset(ServerSubResource.SOCKET_BROADCAST_GROUP, form)}">
+                        <attributes>
+                            <attribute name="broadcast-period"/>
+                            <attribute name="connectors"/>
+                            <attribute name="socket-binding">
+                                <suggest-handler>
+                                    <templates>
+                                        <template address="/socket-binding-group=*/socket-binding=*"/>
+                                    </templates>
+                                </suggest-handler>
+                            </attribute>
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
         </item>
 
         <item id="messaging-discovery-group-item" title="Discovery Group" icon="fa fa-map-o">
-            <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/discovery-group=*">
-                <h1>Discovery Group</h1>
-                <p>${metadata.getDescription().getDescription()}</p>
-                <table id="messaging-discovery-group-table" title="Discovery Group"
-                       form-ref="messaging-discovery-group-form">
-                    <actions>
-                        <action title="${mbuiContext.resources().constants().add()}"
-                                handler="${presenter.addDiscoveryGroup(ServerSubResource.DISCOVERY_GROUP)}" constraint="add"/>
-                        <action title="${mbuiContext.resources().constants().remove()}"
-                                handler="${presenter.remove(ServerSubResource.DISCOVERY_GROUP, table.selectedRow())}"
-                                scope="selected" constraint="remove"/>
-                    </actions>
-                    <columns>
-                        <column name="name" value="${row.getName()}"/>
-                    </columns>
-                </table>
-                <form id="messaging-discovery-group-form" title="Discovery Group"
-                      on-save="${presenter.save(ServerSubResource.DISCOVERY_GROUP, form, changedValues)}"
-                      prepare-reset="${presenter.reset(ServerSubResource.DISCOVERY_GROUP, form)}">
-                    <attributes>
-                        <attribute name="initial-wait-timeout"/>
-                        <attribute name="refresh-timeout"/>
-                        <attribute name="jgroups-cluster"/>
-                        <attribute name="jgroups-channel"/>
-                        <attribute name="jgroups-stack"/>
-                        <attribute name="socket-binding">
-                            <suggest-handler>
-                                <templates>
-                                    <template address="/socket-binding-group=*/socket-binding=*"/>
-                                </templates>
-                            </suggest-handler>
-                        </attribute>
-                    </attributes>
-                </form>
-            </metadata>
+            <sub-item id="msg-jgroups-discovery-group-item" title="JGroups Discovery Group">
+                <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/jgroups-discovery-group=*">
+                    <h1>JGroups Discovery Group</h1>
+                    <p>${metadata.getDescription().getDescription()}</p>
+                    <table id="messaging-jgroups-discovery-group-table" title="JGroups Discovery Group"
+                           form-ref="messaging-jgroups-discovery-group-form">
+                        <actions>
+                            <action title="${mbuiContext.resources().constants().add()}"
+                                    handler="${presenter.add(ServerSubResource.JGROUPS_DISCOVERY_GROUP)}"
+                                    constraint="add"/>
+                            <action title="${mbuiContext.resources().constants().remove()}"
+                                    handler="${presenter.remove(ServerSubResource.JGROUPS_DISCOVERY_GROUP, table.selectedRow())}"
+                                    scope="selected" constraint="remove"/>
+                        </actions>
+                        <columns>
+                            <column name="name" value="${row.getName()}"/>
+                        </columns>
+                    </table>
+                    <form id="messaging-jgroups-discovery-group-form" title="JGroups Discovery Group"
+                          on-save="${presenter.save(ServerSubResource.JGROUPS_DISCOVERY_GROUP, form, changedValues)}"
+                          prepare-reset="${presenter.reset(ServerSubResource.JGROUPS_DISCOVERY_GROUP, form)}">
+                        <attributes>
+                            <attribute name="initial-wait-timeout"/>
+                            <attribute name="refresh-timeout"/>
+                            <attribute name="jgroups-cluster"/>
+                            <attribute name="jgroups-channel"/>
+                            <attribute name="jgroups-stack"/>
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
+            <sub-item id="msg-socket-discovery-group-item" title="Socket Discovery Group">
+                <metadata address="/{selected.profile}/subsystem=messaging-activemq/server=*/socket-discovery-group=*">
+                    <h1>Socket Discovery Group</h1>
+                    <p>${metadata.getDescription().getDescription()}</p>
+                    <table id="messaging-socket-discovery-group-table" title="Socket Discovery Group"
+                           form-ref="messaging-socket-discovery-group-form">
+                        <actions>
+                            <action title="${mbuiContext.resources().constants().add()}"
+                                    handler="${presenter.add(ServerSubResource.SOCKET_DISCOVERY_GROUP)}"
+                                    constraint="add"/>
+                            <action title="${mbuiContext.resources().constants().remove()}"
+                                    handler="${presenter.remove(ServerSubResource.SOCKET_DISCOVERY_GROUP, table.selectedRow())}"
+                                    scope="selected" constraint="remove"/>
+                        </actions>
+                        <columns>
+                            <column name="name" value="${row.getName()}"/>
+                        </columns>
+                    </table>
+                    <form id="messaging-socket-discovery-group-form" title="Socket Discovery Group"
+                          on-save="${presenter.save(ServerSubResource.SOCKET_DISCOVERY_GROUP, form, changedValues)}"
+                          prepare-reset="${presenter.reset(ServerSubResource.SOCKET_DISCOVERY_GROUP, form)}">
+                        <attributes>
+                            <attribute name="initial-wait-timeout"/>
+                            <attribute name="refresh-timeout"/>
+                            <attribute name="socket-binding">
+                                <suggest-handler>
+                                    <templates>
+                                        <template address="/socket-binding-group=*/socket-binding=*"/>
+                                    </templates>
+                                </suggest-handler>
+                            </attribute>
+                        </attributes>
+                    </form>
+                </metadata>
+            </sub-item>
         </item>
 
         <item id="messaging-cluster-connection-item" title="Cluster Connection" icon="pficon pficon-network">

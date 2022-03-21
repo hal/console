@@ -109,15 +109,17 @@ public class RemoteActiveMQPresenter
     @Override
     protected void reload() {
         ResourceAddress address = MESSAGING_SUBSYSTEM_TEMPLATE.resolve(statementContext);
-        crud.readChildren(address, asList(CONNECTOR, IN_VM_CONNECTOR, HTTP_CONNECTOR, REMOTE_CONNECTOR, DISCOVERY_GROUP,
-                CONNECTION_FACTORY, POOLED_CONNECTION_FACTORY, EXTERNAL_JMS_QUEUE, EXTERNAL_JMS_TOPIC),
+        crud.readChildren(address, asList(CONNECTOR, IN_VM_CONNECTOR, HTTP_CONNECTOR, REMOTE_CONNECTOR, JGROUPS_DISCOVERY_GROUP,
+                SOCKET_DISCOVERY_GROUP, CONNECTION_FACTORY, POOLED_CONNECTION_FACTORY, EXTERNAL_JMS_QUEUE,
+                EXTERNAL_JMS_TOPIC),
                 result -> {
                     int i = 0;
                     getView().updateConnector(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateInVmConnector(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateHttpConnector(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateRemoteConnector(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
-                    getView().updateDiscoveryGroup(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateJGroupsDiscoveryGroup(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateSocketDiscoveryGroup(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateConnectionFactory(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updatePooledConnectionFactory(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateExternalQueue(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
@@ -172,7 +174,8 @@ public class RemoteActiveMQPresenter
         form.getFormItem(CONNECTORS).registerSuggestHandler(
                 new ReadChildrenAutoComplete(dispatcher, statementContext, connectors));
         form.getFormItem(DISCOVERY_GROUP).registerSuggestHandler(
-                new ReadChildrenAutoComplete(dispatcher, statementContext, DISCOVERY_GROUP_REMOTE_TEMPLATE));
+                new ReadChildrenAutoComplete(dispatcher, statementContext, asList(JGROUPS_DISCOVERY_GROUP_REMOTE_TEMPLATE,
+                        SOCKET_DISCOVERY_GROUP_REMOTE_TEMPLATE)));
 
         new AddResourceDialog(resources.messages().addResourceTitle(ssr.type), form, (name, model) -> {
             ResourceAddress address = ssr.template.resolve(statementContext, name);
@@ -208,8 +211,9 @@ public class RemoteActiveMQPresenter
     // @formatter:off
     @ProxyCodeSplit
     @Requires({ CONNECTOR_REMOTE_ADDRESS, IN_VM_CONNECTOR_REMOTE_ADDRESS, HTTP_CONNECTOR_REMOTE_ADDRESS,
-            REMOTE_CONNECTOR_REMOTE_ADDRESS, DISCOVERY_GROUP_REMOTE_ADDRESS, CONNECTION_FACTORY_REMOTE_ADDRESS,
-            POOLED_CONNECTION_FACTORY_REMOTE_ADDRESS, EXTERNAL_JMS_QUEUE_ADDRESS, EXTERNAL_JMS_TOPIC_ADDRESS
+            REMOTE_CONNECTOR_REMOTE_ADDRESS, JGROUPS_DISCOVERY_GROUP_REMOTE_ADDRESS, SOCKET_DISCOVERY_GROUP_REMOTE_ADDRESS,
+            CONNECTION_FACTORY_REMOTE_ADDRESS, POOLED_CONNECTION_FACTORY_REMOTE_ADDRESS, EXTERNAL_JMS_QUEUE_ADDRESS,
+            EXTERNAL_JMS_TOPIC_ADDRESS
     })
     @NameToken(NameTokens.MESSAGING_REMOTE_ACTIVEMQ)
     public interface MyProxy extends ProxyPlace<RemoteActiveMQPresenter> {
@@ -224,7 +228,9 @@ public class RemoteActiveMQPresenter
 
         void updateRemoteConnector(List<NamedNode> remoteConnectors);
 
-        void updateDiscoveryGroup(List<NamedNode> connectorServices);
+        void updateSocketDiscoveryGroup(List<NamedNode> connectorServices);
+
+        void updateJGroupsDiscoveryGroup(List<NamedNode> connectorServices);
 
         void updateConnectionFactory(List<NamedNode> connectionFactories);
 

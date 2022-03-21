@@ -116,26 +116,50 @@
         </item>
 
         <item id="msg-remote-discovery-group-item" title="Discovery Group" icon="pficon pficon-service">
-            <metadata address="/{selected.profile}/subsystem=messaging-activemq/discovery-group=*">
-                <h1>Discovery Group</h1>
-                <p>${metadata.getDescription().getDescription()}</p>
-                <table id="msg-remote-discovery-group-table" title="Discovery Group"
-                       form-ref="msg-remote-discovery-group-form">
-                    <actions>
-                        <action title="${mbuiContext.resources().constants().add()}"
-                                handler="${presenter.add(RemoteActiveMQSubResource.DISCOVERY_GROUP)}" constraint="add"/>
-                        <action title="${mbuiContext.resources().constants().remove()}"
-                                handler="${presenter.remove(RemoteActiveMQSubResource.DISCOVERY_GROUP, table.selectedRow())}"
-                                scope="selected" constraint="remove"/>
-                    </actions>
-                    <columns>
-                        <column name="name" value="${row.getName()}"/>
-                    </columns>
-                </table>
-                <form id="msg-remote-discovery-group-form" title="Discovery Group"
-                      on-save="${presenter.save(RemoteActiveMQSubResource.DISCOVERY_GROUP, form, changedValues)}"
-                      prepare-reset="${presenter.reset(RemoteActiveMQSubResource.DISCOVERY_GROUP, form)}"/>
-            </metadata>
+            <sub-item id="msg-remote-jgroups-discovery-group-item" title="JGroups Discovery Group">
+                <metadata address="/{selected.profile}/subsystem=messaging-activemq/jgroups-discovery-group=*">
+                    <h1>JGroups Discovery Group</h1>
+                    <p>${metadata.getDescription().getDescription()}</p>
+                    <table id="msg-remote-jgroups-discovery-group-table" title="JGroups Discovery Group"
+                           form-ref="msg-remote-jgroups-discovery-group-form">
+                        <actions>
+                            <action title="${mbuiContext.resources().constants().add()}"
+                                    handler="${presenter.add(RemoteActiveMQSubResource.JGROUPS_DISCOVERY_GROUP)}" constraint="add"/>
+                            <action title="${mbuiContext.resources().constants().remove()}"
+                                    handler="${presenter.remove(RemoteActiveMQSubResource.JGROUPS_DISCOVERY_GROUP, table.selectedRow())}"
+                                    scope="selected" constraint="remove"/>
+                        </actions>
+                        <columns>
+                            <column name="name" value="${row.getName()}"/>
+                        </columns>
+                    </table>
+                    <form id="msg-remote-jgroups-discovery-group-form" title="JGroups Discovery Group"
+                          on-save="${presenter.save(RemoteActiveMQSubResource.JGROUPS_DISCOVERY_GROUP, form, changedValues)}"
+                          prepare-reset="${presenter.reset(RemoteActiveMQSubResource.JGROUPS_DISCOVERY_GROUP, form)}"/>
+                </metadata>
+            </sub-item>
+            <sub-item id="msg-remote-socket-discovery-group-item" title="Socket Discovery Group">
+                <metadata address="/{selected.profile}/subsystem=messaging-activemq/socket-discovery-group=*">
+                    <h1>Socket Discovery Group</h1>
+                    <p>${metadata.getDescription().getDescription()}</p>
+                    <table id="msg-remote-socket-discovery-group-table" title="Socket Discovery Group"
+                           form-ref="msg-remote-socket-discovery-group-form">
+                        <actions>
+                            <action title="${mbuiContext.resources().constants().add()}"
+                                    handler="${presenter.add(RemoteActiveMQSubResource.SOCKET_DISCOVERY_GROUP)}" constraint="add"/>
+                            <action title="${mbuiContext.resources().constants().remove()}"
+                                    handler="${presenter.remove(RemoteActiveMQSubResource.SOCKET_DISCOVERY_GROUP, table.selectedRow())}"
+                                    scope="selected" constraint="remove"/>
+                        </actions>
+                        <columns>
+                            <column name="name" value="${row.getName()}"/>
+                        </columns>
+                    </table>
+                    <form id="msg-remote-socket-discovery-group-form" title="Socket Discovery Group"
+                          on-save="${presenter.save(RemoteActiveMQSubResource.SOCKET_DISCOVERY_GROUP, form, changedValues)}"
+                          prepare-reset="${presenter.reset(RemoteActiveMQSubResource.SOCKET_DISCOVERY_GROUP, form)}"/>
+                </metadata>
+            </sub-item>
         </item>
 
         <item id="msg-remote-connection-factory-item" title="Connection Factory" icon="fa fa-cubes">

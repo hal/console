@@ -69,8 +69,10 @@ public abstract class RemoteActiveMQView extends MbuiViewImpl<RemoteActiveMQPres
     @MbuiElement("msg-remote-http-connector-form") Form<NamedNode> httpConnectorForm;
     @MbuiElement("msg-remote-remote-connector-table") Table<NamedNode> remoteConnectorTable;
     @MbuiElement("msg-remote-remote-connector-form") Form<NamedNode> remoteConnectorForm;
-    @MbuiElement("msg-remote-discovery-group-table") Table<NamedNode> discoveryGroupTable;
-    @MbuiElement("msg-remote-discovery-group-form") Form<NamedNode> discoveryGroupForm;
+    @MbuiElement("msg-remote-socket-discovery-group-table") Table<NamedNode> socketDiscoveryGroupTable;
+    @MbuiElement("msg-remote-jgroups-discovery-group-table") Table<NamedNode> jgroupsDiscoveryGroupTable;
+    @MbuiElement("msg-remote-socket-discovery-group-form") Form<NamedNode> socketDiscoveryGroupForm;
+    @MbuiElement("msg-remote-jgroups-discovery-group-form") Form<NamedNode> jgroupsDiscoveryGroupForm;
     @MbuiElement("msg-remote-connection-factory-table") Table<NamedNode> connectionFactoryTable;
     @MbuiElement("msg-remote-connection-factory-form") Form<NamedNode> connectionFactoryForm;
     @MbuiElement("msg-remote-external-queue-table") Table<NamedNode> externalQueueTable;
@@ -166,18 +168,18 @@ public abstract class RemoteActiveMQView extends MbuiViewImpl<RemoteActiveMQPres
                 new ReadChildrenAutoComplete(mbuiContext.dispatcher(), presenter.statementContext, connectors));
         connectionFactoryForm.getFormItem(DISCOVERY_GROUP).registerSuggestHandler(
                 new ReadChildrenAutoComplete(mbuiContext.dispatcher(), presenter.statementContext,
-                        DISCOVERY_GROUP_REMOTE_TEMPLATE));
+                        asList(JGROUPS_DISCOVERY_GROUP_REMOTE_TEMPLATE, SOCKET_DISCOVERY_GROUP_REMOTE_TEMPLATE)));
 
         pooledConnectionFactoryForm.getFormItem(CONNECTORS).registerSuggestHandler(
                 new ReadChildrenAutoComplete(mbuiContext.dispatcher(), presenter.statementContext, connectors));
         pooledConnectionFactoryForm.getFormItem(DISCOVERY_GROUP).registerSuggestHandler(
                 new ReadChildrenAutoComplete(mbuiContext.dispatcher(), presenter.statementContext,
-                        DISCOVERY_GROUP_REMOTE_TEMPLATE));
+                        asList(JGROUPS_DISCOVERY_GROUP_REMOTE_TEMPLATE, SOCKET_DISCOVERY_GROUP_REMOTE_TEMPLATE)));
 
         connectorForm.getFormItem(SOCKET_BINDING).registerSuggestHandler(new ReadChildrenAutoComplete(
                 mbuiContext.dispatcher(), statementContext(), SOCKET_BINDING_TEMPLATE));
 
-        discoveryGroupForm.getFormItem(SOCKET_BINDING).registerSuggestHandler(new ReadChildrenAutoComplete(
+        socketDiscoveryGroupForm.getFormItem(SOCKET_BINDING).registerSuggestHandler(new ReadChildrenAutoComplete(
                 mbuiContext.dispatcher(), statementContext(), SOCKET_BINDING_TEMPLATE));
 
         remoteConnectorForm.getFormItem(SOCKET_BINDING).registerSuggestHandler(new ReadChildrenAutoComplete(
@@ -216,9 +218,15 @@ public abstract class RemoteActiveMQView extends MbuiViewImpl<RemoteActiveMQPres
     }
 
     @Override
-    public void updateDiscoveryGroup(List<NamedNode> nodes) {
-        discoveryGroupForm.clear();
-        discoveryGroupTable.update(nodes);
+    public void updateSocketDiscoveryGroup(List<NamedNode> nodes) {
+        socketDiscoveryGroupForm.clear();
+        socketDiscoveryGroupTable.update(nodes);
+    }
+
+    @Override
+    public void updateJGroupsDiscoveryGroup(List<NamedNode> nodes) {
+        jgroupsDiscoveryGroupForm.clear();
+        jgroupsDiscoveryGroupTable.update(nodes);
     }
 
     @Override

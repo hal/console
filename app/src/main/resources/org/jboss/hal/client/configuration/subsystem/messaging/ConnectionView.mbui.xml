@@ -329,7 +329,7 @@
                        form-ref="messaging-connection-factory-form">
                     <actions>
                         <action title="${mbuiContext.resources().constants().add()}"
-                                handler="${presenter.add(ServerSubResource.CONNECTION_FACTORY)}" constraint="add"/>
+                                handler="${presenter.addConnectionFactory(ServerSubResource.CONNECTION_FACTORY)}" constraint="add"/>
                         <action title="${mbuiContext.resources().constants().remove()}"
                                 handler="${presenter.remove(ServerSubResource.CONNECTION_FACTORY, table.selectedRow())}"
                                 scope="selected" constraint="remove"/>
