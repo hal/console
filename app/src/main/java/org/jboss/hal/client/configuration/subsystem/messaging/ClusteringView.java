@@ -64,10 +64,14 @@ public abstract class ClusteringView extends MbuiViewImpl<ClusteringPresenter>
     }
 
     @MbuiElement("messaging-clustering-vertical-navigation") VerticalNavigation navigation;
-    @MbuiElement("messaging-broadcast-group-table") Table<NamedNode> broadcastGroupTable;
-    @MbuiElement("messaging-broadcast-group-form") Form<NamedNode> broadcastGroupForm;
-    @MbuiElement("messaging-discovery-group-table") Table<NamedNode> discoveryGroupTable;
-    @MbuiElement("messaging-discovery-group-form") Form<NamedNode> discoveryGroupForm;
+    @MbuiElement("messaging-jgroups-broadcast-group-table") Table<NamedNode> jgroupsBroadcastGroupTable;
+    @MbuiElement("messaging-socket-broadcast-group-table") Table<NamedNode> socketBroadcastGroupTable;
+    @MbuiElement("messaging-jgroups-broadcast-group-form") Form<NamedNode> jgroupsBroadcastGroupForm;
+    @MbuiElement("messaging-socket-broadcast-group-form") Form<NamedNode> socketBroadcastGroupForm;
+    @MbuiElement("messaging-jgroups-discovery-group-table") Table<NamedNode> jgroupsDiscoveryGroupTable;
+    @MbuiElement("messaging-socket-discovery-group-table") Table<NamedNode> socketDiscoveryGroupTable;
+    @MbuiElement("messaging-jgroups-discovery-group-form") Form<NamedNode> jgroupsDiscoveryGroupForm;
+    @MbuiElement("messaging-socket-discovery-group-form") Form<NamedNode> socketDiscoveryGroupForm;
     @MbuiElement("messaging-cluster-connection-table") Table<NamedNode> clusterConnectionTable;
     @MbuiElement("messaging-cluster-connection-form") Form<NamedNode> clusterConnectionForm;
     @MbuiElement("messaging-grouping-handler-table") Table<NamedNode> groupingHandlerTable;
@@ -153,7 +157,9 @@ public abstract class ClusteringView extends MbuiViewImpl<ClusteringPresenter>
                 SELECTED_SERVER_TEMPLATE.append(HTTP_CONNECTOR + EQ_WILDCARD),
                 SELECTED_SERVER_TEMPLATE.append(REMOTE_CONNECTOR + EQ_WILDCARD));
 
-        broadcastGroupForm.getFormItem(CONNECTORS).registerSuggestHandler(
+        jgroupsBroadcastGroupForm.getFormItem(CONNECTORS).registerSuggestHandler(
+                new ReadChildrenAutoComplete(mbuiContext.dispatcher(), presenter.statementContext, templates));
+        socketBroadcastGroupForm.getFormItem(CONNECTORS).registerSuggestHandler(
                 new ReadChildrenAutoComplete(mbuiContext.dispatcher(), presenter.statementContext, templates));
 
         clusterConnectionForm.getFormItem(CONNECTOR_NAME).registerSuggestHandler(
@@ -161,26 +167,40 @@ public abstract class ClusteringView extends MbuiViewImpl<ClusteringPresenter>
         clusterConnectionForm.getFormItem(STATIC_CONNECTORS).registerSuggestHandler(
                 new ReadChildrenAutoComplete(mbuiContext.dispatcher(), presenter.statementContext, templates));
         clusterConnectionForm.getFormItem(DISCOVERY_GROUP).registerSuggestHandler(
-                new ReadChildrenAutoComplete(mbuiContext.dispatcher(), presenter.statementContext,
-                        SELECTED_SERVER_TEMPLATE.append(DISCOVERY_GROUP + EQ_WILDCARD)));
+                new ReadChildrenAutoComplete(mbuiContext.dispatcher(), presenter.statementContext, asList(
+                        SELECTED_SERVER_TEMPLATE.append(JGROUPS_DISCOVERY_GROUP + EQ_WILDCARD),
+                        SELECTED_SERVER_TEMPLATE.append(SOCKET_DISCOVERY_GROUP + EQ_WILDCARD))));
 
         bridgeForm.getFormItem(DISCOVERY_GROUP).registerSuggestHandler(
-                new ReadChildrenAutoComplete(mbuiContext.dispatcher(), presenter.statementContext,
-                        SELECTED_SERVER_TEMPLATE.append(DISCOVERY_GROUP + EQ_WILDCARD)));
+                new ReadChildrenAutoComplete(mbuiContext.dispatcher(), presenter.statementContext, asList(
+                        SELECTED_SERVER_TEMPLATE.append(JGROUPS_DISCOVERY_GROUP + EQ_WILDCARD),
+                        SELECTED_SERVER_TEMPLATE.append(SOCKET_DISCOVERY_GROUP + EQ_WILDCARD))));
         bridgeForm.getFormItem(STATIC_CONNECTORS).registerSuggestHandler(
                 new ReadChildrenAutoComplete(mbuiContext.dispatcher(), presenter.statementContext, templates));
     }
 
     @Override
-    public void updateBroadcastGroup(List<NamedNode> broadcastGroups) {
-        broadcastGroupForm.clear();
-        broadcastGroupTable.update(broadcastGroups);
+    public void updateJGroupsBroadcastGroup(List<NamedNode> broadcastGroups) {
+        jgroupsBroadcastGroupForm.clear();
+        jgroupsBroadcastGroupTable.update(broadcastGroups);
     }
 
     @Override
-    public void updateDiscoveryGroup(List<NamedNode> discoveryGroups) {
-        discoveryGroupForm.clear();
-        discoveryGroupTable.update(discoveryGroups);
+    public void updateJGroupsDiscoveryGroup(List<NamedNode> discoveryGroups) {
+        jgroupsDiscoveryGroupForm.clear();
+        jgroupsDiscoveryGroupTable.update(discoveryGroups);
+    }
+
+    @Override
+    public void updateSocketBroadcastGroup(List<NamedNode> broadcastGroups) {
+        socketBroadcastGroupForm.clear();
+        socketBroadcastGroupTable.update(broadcastGroups);
+    }
+
+    @Override
+    public void updateSocketDiscoveryGroup(List<NamedNode> discoveryGroups) {
+        socketDiscoveryGroupForm.clear();
+        socketDiscoveryGroupTable.update(discoveryGroups);
     }
 
     @Override

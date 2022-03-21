@@ -16,14 +16,11 @@
 package org.jboss.hal.client.configuration.subsystem.messaging;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.form.FormValidation;
-import org.jboss.hal.ballroom.form.ValidationResult;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
@@ -100,14 +97,17 @@ public class ClusteringPresenter
     @Override
     protected void reload() {
         ResourceAddress address = SELECTED_SERVER_TEMPLATE.resolve(statementContext);
-        crud.readChildren(address, asList(BROADCAST_GROUP, DISCOVERY_GROUP,
+        crud.readChildren(address, asList(JGROUPS_BROADCAST_GROUP, SOCKET_BROADCAST_GROUP,
+                JGROUPS_DISCOVERY_GROUP, SOCKET_DISCOVERY_GROUP,
                 CLUSTER_CONNECTION, GROUPING_HANDLER, BRIDGE),
                 result -> {
-                    getView().updateBroadcastGroup(asNamedNodes(result.step(0).get(RESULT).asPropertyList()));
-                    getView().updateDiscoveryGroup(asNamedNodes(result.step(1).get(RESULT).asPropertyList()));
-                    getView().updateClusterConnection(asNamedNodes(result.step(2).get(RESULT).asPropertyList()));
-                    getView().updateGroupingHandler(asNamedNodes(result.step(3).get(RESULT).asPropertyList()));
-                    getView().updateBridge(asNamedNodes(result.step(4).get(RESULT).asPropertyList()));
+                    getView().updateJGroupsBroadcastGroup(asNamedNodes(result.step(0).get(RESULT).asPropertyList()));
+                    getView().updateSocketBroadcastGroup(asNamedNodes(result.step(1).get(RESULT).asPropertyList()));
+                    getView().updateJGroupsDiscoveryGroup(asNamedNodes(result.step(2).get(RESULT).asPropertyList()));
+                    getView().updateSocketDiscoveryGroup(asNamedNodes(result.step(3).get(RESULT).asPropertyList()));
+                    getView().updateClusterConnection(asNamedNodes(result.step(4).get(RESULT).asPropertyList()));
+                    getView().updateGroupingHandler(asNamedNodes(result.step(5).get(RESULT).asPropertyList()));
+                    getView().updateBridge(asNamedNodes(result.step(6).get(RESULT).asPropertyList()));
                 });
     }
 
@@ -126,6 +126,10 @@ public class ClusteringPresenter
                 SELECTED_SERVER_TEMPLATE.append(REMOTE_CONNECTOR + EQ_WILDCARD));
         form.getFormItem(CONNECTOR_NAME).registerSuggestHandler(
                 new ReadChildrenAutoComplete(dispatcher, statementContext, templates));
+        form.getFormItem(DISCOVERY_GROUP).registerSuggestHandler(
+                new ReadChildrenAutoComplete(dispatcher, statementContext, asList(
+                        SELECTED_SERVER_TEMPLATE.append(JGROUPS_DISCOVERY_GROUP + EQ_WILDCARD),
+                        SELECTED_SERVER_TEMPLATE.append(SOCKET_DISCOVERY_GROUP + EQ_WILDCARD))));
 
         new AddResourceDialog(resources.messages().addResourceTitle(ssr.type), form, (name, model) -> {
             ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(ssr.resource + "=" + name)
@@ -150,8 +154,9 @@ public class ClusteringPresenter
                 SELECTED_SERVER_TEMPLATE.append(HTTP_CONNECTOR + EQ_WILDCARD),
                 SELECTED_SERVER_TEMPLATE.append(REMOTE_CONNECTOR + EQ_WILDCARD));
         form.getFormItem(DISCOVERY_GROUP).registerSuggestHandler(
-                new ReadChildrenAutoComplete(dispatcher, statementContext,
-                        SELECTED_SERVER_TEMPLATE.append(DISCOVERY_GROUP + EQ_WILDCARD)));
+                new ReadChildrenAutoComplete(dispatcher, statementContext, asList(
+                        SELECTED_SERVER_TEMPLATE.append(JGROUPS_DISCOVERY_GROUP + EQ_WILDCARD),
+                        SELECTED_SERVER_TEMPLATE.append(SOCKET_DISCOVERY_GROUP + EQ_WILDCARD))));
         form.getFormItem(STATIC_CONNECTORS).registerSuggestHandler(
                 new ReadChildrenAutoComplete(dispatcher, statementContext, templates));
 
@@ -167,84 +172,27 @@ public class ClusteringPresenter
         return bridgeName != null ? SELECTED_BRIDGE_TEMPLATE.resolve(statementContext, bridgeName) : null;
     }
 
-    // Include JGROUPS_CLUSTER and SOCKET_BINDING fields in the Add form, as one of these fields is required.
-    void addBroadcastGroup(ServerSubResource ssr) {
-        List<AddressTemplate> templates = asList(
-                SELECTED_SERVER_TEMPLATE.append(CONNECTOR + EQ_WILDCARD),
-                SELECTED_SERVER_TEMPLATE.append(IN_VM_CONNECTOR + EQ_WILDCARD),
-                SELECTED_SERVER_TEMPLATE.append(HTTP_CONNECTOR + EQ_WILDCARD),
-                SELECTED_SERVER_TEMPLATE.append(REMOTE_CONNECTOR + EQ_WILDCARD));
-
-        showBroadcastOrDiscoveryGroupAddDialog(ssr,
-                formBuilderAugmentor -> {
-                    formBuilderAugmentor.include(CONNECTORS);
-                },
-                formAugmentor -> {
-                    formAugmentor.getFormItem(CONNECTORS).registerSuggestHandler(
-                            new ReadChildrenAutoComplete(dispatcher, statementContext, templates));
-                });
-    }
-
-    // Include JGROUPS_CLUSTER and SOCKET_BINDING fields in the Add form, as one of these fields is required.
-    void addDiscoveryGroup(ServerSubResource ssr) {
-        showBroadcastOrDiscoveryGroupAddDialog(ssr, b -> {
-        }, f -> {
-        });
-    }
-
-    void showBroadcastOrDiscoveryGroupAddDialog(ServerSubResource ssr,
-            Consumer<ModelNodeForm.Builder<ModelNode>> formBuilderAugmenter,
-            Consumer<Form<ModelNode>> formAugmenter) {
-        Metadata metadata = metadataRegistry.lookup(ssr.template);
-        NameItem nameItem = new NameItem();
-        ModelNodeForm.Builder<ModelNode> formBuilder = new ModelNodeForm.Builder<>(Ids.build(ssr.baseId, Ids.ADD), metadata)
-                .unboundFormItem(nameItem, 0)
-                .fromRequestProperties()
-                .include(JGROUPS_CLUSTER, SOCKET_BINDING)
-                .unsorted();
-        formBuilderAugmenter.accept(formBuilder);
-
-        Form<ModelNode> form = formBuilder.build();
-        formAugmenter.accept(form);
-
-        // validation that requires one of jgroups-cluster and socket-binding to be configured
-        FormValidation<ModelNode> jgroupsOrSocketValidation = new FormValidation<ModelNode>() {
-            @Override
-            public ValidationResult validate(Form<ModelNode> form) {
-                if (form.getFormItem(JGROUPS_CLUSTER).isEmpty() && form.getFormItem(SOCKET_BINDING).isEmpty()) {
-                    return ValidationResult.invalid(resources.messages().jgroupsClusterOrSocketBindingMustBeSet());
-                }
-                return ValidationResult.OK;
-            }
-        };
-
-        form.getFormItem(SOCKET_BINDING).registerSuggestHandler(
-                new ReadChildrenAutoComplete(dispatcher, statementContext, SOCKET_BINDING_TEMPLATE));
-        form.addFormValidation(jgroupsOrSocketValidation);
-
-        new AddResourceDialog(resources.messages().addResourceTitle(ssr.type), form, (name, model) -> {
-            name = nameItem.getValue();
-            ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(ssr.resource + "=" + name)
-                    .resolve(statementContext);
-            crud.add(ssr.type, name, address, model, (n, a) -> reload());
-        }).show();
-    }
-
     // @formatter:off
     @ProxyCodeSplit
     @Requires({ BRIDGE_ADDRESS,
-            BROADCAST_GROUP_ADDRESS,
+            JGROUPS_BROADCAST_GROUP_ADDRESS,
+            SOCKET_BROADCAST_GROUP_ADDRESS,
             CLUSTER_CONNECTION_ADDRESS,
-            DISCOVERY_GROUP_ADDRESS,
+            JGROUPS_DISCOVERY_GROUP_ADDRESS,
+            SOCKET_DISCOVERY_GROUP_ADDRESS,
             GROUPING_HANDLER_ADDRESS })
     @NameToken(NameTokens.MESSAGING_SERVER_CLUSTERING)
     public interface MyProxy extends ProxyPlace<ClusteringPresenter> {
     }
 
     public interface MyView extends MbuiView<ClusteringPresenter> {
-        void updateBroadcastGroup(List<NamedNode> broadcastGroups);
+        void updateJGroupsBroadcastGroup(List<NamedNode> broadcastGroups);
 
-        void updateDiscoveryGroup(List<NamedNode> discoveryGroups);
+        void updateJGroupsDiscoveryGroup(List<NamedNode> discoveryGroups);
+
+        void updateSocketBroadcastGroup(List<NamedNode> broadcastGroups);
+
+        void updateSocketDiscoveryGroup(List<NamedNode> discoveryGroups);
 
         void updateClusterConnection(List<NamedNode> clusterConnections);
 

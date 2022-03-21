@@ -110,7 +110,6 @@ public interface ModelDescriptionConstants {
     String BOUND_ADDRESS = "bound-address";
     String BOUND_PORT = "bound-port";
     String BRIDGE = "bridge";
-    String BROADCAST_GROUP = "broadcast-group";
     String BROWSE = "browse";
     String BROWSE_CONTENT = "browse-content";
     String BROWSE_ONLY = "browse-only";
@@ -456,7 +455,9 @@ public interface ModelDescriptionConstants {
     String JDBC_REALM = "jdbc-realm";
     String JDR = "jdr";
     String JGROUPS = "jgroups";
+    String JGROUPS_BROADCAST_GROUP = "jgroups-broadcast-group";
     String JGROUPS_CLUSTER = "jgroups-cluster";
+    String JGROUPS_DISCOVERY_GROUP = "jgroups-discovery-group";
     String JMS_BRIDGE = "jms-bridge";
     String JMS_DELIVERY_MODE = "JMSDeliveryMode";
     String JMS_EXPIRATION = "JMSExpiration";
@@ -898,6 +899,8 @@ public interface ModelDescriptionConstants {
     String SOCKET_BINDING_PORT_OFFSET = "socket-binding-port-offset";
     String SOCKET_BINDING_REF = "socket-binding-ref";
     String SOCKET_BINDINGS = "socket-bindings";
+    String SOCKET_BROADCAST_GROUP = "socket-broadcast-group";
+    String SOCKET_DISCOVERY_GROUP = "socket-discovery-group";
     String SOCKET_HANDLER = "socket-handler";
     String SOCKET_TIMEOUT = "socket-timeout";
     String SOURCE = "source";

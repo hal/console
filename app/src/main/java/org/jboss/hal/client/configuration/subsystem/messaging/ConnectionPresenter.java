@@ -175,6 +175,30 @@ public class ConnectionPresenter
         }).show();
     }
 
+    // creation form form connection factory - this was added in order to define suggestion handler for discovery-group attr
+    void addConnectionFactory(ServerSubResource ssr) {
+        Metadata metadata = metadataRegistry.lookup(ssr.template);
+        NameItem nameItem = new NameItem();
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(ssr.baseId, Ids.ADD), metadata)
+                .unboundFormItem(nameItem, 0)
+                .fromRequestProperties()
+                .include("entries", DISCOVERY_GROUP, CONNECTORS)
+                .unsorted()
+                .build();
+
+        form.getFormItem(DISCOVERY_GROUP).registerSuggestHandler(
+                new ReadChildrenAutoComplete(dispatcher, statementContext, asList(
+                        SELECTED_SERVER_TEMPLATE.append(JGROUPS_DISCOVERY_GROUP + EQ_WILDCARD),
+                        SELECTED_SERVER_TEMPLATE.append(SOCKET_DISCOVERY_GROUP + EQ_WILDCARD))));
+
+        new AddResourceDialog(resources.messages().addResourceTitle(ssr.type), form, (name, model) -> {
+            name = nameItem.getValue();
+            ResourceAddress address = SELECTED_SERVER_TEMPLATE.append(ssr.resource + EQ + name)
+                    .resolve(statementContext);
+            crud.add(ssr.type, name, address, model, (n, a) -> reload());
+        }).show();
+    }
+
     void addPooledConnectionFactory(ServerSubResource ssr) {
         Metadata metadata = metadataRegistry.lookup(ssr.template);
         NameItem nameItem = new NameItem();
@@ -191,8 +215,9 @@ public class ConnectionPresenter
                 SELECTED_SERVER_TEMPLATE.append(HTTP_CONNECTOR + EQ_WILDCARD),
                 SELECTED_SERVER_TEMPLATE.append(REMOTE_CONNECTOR + EQ_WILDCARD));
         form.getFormItem(DISCOVERY_GROUP).registerSuggestHandler(
-                new ReadChildrenAutoComplete(dispatcher, statementContext,
-                        SELECTED_SERVER_TEMPLATE.append(DISCOVERY_GROUP + EQ_WILDCARD)));
+                new ReadChildrenAutoComplete(dispatcher, statementContext, asList(
+                        SELECTED_SERVER_TEMPLATE.append(JGROUPS_DISCOVERY_GROUP + EQ_WILDCARD),
+                        SELECTED_SERVER_TEMPLATE.append(SOCKET_DISCOVERY_GROUP + EQ_WILDCARD))));
         form.getFormItem(CONNECTORS).registerSuggestHandler(
                 new ReadChildrenAutoComplete(dispatcher, statementContext, templates));
 

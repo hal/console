@@ -514,7 +514,6 @@ public interface Ids {
     String MESSAGING_ACCEPTOR = "messaging-acceptor";
     String MESSAGING_ADDRESS_SETTING = "messaging-address-setting";
     String MESSAGING_BRIDGE = "messaging-bridge";
-    String MESSAGING_BROADCAST_GROUP = "messaging-broadcast-group";
     String MESSAGING_CATEGORY = "messaging-category";
     String MESSAGING_CATEGORY_RUNTIME = "messaging-category-r";
     String MESSAGING_CLUSTER_CONNECTION = "messaging-cluster-connection";
@@ -522,7 +521,6 @@ public interface Ids {
     String MESSAGING_CONNECTOR = "messaging-connector";
     String MESSAGING_CONNECTOR_SERVICE = "messaging-connector-service";
     String MESSAGING_CORE_QUEUE = "messaging-core-queue";
-    String MESSAGING_DISCOVERY_GROUP = "messaging-discovery-group";
     String MESSAGING_DIVERT = "messaging-divert";
     String MESSAGING_REMOTE_ACTIVEMQ = "msg-remote-activemq";
     String MESSAGING_GLOBAL_SETTINGS = "messaging-global-settings";
@@ -546,6 +544,8 @@ public interface Ids {
     String MESSAGING_HTTP_CONNECTOR = "messaging-http-connector";
     String MESSAGING_IN_VM_ACCEPTOR = "messaging-in-vm-acceptor";
     String MESSAGING_IN_VM_CONNECTOR = "messaging-in-vm-connector";
+    String MESSAGING_JGROUPS_BROADCAST_GROUP = "messaging-jgroups-broadcast-group";
+    String MESSAGING_JGROUPS_DISCOVERY_GROUP = "messaging-jgroups-discovery-group";
     String MESSAGING_JMS_QUEUE = "messaging-jms-queue";
     String MESSAGING_JMS_TOPIC = "messaging-jms-topic";
     String MESSAGING_POOLED_CONNECTION_FACTORY = "messaging-pooled-connection-factory";
@@ -610,6 +610,8 @@ public interface Ids {
     String MESSAGING_SERVER_TRANSACTION_ITEM = "msg-server-transaction-item";
     String MESSAGING_SERVER_TRANSACTION_FORM = "msg-server-transaction-form";
     String MESSAGING_SERVER_TRANSACTION_TABLE = "msg-server-transaction-table";
+    String MESSAGING_SOCKET_BROADCAST_GROUP = "messaging-socket-broadcast-group";
+    String MESSAGING_SOCKET_DISCOVERY_GROUP = "messaging-socket-discovery-group";
     String MICRO_PROFILE_CONFIG_SOURCE = "microprofile-config-source";
     String MICRO_PROFILE_HEALTH = "microprofile-health";
     String MICRO_PROFILE_METRICS_FORM = "microprofile-metrics-form";

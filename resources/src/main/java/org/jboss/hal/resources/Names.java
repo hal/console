@@ -49,7 +49,6 @@ public interface Names {
     String BOOT_ERRORS = "Boot Errors";
     String BOOTSTRAP = "Bootstrap";
     String BRIDGE = "Bridge";
-    String BROADCAST_GROUP = "Broadcast Group";
     String BROWSER_DEFAULT_TITLE = "%n | Management Console";
     String BROWSER_FALLBACK_TITLE = "HAL Management Console";
     String BUFFER_CACHES = "Buffer Caches";
@@ -104,7 +103,6 @@ public interface Names {
     String DEPLOYMENTS = "Deployments";
     String DESTINATION = "Destination";
     String DESTINATIONS = "Destinations";
-    String DISCOVERY_GROUP = "Discovery Group";
     String DISTRIBUTED_CACHE = "Distributed Cache";
     String DIVERT = "Divert";
     String DOMAIN_CONTROLLER = "Domain Controller";
@@ -182,6 +180,8 @@ public interface Names {
     String JDBC_DRIVERS = "JDBC Drivers";
     String JDBC_REALM = "JDBC Realm";
     String JGROUPS = "JGroups";
+    String JGROUPS_BROADCAST_GROUP = "JGroups Broadcast Group";
+    String JGROUPS_DISCOVERY_GROUP = "JGroups Discovery Group";
     String JMS_BRIDGE = "JMS Bridge";
     String JNDI = "JNDI";
     String JOB = "Job";
@@ -350,6 +350,8 @@ public interface Names {
     String SOCKET_BINDING_GROUP = "Socket Binding Group";
     String SOCKET_BINDING_GROUPS = "Socket Binding Groups";
     String SOCKET_BINDINGS = "Socket Bindings";
+    String SOCKET_BROADCAST_GROUP = "Socket Broadcast Group";
+    String SOCKET_DISCOVERY_GROUP = "Socket Discovery Group";
     String SSL = "SSL";
     String STANDALONE_EXTENSION = "Standalone Extension";
     String STANDALONE_SERVER = "Standalone Server";
