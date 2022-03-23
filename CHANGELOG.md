@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Changed
+
+- Adjust license URLs
+
 ## [3.5.12] - 2022-03-18
 
 ### Added
@@ -21,7 +25,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - [HAL-1777](https://issues.redhat.com/browse/HAL-1777): Replace ZeroClipboard with clipboardjs
 
-### Fixed 
+### Fixed
 
 - [HAL-1778](https://issues.redhat.com/browse/HAL-1778): Fix various i18n issues
 - Fix left margin for recording icon in footer
@@ -98,7 +102,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [3.5.7] - 2022-02-16
 
-### Fixed 
+### Fixed
 
 - Fix native build
 - Fix release workflow
@@ -114,7 +118,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Verify versions in release script
 - Optimise Git operations in release script
 
-### Fixed 
+### Fixed
 
 - Fix native binary generation
 
@@ -124,7 +128,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - Use PAT for release workflow
 
-### Changed 
+### Changed
 
 - Optimise release script
 
@@ -141,7 +145,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [3.5.3] - 2022-02-15
 
-### Added 
+### Added
 
 - Add verification question in release script
 
@@ -162,7 +166,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [3.5.1] - 2022-02-15
 
-### Added 
+### Added
 
 - Add release script
 
