@@ -31,8 +31,8 @@ import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.GET;
 
 public class CheckForUpdate implements InitializedTask {
 
-    private static final String METADATA_URL = "https://raw.githubusercontent.com/hal/console/master/version.txt";
-    private static Logger logger = LoggerFactory.getLogger(CheckForUpdate.class);
+    private static final String METADATA_URL = "https://raw.githubusercontent.com/hal/console/main/version.txt";
+    private static final Logger logger = LoggerFactory.getLogger(CheckForUpdate.class);
 
     private final Environment environment;
     private final EventBus eventBus;
