@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Upgrades
 
+- Bump d3 from 5.9.7 to 5.16.0
 - Bump Parcel from 2.3.2 to 2.4.0
 
 ## [3.5.12] - 2022-03-18
