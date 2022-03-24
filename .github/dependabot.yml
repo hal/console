@@ -27,3 +27,8 @@ updates:
         versions: [">=6"]
       - dependency-name: "datatables.net-buttons"
         versions: [">=2"]
+
+  - package-ecosystem: "npm"
+    directory: "/app/local_modules/parcel-resolver-theme"
+    schedule:
+      interval: "daily"
