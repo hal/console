@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.tree.Node;
@@ -39,9 +39,15 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 import elemental2.dom.HTMLElement;
 
-import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.elemento.Elements.p;
 import static org.jboss.hal.core.modelbrowser.ModelBrowser.PLACE_HOLDER_ELEMENT;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.OBJECT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STRING;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE_TYPE;
 import static org.jboss.hal.resources.CSS.lead;
 
 /**
@@ -78,7 +84,7 @@ class ResourcePanel implements Iterable<HTMLElement> {
         tabs.add(attributesId, resources.constants().attributes(), PLACE_HOLDER_ELEMENT);
         tabs.add(operationsId, resources.constants().operations(), PLACE_HOLDER_ELEMENT);
 
-        elements = Elements.collect()
+        elements = Elements.bag()
                 .add(description = p().css(lead).element())
                 .add(empty = p().textContent(resources.constants().noAttributes()).element())
                 .add(tabs.element()).elements();

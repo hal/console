@@ -22,7 +22,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import org.jboss.gwt.elemento.core.EventType;
+import org.jboss.elemento.EventType;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.VerticalNavigation;
@@ -49,7 +49,7 @@ import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLSelectElement;
 
 import static java.util.stream.Collectors.toList;
-import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.elemento.Elements.*;
 import static org.jboss.hal.ballroom.JQuery.$;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.AFFINITY;
 import static org.jboss.hal.resources.CSS.pfIcon;

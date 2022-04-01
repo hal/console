@@ -32,7 +32,6 @@ import org.jboss.hal.client.accesscontrol.AccessControlTasks.AddRoleMapping;
 import org.jboss.hal.client.accesscontrol.AccessControlTasks.CheckRoleMapping;
 import org.jboss.hal.config.Role;
 import org.jboss.hal.config.User;
-import org.jboss.hal.core.SuccessfulOutcome;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
@@ -58,6 +57,7 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
 
 import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
 
 import static java.util.Collections.singletonList;
 import static java.util.Comparator.comparing;
@@ -65,7 +65,11 @@ import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.accesscontrol.AddressTemplates.INCLUDE_TEMPLATE;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.EXCLUDE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REALM;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 import static org.jboss.hal.flow.Flow.series;
 
 class PrincipalColumn extends FinderColumn<Principal> {
@@ -160,11 +164,11 @@ class PrincipalColumn extends FinderColumn<Principal> {
         addColumnAction(columnActionFactory.refresh(Ids.build(id, "refresh"),
                 column -> accessControl.reload(() -> refresh(RESTORE_SELECTION))));
 
-        setItemsProvider((context, callback) -> {
+        setItemsProvider((context) -> new Promise<>((resolve, reject) -> {
             Set<Principal> principals = type == Principal.Type.USER ? accessControl.principals()
                     .users() : accessControl.principals().groups();
-            callback.onSuccess(principals.stream().sorted(comparing(Principal::getName)).collect(toList()));
-        });
+            resolve.onInvoke(principals.stream().sorted(comparing(Principal::getName)).collect(toList()));
+        }));
 
         setItemRenderer(item -> new ItemDisplay<Principal>() {
             @Override
@@ -236,16 +240,14 @@ class PrincipalColumn extends FinderColumn<Principal> {
         collectTasks(tasks, type, name, false, model, EXCLUDE);
         if (!tasks.isEmpty()) {
             series(new FlowContext(progress.get()), tasks)
-                    .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
-                        @Override
-                        public void onSuccess(FlowContext context) {
-                            String typeName = type == Principal.Type.USER
-                                    ? resources.constants().user()
-                                    : resources.constants().group();
-                            MessageEvent.fire(eventBus, Message.success(resources.messages()
-                                    .addResourceSuccess(typeName, name)));
-                            accessControl.reload(() -> refresh(Ids.principal(type.name().toLowerCase(), name)));
-                        }
+                    .then(__ -> {
+                        String typeName = type == Principal.Type.USER
+                                ? resources.constants().user()
+                                : resources.constants().group();
+                        MessageEvent.fire(eventBus, Message.success(resources.messages()
+                                .addResourceSuccess(typeName, name)));
+                        accessControl.reload(() -> refresh(Ids.principal(type.name().toLowerCase(), name)));
+                        return null;
                     });
         }
     }

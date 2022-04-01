@@ -17,8 +17,8 @@ package org.jboss.hal.core.modelbrowser;
 
 import java.util.List;
 
-import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
+import org.jboss.elemento.HtmlContentBuilder;
+import org.jboss.elemento.IsElement;
 import org.jboss.hal.ballroom.HelpTextBuilder;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
@@ -33,9 +33,9 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLTableRowElement;
 
-import static org.jboss.gwt.elemento.core.Elements.*;
-import static org.jboss.gwt.elemento.core.Elements.i;
-import static org.jboss.gwt.elemento.core.Elements.table;
+import static org.jboss.elemento.Elements.*;
+import static org.jboss.elemento.Elements.i;
+import static org.jboss.elemento.Elements.table;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.CSS.table;

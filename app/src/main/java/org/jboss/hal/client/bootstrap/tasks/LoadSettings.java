@@ -21,19 +21,26 @@ import org.jboss.hal.config.Build;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Settings;
 import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.resources.Names;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rx.Completable;
+import elemental2.promise.Promise;
 
-import static org.jboss.hal.config.Settings.Key.*;
+import static org.jboss.hal.config.Settings.Key.COLLECT_USER_DATA;
+import static org.jboss.hal.config.Settings.Key.LOCALE;
+import static org.jboss.hal.config.Settings.Key.PAGE_SIZE;
+import static org.jboss.hal.config.Settings.Key.POLL;
+import static org.jboss.hal.config.Settings.Key.POLL_TIME;
+import static org.jboss.hal.config.Settings.Key.RUN_AS;
+import static org.jboss.hal.config.Settings.Key.TITLE;
 
 /**
  * Loads the settings. Please make sure this is one of the last bootstrap function. This function loads the run-as role which is
  * then used by the dispatcher. But all previous bootstrap functions must not have a run-as role in the dispatcher.
  */
-public class LoadSettings implements BootstrapTask {
+public final class LoadSettings implements Task<FlowContext> {
 
     private static final Logger logger = LoggerFactory.getLogger(LoadSettings.class);
 
@@ -47,7 +54,7 @@ public class LoadSettings implements BootstrapTask {
     }
 
     @Override
-    public Completable call(FlowContext context) {
+    public Promise<FlowContext> apply(final FlowContext context) {
         settings.load(TITLE, Names.BROWSER_DEFAULT_TITLE);
         settings.load(COLLECT_USER_DATA, environment.getHalBuild() == Build.COMMUNITY);
         settings.load(LOCALE, Settings.DEFAULT_LOCALE);
@@ -56,6 +63,6 @@ public class LoadSettings implements BootstrapTask {
         settings.load(POLL_TIME, Settings.DEFAULT_POLL_TIME);
         settings.load(RUN_AS, null);
         logger.debug("Load settings: {}", settings);
-        return Completable.complete();
+        return Promise.resolve(context);
     }
 }

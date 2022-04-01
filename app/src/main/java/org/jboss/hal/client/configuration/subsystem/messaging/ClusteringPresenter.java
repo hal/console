@@ -50,8 +50,32 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
 import static java.util.Arrays.asList;
-import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.BRIDGE_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.CLUSTER_CONNECTION_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.GROUPING_HANDLER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.JGROUPS_BROADCAST_GROUP_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.JGROUPS_DISCOVERY_GROUP_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_BRIDGE_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_SERVER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SOCKET_BROADCAST_GROUP_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SOCKET_DISCOVERY_GROUP_ADDRESS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.BRIDGE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CLUSTER_CONNECTION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CONNECTOR;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CONNECTOR_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DISCOVERY_GROUP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.GROUPING_HANDLER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HTTP_CONNECTOR;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.IN_VM_CONNECTOR;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.JGROUPS_BROADCAST_GROUP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.JGROUPS_DISCOVERY_GROUP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MESSAGING_ACTIVEMQ;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.QUEUE_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOTE_CONNECTOR;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BROADCAST_GROUP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_DISCOVERY_GROUP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STATIC_CONNECTORS;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
 public class ClusteringPresenter

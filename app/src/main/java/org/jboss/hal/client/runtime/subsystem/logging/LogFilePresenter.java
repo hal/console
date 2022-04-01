@@ -53,7 +53,15 @@ import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.client.runtime.subsystem.logging.AddressTemplates.LOG_FILE_ADDRESS;
 import static org.jboss.hal.client.runtime.subsystem.logging.AddressTemplates.LOG_FILE_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.logging.AddressTemplates.PROFILE_LOG_FILE_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LINES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LOGGING;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LOGGING_PROFILE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_LOG_FILE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TAIL;
 import static org.jboss.hal.meta.token.NameTokens.LOG_FILE;
 
 public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresenter.MyView, LogFilePresenter.MyProxy> {
@@ -146,11 +154,6 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
                         clearTimeout(handle);
                         MessageEvent.fire(getEventBus(),
                                 Message.error(resources.messages().logFileError(logFileName), failure));
-                    },
-                    (operation, exception) -> {
-                        clearTimeout(handle);
-                        MessageEvent.fire(getEventBus(),
-                                Message.error(resources.messages().logFileError(logFileName), exception.getMessage()));
                     });
         } else {
             MessageEvent.fire(getEventBus(), Message.error(resources.messages().noLogFile()));
@@ -177,17 +180,11 @@ public class LogFilePresenter extends ApplicationFinderPresenter<LogFilePresente
                 List<ModelNode> linesRead = result.asList();
                 String content = linesRead.stream().map(ModelNode::asString).collect(joining("\n"));
                 getView().refresh(linesRead.size(), content);
-            },
-                    (op, failure) -> {
-                        clearTimeout(handle);
-                        MessageEvent.fire(getEventBus(),
-                                Message.error(resources.messages().logFileError(logFileName), failure));
-                    },
-                    (op, exception) -> {
-                        clearTimeout(handle);
-                        MessageEvent.fire(getEventBus(),
-                                Message.error(resources.messages().logFileError(logFileName), exception.getMessage()));
-                    });
+            }, (op, failure) -> {
+                clearTimeout(handle);
+                MessageEvent.fire(getEventBus(),
+                        Message.error(resources.messages().logFileError(logFileName), failure));
+            });
         } else {
             MessageEvent.fire(getEventBus(), Message.error(resources.messages().noLogFile()));
         }

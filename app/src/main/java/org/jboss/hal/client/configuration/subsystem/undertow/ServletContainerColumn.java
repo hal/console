@@ -35,6 +35,8 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Requires;
 
+import elemental2.promise.Promise;
+
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SERVLET_CONTAINER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.UNDERTOW_SUBSYSTEM_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
@@ -51,13 +53,13 @@ public class ServletContainerColumn extends FinderColumn<NamedNode> {
             final ItemActionFactory itemActionFactory,
             final Places places,
             final CrudOperations crud) {
+        // noinspection Convert2MethodRef
         super(new Builder<NamedNode>(finder, Ids.UNDERTOW_SERVLET_CONTAINER, Names.SERVLET_CONTAINER)
 
-                .itemsProvider(
-                        (context, callback) -> crud.readChildren(UNDERTOW_SUBSYSTEM_TEMPLATE, SERVLET_CONTAINER, 2,
-                                children -> callback.onSuccess(asNamedNodes(children))))
+                .itemsProvider(context -> crud.readChildren(UNDERTOW_SUBSYSTEM_TEMPLATE, SERVLET_CONTAINER, 2)
+                        .then(children -> Promise.resolve(asNamedNodes(children))))
 
-                .onPreview(ServletContainerPreview::new)
+                .onPreview(servletContainer -> new ServletContainerPreview(servletContainer))
                 .useFirstActionAsBreadcrumbHandler()
                 .pinnable()
                 .withFilter());

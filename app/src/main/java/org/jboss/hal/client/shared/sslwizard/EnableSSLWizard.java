@@ -23,7 +23,6 @@ import javax.inject.Provider;
 
 import org.jboss.hal.ballroom.wizard.Wizard;
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.core.SuccessfulOutcome;
 import org.jboss.hal.core.runtime.host.Host;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
@@ -45,6 +44,8 @@ import org.jboss.hal.spi.MessageEvent;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
+
+import elemental2.promise.Promise;
 
 import static elemental2.dom.DomGlobal.window;
 import static org.jboss.hal.client.shared.sslwizard.AbstractConfiguration.CAA_ALIAS;
@@ -101,11 +102,11 @@ public class EnableSSLWizard {
     private final Environment environment;
     private final StatementContext statementContext;
     private final Dispatcher dispatcher;
-    private Host host;
-    private EnableSSLPresenter presenter;
-    private Provider<Progress> progress;
-    private EventBus eventBus;
-    private Map<String, List<String>> existingResources;
+    private final Host host;
+    private final EnableSSLPresenter presenter;
+    private final Provider<Progress> progress;
+    private final EventBus eventBus;
+    private final Map<String, List<String>> existingResources;
     private boolean undertowHttps;
     private String undertowServer;
     private String httpsListener;
@@ -204,10 +205,13 @@ public class EnableSSLWizard {
                                 Operation keyStoreOp = builder.build();
 
                                 return dispatcher.execute(keyStoreOp)
-                                        .doOnError(exception -> wizard.showError(constants.failed(),
-                                                resources.messages().addKeyStoreError(keyStoreName),
-                                                exception.getMessage(), false))
-                                        .toCompletable();
+                                        .then(__ -> Promise.resolve(flowContext))
+                                        .catch_(error -> {
+                                            wizard.showError(constants.failed(),
+                                                    resources.messages().addKeyStoreError(keyStoreName),
+                                                    String.valueOf(error), false);
+                                            return Promise.reject(error);
+                                        });
                             });
 
                             tasks.add(flowContext -> {
@@ -233,8 +237,7 @@ public class EnableSSLWizard {
                                         .build();
                                 composite.add(storeOp);
 
-                                return dispatcher.execute(composite)
-                                        .toCompletable();
+                                return dispatcher.execute(composite).then(__ -> Promise.resolve(flowContext));
                             });
 
                         } else if (context.strategy.equals(EnableSSLContext.Strategy.KEYSTORE_FILE_EXISTS)) {
@@ -251,11 +254,13 @@ public class EnableSSLWizard {
                                     builder.param(RELATIVE_TO, asString(model, AbstractConfiguration.KEY_STORE_RELATIVE_TO));
                                 }
                                 Operation keyStoreOp = builder.build();
-                                return dispatcher.execute(keyStoreOp)
-                                        .doOnError(exception -> wizard.showError(constants.failed(),
-                                                resources.messages().addKeyStoreError(keyStoreName),
-                                                exception.getMessage(), false))
-                                        .toCompletable();
+                                return dispatcher.execute(keyStoreOp).then(__ -> Promise.resolve(flowContext))
+                                        .catch_(error -> {
+                                            wizard.showError(constants.failed(),
+                                                    resources.messages().addKeyStoreError(keyStoreName),
+                                                    String.valueOf(error), false);
+                                            return Promise.reject(error);
+                                        });
                             });
                         } else if (context.strategy.equals(EnableSSLContext.Strategy.KEYSTORE_OBTAIN_LETSENCRYPT)) {
 
@@ -271,11 +276,13 @@ public class EnableSSLWizard {
                                 }
                                 Operation keyStoreOp = builder.build();
 
-                                return dispatcher.execute(keyStoreOp)
-                                        .doOnError(exception -> wizard.showError(constants.failed(),
-                                                resources.messages().addKeyStoreError(keyStoreName),
-                                                exception.getMessage(), false))
-                                        .toCompletable();
+                                return dispatcher.execute(keyStoreOp).then(__ -> Promise.resolve(flowContext))
+                                        .catch_(error -> {
+                                            wizard.showError(constants.failed(),
+                                                    resources.messages().addKeyStoreError(keyStoreName),
+                                                    String.valueOf(error), false);
+                                            return Promise.reject(error);
+                                        });
                             });
 
                             String caaName = asString(model, CAA_NAME);
@@ -287,11 +294,14 @@ public class EnableSSLWizard {
                                         .param(ALIAS, asString(model, CAA_ALIAS))
                                         .build();
 
-                                return dispatcher.execute(caaOp)
-                                        .doOnError(exception -> wizard.showError(constants.failed(),
-                                                resources.messages().addResourceError(caaName, exception.getMessage()),
-                                                false))
-                                        .toCompletable();
+                                return dispatcher.execute(caaOp).then(__ -> Promise.resolve(flowContext))
+                                        .catch_(error -> {
+                                            wizard.showError(constants.failed(),
+                                                    resources.messages()
+                                                            .addResourceError(caaName, String.valueOf(error)),
+                                                    false);
+                                            return Promise.reject(error);
+                                        });
                             });
 
                             tasks.add(flowContext -> {
@@ -310,13 +320,15 @@ public class EnableSSLWizard {
                                         .build();
                                 composite.add(storeOp);
 
-                                return dispatcher.execute(composite)
-                                        .doOnError(ex -> wizard.showError(constants.failed(),
-                                                resources.messages()
-                                                        .obtainCertificateError(obtainAlias, keyStoreName,
-                                                                ex.getMessage()),
-                                                false))
-                                        .toCompletable();
+                                return dispatcher.execute(composite).then(__ -> Promise.resolve(flowContext))
+                                        .catch_(error -> {
+                                            wizard.showError(constants.failed(),
+                                                    resources.messages()
+                                                            .obtainCertificateError(obtainAlias, keyStoreName,
+                                                                    String.valueOf(error)),
+                                                    false);
+                                            return Promise.reject(error);
+                                        });
                             });
                         }
                     }
@@ -339,8 +351,7 @@ public class EnableSSLWizard {
                             }
                             Operation trustStoreOp = builder.build();
 
-                            return dispatcher.execute(trustStoreOp)
-                                    .toCompletable();
+                            return dispatcher.execute(trustStoreOp).then(__ -> Promise.resolve(flowContext));
                         });
 
                         tasks.add(flowContext -> {
@@ -367,8 +378,7 @@ public class EnableSSLWizard {
                                     .build();
                             composite.add(trustManagerOp);
 
-                            return dispatcher.execute(composite)
-                                    .toCompletable();
+                            return dispatcher.execute(composite).then(__ -> Promise.resolve(flowContext));
                         });
                     }
 
@@ -438,57 +448,54 @@ public class EnableSSLWizard {
                         }
                     }
 
-                    tasks.add(flowContext -> dispatcher.execute(composite).toCompletable());
+                    tasks.add(flowContext -> dispatcher.execute(composite).then(__ -> Promise.resolve(flowContext)));
 
                     series(new FlowContext(progress.get()), tasks)
-                            .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
-                                @Override
-                                public void onSuccess(FlowContext flowContext) {
-                                    if (undertowHttps) {
-                                        wizard.showSuccess(resources.constants().success(),
-                                                resources.messages().enableSSLResultsSuccessUndertow(httpsListener,
-                                                        serverSslContext),
-                                                context1 -> presenter.reloadView(), true);
+                            .then(__ -> {
+                                if (undertowHttps) {
+                                    wizard.showSuccess(resources.constants().success(),
+                                            resources.messages().enableSSLResultsSuccessUndertow(httpsListener,
+                                                    serverSslContext),
+                                            context1 -> presenter.reloadView(), true);
+                                } else {
+                                    // constructs the http management console url
+                                    String serverName = environment.isStandalone() ? Names.STANDALONE_SERVER
+                                            : Names.DOMAIN_CONTROLLER;
+                                    String label = resources.constants().reload() + " " + serverName;
+                                    SafeHtml description;
+                                    StringBuilder location = new StringBuilder(
+                                            "https://" + window.location.hostname + ":");
+                                    if (environment.isStandalone()) {
+                                        location.append(context.securePort);
+                                        description = resources.messages()
+                                                .enableSSLResultsSuccessStandalone(location.toString());
                                     } else {
-                                        // constructs the http management console url
-                                        String serverName = environment.isStandalone() ? Names.STANDALONE_SERVER
-                                                : Names.DOMAIN_CONTROLLER;
-                                        String label = resources.constants().reload() + " " + serverName;
-                                        SafeHtml description;
-                                        StringBuilder location = new StringBuilder(
-                                                "https://" + window.location.getHostname() + ":");
-                                        if (environment.isStandalone()) {
-                                            location.append(context.securePort);
-                                            description = resources.messages()
-                                                    .enableSSLResultsSuccessStandalone(location.toString());
-                                        } else {
-                                            location.append(asString(model, SECURE_PORT));
-                                            description = resources.messages()
-                                                    .enableSSLResultsSuccessDomain(location.toString());
-                                        }
-                                        // extracts the url search path, so the url shows the view the user is located
-                                        String urlSuffix = window.location.getHref();
-                                        urlSuffix = urlSuffix.substring(urlSuffix.indexOf("//") + 2);
-                                        urlSuffix = urlSuffix.substring(urlSuffix.indexOf("/"));
-                                        location.append(urlSuffix);
-                                        wizard.showSuccess(resources.constants().success(), description, label,
-                                                // reloads the server/host if user clicks on the success action
-                                                context1 -> presenter.reloadServer(host, location.toString()),
-                                                // reload only the view and displays a success message
-                                                context2 -> {
-                                                    presenter.reloadView();
-                                                    MessageEvent.fire(eventBus,
-                                                            Message.success(resources.messages().enableSSLSuccess()));
-                                                }, true);
+                                        location.append(asString(model, SECURE_PORT));
+                                        description = resources.messages()
+                                                .enableSSLResultsSuccessDomain(location.toString());
                                     }
+                                    // extracts the url search path, so the url shows the view the user is located
+                                    String urlSuffix = window.location.href;
+                                    urlSuffix = urlSuffix.substring(urlSuffix.indexOf("//") + 2);
+                                    urlSuffix = urlSuffix.substring(urlSuffix.indexOf("/"));
+                                    location.append(urlSuffix);
+                                    wizard.showSuccess(resources.constants().success(), description, label,
+                                            // reloads the server/host if user clicks on the success action
+                                            context1 -> presenter.reloadServer(host, location.toString()),
+                                            // reload only the view and displays a success message
+                                            context2 -> {
+                                                presenter.reloadView();
+                                                MessageEvent.fire(eventBus,
+                                                        Message.success(resources.messages().enableSSLSuccess()));
+                                            }, true);
                                 }
-
-                                @Override
-                                public void onError(FlowContext context, Throwable exception) {
-                                    wizard.showError(resources.constants().failed(),
-                                            resources.messages().enableSSLResultsError(), exception.getMessage(),
-                                            false);
-                                }
+                                return null;
+                            })
+                            .catch_(error -> {
+                                wizard.showError(resources.constants().failed(),
+                                        resources.messages().enableSSLResultsError(), String.valueOf(error),
+                                        false);
+                                return null;
                             });
 
                 });
@@ -535,13 +542,13 @@ public class EnableSSLWizard {
         private Environment environment;
         private Host host;
         private boolean undertowHttps;
-        private Map<String, List<String>> existingResources;
-        private Resources resources;
-        private EventBus eventBus;
-        private Provider<Progress> progress;
-        private StatementContext statementContext;
-        private Dispatcher dispatcher;
-        private EnableSSLPresenter presenter;
+        private final Map<String, List<String>> existingResources;
+        private final Resources resources;
+        private final EventBus eventBus;
+        private final Provider<Progress> progress;
+        private final StatementContext statementContext;
+        private final Dispatcher dispatcher;
+        private final EnableSSLPresenter presenter;
         private String undertowServer;
         private String httpsListener;
 

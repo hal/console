@@ -66,7 +66,15 @@ import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTempla
 import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTemplates.SELECTED_RELAY_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTemplates.STACK_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTemplates.TRANSPORT_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHANNEL;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.FORK;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.JGROUPS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROTOCOL;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RELAY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDING;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STACK;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TRANSPORT;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 import static org.jboss.hal.resources.Ids.JGROUPS_REMOTE_SITE;
@@ -76,14 +84,14 @@ public class JGroupsPresenter extends ApplicationFinderPresenter<JGroupsPresente
 
     private final FinderPathFactory finderPathFactory;
     private final CrudOperations crud;
-    private EventBus eventBus;
-    private Resources resources;
-    private MetadataRegistry metadataRegistry;
-    private Dispatcher dispatcher;
+    private final EventBus eventBus;
+    private final Resources resources;
+    private final MetadataRegistry metadataRegistry;
+    private final Dispatcher dispatcher;
+    private final StatementContext filterStatementContext;
     private String selectedStack;
     private String currentChannel;
     private String selectedFork;
-    private StatementContext filterStatementContext;
 
     @Inject
     public JGroupsPresenter(EventBus eventBus,

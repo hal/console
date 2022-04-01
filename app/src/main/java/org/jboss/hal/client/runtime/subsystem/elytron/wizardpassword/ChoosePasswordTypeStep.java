@@ -15,8 +15,8 @@
  */
 package org.jboss.hal.client.runtime.subsystem.elytron.wizardpassword;
 
-import org.jboss.gwt.elemento.core.InputType;
-import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
+import org.jboss.elemento.HtmlContentBuilder;
+import org.jboss.elemento.InputType;
 import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
@@ -24,8 +24,8 @@ import org.jboss.hal.resources.UIConstants;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 
-import static org.jboss.gwt.elemento.core.Elements.*;
-import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.elemento.Elements.*;
+import static org.jboss.elemento.EventType.click;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SET_PASSWORD;
 import static org.jboss.hal.resources.CSS.formHorizontal;
 import static org.jboss.hal.resources.CSS.marginTopLarge;

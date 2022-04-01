@@ -50,8 +50,8 @@ public class ManagementPresenter extends FinderPresenter<ManagementPresenter.MyV
     }
 
     @Override
-    protected PreviewContent initialPreview() {
-        return new PreviewContent(Names.MANAGEMENT, resources.previews().managementOverview());
+    protected PreviewContent<Void> initialPreview() {
+        return new PreviewContent<>(Names.MANAGEMENT, resources.previews().managementOverview());
     }
 
     // @formatter:off

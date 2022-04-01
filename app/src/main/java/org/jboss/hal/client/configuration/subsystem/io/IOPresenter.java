@@ -38,7 +38,12 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
-import static org.jboss.hal.client.configuration.subsystem.io.AddressTemplates.*;
+import static org.jboss.hal.client.configuration.subsystem.io.AddressTemplates.BUFFER_POOL_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.io.AddressTemplates.BUFFER_POOL_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.io.AddressTemplates.IO_SUBSYSTEM_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.io.AddressTemplates.IO_SUBSYSTEM_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.io.AddressTemplates.WORKER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.io.AddressTemplates.WORKER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 

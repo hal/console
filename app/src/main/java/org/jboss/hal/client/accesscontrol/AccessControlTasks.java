@@ -25,16 +25,25 @@ import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
-import org.jboss.hal.dmr.ResourceCheck;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.Metadata;
 
-import rx.Completable;
+import elemental2.promise.Promise;
 
 import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.EXCLUDE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_ALL;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REALM;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION;
 
 /** Tasks related to principals, roles and assignments. */
 final class AccessControlTasks {
@@ -43,10 +52,24 @@ final class AccessControlTasks {
      * Checks whether a role mapping for a given role exists and pushes {@code 200} to the context stack if it exists,
      * {@code 404} otherwise.
      */
-    static class CheckRoleMapping extends ResourceCheck {
+    // We cannot inherit from org.jboss.hal.dmr.ResourceCheck since the
+    // Task<FlowContext> implementations have to be final (due to @JsFunction)
+    static final class CheckRoleMapping implements Task<FlowContext> {
+
+        private final Dispatcher dispatcher;
+        private final ResourceAddress address;
 
         CheckRoleMapping(Dispatcher dispatcher, Role role) {
-            super(dispatcher, AddressTemplates.roleMapping(role));
+            this.dispatcher = dispatcher;
+            this.address = AddressTemplates.roleMapping(role);
+        }
+
+        @Override
+        public Promise<FlowContext> apply(final FlowContext context) {
+            Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION).build();
+            return dispatcher.execute(operation)
+                    .then(result -> Promise.resolve(context.push(200)))
+                    .catch_(error -> Promise.resolve(context.push(404)));
         }
     }
 
@@ -54,7 +77,7 @@ final class AccessControlTasks {
      * Adds a role mapping for a given role if the predicate returns {@code true}, proceeds otherwise. Expects an integer status
      * code at the top of the context stack which is used to call the predicate.
      */
-    static class AddRoleMapping implements Task<FlowContext> {
+    static final class AddRoleMapping implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final Role role;
@@ -67,16 +90,18 @@ final class AccessControlTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
-            Completable result = Completable.complete();
+        public Promise<FlowContext> apply(final FlowContext context) {
             if (!context.emptyStack()) {
                 Integer status = context.pop();
                 if (predicate.test(status)) {
                     Operation operation = new Operation.Builder(AddressTemplates.roleMapping(role), ADD).build();
-                    result = dispatcher.execute(operation).toCompletable();
+                    return dispatcher.execute(operation).then(__ -> Promise.resolve(context));
+                } else {
+                    return Promise.resolve(context);
                 }
+            } else {
+                return Promise.resolve(context);
             }
-            return result;
         }
     }
 
@@ -84,7 +109,7 @@ final class AccessControlTasks {
      * Modifies the include-all flag of a role-mapping. Please make sure that the role-mapping exists before using this
      * function. Use a combination of {@link CheckRoleMapping} and {@link AddRoleMapping} to do so.
      */
-    static class ModifyIncludeAll implements Task<FlowContext> {
+    static final class ModifyIncludeAll implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final Role role;
@@ -97,12 +122,12 @@ final class AccessControlTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Promise<FlowContext> apply(final FlowContext context) {
             Operation operation = new Operation.Builder(AddressTemplates.roleMapping(role), WRITE_ATTRIBUTE_OPERATION)
                     .param(NAME, INCLUDE_ALL)
                     .param(VALUE, includeAll)
                     .build();
-            return dispatcher.execute(operation).toCompletable();
+            return dispatcher.execute(operation).then(__ -> Promise.resolve(context));
         }
     }
 
@@ -110,7 +135,7 @@ final class AccessControlTasks {
      * Removes a role mapping for a given role if the predicate returns {@code true}, proceeds otherwise. Expects an integer
      * status code at the top of the context stack which is used to call the predicate.
      */
-    static class RemoveRoleMapping implements Task<FlowContext> {
+    static final class RemoveRoleMapping implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final Role role;
@@ -123,15 +148,18 @@ final class AccessControlTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Promise<FlowContext> apply(final FlowContext context) {
             if (!context.emptyStack()) {
                 Integer status = context.pop();
                 if (predicate.test(status)) {
                     Operation operation = new Operation.Builder(AddressTemplates.roleMapping(role), REMOVE).build();
-                    return dispatcher.execute(operation).toCompletable();
+                    return dispatcher.execute(operation).then(__ -> Promise.resolve(context));
+                } else {
+                    return Promise.resolve(context);
                 }
+            } else {
+                return Promise.resolve(context);
             }
-            return Completable.complete();
         }
     }
 
@@ -139,7 +167,7 @@ final class AccessControlTasks {
      * Adds an assignment to a role-mapping. Please make sure that the role-mapping exists before using this task. Use a
      * combination of {@link CheckRoleMapping} and {@link AddRoleMapping} to do so.
      */
-    static class AddAssignment implements Task<FlowContext> {
+    static final class AddAssignment implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final Role role;
@@ -154,7 +182,7 @@ final class AccessControlTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Promise<FlowContext> apply(final FlowContext context) {
             ResourceAddress address = AddressTemplates.roleMapping(role)
                     .add(include ? INCLUDE : EXCLUDE, principal.getResourceName());
             Operation.Builder builder = new Operation.Builder(address, ADD)
@@ -163,7 +191,7 @@ final class AccessControlTasks {
             if (principal.getRealm() != null) {
                 builder.param(REALM, principal.getRealm());
             }
-            return dispatcher.execute(builder.build()).toCompletable();
+            return dispatcher.execute(builder.build()).then(__ -> Promise.resolve(context));
         }
     }
 
@@ -171,7 +199,7 @@ final class AccessControlTasks {
      * Removes assignments from a role-mapping. Please make sure that the role-mapping exists before using this function. Use a
      * combination of {@link CheckRoleMapping} and {@link AddRoleMapping} to do so.
      */
-    static class RemoveAssignments implements Task<FlowContext> {
+    static final class RemoveAssignments implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final List<Assignment> assignments;
@@ -182,15 +210,14 @@ final class AccessControlTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
-            Completable completable;
+        public Promise<FlowContext> apply(final FlowContext context) {
             if (assignments.isEmpty()) {
-                completable = Completable.complete();
+                return Promise.resolve(context);
             } else if (assignments.size() == 1) {
                 Assignment assignment = assignments.get(0);
                 ResourceAddress address = AddressTemplates.assignment(assignment);
                 Operation operation = new Operation.Builder(address, REMOVE).build();
-                completable = dispatcher.execute(operation).toCompletable();
+                return dispatcher.execute(operation).then(__ -> Promise.resolve(context));
             } else {
                 List<Operation> operations = assignments.stream()
                         .map(assignment -> {
@@ -198,14 +225,13 @@ final class AccessControlTasks {
                             return new Operation.Builder(address, REMOVE).build();
                         })
                         .collect(toList());
-                completable = dispatcher.execute(new Composite(operations)).toCompletable();
+                return dispatcher.execute(new Composite(operations)).then(__ -> Promise.resolve(context));
             }
-            return completable;
         }
     }
 
     /** Adds a scoped role. */
-    static class AddScopedRole implements Task<FlowContext> {
+    static final class AddScopedRole implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final Role.Type type;
@@ -220,17 +246,17 @@ final class AccessControlTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Promise<FlowContext> apply(final FlowContext context) {
             ResourceAddress address = AddressTemplates.scopedRole(new Role(name, null, type, null));
             Operation operation = new Operation.Builder(address, ADD)
                     .payload(payload)
                     .build();
-            return dispatcher.execute(operation).toCompletable();
+            return dispatcher.execute(operation).then(__ -> Promise.resolve(context));
         }
     }
 
     /** Modifies a scoped role. */
-    static class ModifyScopedRole implements Task<FlowContext> {
+    static final class ModifyScopedRole implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final Role role;
@@ -246,17 +272,17 @@ final class AccessControlTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Promise<FlowContext> apply(final FlowContext context) {
             ResourceAddress address = AddressTemplates.scopedRole(role);
             Operation operation = new OperationFactory().fromChangeSet(address, changedValues, metadata);
-            return dispatcher.execute(operation).toCompletable();
+            return dispatcher.execute(operation).then(__ -> Promise.resolve(context));
         }
     }
 
     /**
      * Removes a scoped role.
      */
-    static class RemoveScopedRole implements Task<FlowContext> {
+    static final class RemoveScopedRole implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final Role role;
@@ -267,10 +293,10 @@ final class AccessControlTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Promise<FlowContext> apply(final FlowContext context) {
             ResourceAddress address = AddressTemplates.scopedRole(role);
             Operation operation = new Operation.Builder(address, REMOVE).build();
-            return dispatcher.execute(operation).toCompletable();
+            return dispatcher.execute(operation).then(__ -> Promise.resolve(context));
         }
     }
 

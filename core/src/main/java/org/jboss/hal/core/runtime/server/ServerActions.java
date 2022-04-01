@@ -16,6 +16,7 @@
 package org.jboss.hal.core.runtime.server;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +27,7 @@ import java.util.function.Predicate;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.dialog.BlockingDialog;
 import org.jboss.hal.ballroom.dialog.Dialog;
@@ -53,17 +54,14 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.dmr.dispatch.Dispatcher.OnError;
-import org.jboss.hal.dmr.dispatch.Dispatcher.OnFail;
 import org.jboss.hal.flow.FlowContext;
-import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.processing.MetadataProcessor;
-import org.jboss.hal.meta.processing.SuccessfulMetadataCallback;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -81,20 +79,61 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 
 import elemental2.dom.HTMLElement;
-import rx.CompletableSubscriber;
-import rx.Subscription;
+import elemental2.promise.Promise;
 
 import static elemental2.dom.DomGlobal.setTimeout;
-import static org.jboss.gwt.elemento.core.Elements.a;
-import static org.jboss.gwt.elemento.core.Elements.p;
-import static org.jboss.gwt.elemento.core.Elements.span;
+import static org.jboss.elemento.Elements.a;
+import static org.jboss.elemento.Elements.p;
+import static org.jboss.elemento.Elements.span;
 import static org.jboss.hal.core.runtime.RunningState.RUNNING;
 import static org.jboss.hal.core.runtime.SuspendState.SUSPENDED;
 import static org.jboss.hal.core.runtime.server.ServerConfigStatus.DISABLED;
 import static org.jboss.hal.core.runtime.server.ServerConfigStatus.STARTED;
 import static org.jboss.hal.core.runtime.server.ServerConfigStatus.STOPPED;
 import static org.jboss.hal.core.runtime.server.ServerUrlTasks.URL_KEY;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES_ONLY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.AUTO_START;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.BLOCKING;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CORE_SERVICE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DESTROY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.GROUP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INTERFACE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.JVM;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.KILL;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MANAGEMENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PATH;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_ATTRIBUTE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_BOOT_ERRORS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RELOAD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESTART;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESUME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_CONFIG;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_STATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SHUTDOWN;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDING_DEFAULT_INTERFACE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDING_GROUP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDING_PORT_OFFSET;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SSL;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.START;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.START_MODE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STATUS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STOP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SUSPEND;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SUSPEND_STATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SYSTEM_PROPERTY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TIMEOUT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.UPDATE_AUTO_START_WITH_SERVER_STATUS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.URL;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 import static org.jboss.hal.dmr.ModelNodeHelper.getOrDefault;
 import static org.jboss.hal.dmr.dispatch.TimeoutHandler.repeatOperationUntil;
@@ -146,21 +185,19 @@ public class ServerActions implements Timeouts {
     // ------------------------------------------------------ server operations
 
     public void copyServer(Server server, Callback callback) {
+        List<String> hosts = new ArrayList<>();
         Operation operation = new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_NAMES_OPERATION)
                 .param(CHILD_TYPE, HOST)
                 .build();
-
-        dispatcher.execute(operation, result -> {
-
-            List<String> hosts = new ArrayList<>();
-            result.asList().forEach(m -> hosts.add(m.asString()));
-            // get the first host only to retrieve the r-r-d for server-config
-            // as /host=*/server-config=*:read-operation-description(name=add) does not work
-            AddressTemplate template = AddressTemplate.of("/host=" + hosts.get(0) + "/server-config=*");
-            metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback(eventBus, resources) {
-                @Override
-                public void onMetadata(Metadata metadata) {
-
+        dispatcher.execute(operation)
+                .then(result -> {
+                    result.asList().forEach(m -> hosts.add(m.asString()));
+                    // get the first host only to retrieve the r-r-d for server-config
+                    // as /host=*/server-config=*:read-operation-description(name=add) does not work
+                    AddressTemplate template = AddressTemplate.of("/host=" + hosts.get(0) + "/server-config=*");
+                    return metadataProcessor.lookup(template, progress.get());
+                })
+                .then(metadata -> {
                     String id = Ids.build(SERVER_GROUP, statementContext.selectedServerGroup(), SERVER,
                             FORM);
                     SingleSelectBoxItem hostFormItem = new SingleSelectBoxItem(HOST, Names.HOST, hosts,
@@ -176,88 +213,80 @@ public class ServerActions implements Timeouts {
                                     SOCKET_BINDING_GROUP, UPDATE_AUTO_START_WITH_SERVER_STATUS)
                             .build();
 
-                    AddResourceDialog dialog = new AddResourceDialog(resources.messages().copyServerTitle(),
-                            form, (resource, payload) -> {
+                    String title = resources.messages().copyServerTitle();
+                    AddResourceDialog dialog = new AddResourceDialog(title, form, (resource, payload) -> {
+                        // read server-config recursively to retrieve nested resources
+                        ModelNode serverConfigModel = new ModelNode();
+                        serverConfigModel.get(HOST).set(server.getHost());
+                        serverConfigModel.get(SERVER_CONFIG).set(server.getName());
 
-                                // read server-config recursively to retrieve nested resources
-                                ModelNode serverConfigModel = new ModelNode();
-                                serverConfigModel.get(HOST).set(server.getHost());
-                                serverConfigModel.get(SERVER_CONFIG).set(server.getName());
+                        ResourceAddress serverAddress = new ResourceAddress(serverConfigModel);
+                        Operation opReadServer = new Operation.Builder(serverAddress, READ_RESOURCE_OPERATION)
+                                .param(RECURSIVE, true)
+                                .build();
 
-                                ResourceAddress serverAddress = new ResourceAddress(serverConfigModel);
-                                Operation opReadServer = new Operation.Builder(serverAddress, READ_RESOURCE_OPERATION)
-                                        .param(RECURSIVE, true)
-                                        .build();
+                        dispatcher.execute(opReadServer, new Consumer<ModelNode>() {
+                            @Override
+                            public void accept(ModelNode newServerModel) {
+                                String newServerName = nameItem.getValue();
+                                // set the chosen group in the model
+                                newServerModel.get(GROUP).set(payload.get(GROUP).asString());
+                                if (payload.hasDefined(SOCKET_BINDING_PORT_OFFSET)) {
+                                    newServerModel.get(SOCKET_BINDING_PORT_OFFSET)
+                                            .set(payload.get(SOCKET_BINDING_PORT_OFFSET).asLong());
+                                }
+                                newServerModel.get(NAME).set(newServerName);
 
-                                dispatcher.execute(opReadServer, new Consumer<ModelNode>() {
-                                    @Override
-                                    public void accept(ModelNode newServerModel) {
+                                ModelNode newServerModelAddress = new ModelNode();
+                                newServerModelAddress.get(HOST).set(hostFormItem.getValue());
+                                newServerModelAddress.get(SERVER_CONFIG).set(newServerName);
 
-                                        String newServerName = nameItem.getValue();
-                                        // set the chosen group in the model
-                                        newServerModel.get(GROUP).set(payload.get(GROUP).asString());
-                                        if (payload.hasDefined(SOCKET_BINDING_PORT_OFFSET)) {
-                                            newServerModel.get(SOCKET_BINDING_PORT_OFFSET)
-                                                    .set(payload.get(SOCKET_BINDING_PORT_OFFSET).asLong());
-                                        }
-                                        newServerModel.get(NAME).set(newServerName);
+                                Operation opAddServer = new Operation.Builder(
+                                        new ResourceAddress(newServerModelAddress), ADD)
+                                                .payload(newServerModel)
+                                                .build();
+                                Composite comp = new Composite();
+                                comp.add(opAddServer);
 
-                                        ModelNode newServerModelAddress = new ModelNode();
-                                        newServerModelAddress.get(HOST).set(hostFormItem.getValue());
-                                        newServerModelAddress.get(SERVER_CONFIG).set(newServerName);
+                                // create operation for each nested resource of the source server
+                                createOperation(comp, JVM, newServerModel, newServerModelAddress);
+                                createOperation(comp, INTERFACE, newServerModel, newServerModelAddress);
+                                createOperation(comp, PATH, newServerModel, newServerModelAddress);
+                                createOperation(comp, SYSTEM_PROPERTY, newServerModel, newServerModelAddress);
+                                createOperation(comp, SSL, newServerModel, newServerModelAddress);
 
-                                        Operation opAddServer = new Operation.Builder(
-                                                new ResourceAddress(newServerModelAddress), ADD)
-                                                        .payload(newServerModel)
-                                                        .build();
-                                        Composite comp = new Composite();
-                                        comp.add(opAddServer);
-
-                                        // create operation for each nested resource of the source server
-                                        createOperation(comp, JVM, newServerModel, newServerModelAddress);
-                                        createOperation(comp, INTERFACE, newServerModel, newServerModelAddress);
-                                        createOperation(comp, PATH, newServerModel, newServerModelAddress);
-                                        createOperation(comp, SYSTEM_PROPERTY, newServerModel, newServerModelAddress);
-                                        createOperation(comp, SSL, newServerModel, newServerModelAddress);
-
-                                        dispatcher.execute(comp, (CompositeResult result) -> {
-                                            MessageEvent.fire(eventBus, Message.success(
-                                                    resources.messages()
-                                                            .addResourceSuccess(Names.SERVER, newServerName)));
-                                            callback.execute();
-                                        }, (operation1, failure) -> {
-                                            MessageEvent.fire(eventBus, Message.error(
-                                                    resources.messages().addResourceError(newServerName, failure)));
-                                            callback.execute();
-                                        }, (operation1, exception) -> {
-                                            MessageEvent.fire(eventBus, Message.error(resources.messages()
-                                                    .addResourceError(newServerName, exception.getMessage())));
-                                            callback.execute();
-                                        });
-                                    }
-
-                                    private void createOperation(Composite composite, String resource, ModelNode model,
-                                            ModelNode baseAddress) {
-                                        if (model.hasDefined(resource)) {
-                                            List<Property> props = model.get(resource).asPropertyList();
-                                            props.forEach(p -> {
-                                                String propname = p.getName();
-                                                ModelNode _address = baseAddress.clone();
-                                                _address.get(resource).set(propname);
-                                                Operation operation = new Operation.Builder(
-                                                        new ResourceAddress(_address), ADD)
-                                                                .payload(p.getValue())
-                                                                .build();
-                                                composite.add(operation);
-                                            });
-                                        }
-                                    }
+                                dispatcher.execute(comp, (CompositeResult __) -> {
+                                    MessageEvent.fire(eventBus, Message.success(
+                                            resources.messages().addResourceSuccess(Names.SERVER, newServerName)));
+                                    callback.execute();
+                                }, (__, failure) -> {
+                                    MessageEvent.fire(eventBus, Message.error(
+                                            resources.messages().addResourceError(newServerName, failure)));
+                                    callback.execute();
                                 });
-                            });
+                            }
+
+                            private void createOperation(Composite composite, String resource, ModelNode model,
+                                    ModelNode baseAddress) {
+                                if (model.hasDefined(resource)) {
+                                    List<Property> props = model.get(resource).asPropertyList();
+                                    props.forEach(p -> {
+                                        String propname = p.getName();
+                                        ModelNode _address = baseAddress.clone();
+                                        _address.get(resource).set(propname);
+                                        Operation operation = new Operation.Builder(
+                                                new ResourceAddress(_address), ADD)
+                                                        .payload(p.getValue())
+                                                        .build();
+                                        composite.add(operation);
+                                    });
+                                }
+                            }
+                        });
+                    });
                     dialog.show();
-                }
-            });
-        });
+                    return null;
+                });
     }
 
     // ------------------------------------------------------ lifecycle operations
@@ -295,50 +324,30 @@ public class ServerActions implements Timeouts {
     public void restartStandalone(Server server, SafeHtml question) {
         String title = resources.messages().restart(server.getName());
         DialogFactory.showConfirmation(title, question, () -> {
-            // execute the restart with a little delay to ensure the confirmation dialog is closed
+            // execute the restart with a little delay ensuring the confirmation dialog is closed
             // before the next dialog is opened (only one modal can be open at a time!)
-            setTimeout((o) -> {
-
+            setTimeout(__ -> {
                 prepare(server, Action.RESTART);
-                BlockingDialog pendingDialog = DialogFactory
-                        .buildLongRunning(title,
-                                resources.messages().restartStandalonePending(server.getName()));
+                BlockingDialog pendingDialog = DialogFactory.buildLongRunning(
+                        title, resources.messages().restartStandalonePending(server.getName()));
                 pendingDialog.show();
                 Operation operation = new Operation.Builder(ResourceAddress.root(), SHUTDOWN)
                         .param(RESTART, true)
                         .build();
                 Operation ping = new Operation.Builder(ResourceAddress.root(), READ_RESOURCE_OPERATION).build();
-                dispatcher.execute(operation, result -> repeatUntilTimeout(dispatcher, SERVER_RESTART_TIMEOUT, ping)
-                        .subscribe(new CompletableSubscriber() {
-                            @Override
-                            public void onSubscribe(Subscription d) {
-                            }
-
-                            @Override
-                            public void onCompleted() {
-                                // wait a little bit before event handlers try to use the restarted server
-                                setTimeout((o1) -> {
-                                    pendingDialog.close();
-                                    finish(Server.STANDALONE, Result.SUCCESS, Message.success(
-                                            resources.messages()
-                                                    .restartServerSuccess(server.getName())));
-                                }, 666);
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                pendingDialog.close();
-                                DialogFactory.buildBlocking(title,
-                                        resources.messages().restartStandaloneTimeout(server.getName()))
-                                        .show();
-                                finish(Server.STANDALONE, Result.TIMEOUT, null);
-                            }
-                        }),
-                        (o1, failure) -> finish(Server.STANDALONE, Result.ERROR,
-                                Message.error(resources.messages().restartServerError(server.getName()))),
-                        (o2, exception) -> finish(Server.STANDALONE, Result.ERROR,
-                                Message.error(resources.messages().restartServerError(server.getName()))));
-
+                dispatcher.execute(operation)
+                        .then(___ -> repeatUntilTimeout(dispatcher, ping, SERVER_RESTART_TIMEOUT))
+                        .then(___ -> {
+                            pendingDialog.close();
+                            return finish(Server.STANDALONE, Result.SUCCESS, Message.success(
+                                    resources.messages().restartServerSuccess(server.getName())));
+                        })
+                        .catch_(___ -> {
+                            pendingDialog.close();
+                            DialogFactory.buildBlocking(
+                                    title, resources.messages().restartStandaloneTimeout(server.getName())).show();
+                            return finish(Server.STANDALONE, Result.TIMEOUT, null);
+                        });
             }, SHORT_TIMEOUT);
         });
     }
@@ -346,15 +355,22 @@ public class ServerActions implements Timeouts {
     private void reloadRestart(Server server, Operation operation, Action action, int timeout,
             String title, SafeHtml question, SafeHtml successMessage, SafeHtml errorMessage) {
         DialogFactory.showConfirmation(title, question, () -> {
-
             prepare(server, action);
-            dispatcher.execute(operation,
-                    result -> repeatOperationUntil(dispatcher, timeout,
+            dispatcher.execute(operation)
+                    .then(__ -> repeatOperationUntil(dispatcher,
                             server.isStandalone() ? readServerState(server) : readServerConfigStatus(server),
-                            server.isStandalone() ? checkServerState(RUNNING) : checkServerConfigStatus(STARTED))
-                                    .subscribe(new ServerTimeoutCallback(server, action, successMessage)),
-                    new ServerFailedCallback(server, errorMessage),
-                    new ServerExceptionCallback(server, errorMessage));
+                            server.isStandalone() ? checkServerState(RUNNING) : checkServerConfigStatus(STARTED),
+                            timeout))
+                    .then(__ -> readBootErrors(server))
+                    .then(result -> {
+                        if (!result.asList().isEmpty()) {
+                            return finish(server, Result.ERROR, Message.error(
+                                    resources.messages().serverBootErrors(server.getName())));
+                        } else {
+                            return finish(server, Result.SUCCESS, Message.success(successMessage));
+                        }
+                    })
+                    .catch_(__ -> finish(server, Result.ERROR, Message.error(errorMessage)));
         });
     }
 
@@ -365,55 +381,43 @@ public class ServerActions implements Timeouts {
             return;
         }
 
-        metadataProcessor.lookup(serverConfigTemplate(server), progress.get(),
-                new MetadataProcessor.MetadataCallback() {
-                    @Override
-                    public void onMetadata(Metadata metadata) {
-                        String id = Ids.build(SUSPEND, server.getName(), Ids.FORM);
-                        Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, SUSPEND).build();
+        metadataProcessor.lookup(serverConfigTemplate(server), progress.get())
+                .then(metadata -> {
+                    String id = Ids.build(SUSPEND, server.getName(), Ids.FORM);
+                    Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, SUSPEND).build();
 
-                        Dialog dialog = DialogFactory.buildConfirmation(
-                                resources.messages().suspend(server.getName()),
-                                resources.messages().suspendServerQuestion(server.getName()),
-                                form.element(),
-                                Dialog.Size.MEDIUM,
-                                () -> {
+                    Dialog dialog = DialogFactory.buildConfirmation(
+                            resources.messages().suspend(server.getName()),
+                            resources.messages().suspendServerQuestion(server.getName()),
+                            form.element(),
+                            Dialog.Size.MEDIUM,
+                            () -> {
+                                form.save();
+                                int timeout = getOrDefault(form.getModel(), TIMEOUT,
+                                        () -> form.getModel().get(TIMEOUT).asInt(), 0);
+                                int uiTimeout = timeout + SERVER_SUSPEND_TIMEOUT;
 
-                                    form.save();
-                                    int timeout = getOrDefault(form.getModel(), TIMEOUT,
-                                            () -> form.getModel().get(TIMEOUT).asInt(), 0);
-                                    int uiTimeout = timeout + SERVER_SUSPEND_TIMEOUT;
+                                prepare(server, Action.SUSPEND);
+                                ResourceAddress address = server.getServerConfigAddress();
+                                Operation operation = new Operation.Builder(address, SUSPEND)
+                                        .param(TIMEOUT, timeout)
+                                        .build();
+                                dispatcher.execute(operation)
+                                        .then(__ -> repeatOperationUntil(dispatcher,
+                                                readSuspendState(server), checkSuspendState(SUSPENDED), uiTimeout))
+                                        .then(__ -> finish(server, Result.SUCCESS, Message.success(
+                                                resources.messages().suspendServerSuccess(server.getName()))))
+                                        .catch_(__ -> finish(server, Result.ERROR, Message.error(
+                                                resources.messages().suspendServerError(server.getName()))));
+                            });
 
-                                    prepare(server, Action.SUSPEND);
-                                    Operation operation = new Operation.Builder(server.getServerConfigAddress(),
-                                            SUSPEND)
-                                                    .param(TIMEOUT, timeout)
-                                                    .build();
-                                    dispatcher.execute(operation,
-                                            result -> repeatOperationUntil(dispatcher, uiTimeout,
-                                                    readSuspendState(server), checkSuspendState(SUSPENDED))
-                                                            .subscribe(new ServerTimeoutCallback(server, Action.SUSPEND,
-                                                                    resources.messages()
-                                                                            .suspendServerSuccess(server.getName()))),
-                                            new ServerFailedCallback(server,
-                                                    resources.messages().suspendServerError(server.getName())),
-                                            new ServerExceptionCallback(server,
-                                                    resources.messages().suspendServerError(server.getName())));
-                                });
+                    dialog.registerAttachable(form);
+                    dialog.show();
 
-                        dialog.registerAttachable(form);
-                        dialog.show();
-
-                        ModelNode model = new ModelNode();
-                        model.get(TIMEOUT).set(0);
-                        form.edit(model);
-                    }
-
-                    @Override
-                    public void onError(Throwable error) {
-                        MessageEvent.fire(eventBus,
-                                Message.error(resources.messages().metadataError(), error.getMessage()));
-                    }
+                    ModelNode model = new ModelNode();
+                    model.get(TIMEOUT).set(0);
+                    form.edit(model);
+                    return null;
                 });
     }
 
@@ -427,123 +431,122 @@ public class ServerActions implements Timeouts {
         prepare(server, Action.RESUME);
         ResourceAddress address = server.isStandalone() ? server.getServerAddress() : server.getServerConfigAddress();
         Operation operation = new Operation.Builder(address, RESUME).build();
-        dispatcher.execute(operation, result -> repeatOperationUntil(dispatcher, SERVER_START_TIMEOUT,
-                server.isStandalone() ? readServerState(server) : readServerConfigStatus(server),
-                server.isStandalone() ? checkServerState(RUNNING) : checkServerConfigStatus(STARTED))
-                        .subscribe(new ServerTimeoutCallback(server, Action.RESUME,
-                                resources.messages().resumeServerSuccess(server.getName()))),
-                new ServerFailedCallback(server, resources.messages().resumeServerError(server.getName())),
-                new ServerExceptionCallback(server, resources.messages().resumeServerError(server.getName())));
+        dispatcher.execute(operation)
+                .then(__ -> repeatOperationUntil(dispatcher,
+                        server.isStandalone() ? readServerState(server) : readServerConfigStatus(server),
+                        server.isStandalone() ? checkServerState(RUNNING) : checkServerConfigStatus(STARTED),
+                        SERVER_START_TIMEOUT))
+                .then(__ -> readBootErrors(server))
+                .then(result -> {
+                    if (!result.asList().isEmpty()) {
+                        return finish(server, Result.ERROR,
+                                Message.error(resources.messages().serverBootErrors(server.getName())));
+                    } else {
+                        return finish(server, Result.SUCCESS,
+                                Message.success(resources.messages().resumeServerSuccess(server.getName())));
+                    }
+
+                })
+                .catch_(__ -> finish(server, Result.ERROR,
+                        Message.error(resources.messages().resumeServerError(server.getName()))));
     }
 
     public void stop(Server server) {
-        metadataProcessor.lookup(serverConfigTemplate(server), progress.get(),
-                new MetadataProcessor.MetadataCallback() {
-                    @Override
-                    public void onMetadata(Metadata metadata) {
-                        String id = Ids.build(STOP, server.getName(), Ids.FORM);
-                        Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, STOP)
-                                .include(TIMEOUT).build();
+        metadataProcessor.lookup(serverConfigTemplate(server), progress.get())
+                .then(metadata -> {
+                    String id = Ids.build(STOP, server.getName(), Ids.FORM);
+                    Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, STOP)
+                            .include(TIMEOUT).build();
 
-                        Dialog dialog = DialogFactory.buildConfirmation(
-                                resources.messages().stop(server.getName()),
-                                resources.messages().stopServerQuestion(server.getName()),
-                                form.element(),
-                                Dialog.Size.MEDIUM,
-                                () -> {
+                    Dialog dialog = DialogFactory.buildConfirmation(
+                            resources.messages().stop(server.getName()),
+                            resources.messages().stopServerQuestion(server.getName()),
+                            form.element(),
+                            Dialog.Size.MEDIUM,
+                            () -> {
+                                form.save();
+                                int timeout = getOrDefault(form.getModel(), TIMEOUT,
+                                        () -> form.getModel().get(TIMEOUT).asInt(), 0);
+                                int uiTimeout = timeout + SERVER_STOP_TIMEOUT;
 
-                                    form.save();
-                                    int timeout = getOrDefault(form.getModel(), TIMEOUT,
-                                            () -> form.getModel().get(TIMEOUT).asInt(), 0);
-                                    int uiTimeout = timeout + SERVER_STOP_TIMEOUT;
+                                prepare(server, Action.STOP);
+                                Operation operation = new Operation.Builder(server.getServerConfigAddress(), STOP)
+                                        .param(TIMEOUT, timeout)
+                                        .param(BLOCKING, false)
+                                        .build();
+                                dispatcher.execute(operation)
+                                        .then(__ -> repeatOperationUntil(dispatcher,
+                                                readServerConfigStatus(server),
+                                                checkServerConfigStatus(STOPPED, DISABLED),
+                                                uiTimeout))
+                                        .then(__ -> updateServer(server))
+                                        .then(stoppedServer -> finish(stoppedServer, Result.SUCCESS, Message.success(
+                                                resources.messages().stopServerSuccess(server.getName()))))
+                                        .catch_(error -> finish(server, Result.ERROR, Message.error(
+                                                resources.messages().stopServerError(server.getName()),
+                                                String.valueOf(error))));
+                            });
 
-                                    prepare(server, Action.STOP);
-                                    Operation operation = new Operation.Builder(server.getServerConfigAddress(), STOP)
-                                            .param(TIMEOUT, timeout)
-                                            .param(BLOCKING, false)
-                                            .build();
-                                    dispatcher.execute(operation,
-                                            result -> repeatOperationUntil(dispatcher, uiTimeout,
-                                                    readServerConfigStatus(server),
-                                                    checkServerConfigStatus(STOPPED, DISABLED))
-                                                            .subscribe(new ServerTimeoutCallback(server, Action.STOP,
-                                                                    resources.messages().stopServerSuccess(server.getName()))),
-                                            new ServerFailedCallback(server,
-                                                    resources.messages().stopServerError(server.getName())),
-                                            new ServerExceptionCallback(server,
-                                                    resources.messages().stopServerError(server.getName())));
-                                });
+                    dialog.registerAttachable(form);
+                    dialog.show();
 
-                        dialog.registerAttachable(form);
-                        dialog.show();
-
-                        ModelNode model = new ModelNode();
-                        model.get(TIMEOUT).set(0);
-                        form.edit(model);
-                    }
-
-                    @Override
-                    public void onError(Throwable error) {
-                        MessageEvent
-                                .fire(eventBus,
-                                        Message.error(resources.messages().metadataError(), error.getMessage()));
-                    }
+                    ModelNode model = new ModelNode();
+                    model.get(TIMEOUT).set(0);
+                    form.edit(model);
+                    return null;
                 });
     }
 
     /**
      * Call <code>/host={host}/server-config={sever}:stop(blocking=false)</code> the intended action is to immediately stop the
      * server.
-     *
-     * @param server
      */
     public void stopNow(Server server) {
         prepare(server, Action.STOP);
         Operation operation = new Operation.Builder(server.getServerConfigAddress(), STOP)
                 .param(BLOCKING, false)
                 .build();
-        dispatcher.execute(operation, result -> repeatOperationUntil(dispatcher, SERVER_STOP_TIMEOUT,
-                readServerConfigStatus(server), checkServerConfigStatus(STOPPED, DISABLED))
-                        .subscribe(new ServerTimeoutCallback(server, Action.STOP,
-                                resources.messages().stopServerSuccess(server.getName()))),
-                new ServerFailedCallback(server, resources.messages().stopServerError(server.getName())),
-                new ServerExceptionCallback(server, resources.messages().stopServerError(server.getName())));
+        dispatcher.execute(operation)
+                .then(__ -> repeatOperationUntil(dispatcher, readServerConfigStatus(server),
+                        checkServerConfigStatus(STOPPED, DISABLED), SERVER_STOP_TIMEOUT))
+                .then(__ -> updateServer(server))
+                .then(stoppedServer -> finish(stoppedServer, Result.SUCCESS, Message.success(
+                        resources.messages().stopServerSuccess(server.getName()))))
+                .catch_(error -> finish(server, Result.ERROR, Message.error(
+                        resources.messages().stopServerError(server.getName()),
+                        String.valueOf(error))));
     }
 
     public void destroy(Server server) {
-        DialogFactory.showConfirmation(resources.messages().destroy(server.getName()),
-                resources.messages().destroyServerQuestion(server.getName()),
-                () -> {
-                    prepare(server, Action.DESTROY);
-                    Operation operation = new Operation.Builder(server.getServerConfigAddress(), DESTROY).build();
-                    dispatcher.execute(operation,
-                            result -> repeatOperationUntil(dispatcher, SERVER_DESTROY_TIMEOUT,
-                                    readServerConfigStatus(server), checkServerConfigStatus(STOPPED, DISABLED))
-                                            .subscribe(new ServerTimeoutCallback(server, Action.DESTROY,
-                                                    resources.messages().destroyServerSuccess(server.getName()))),
-                            new ServerFailedCallback(server,
-                                    resources.messages().destroyServerError(server.getName())),
-                            new ServerExceptionCallback(server,
-                                    resources.messages().destroyServerError(server.getName())));
-                });
+        SafeHtml question = resources.messages().destroyServerQuestion(server.getName());
+        DialogFactory.showConfirmation(resources.messages().destroy(server.getName()), question, () -> {
+            prepare(server, Action.DESTROY);
+            Operation operation = new Operation.Builder(server.getServerConfigAddress(), DESTROY).build();
+            dispatcher.execute(operation)
+                    .then(__ -> repeatOperationUntil(dispatcher, readServerConfigStatus(server),
+                            checkServerConfigStatus(STOPPED, DISABLED), SERVER_DESTROY_TIMEOUT))
+                    .then(__ -> updateServer(server))
+                    .then(stoppedServer -> finish(stoppedServer, Result.SUCCESS, Message.success(
+                            resources.messages().destroyServerSuccess(server.getName()))))
+                    .catch_(error -> finish(server, Result.ERROR, Message.error(
+                            resources.messages().destroyServerError(server.getName()), String.valueOf(error))));
+        });
     }
 
     public void kill(Server server) {
-        DialogFactory.showConfirmation(resources.messages().kill(server.getName()),
-                resources.messages().killServerQuestion(server.getName()),
-                () -> {
-                    prepare(server, Action.KILL);
-                    Operation operation = new Operation.Builder(server.getServerConfigAddress(), KILL).build();
-                    dispatcher.execute(operation,
-                            result -> repeatOperationUntil(dispatcher, SERVER_KILL_TIMEOUT,
-                                    readServerConfigStatus(server), checkServerConfigStatus(STOPPED, DISABLED))
-                                            .subscribe(new ServerTimeoutCallback(server, Action.KILL,
-                                                    resources.messages().killServerSuccess(server.getName()))),
-                            new ServerFailedCallback(server,
-                                    resources.messages().killServerError(server.getName())),
-                            new ServerExceptionCallback(server,
-                                    resources.messages().killServerError(server.getName())));
-                });
+        SafeHtml question = resources.messages().killServerQuestion(server.getName());
+        DialogFactory.showConfirmation(resources.messages().kill(server.getName()), question, () -> {
+            prepare(server, Action.KILL);
+            Operation operation = new Operation.Builder(server.getServerConfigAddress(), KILL).build();
+            dispatcher.execute(operation)
+                    .then(__ -> repeatOperationUntil(dispatcher, readServerConfigStatus(server),
+                            checkServerConfigStatus(STOPPED, DISABLED), SERVER_KILL_TIMEOUT))
+                    .then(__ -> updateServer(server))
+                    .then(stoppedServer -> finish(stoppedServer, Result.SUCCESS, Message.success(
+                            resources.messages().killServerSuccess(server.getName()))))
+                    .catch_(error -> finish(server, Result.ERROR, Message.error(
+                            resources.messages().killServerError(server.getName()), String.valueOf(error))));
+        });
     }
 
     public void start(Server server) {
@@ -551,13 +554,21 @@ public class ServerActions implements Timeouts {
         Operation operation = new Operation.Builder(server.getServerConfigAddress(), START)
                 .param(BLOCKING, false)
                 .build();
-        dispatcher.execute(operation,
-                result -> repeatOperationUntil(dispatcher, SERVER_START_TIMEOUT,
-                        readServerConfigStatus(server), checkServerConfigStatus(STARTED))
-                                .subscribe(new ServerTimeoutCallback(server, Action.START,
-                                        resources.messages().startServerSuccess(server.getName()))),
-                new ServerFailedCallback(server, resources.messages().startServerError(server.getName())),
-                new ServerExceptionCallback(server, resources.messages().startServerError(server.getName())));
+        dispatcher.execute(operation)
+                .then(__ -> repeatOperationUntil(dispatcher, readServerConfigStatus(server),
+                        checkServerConfigStatus(STARTED), SERVER_START_TIMEOUT))
+                .then(__ -> readBootErrors(server))
+                .then(result -> {
+                    if (!result.asList().isEmpty()) {
+                        return finish(server, Result.ERROR, Message.error(
+                                resources.messages().serverBootErrors(server.getName())));
+                    } else {
+                        return finish(server, Result.SUCCESS, Message.success(
+                                resources.messages().startServerSuccess(server.getName())));
+                    }
+                })
+                .catch_(error -> finish(server, Result.ERROR, Message.error(
+                        resources.messages().startServerError(server.getName()), String.valueOf(error))));
     }
 
     public void startInSuspendedMode(Server server) {
@@ -566,13 +577,21 @@ public class ServerActions implements Timeouts {
                 .param(START_MODE, SUSPEND)
                 .param(BLOCKING, false)
                 .build();
-        dispatcher.execute(operation,
-                result -> repeatOperationUntil(dispatcher, SERVER_START_TIMEOUT,
-                        readServerConfigStatus(server), checkServerConfigStatus(STARTED))
-                                .subscribe(new ServerTimeoutCallback(server, Action.START,
-                                        resources.messages().startServerInSuspendedModeSuccess(server.getName()))),
-                new ServerFailedCallback(server, resources.messages().startServerError(server.getName())),
-                new ServerExceptionCallback(server, resources.messages().startServerError(server.getName())));
+        dispatcher.execute(operation)
+                .then(__ -> repeatOperationUntil(dispatcher, readServerConfigStatus(server),
+                        checkServerConfigStatus(STARTED), SERVER_START_TIMEOUT))
+                .then(__ -> readBootErrors(server))
+                .then(result -> {
+                    if (!result.asList().isEmpty()) {
+                        return finish(server, Result.ERROR, Message.error(
+                                resources.messages().serverBootErrors(server.getName())));
+                    } else {
+                        return finish(server, Result.SUCCESS, Message.success(
+                                resources.messages().startServerSuccess(server.getName())));
+                    }
+                })
+                .catch_(error -> finish(server, Result.ERROR, Message.error(
+                        resources.messages().startServerError(server.getName()), String.valueOf(error))));
     }
 
     // ------------------------------------------------------ server url methods
@@ -614,21 +633,20 @@ public class ServerActions implements Timeouts {
             callback.onSuccess(serverUrl);
 
         } else {
-            series(new FlowContext(),
+            List<Task<FlowContext>> tasks = Arrays.asList(
                     new ReadSocketBindingGroup(standalone, serverGroup, dispatcher),
-                    new ReadSocketBinding(standalone, host, server, dispatcher))
-                            .subscribe(new Outcome<FlowContext>() {
-                                @Override
-                                public void onError(FlowContext context, Throwable error) {
-                                    logger.error(error.getMessage());
-                                    callback.onFailure(error);
-                                }
-
-                                @Override
-                                public void onSuccess(FlowContext context) {
-                                    callback.onSuccess(context.get(URL_KEY));
-                                }
-                            });
+                    new ReadSocketBinding(standalone, host, server, dispatcher));
+            series(new FlowContext(), tasks)
+                    .then(context -> {
+                        callback.onSuccess(context.get(URL_KEY));
+                        return null;
+                    })
+                    .catch_(error -> {
+                        String message = String.valueOf(error);
+                        logger.error(message);
+                        callback.onFailure(new RuntimeException(message));
+                        return null;
+                    });
         }
     }
 
@@ -702,10 +720,11 @@ public class ServerActions implements Timeouts {
         eventBus.fireEvent(new ServerActionEvent(server, action));
     }
 
-    private void finish(Server server, Result result, Message message) {
+    private Promise<Void> finish(Server server, Result result, Message message) {
         clearPending(server); // clear pending state *before* firing the event!
         eventBus.fireEvent(new ServerResultEvent(server, result));
         MessageEvent.fire(eventBus, message);
+        return Promise.resolve((Void) null);
     }
 
     public void markAsPending(Server server) {
@@ -738,16 +757,15 @@ public class ServerActions implements Timeouts {
 
     private Predicate<ModelNode> checkServerConfigStatus(ServerConfigStatus first, ServerConfigStatus... rest) {
         return result -> {
-            ServerConfigStatus status = asEnumValue(result, name -> ServerConfigStatus.valueOf(name),
-                    ServerConfigStatus.UNDEFINED);
-            return EnumSet.of(first, rest).contains(status);
+            ServerConfigStatus status = asEnumValue(result, ServerConfigStatus::valueOf, ServerConfigStatus.UNDEFINED);
+            return !EnumSet.of(first, rest).contains(status);
         };
     }
 
     private Predicate<ModelNode> checkServerState(RunningState first, RunningState... rest) {
         return result -> {
-            RunningState state = asEnumValue(result, (name) -> RunningState.valueOf(name), RunningState.UNDEFINED);
-            return EnumSet.of(first, rest).contains(state);
+            RunningState state = asEnumValue(result, RunningState::valueOf, RunningState.UNDEFINED);
+            return !EnumSet.of(first, rest).contains(state);
         };
     }
 
@@ -758,91 +776,22 @@ public class ServerActions implements Timeouts {
     }
 
     private Predicate<ModelNode> checkSuspendState(SuspendState statusToReach) {
-        return result -> statusToReach == asEnumValue(result, name -> SuspendState.valueOf(name),
-                SuspendState.UNDEFINED);
+        return result -> statusToReach != asEnumValue(result, SuspendState::valueOf, SuspendState.UNDEFINED);
     }
 
-    private class ServerTimeoutCallback implements CompletableSubscriber {
-
-        private final Server server;
-        private final Action action;
-        private final SafeHtml successMessage;
-
-        ServerTimeoutCallback(Server server, Action action, SafeHtml successMessage) {
-            this.server = server;
-            this.action = action;
-            this.successMessage = successMessage;
-        }
-
-        @Override
-        public void onCompleted() {
-            if (Action.isStart(action)) {
-                // read boot errors
-                ResourceAddress address = server.getServerAddress().add(CORE_SERVICE, MANAGEMENT);
-                Operation operation = new Operation.Builder(address, READ_BOOT_ERRORS).build();
-                dispatcher.execute(operation, result -> {
-                    if (!result.asList().isEmpty()) {
-                        finish(server, Result.ERROR,
-                                Message.error(resources.messages().serverBootErrors(server.getName())));
-                    } else {
-                        finish(server, Result.SUCCESS, Message.success(successMessage));
-                    }
-                });
-            } else if (Action.isStop(action)) {
-                // update server for event
-                ResourceAddress address = server.getServerConfigAddress();
-                Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
-                        .param(ATTRIBUTES_ONLY, true)
-                        .param(INCLUDE_RUNTIME, true)
-                        .build();
-                dispatcher.execute(operation, result -> {
-                    Server stoppedServer = new Server(this.server.getHost(), result);
-                    finish(stoppedServer, Result.SUCCESS, Message.success(successMessage));
-                });
-            } else {
-                finish(server, Result.SUCCESS, Message.success(successMessage));
-            }
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            finish(server, Result.TIMEOUT, Message.error(resources.messages().serverTimeout(server.getName())));
-        }
-
-        @Override
-        public void onSubscribe(Subscription d) {
-        }
+    private Promise<ModelNode> readBootErrors(Server server) {
+        ResourceAddress address = server.getServerAddress().add(CORE_SERVICE, MANAGEMENT);
+        Operation operation = new Operation.Builder(address, READ_BOOT_ERRORS).build();
+        return dispatcher.execute(operation);
     }
 
-    private class ServerFailedCallback implements OnFail {
-
-        private final Server server;
-        private final SafeHtml errorMessage;
-
-        ServerFailedCallback(Server server, SafeHtml errorMessage) {
-            this.server = server;
-            this.errorMessage = errorMessage;
-        }
-
-        @Override
-        public void onFailed(Operation operation, String failure) {
-            finish(server, Result.ERROR, Message.error(errorMessage, failure));
-        }
-    }
-
-    private class ServerExceptionCallback implements OnError {
-
-        private final Server server;
-        private final SafeHtml errorMessage;
-
-        ServerExceptionCallback(Server server, SafeHtml errorMessage) {
-            this.server = server;
-            this.errorMessage = errorMessage;
-        }
-
-        @Override
-        public void onException(Operation operation, Throwable exception) {
-            finish(server, Result.ERROR, Message.error(errorMessage, exception.getMessage()));
-        }
+    private Promise<Server> updateServer(Server server) {
+        ResourceAddress address = server.getServerConfigAddress();
+        Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
+                .param(ATTRIBUTES_ONLY, true)
+                .param(INCLUDE_RUNTIME, true)
+                .build();
+        return dispatcher.execute(operation)
+                .then(result -> Promise.resolve(new Server(server.getHost(), result)));
     }
 }

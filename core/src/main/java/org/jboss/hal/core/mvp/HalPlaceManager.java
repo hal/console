@@ -35,7 +35,6 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
 import com.google.gwt.place.shared.PlaceHistoryHandler;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.DefaultPlace;
 import com.gwtplatform.mvp.client.annotations.ErrorPlace;
@@ -44,7 +43,11 @@ import com.gwtplatform.mvp.client.proxy.DefaultPlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
 
-import static org.jboss.hal.meta.StatementContext.Expression.*;
+import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_GROUP;
+import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_HOST;
+import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_PROFILE;
+import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_SERVER;
+import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_SERVER_CONFIG;
 
 /**
  * Custom place manager for HAL. The most important task of this place manager is to extract well-known place request parameters
@@ -103,19 +106,17 @@ public class HalPlaceManager extends DefaultPlaceManager {
             }
         }
 
-        metadataProcessor.process(request.getNameToken(), progress.get(), new AsyncCallback<Void>() {
-            @Override
-            public void onFailure(Throwable throwable) {
-                unlock();
-                revealCurrentPlace();
-                String details = throwable != null ? throwable.getMessage() : null;
-                getEventBus().fireEvent(new MessageEvent(Message.error(resources.messages().metadataError(), details)));
-            }
-
-            @Override
-            public void onSuccess(Void whatever) {
-                HalPlaceManager.super.doRevealPlace(request, updateBrowserUrl);
-            }
-        });
+        metadataProcessor.process(request.getNameToken(), progress.get())
+                .then(__ -> {
+                    HalPlaceManager.super.doRevealPlace(request, updateBrowserUrl);
+                    return null;
+                })
+                .catch_(error -> {
+                    unlock();
+                    revealCurrentPlace();
+                    getEventBus().fireEvent(
+                            new MessageEvent(Message.error(resources.messages().metadataError(), String.valueOf(error))));
+                    return null;
+                });
     }
 }

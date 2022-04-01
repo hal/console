@@ -157,7 +157,7 @@ public class FinderPathFactory {
 
     private boolean browseByServerGroups() {
         if (!finder.getContext().getPath().isEmpty()) {
-            FinderSegment firstSegment = finder.getContext().getPath().iterator().next();
+            FinderSegment<?> firstSegment = finder.getContext().getPath().iterator().next();
             return firstSegment.getItemId().equals(Ids.asId(Names.SERVER_GROUPS));
         }
         return false;

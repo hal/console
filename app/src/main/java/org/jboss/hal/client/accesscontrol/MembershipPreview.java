@@ -21,9 +21,9 @@ import org.jboss.hal.resources.Resources;
 
 import elemental2.dom.HTMLElement;
 
-import static org.jboss.gwt.elemento.core.Elements.a;
-import static org.jboss.gwt.elemento.core.Elements.p;
-import static org.jboss.gwt.elemento.core.Elements.span;
+import static org.jboss.elemento.Elements.a;
+import static org.jboss.elemento.Elements.p;
+import static org.jboss.elemento.Elements.span;
 
 class MembershipPreview extends PreviewContent<Assignment> {
 

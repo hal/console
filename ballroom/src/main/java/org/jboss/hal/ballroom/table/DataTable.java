@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.JQuery;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Api.CallbackUnionType;
@@ -39,11 +39,11 @@ import elemental2.dom.NodeList;
 
 import static elemental2.dom.DomGlobal.document;
 import static java.util.Arrays.asList;
-import static org.jboss.gwt.elemento.core.Elements.asHtmlElement;
-import static org.jboss.gwt.elemento.core.Elements.htmlElements;
-import static org.jboss.gwt.elemento.core.Elements.table;
-import static org.jboss.gwt.elemento.core.EventType.bind;
-import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.elemento.Elements.asHtmlElement;
+import static org.jboss.elemento.Elements.htmlElements;
+import static org.jboss.elemento.Elements.table;
+import static org.jboss.elemento.EventType.bind;
+import static org.jboss.elemento.EventType.click;
 import static org.jboss.hal.ballroom.table.RefreshMode.RESET;
 import static org.jboss.hal.resources.CSS.columnAction;
 import static org.jboss.hal.resources.CSS.dataTable;

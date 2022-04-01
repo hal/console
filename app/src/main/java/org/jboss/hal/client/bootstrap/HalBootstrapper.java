@@ -24,7 +24,6 @@ import org.jboss.hal.client.bootstrap.tasks.InitializedTask;
 import org.jboss.hal.core.ExceptionHandler;
 import org.jboss.hal.flow.Flow;
 import org.jboss.hal.flow.FlowContext;
-import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.js.Browser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,24 +70,22 @@ public class HalBootstrapper implements Bootstrapper {
 
         endpointManager.select(() -> {
             LoadingPanel.get().on();
-            Flow.series(new FlowContext(), bootstrapTasks.tasks()).subscribe(new Outcome<FlowContext>() {
-                @Override
-                public void onError(FlowContext context, Throwable error) {
-                    logger.error("Bootstrap error: {}", error.getMessage());
-                    LoadingPanel.get().off();
-                }
-
-                @Override
-                public void onSuccess(FlowContext context) {
-                    logger.info("Bootstrap finished");
-                    LoadingPanel.get().off();
-                    placeManager.revealCurrentPlace();
-                    exceptionHandler.afterBootstrap();
-                    for (InitializedTask task : initializationTasks.tasks()) {
-                        task.run();
-                    }
-                }
-            });
+            Flow.series(new FlowContext(), bootstrapTasks.tasks())
+                    .then(context -> {
+                        logger.info("Bootstrap finished");
+                        LoadingPanel.get().off();
+                        placeManager.revealCurrentPlace();
+                        exceptionHandler.afterBootstrap();
+                        for (InitializedTask task : initializationTasks.tasks()) {
+                            task.run();
+                        }
+                        return null;
+                    })
+                    .catch_(error -> {
+                        logger.error("Bootstrap error: {}", error);
+                        LoadingPanel.get().off();
+                        return null;
+                    });
         });
     }
 }

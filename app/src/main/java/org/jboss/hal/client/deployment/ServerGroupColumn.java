@@ -26,7 +26,6 @@ import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.group.ServerGroup;
 import org.jboss.hal.core.runtime.group.ServerGroupSelectionEvent;
 import org.jboss.hal.dmr.Composite;
-import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -41,10 +40,17 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 
 @AsyncColumn(Ids.DEPLOYMENT_SERVER_GROUP)
 @Requires("/server-group=*")
@@ -101,7 +107,7 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup> {
             }
         });
 
-        setItemsProvider((context, callback) -> {
+        setItemsProvider(context -> {
             Operation serverGroupsOp = new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_RESOURCES_OPERATION)
                     .param(CHILD_TYPE, SERVER_GROUP)
                     .param(INCLUDE_RUNTIME, true)
@@ -110,12 +116,12 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup> {
                     new ResourceAddress().add(SERVER_GROUP, "*").add(DEPLOYMENT, "*"), READ_RESOURCE_OPERATION)
                             .param(INCLUDE_RUNTIME, true)
                             .build();
-            dispatcher.execute(new Composite(serverGroupsOp, deploymentsOp), (CompositeResult result) -> {
+            return dispatcher.execute(new Composite(serverGroupsOp, deploymentsOp)).then(result -> {
                 List<ServerGroup> serverGroups = result.step(0).get(RESULT).asPropertyList().stream()
                         .map(ServerGroup::new)
                         .sorted(comparing(ServerGroup::getName))
                         .collect(toList());
-                callback.onSuccess(serverGroups);
+                return Promise.resolve(serverGroups);
             });
         });
 

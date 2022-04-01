@@ -17,7 +17,7 @@ package org.jboss.hal.client.deployment;
 
 import javax.inject.Inject;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.PreviewContent;
@@ -62,7 +62,7 @@ public class DeploymentPresenter extends FinderPresenter<DeploymentPresenter.MyV
     }
 
     @Override
-    protected PreviewContent initialPreview() {
+    protected PreviewContent<Void> initialPreview() {
         return new InitialPreview();
     }
 

@@ -47,12 +47,18 @@ import org.jboss.hal.spi.Requires;
 import com.google.web.bindery.event.shared.EventBus;
 
 import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.configuration.subsystem.modcluster.AddressTemplates.MODCLUSTER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.modcluster.AddressTemplates.PROXY_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.modcluster.AddressTemplates.PROXY_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CONNECTOR;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROXY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
 import static org.jboss.hal.resources.Ids.FORM;
 import static org.jboss.hal.resources.Ids.build;
 
@@ -76,17 +82,15 @@ public class ProxyColumn extends FinderColumn<NamedNode> {
                 .filterDescription(resources.messages().proxyColumnFilterDescription())
                 .useFirstActionAsBreadcrumbHandler());
 
-        setItemsProvider((context, callback) -> {
+        setItemsProvider((context) -> {
             ResourceAddress address = MODCLUSTER_TEMPLATE.resolve(statementContext);
             Operation op = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                     .param(RECURSIVE, true).build();
 
-            dispatcher.execute(op, result -> {
-                List<NamedNode> proxies = result.get(PROXY).asPropertyList().stream()
-                        .map(NamedNode::new)
-                        .collect(toList());
-                callback.onSuccess(proxies);
-            });
+            return dispatcher.execute(op)
+                    .then(result -> Promise.resolve(result.get(PROXY).asPropertyList().stream()
+                            .map(NamedNode::new)
+                            .collect(toList())));
         });
 
         addColumnAction(columnActionFactory.add(Ids.MODCLUSTER_PROXY_ADD, Names.PROXY, PROXY_TEMPLATE,

@@ -18,7 +18,7 @@ package org.jboss.hal.client.deployment;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.deployment.Deployment;
@@ -40,8 +40,25 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import elemental2.dom.HTMLElement;
 
 import static java.util.stream.Collectors.toList;
-import static org.jboss.gwt.elemento.core.Elements.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.elemento.Elements.a;
+import static org.jboss.elemento.Elements.asHtmlElement;
+import static org.jboss.elemento.Elements.bag;
+import static org.jboss.elemento.Elements.h;
+import static org.jboss.elemento.Elements.htmlElements;
+import static org.jboss.elemento.Elements.li;
+import static org.jboss.elemento.Elements.span;
+import static org.jboss.elemento.Elements.stream;
+import static org.jboss.elemento.Elements.ul;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CONTENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CONTEXT_ROOT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ENABLED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.EXPLODED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HASH;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LINK;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MANAGED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STATUS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBSYSTEM;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDERTOW;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeBoolean;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.resources.CSS.marginRight5;
@@ -50,9 +67,9 @@ import static org.jboss.hal.resources.Icons.flag;
 abstract class DeploymentPreview<T extends ModelNode> extends PreviewContent<T> {
 
     private final LabelBuilder labelBuilder;
-    private ServerActions serverActions;
-    private Environment environment;
-    private Deployment deployment;
+    private final ServerActions serverActions;
+    private final Environment environment;
+    private final Deployment deployment;
 
     DeploymentPreview(String header, ServerActions serverActions,
             Environment environment, Deployment deployment) {
@@ -70,7 +87,7 @@ abstract class DeploymentPreview<T extends ModelNode> extends PreviewContent<T> 
             attributes.append(model -> {
                 String label = String.join(", ",
                         labelBuilder.label(ENABLED), labelBuilder.label(MANAGED), labelBuilder.label(EXPLODED));
-                Iterable<HTMLElement> elements = collect()
+                Iterable<HTMLElement> elements = bag()
                         .add(span()
                                 .title(labelBuilder.label(ENABLED))
                                 .css(flag(failSafeBoolean(model, ENABLED)), marginRight5))
@@ -87,7 +104,7 @@ abstract class DeploymentPreview<T extends ModelNode> extends PreviewContent<T> 
             attributes.append(model -> {
                 String label = String.join(", ",
                         labelBuilder.label(ENABLED), labelBuilder.label(MANAGED));
-                Iterable<HTMLElement> elements = collect()
+                Iterable<HTMLElement> elements = bag()
                         .add(span()
                                 .title(labelBuilder.label(ENABLED))
                                 .css(flag(failSafeBoolean(model, ENABLED)), marginRight5))

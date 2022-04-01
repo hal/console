@@ -37,6 +37,7 @@ import org.jboss.hal.spi.AsyncColumn;
 import com.google.common.collect.Sets;
 
 import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.JAX_RS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REST_RESOURCE;
@@ -61,10 +62,10 @@ public class RestResourceColumn extends FinderColumn<RestResource> {
 
                 .columnAction(columnActionFactory.refresh(Ids.REST_RESOURCE_REFRESH))
 
-                .itemsProvider((context, callback) -> deploymentResources.readChildren(JAX_RS, REST_RESOURCE,
-                        RestResource::new, restResources -> {
+                .itemsProvider(context -> deploymentResources.readChildren(JAX_RS, REST_RESOURCE, RestResource::new)
+                        .then(restResources -> {
                             restResources.sort(Comparator.comparing(RestResource::getName));
-                            callback.onSuccess(restResources);
+                            return Promise.resolve(restResources);
                         }))
 
                 .itemRenderer(item -> new ItemDisplay<RestResource>() {

@@ -20,9 +20,8 @@ import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.client.bootstrap.BootstrapFailed;
-import org.jboss.hal.client.bootstrap.tasks.BootstrapTask;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.keycloak.Keycloak;
 import org.jboss.hal.config.keycloak.KeycloakHolder;
@@ -55,7 +54,7 @@ import static org.jboss.hal.resources.Urls.MANAGEMENT;
  * default this class first tries to connect to the management endpoint the console was loaded from. If no endpoint was found,
  * the selection is triggered by {@link EndpointDialog}.
  * <p>
- * Please note: This class must run <em>before</em> any {@linkplain BootstrapTask bootstrap function}!
+ * Please note: This class must run <em>before</em> any bootstrap function!
  */
 public class EndpointManager {
 
@@ -244,7 +243,6 @@ public class EndpointManager {
                     .error(() -> logger.error("Error, could not initialize keycloak authentication."));
 
             keycloakHolder.setKeycloak(kc);
-            return null;
         };
         document.head.appendChild(script);
     }

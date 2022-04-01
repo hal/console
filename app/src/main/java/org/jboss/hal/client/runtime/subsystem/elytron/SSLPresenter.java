@@ -55,7 +55,7 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
-import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.elemento.Elements.p;
 import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.CERTIFICATE_AUTHORITY_ACCOUNT_ADDRESS;
 import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.ELYTRON_SUBSYSTEM_TEMPLATE;
@@ -86,11 +86,11 @@ public class SSLPresenter extends ApplicationFinderPresenter<SSLPresenter.MyView
 
     private static final String SPACE = " ";
 
-    private MetadataRegistry metadataRegistry;
+    private final MetadataRegistry metadataRegistry;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
-    private Resources resources;
-    private Dispatcher dispatcher;
+    private final Resources resources;
+    private final Dispatcher dispatcher;
 
     @Inject
     public SSLPresenter(EventBus eventBus,
@@ -168,10 +168,7 @@ public class SSLPresenter extends ApplicationFinderPresenter<SSLPresenter.MyView
             dispatcher.execute(operation, result -> MessageEvent.fire(getEventBus(),
                     Message.success(resources.messages().createAccountSuccess(name))),
                     (operation1, failure) -> MessageEvent.fire(getEventBus(),
-                            Message.error(resources.messages().createAccountError(name, failure))),
-                    (operation1, exception) -> MessageEvent.fire(getEventBus(),
-                            Message.error(
-                                    resources.messages().createAccountError(name, exception.getMessage()))));
+                            Message.error(resources.messages().createAccountError(name, failure))));
         });
         Dialog dialog = new Dialog.Builder(title)
                 .add(p().textContent(resources.messages().createAccountQuestion(name)).element())
@@ -201,10 +198,7 @@ public class SSLPresenter extends ApplicationFinderPresenter<SSLPresenter.MyView
             dispatcher.execute(operation, result -> MessageEvent.fire(getEventBus(),
                     Message.success(resources.messages().deactivateAccountSuccess(name))),
                     (operation1, failure) -> MessageEvent.fire(getEventBus(),
-                            Message.error(resources.messages().deactivateAccountError(name, failure))),
-                    (operation1, exception) -> MessageEvent.fire(getEventBus(),
-                            Message.error(
-                                    resources.messages().deactivateAccountError(name, exception.getMessage()))));
+                            Message.error(resources.messages().deactivateAccountError(name, failure))));
         });
         Dialog dialog = new Dialog.Builder(title)
                 .add(p().textContent(resources.messages().deactivateAccountQuestion(name)).element())
@@ -234,10 +228,7 @@ public class SSLPresenter extends ApplicationFinderPresenter<SSLPresenter.MyView
             dispatcher.execute(operation, result -> MessageEvent.fire(getEventBus(),
                     Message.success(resources.messages().updateAccountSuccess(name))),
                     (operation1, failure) -> MessageEvent.fire(getEventBus(),
-                            Message.error(resources.messages().updateAccountError(name, failure))),
-                    (operation1, exception) -> MessageEvent.fire(getEventBus(),
-                            Message.error(
-                                    resources.messages().updateAccountError(name, exception.getMessage()))));
+                            Message.error(resources.messages().updateAccountError(name, failure))));
         });
         Dialog dialog = new Dialog.Builder(title)
                 .add(p().textContent(resources.messages().updateAccountQuestion(name)).element())
@@ -260,12 +251,8 @@ public class SSLPresenter extends ApplicationFinderPresenter<SSLPresenter.MyView
             callback.accept(result.toString());
             MessageEvent.fire(getEventBus(),
                     Message.success(resources.messages().getMetadataSuccess(name)));
-        },
-                (operation1, failure) -> MessageEvent.fire(getEventBus(),
-                        Message.error(resources.messages().getMetadataError(name, failure))),
-                (operation1, exception) -> MessageEvent.fire(getEventBus(),
-                        Message.error(
-                                resources.messages().getMetadataError(name, exception.getMessage()))));
+        }, (operation1, failure) -> MessageEvent.fire(getEventBus(),
+                Message.error(resources.messages().getMetadataError(name, failure))));
     }
 
     void changeAccountKey(String name) {
@@ -283,10 +270,7 @@ public class SSLPresenter extends ApplicationFinderPresenter<SSLPresenter.MyView
             dispatcher.execute(operation, result -> MessageEvent.fire(getEventBus(),
                     Message.success(resources.messages().changeAccountKeySuccess(name))),
                     (operation1, failure) -> MessageEvent.fire(getEventBus(),
-                            Message.error(resources.messages().changeAccountKeyError(name, failure))),
-                    (operation1, exception) -> MessageEvent.fire(getEventBus(),
-                            Message.error(
-                                    resources.messages().changeAccountKeyError(name, exception.getMessage()))));
+                            Message.error(resources.messages().changeAccountKeyError(name, failure))));
         });
         Dialog dialog = new Dialog.Builder(title)
                 .add(p().textContent(resources.messages().changeAccountKeyQuestion(name)).element())
@@ -309,11 +293,8 @@ public class SSLPresenter extends ApplicationFinderPresenter<SSLPresenter.MyView
         dispatcher.execute(operation, result -> {
             MessageEvent.fire(getEventBus(), Message.success(resources.messages().initKeyManagerSuccess(name)));
             reload();
-        },
-                (operation1, failure) -> MessageEvent.fire(getEventBus(),
-                        Message.error(resources.messages().initKeyManagerError(name, failure))),
-                (operation1, exception) -> MessageEvent.fire(getEventBus(),
-                        Message.error(resources.messages().initKeyManagerError(name, exception.getMessage()))));
+        }, (operation1, failure) -> MessageEvent.fire(getEventBus(),
+                Message.error(resources.messages().initKeyManagerError(name, failure))));
     }
 
     void initTrustManager(String name) {
@@ -322,11 +303,8 @@ public class SSLPresenter extends ApplicationFinderPresenter<SSLPresenter.MyView
         dispatcher.execute(operation, result -> {
             MessageEvent.fire(getEventBus(), Message.success(resources.messages().initTrustManagerSuccess(name)));
             reload();
-        },
-                (operation1, failure) -> MessageEvent.fire(getEventBus(),
-                        Message.error(resources.messages().initTrustManagerError(name, failure))),
-                (operation1, exception) -> MessageEvent.fire(getEventBus(),
-                        Message.error(resources.messages().initTrustManagerError(name, exception.getMessage()))));
+        }, (operation1, failure) -> MessageEvent.fire(getEventBus(),
+                Message.error(resources.messages().initTrustManagerError(name, failure))));
     }
 
     void reloadCRL(String name) {
@@ -336,9 +314,7 @@ public class SSLPresenter extends ApplicationFinderPresenter<SSLPresenter.MyView
         dispatcher.execute(operation, result -> MessageEvent.fire(getEventBus(),
                 Message.success(resources.messages().reloadCRLSuccess(name))),
                 (operation1, failure) -> MessageEvent.fire(getEventBus(),
-                        Message.error(resources.messages().reloadCRLError(name, failure))),
-                (operation1, exception) -> MessageEvent.fire(getEventBus(),
-                        Message.error(resources.messages().reloadCRLError(name, exception.getMessage()))));
+                        Message.error(resources.messages().reloadCRLError(name, failure))));
     }
 
     void readIdentity(Metadata metadata, String name) {

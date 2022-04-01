@@ -21,7 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.Pager;
@@ -49,7 +49,7 @@ import elemental2.dom.CSSProperties.MarginTopUnionType;
 import elemental2.dom.HTMLElement;
 
 import static java.util.stream.Collectors.toList;
-import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.elemento.Elements.div;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.ballroom.Skeleton.MARGIN_BIG;
@@ -120,7 +120,7 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, Itera
         }
 
         // root elements
-        elements = Elements.collect()
+        elements = Elements.bag()
                 .add(toolbar)
                 .add(row()
                         .add(column()
@@ -156,8 +156,8 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, Itera
     }
 
     private void adjustHeight() {
-        int toolbarHeight = (int) (toolbar.element().offsetHeight);
-        int pagerHeight = (int) pager.element().offsetHeight;
+        int toolbarHeight = toolbar.element().offsetHeight;
+        int pagerHeight = pager.element().offsetHeight;
         listView.element().style.height = vh(
                 applicationOffset() + toolbarHeight + pagerHeight + surroundingHeight + 2);
         listView.element().style.overflow = "scroll"; // NON-NLS
@@ -194,7 +194,7 @@ public class ModelNodeListView<T extends ModelNode> implements Display<T>, Itera
     }
 
     @Override
-    public void updateSelection(SelectionInfo selectionInfo) {
+    public void updateSelection(SelectionInfo<T> selectionInfo) {
         // already covered by listView
     }
 

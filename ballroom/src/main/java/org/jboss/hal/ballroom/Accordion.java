@@ -15,8 +15,8 @@
  */
 package org.jboss.hal.ballroom;
 
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.elemento.Elements;
+import org.jboss.elemento.IsElement;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
 
@@ -28,9 +28,9 @@ import jsinterop.annotations.JsType;
 
 import static elemental2.dom.DomGlobal.document;
 import static jsinterop.annotations.JsPackage.GLOBAL;
-import static org.jboss.gwt.elemento.core.Elements.a;
-import static org.jboss.gwt.elemento.core.Elements.div;
-import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.elemento.Elements.a;
+import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.h;
 import static org.jboss.hal.resources.CSS.collapse;
 import static org.jboss.hal.resources.CSS.in;
 import static org.jboss.hal.resources.CSS.panel;

@@ -27,8 +27,8 @@ import org.jboss.hal.resources.Resources;
 
 import elemental2.dom.HTMLElement;
 
-import static org.jboss.gwt.elemento.core.Elements.p;
-import static org.jboss.gwt.elemento.core.Elements.section;
+import static org.jboss.elemento.Elements.p;
+import static org.jboss.elemento.Elements.section;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 public class ReviewStep extends AbstractConfiguration implements AsyncStep<EnableSSLContext> {

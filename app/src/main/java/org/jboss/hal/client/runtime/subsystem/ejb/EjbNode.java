@@ -25,9 +25,13 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.DELIVERY_ACTIVE;
 class EjbNode extends DeploymentResource {
 
     enum Type {
-        MDB("message-driven-bean", Names.MESSAGE_DRIVEN_BEAN), SINGLETON("singleton-bean", Names.SINGLETON_BEAN), STATEFUL(
-                "stateful-session-bean",
-                Names.STATEFUL_SESSION_BEAN), STATELESS("stateless-session-bean", Names.STATELESS_SESSION_BEAN);
+        MDB("message-driven-bean", Names.MESSAGE_DRIVEN_BEAN),
+
+        SINGLETON("singleton-bean", Names.SINGLETON_BEAN),
+
+        STATEFUL("stateful-session-bean", Names.STATEFUL_SESSION_BEAN),
+
+        STATELESS("stateless-session-bean", Names.STATELESS_SESSION_BEAN);
 
         static Type fromResource(String resource) {
             if (MDB.resource.equals(resource)) {

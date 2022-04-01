@@ -26,9 +26,9 @@ import java.util.function.Supplier;
 
 import javax.inject.Provider;
 
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.EventCallbackFn;
-import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
+import org.jboss.elemento.Elements;
+import org.jboss.elemento.EventCallbackFn;
+import org.jboss.elemento.HtmlContentBuilder;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.client.runtime.server.ServerStatusSwitch;
@@ -65,7 +65,6 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
-import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.security.AuthorisationDecision;
@@ -102,10 +101,47 @@ import static elemental2.dom.DomGlobal.document;
 import static elemental2.dom.DomGlobal.setTimeout;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
-import static org.jboss.gwt.elemento.core.Elements.*;
-import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.elemento.Elements.a;
+import static org.jboss.elemento.Elements.asHtmlElement;
+import static org.jboss.elemento.Elements.col;
+import static org.jboss.elemento.Elements.colgroup;
+import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.htmlElements;
+import static org.jboss.elemento.Elements.li;
+import static org.jboss.elemento.Elements.p;
+import static org.jboss.elemento.Elements.section;
+import static org.jboss.elemento.Elements.setVisible;
+import static org.jboss.elemento.Elements.span;
+import static org.jboss.elemento.Elements.table;
+import static org.jboss.elemento.Elements.tbody;
+import static org.jboss.elemento.Elements.td;
+import static org.jboss.elemento.Elements.th;
+import static org.jboss.elemento.Elements.thead;
+import static org.jboss.elemento.Elements.tr;
+import static org.jboss.elemento.Elements.ul;
+import static org.jboss.elemento.EventType.click;
 import static org.jboss.hal.core.runtime.TopologyTasks.topology;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.AUTO_START;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DISCONNECTED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST_STATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LAST_CONNECTED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MANAGEMENT_VERSION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PRODUCT_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PRODUCT_VERSION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RELEASE_CODENAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RELEASE_VERSION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RELOAD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RELOAD_SERVERS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNNING_MODE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_STATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDING_DEFAULT_INTERFACE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDING_GROUP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDING_PORT_OFFSET;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STATUS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SUSPEND_STATE;
 import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.CSS.centerBlock;
 import static org.jboss.hal.resources.CSS.clickable;
@@ -321,107 +357,101 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
         // show the loading indicator if the operations take too long
         double timeoutHandle = setTimeout((o) -> setVisible(loadingSection, true), MEDIUM_TIMEOUT);
         series(new FlowContext(progress.get()), topology(environment, dispatcher))
-                .subscribe(new Outcome<FlowContext>() {
-                    @Override
-                    public void onError(FlowContext context, Throwable error) {
-                        clearTimeout(timeoutHandle);
-                        setVisible(loadingSection, false);
-                        MessageEvent.fire(eventBus,
-                                Message.error(resources.messages().topologyError(), error.getMessage()));
+                .then(context -> {
+                    clearTimeout(timeoutHandle);
+                    setVisible(loadingSection, false);
+                    Elements.removeChildrenFrom(topologySection);
+
+                    List<Host> hosts = context.get(TopologyTasks.HOSTS);
+                    List<ServerGroup> serverGroups = context.get(TopologyTasks.SERVER_GROUPS);
+                    List<Server> servers = context.get(TopologyTasks.SERVERS);
+
+                    topologySection.appendChild(buildTable(hosts, serverGroups, servers));
+                    setVisible(topologySection, true);
+                    adjustTdHeight();
+
+                    // restore selection
+                    if (hostName != null) {
+                        hosts.stream()
+                                .filter(host -> hostName.equals(host.getName()))
+                                .findAny()
+                                .ifPresent(this::hostDetails);
                     }
-
-                    @Override
-                    public void onSuccess(FlowContext context) {
-                        clearTimeout(timeoutHandle);
-                        setVisible(loadingSection, false);
-                        Elements.removeChildrenFrom(topologySection);
-
-                        List<Host> hosts = context.get(TopologyTasks.HOSTS);
-                        List<ServerGroup> serverGroups = context.get(TopologyTasks.SERVER_GROUPS);
-                        List<Server> servers = context.get(TopologyTasks.SERVERS);
-
-                        topologySection.appendChild(buildTable(hosts, serverGroups, servers));
-                        setVisible(topologySection, true);
-                        adjustTdHeight();
-
-                        // restore selection
-                        if (hostName != null) {
-                            hosts.stream()
-                                    .filter(host -> hostName.equals(host.getName()))
-                                    .findAny()
-                                    .ifPresent(host -> hostDetails(host));
-                        }
-                        if (serverGroupName != null) {
-                            serverGroups.stream()
-                                    .filter(serverGroup -> serverGroupName.equals(serverGroup.getName()))
-                                    .findAny()
-                                    .ifPresent(serverGroup -> serverGroupDetails(serverGroup));
-                        }
-                        if (serverName != null) {
-                            servers.stream()
-                                    .filter(server -> serverName.equals(server.getName()))
-                                    .findAny()
-                                    .ifPresent(server -> serverDetails(server));
-                        }
+                    if (serverGroupName != null) {
+                        serverGroups.stream()
+                                .filter(serverGroup -> serverGroupName.equals(serverGroup.getName()))
+                                .findAny()
+                                .ifPresent(this::serverGroupDetails);
                     }
+                    if (serverName != null) {
+                        servers.stream()
+                                .filter(server -> serverName.equals(server.getName()))
+                                .findAny()
+                                .ifPresent(this::serverDetails);
+                    }
+                    return null;
+                })
+                .catch_(error -> {
+                    clearTimeout(timeoutHandle);
+                    setVisible(loadingSection, false);
+                    MessageEvent.fire(eventBus,
+                            Message.error(resources.messages().topologyError(), String.valueOf(error)));
+                    return null;
                 });
     }
 
     private void updateServer(Server server) {
         series(new FlowContext(progress.get()), topology(environment, dispatcher))
-                .subscribe(new Outcome<FlowContext>() {
-                    @Override
-                    public void onError(FlowContext context, Throwable error) {
-                        MessageEvent.fire(eventBus,
-                                Message.error(resources.messages().updateServerError(server.getName()),
-                                        error.getMessage()));
-                    }
-
-                    @Override
-                    public void onSuccess(FlowContext context) {
-                        Host host = null;
-                        List<Host> hosts = context.get(TopologyTasks.HOSTS);
-                        for (Host h : hosts) {
-                            if (h.getName().equals(server.getHost())) {
-                                host = h;
-                                break;
-                            }
-                        }
-                        ServerGroup serverGroup = null;
-                        List<ServerGroup> serverGroups = context.get(TopologyTasks.SERVER_GROUPS);
-                        for (ServerGroup sg : serverGroups) {
-                            if (sg.getName().equals(server.getServerGroup())) {
-                                serverGroup = sg;
-                                break;
-                            }
-                        }
-
-                        if (host != null && serverGroup != null) {
-                            // Does not matter where we take the updated server from (must be included in both
-                            // host and server group)
-                            Host finalHost = host;
-                            ServerGroup finalServerGroup = serverGroup;
-                            host.getServers().stream()
-                                    .filter(srv -> srv.getId().equals(server.getId()))
-                                    .findAny()
-                                    .ifPresent(updatedServer -> {
-                                        String updatedContainerId = Ids.build(updatedServer.getId(), CONTAINER);
-                                        replaceElement(document.getElementById(updatedContainerId),
-                                                () -> serverElement(updatedServer),
-                                                whatever -> serverDetails(updatedServer));
-                                    });
-
-                            // Update not only the server, but also the host and server group elements. Since the
-                            // server's state has changed the host and server group dropdown links need to be updated
-                            // as well.
-                            replaceElement(document.querySelector(hostSelector(host)),
-                                    () -> hostElement(finalHost),
-                                    whatever -> hostDetails(finalHost));
-                            replaceElement(document.querySelector(serverGroupSelector(serverGroup)),
-                                    () -> serverGroupElement(finalServerGroup),
-                                    updatedElement -> serverGroupDetails(finalServerGroup));
+                .then(context -> {
+                    Host host = null;
+                    List<Host> hosts = context.get(TopologyTasks.HOSTS);
+                    for (Host h : hosts) {
+                        if (h.getName().equals(server.getHost())) {
+                            host = h;
+                            break;
                         }
                     }
+                    ServerGroup serverGroup = null;
+                    List<ServerGroup> serverGroups = context.get(TopologyTasks.SERVER_GROUPS);
+                    for (ServerGroup sg : serverGroups) {
+                        if (sg.getName().equals(server.getServerGroup())) {
+                            serverGroup = sg;
+                            break;
+                        }
+                    }
+
+                    if (host != null && serverGroup != null) {
+                        // Does not matter where we take the updated server from (must be included in both
+                        // host and server group)
+                        Host finalHost = host;
+                        ServerGroup finalServerGroup = serverGroup;
+                        host.getServers().stream()
+                                .filter(srv -> srv.getId().equals(server.getId()))
+                                .findAny()
+                                .ifPresent(updatedServer -> {
+                                    String updatedContainerId = Ids.build(updatedServer.getId(), CONTAINER);
+                                    replaceElement(document.getElementById(updatedContainerId),
+                                            () -> serverElement(updatedServer),
+                                            whatever -> serverDetails(updatedServer));
+                                });
+
+                        // Update not only the server, but also the host and server group elements. Since the
+                        // server's state has changed the host and server group dropdown links need to be updated
+                        // as well.
+                        replaceElement(document.querySelector(hostSelector(host)),
+                                () -> hostElement(finalHost),
+                                whatever -> hostDetails(finalHost));
+                        replaceElement(document.querySelector(serverGroupSelector(serverGroup)),
+                                () -> serverGroupElement(finalServerGroup),
+                                updatedElement -> serverGroupDetails(finalServerGroup));
+                    }
+                    return null;
+                })
+                .catch_(error -> {
+                    MessageEvent.fire(eventBus,
+                            Message.error(resources.messages().updateServerError(server.getName()),
+                                    String.valueOf(error)));
+                    return null;
                 });
     }
 

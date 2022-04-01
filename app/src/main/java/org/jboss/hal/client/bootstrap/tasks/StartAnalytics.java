@@ -25,6 +25,7 @@ import org.jboss.hal.core.analytics.Tracker;
 import org.jboss.hal.core.finder.FinderContextEvent;
 import org.jboss.hal.core.modelbrowser.ModelBrowserPathEvent;
 import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.js.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +34,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.NavigationEvent;
 
 import elemental2.dom.HTMLScriptElement;
-import rx.Completable;
+import elemental2.promise.Promise;
 
 import static elemental2.dom.DomGlobal.document;
 import static elemental2.dom.DomGlobal.window;
@@ -42,7 +43,7 @@ import static org.jboss.hal.config.Settings.Key.LOCALE;
 import static org.jboss.hal.js.Json.stringify;
 
 /** Initialises google analytics and binds {@link Tracker} */
-public class StartAnalytics implements BootstrapTask {
+public final class StartAnalytics implements Task<FlowContext> {
 
     private static final String PRODUCTION_ID = "UA-89365654-1";
     private static final String DEVELOPMENT_ID = "UA-89365654-2";
@@ -64,8 +65,8 @@ public class StartAnalytics implements BootstrapTask {
     }
 
     @Override
-    public Completable call(FlowContext context) {
-        String pathname = window.location.getPathname();
+    public Promise<FlowContext> apply(final FlowContext context) {
+        String pathname = window.location.pathname;
         boolean testSuite = pathname.endsWith("ts.html");
         boolean collectUserData = settings.get(COLLECT_USER_DATA).asBoolean();
         if (!testSuite && collectUserData) {
@@ -108,7 +109,7 @@ public class StartAnalytics implements BootstrapTask {
         } else {
             logger.info("Collect user data is off.");
         }
-        return Completable.complete();
+        return Promise.resolve(context);
     }
 
     private JsonObject config(String id) {

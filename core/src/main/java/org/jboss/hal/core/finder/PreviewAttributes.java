@@ -21,8 +21,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
+import org.jboss.elemento.Elements;
+import org.jboss.elemento.ElementsBag;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.ResolveExpressionEvent;
 import org.jboss.hal.core.Core;
@@ -42,9 +42,21 @@ import elemental2.dom.HTMLLIElement;
 import elemental2.dom.HTMLUListElement;
 
 import static elemental2.dom.DomGlobal.document;
-import static org.jboss.gwt.elemento.core.Elements.*;
-import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.elemento.Elements.a;
+import static org.jboss.elemento.Elements.bag;
+import static org.jboss.elemento.Elements.h;
+import static org.jboss.elemento.Elements.li;
+import static org.jboss.elemento.Elements.p;
+import static org.jboss.elemento.Elements.span;
+import static org.jboss.elemento.Elements.ul;
+import static org.jboss.elemento.EventType.click;
+import static org.jboss.hal.resources.CSS.clickable;
+import static org.jboss.hal.resources.CSS.fontAwesome;
+import static org.jboss.hal.resources.CSS.key;
+import static org.jboss.hal.resources.CSS.listGroup;
+import static org.jboss.hal.resources.CSS.listGroupItem;
+import static org.jboss.hal.resources.CSS.marginLeft5;
+import static org.jboss.hal.resources.CSS.value;
 
 /** Element to show the basic attributes of a resource inside the preview pane. */
 public class PreviewAttributes<T extends ModelNode> implements Iterable<HTMLElement> {
@@ -84,7 +96,7 @@ public class PreviewAttributes<T extends ModelNode> implements Iterable<HTMLElem
         this.listItems = new HashMap<>();
         this.lb = new LabelBuilder();
 
-        ElementsBuilder builder = collect();
+        ElementsBag builder = bag();
         if (header != null) {
             builder.add(h(2, header));
         }

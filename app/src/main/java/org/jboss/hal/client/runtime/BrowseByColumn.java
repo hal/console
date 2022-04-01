@@ -95,8 +95,8 @@ public class BrowseByColumn extends StaticItemColumn {
         super(finder, Ids.DOMAIN_BROWSE_BY, resources.constants().browseBy(),
                 Arrays.asList(
                         new StaticItem.Builder(Names.TOPOLOGY)
-                                .onPreview(new TopologyPreview(securityContextRegistry, environment,
-                                        dispatcher, progress, eventBus, places, finderPathFactory, hostActions,
+                                .onPreview(new TopologyPreview(securityContextRegistry, environment, dispatcher,
+                                        progress, eventBus, places, finderPathFactory, hostActions,
                                         serverGroupActions, serverActions, resources))
                                 .build(),
                         new StaticItem.Builder(Names.HOSTS)

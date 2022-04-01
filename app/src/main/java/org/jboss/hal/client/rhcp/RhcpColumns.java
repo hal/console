@@ -38,11 +38,18 @@ import org.jboss.hal.spi.AsyncColumn;
 import com.google.common.collect.Iterators;
 
 import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
-import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.elemento.Elements.a;
+import static org.jboss.elemento.Elements.bag;
+import static org.jboss.elemento.Elements.img;
+import static org.jboss.elemento.Elements.li;
+import static org.jboss.elemento.Elements.p;
+import static org.jboss.elemento.Elements.span;
+import static org.jboss.elemento.Elements.ul;
 import static org.jboss.hal.client.rhcp.RhcpColumns.Decade.DECADES;
 import static org.jboss.hal.resources.CSS.listGroupItem;
 import static org.jboss.hal.resources.CSS.preview;
@@ -128,6 +135,8 @@ public class RhcpColumns {
                     .getNumber(YEAR) < 2010);
             DECADES.put("2010 - 2020", input -> input != null && (int) input.getNumber(YEAR) >= 2010 && (int) input
                     .getNumber(YEAR) < 2020);
+            DECADES.put("2020 - 2030", input -> input != null && (int) input.getNumber(YEAR) >= 2020 && (int) input
+                    .getNumber(YEAR) < 2030);
         }
 
         @Inject
@@ -144,7 +153,7 @@ public class RhcpColumns {
         @Inject
         public Album(Finder finder) {
             super(new Builder<JsonObject>(finder, "rhcp-album", "Album")
-                    .itemsProvider((context, callback) -> {
+                    .itemsProvider((context) -> new Promise<>((resolve, reject) -> {
                         String decade = Iterators.getLast(context.getPath().iterator()).getItemTitle();
                         List<JsonObject> albums = new ArrayList<>();
                         for (String key : RhcpResources.DISCOGRAPHY.keys()) {
@@ -153,8 +162,8 @@ public class RhcpColumns {
                                 albums.add(album);
                             }
                         }
-                        callback.onSuccess(albums);
-                    })
+                        resolve.onInvoke(albums);
+                    }))
                     .itemRenderer(item -> new ItemDisplay<JsonObject>() {
                         @Override
                         public HTMLElement element() {
@@ -174,7 +183,7 @@ public class RhcpColumns {
                     })
                     .onPreview(item -> new PreviewContent<>(item.getString(TITLE),
                             "Released " + item.getString("released"),
-                            collect()
+                            bag()
                                     .add(img(item.getString("cover")).css(preview))
                                     .add(p()
                                             .add(span().textContent("More infos: "))
@@ -191,7 +200,7 @@ public class RhcpColumns {
         @Inject
         public Track(Finder finder, ItemActionFactory itemActionFactory) {
             super(new Builder<JsonObject>(finder, "rhcp-track", "Track")
-                    .itemsProvider((context, callback) -> {
+                    .itemsProvider((context) -> new Promise<>((resolve, reject) -> {
                         List<JsonObject> tracks = new ArrayList<>();
                         StreamSupport.stream(context.getPath().spliterator(), false)
                                 .filter(segment -> "rhcp-album".equals(segment.getColumnId()))
@@ -202,8 +211,8 @@ public class RhcpColumns {
                                         tracks.add(album.getArray("tracks").getObject(i));
                                     }
                                 });
-                        callback.onSuccess(tracks);
-                    })
+                        resolve.onInvoke(tracks);
+                    }))
                     .itemRenderer(item -> new ItemDisplay<JsonObject>() {
                         @Override
                         public HTMLElement element() {

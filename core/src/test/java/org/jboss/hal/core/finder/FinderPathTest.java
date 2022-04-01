@@ -79,7 +79,7 @@ public class FinderPathTest {
         assertFalse(path.isEmpty());
         assertEquals(2, path.size());
 
-        Iterator<FinderSegment> iterator = path.iterator();
+        Iterator<FinderSegment<?>> iterator = path.iterator();
         assertSegment(iterator.next(), "2", "two");
         assertSegment(iterator.next(), "1", "one");
     }
@@ -91,11 +91,11 @@ public class FinderPathTest {
                 new FinderPath().append("1", "one").append("2", "two").toString());
     }
 
-    private void assertSegment(FinderSegment segment, String columnId, String itemId) {
+    private void assertSegment(FinderSegment<?> segment, String columnId, String itemId) {
         assertSegment(segment, columnId, itemId, columnId, itemId);
     }
 
-    private void assertSegment(FinderSegment segment,
+    private void assertSegment(FinderSegment<?> segment,
             String columnId, String itemId, String columnTitle, String itemTitle) {
         assertEquals(columnId, segment.getColumnId());
         assertEquals(itemId, segment.getItemId());

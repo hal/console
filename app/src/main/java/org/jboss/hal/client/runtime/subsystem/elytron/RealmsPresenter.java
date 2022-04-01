@@ -28,7 +28,6 @@ import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.client.runtime.subsystem.elytron.wizardpassword.PasswordWizard;
-import org.jboss.hal.core.SuccessfulOutcome;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -66,8 +65,34 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
-import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import elemental2.promise.Promise;
+
+import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.CACHING_REALM_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.CACHING_REALM_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.CUSTOM_MODIFIABLE_REALM_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.CUSTOM_MODIFIABLE_REALM_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.ELYTRON_SUBSYSTEM_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.FILESYSTEM_REALM_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.FILESYSTEM_REALM_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.LDAP_REALM_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.LDAP_REALM_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.PROPERTIES_REALM_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.PROPERTIES_REALM_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD_IDENTITY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD_IDENTITY_ATTRIBUTE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CLEAR_CACHE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.IDENTITY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LOAD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_IDENTITY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE_IDENTITY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE_IDENTITY_ATTRIBUTE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURITY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.Names.IDENTITY_ATTRIBUTE_MAPPING;
@@ -79,9 +104,9 @@ public class RealmsPresenter extends ApplicationFinderPresenter<RealmsPresenter.
 
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
-    private Resources resources;
-    private Provider<Progress> progress;
-    private Dispatcher dispatcher;
+    private final Resources resources;
+    private final Provider<Progress> progress;
+    private final Dispatcher dispatcher;
 
     @Inject
     public RealmsPresenter(EventBus eventBus,
@@ -150,11 +175,8 @@ public class RealmsPresenter extends ApplicationFinderPresenter<RealmsPresenter.
         dispatcher.execute(operation, result -> {
             MessageEvent.fire(getEventBus(), Message.success(resources.messages().clearCacheSuccess(name)));
             reload();
-        },
-                (operation1, failure) -> MessageEvent.fire(getEventBus(),
-                        Message.error(resources.messages().clearCacheError(name, failure))),
-                (operation1, exception) -> MessageEvent.fire(getEventBus(),
-                        Message.error(resources.messages().clearCacheError(name, exception.getMessage()))));
+        }, (operation1, failure) -> MessageEvent.fire(getEventBus(),
+                Message.error(resources.messages().clearCacheError(name, failure))));
     }
 
     void loadProperties(String name) {
@@ -163,11 +185,8 @@ public class RealmsPresenter extends ApplicationFinderPresenter<RealmsPresenter.
         dispatcher.execute(operation, result -> {
             MessageEvent.fire(getEventBus(), Message.success(resources.messages().loadPropertiesRealmSuccess(name)));
             reload();
-        },
-                (operation1, failure) -> MessageEvent.fire(getEventBus(),
-                        Message.error(resources.messages().loadPropertiesRealmError(name, failure))),
-                (operation1, exception) -> MessageEvent.fire(getEventBus(),
-                        Message.error(resources.messages().loadPropertiesRealmError(name, exception.getMessage()))));
+        }, (operation1, failure) -> MessageEvent.fire(getEventBus(),
+                Message.error(resources.messages().loadPropertiesRealmError(name, failure))));
     }
 
     void addIdentity(AddressTemplate template, Metadata metadata, String name) {
@@ -191,12 +210,7 @@ public class RealmsPresenter extends ApplicationFinderPresenter<RealmsPresenter.
                         .param(IDENTITY, identity)
                         .build();
 
-                return dispatcher.execute(addOp)
-                        .doOnError(ex -> MessageEvent.fire(getEventBus(),
-                                Message.error(resources.messages()
-                                        .addError(resources.constants().identity(), identity, resourceName,
-                                                ex.getMessage()))))
-                        .toCompletable();
+                return dispatcher.execute(addOp).then(__ -> Promise.resolve(flowContext));
             };
             tasks.add(addTask);
 
@@ -211,12 +225,7 @@ public class RealmsPresenter extends ApplicationFinderPresenter<RealmsPresenter.
                                 .param(VALUE, modelValues)
                                 .build();
 
-                        return dispatcher.execute(addIdentAttributeOp)
-                                .doOnError(ex -> MessageEvent.fire(getEventBus(),
-                                        Message.error(resources.messages()
-                                                .addError(resources.constants().identity(), identity, resourceName,
-                                                        ex.getMessage()))))
-                                .toCompletable();
+                        return dispatcher.execute(addIdentAttributeOp).then(__ -> Promise.resolve(flowContext));
 
                     };
                     tasks.add(addAttribute);
@@ -224,21 +233,18 @@ public class RealmsPresenter extends ApplicationFinderPresenter<RealmsPresenter.
             }
 
             series(new FlowContext(progress.get()), tasks)
-                    .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
-                        @Override
-                        public void onSuccess(FlowContext flowContext) {
-                            MessageEvent.fire(getEventBus(),
-                                    Message.success(resources.messages()
-                                            .addSuccess(resources.constants().identity(), identity, resourceName)));
-                        }
-
-                        @Override
-                        public void onError(FlowContext context, Throwable throwable) {
-                            MessageEvent.fire(getEventBus(),
-                                    Message.error(resources.messages()
-                                            .addError(resources.constants().identity(), identity, resourceName,
-                                                    throwable.getMessage())));
-                        }
+                    .then(__ -> {
+                        MessageEvent.fire(getEventBus(),
+                                Message.success(resources.messages()
+                                        .addSuccess(resources.constants().identity(), identity, resourceName)));
+                        return null;
+                    })
+                    .catch_(error -> {
+                        MessageEvent.fire(getEventBus(),
+                                Message.error(resources.messages()
+                                        .addError(resources.constants().identity(), identity, resourceName,
+                                                String.valueOf(error))));
+                        return null;
                     });
         });
         dialog.show();
@@ -266,12 +272,9 @@ public class RealmsPresenter extends ApplicationFinderPresenter<RealmsPresenter.
                     .build();
             LabelBuilder labelBuilder = new LabelBuilder();
             String resourceName = labelBuilder.label(template.lastName()) + SPACE + resource;
-            dispatcher.execute(operation, callback::accept,
+            dispatcher.execute(operation, callback,
                     (operation1, failure) -> MessageEvent.fire(getEventBus(),
-                            Message.error(resources.messages().readIdentityError(identity, resourceName, failure))),
-                    (operation1, exception) -> MessageEvent.fire(getEventBus(),
-                            Message.error(
-                                    resources.messages().readIdentityError(identity, resourceName, exception.getMessage()))));
+                            Message.error(resources.messages().readIdentityError(identity, resourceName, failure))));
         });
         form.edit(new ModelNode());
         dialog.show();
@@ -296,10 +299,7 @@ public class RealmsPresenter extends ApplicationFinderPresenter<RealmsPresenter.
                             .param(NAME, key)
                             .build();
 
-                    return dispatcher.execute(operation)
-                            .doOnError(ex -> MessageEvent.fire(getEventBus(), Message.error(
-                                    resources.messages().saveIdentityError(identity, resourceName, ex.getMessage()))))
-                            .toCompletable();
+                    return dispatcher.execute(operation).then(__ -> Promise.resolve(flowContext));
                 };
                 tasks.add(addTask);
             }
@@ -317,10 +317,7 @@ public class RealmsPresenter extends ApplicationFinderPresenter<RealmsPresenter.
                             .param(VALUE, modelValues)
                             .build();
 
-                    return dispatcher.execute(operation)
-                            .doOnError(ex -> MessageEvent.fire(getEventBus(), Message.error(
-                                    resources.messages().saveIdentityError(identity, resourceName, ex.getMessage()))))
-                            .toCompletable();
+                    return dispatcher.execute(operation).then(__ -> Promise.resolve(flowContext));
                 };
                 tasks.add(addTask);
             }
@@ -330,20 +327,17 @@ public class RealmsPresenter extends ApplicationFinderPresenter<RealmsPresenter.
         } else {
 
             series(new FlowContext(progress.get()), tasks)
-                    .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
-                        @Override
-                        public void onSuccess(FlowContext flowContext) {
-                            viewCallback.accept(true);
-                            MessageEvent.fire(getEventBus(),
-                                    Message.success(resources.messages().saveIdentitySuccess(identity, resourceName)));
-                        }
-
-                        @Override
-                        public void onError(FlowContext context, Throwable throwable) {
-                            MessageEvent.fire(getEventBus(),
-                                    Message.error(resources.messages()
-                                            .saveIdentityError(identity, resourceName, throwable.getMessage())));
-                        }
+                    .then(__ -> {
+                        viewCallback.accept(true);
+                        MessageEvent.fire(getEventBus(),
+                                Message.success(resources.messages().saveIdentitySuccess(identity, resourceName)));
+                        return null;
+                    })
+                    .catch_(error -> {
+                        MessageEvent.fire(getEventBus(),
+                                Message.error(resources.messages()
+                                        .saveIdentityError(identity, resourceName, String.valueOf(error))));
+                        return null;
                     });
         }
     }
@@ -367,12 +361,8 @@ public class RealmsPresenter extends ApplicationFinderPresenter<RealmsPresenter.
                 MessageEvent.fire(getEventBus(),
                         Message.success(resources.messages().removeIdentitySuccess(identity, resourceName)));
                 consumer.accept(true);
-            },
-                    (operation1, failure) -> MessageEvent.fire(getEventBus(),
-                            Message.error(resources.messages().removeIdentityError(identity, resourceName, failure))),
-                    (operation1, exception) -> MessageEvent.fire(getEventBus(),
-                            Message.error(
-                                    resources.messages().removeIdentityError(identity, resourceName, exception.getMessage()))));
+            }, (operation1, failure) -> MessageEvent.fire(getEventBus(),
+                    Message.error(resources.messages().removeIdentityError(identity, resourceName, failure))));
 
         });
     }

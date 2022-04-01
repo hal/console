@@ -17,7 +17,7 @@ package org.jboss.hal.client.skeleton;
 
 import javax.inject.Inject;
 
-import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.elemento.IsElement;
 import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.client.bootstrap.tasks.VersionUpdateEvent;
 import org.jboss.hal.client.bootstrap.tasks.VersionUpdateEvent.VersionUpdateHandler;

@@ -87,18 +87,8 @@
                 <version>${version.gin}</version>
             </dependency>
             <dependency>
-                <groupId>com.intendia.gwt.rxgwt</groupId>
-                <artifactId>rxgwt</artifactId>
-                <version>${version.rx.gwt}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.gwt.elemento</groupId>
+                <groupId>org.jboss.elemento</groupId>
                 <artifactId>elemento-core</artifactId>
-                <version>${version.elemento}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.gwt.elemento</groupId>
-                <artifactId>elemento-widget</artifactId>
                 <version>${version.elemento}</version>
             </dependency>
 

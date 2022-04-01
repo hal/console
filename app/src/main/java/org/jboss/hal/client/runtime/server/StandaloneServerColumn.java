@@ -38,7 +38,6 @@ import org.jboss.hal.core.runtime.server.ServerResultEvent;
 import org.jboss.hal.core.runtime.server.ServerResultEvent.ServerResultHandler;
 import org.jboss.hal.core.runtime.server.ServerSelectionEvent;
 import org.jboss.hal.dmr.Composite;
-import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -61,6 +60,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
 
 import static java.util.Collections.singletonList;
 import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.HOST_CONFIGURATION_CHANGES_ADDRESS;
@@ -68,7 +68,18 @@ import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationCha
 import static org.jboss.hal.client.runtime.managementoperations.ManagementOperationsPresenter.MANAGEMENT_OPERATIONS_ADDRESS;
 import static org.jboss.hal.client.runtime.server.StandaloneServerColumn.MANAGEMENT_ADDRESS;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES_ONLY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CORE_SERVICE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MANAGEMENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_BOOT_ERRORS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RELOAD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESUME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SHUTDOWN;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SUSPEND;
 import static org.jboss.hal.meta.AddressTemplate.OPTIONAL;
 
 @Column(Ids.STANDALONE_SERVER_COLUMN)
@@ -89,7 +100,7 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
             Resources resources, StatementContext statementContext, MetadataRegistry metadataRegistry) {
         super(new Builder<Server>(finder, Ids.STANDALONE_SERVER_COLUMN, Names.SERVER)
 
-                .itemsProvider((context, callback) -> {
+                .itemsProvider(context -> {
                     Operation attributes = new Operation.Builder(ResourceAddress.root(), READ_RESOURCE_OPERATION)
                             .param(INCLUDE_RUNTIME, true)
                             .param(ATTRIBUTES_ONLY, true)
@@ -97,20 +108,19 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
                     Operation bootErrors = new Operation.Builder(ResourceAddress.root().add(CORE_SERVICE, MANAGEMENT),
                             READ_BOOT_ERRORS)
                                     .build();
-                    dispatcher.execute(new Composite(attributes, bootErrors), (CompositeResult result) -> {
+                    return dispatcher.execute(new Composite(attributes, bootErrors)).then(result -> {
                         Server.STANDALONE.addServerAttributes(result.step(0).get(RESULT));
                         Server.STANDALONE.setBootErrors(!result.step(1).get(RESULT).asList().isEmpty());
-                        callback.onSuccess(singletonList(Server.STANDALONE));
-
                         // Restore pending servers visualization
                         if (serverActions.isPending(Server.STANDALONE)) {
                             ItemMonitor.startProgress(Server.STANDALONE.getId());
                         }
+                        return Promise.resolve(singletonList(Server.STANDALONE));
                     });
                 })
 
                 .onItemSelect(server -> eventBus.fireEvent(new ServerSelectionEvent(server.getName())))
-                .onPreview(item -> new ServerPreview(serverActions, item, dispatcher, eventBus, progress,
+                .onPreview(item -> new ServerPreview(serverActions, item, dispatcher, progress,
                         statementContext, placeManager, places, finderPathFactory, resources)));
 
         this.finder = finder;

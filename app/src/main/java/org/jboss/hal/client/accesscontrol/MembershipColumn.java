@@ -42,6 +42,7 @@ import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Progress;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
@@ -54,12 +55,14 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
 
 import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
-import static org.jboss.gwt.elemento.core.Elements.span;
+import static org.jboss.elemento.Elements.span;
 import static org.jboss.hal.client.accesscontrol.AddressTemplates.EXCLUDE_TEMPLATE;
 import static org.jboss.hal.client.accesscontrol.AddressTemplates.INCLUDE_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
@@ -100,7 +103,7 @@ public class MembershipColumn extends FinderColumn<Assignment> {
         this.accessControl = accessControl;
         this.resources = resources;
 
-        setItemsProvider((context, callback) -> {
+        setItemsProvider((context -> new Promise<>((resolve, reject) -> {
             List<Assignment> assignments = new ArrayList<>();
             Role role = findRole(finder.getContext().getPath());
             if (role != null) {
@@ -141,8 +144,8 @@ public class MembershipColumn extends FinderColumn<Assignment> {
                         excludeActions);
             }
 
-            callback.onSuccess(assignments);
-        });
+            resolve.onInvoke(assignments);
+        })));
 
         setItemRenderer(item -> new ItemDisplay<Assignment>() {
             @Override
@@ -217,7 +220,7 @@ public class MembershipColumn extends FinderColumn<Assignment> {
     }
 
     private Role findRole(FinderPath path) {
-        FinderSegment segment = path.findColumn(Ids.ROLE);
+        FinderSegment<?> segment = path.findColumn(Ids.ROLE);
         if (segment != null) {
             return accessControl.roles().get(segment.getItemId());
         }
@@ -244,27 +247,26 @@ public class MembershipColumn extends FinderColumn<Assignment> {
         return column -> {
             Role role = findRole(getFinder().getContext().getPath());
             if (role != null) {
-                series(new FlowContext(progress.get()), new CheckRoleMapping(dispatcher, role),
+                List<Task<FlowContext>> tasks = asList(new CheckRoleMapping(dispatcher, role),
                         new AddRoleMapping(dispatcher, role, status -> status == 404),
-                        new AddAssignment(dispatcher, role, principal, include))
-                                .subscribe(new org.jboss.hal.core.SuccessfulOutcome<FlowContext>(eventBus, resources) {
-                                    @Override
-                                    public void onSuccess(FlowContext context) {
-                                        String type = principal.getType() == Principal.Type.USER
-                                                ? resources.constants().user()
-                                                : resources.constants().group();
-                                        SafeHtml message = include
-                                                ? resources.messages().assignmentIncludeSuccess(type, principal.getName())
-                                                : resources.messages().assignmentExcludeSuccess(type, principal.getName());
-                                        MessageEvent.fire(eventBus, Message.success(message));
-                                        accessControl.reload(() -> {
-                                            refresh(RefreshMode.RESTORE_SELECTION);
-                                            if (isCurrentUser(principal)) {
-                                                eventBus.fireEvent(new UserChangedEvent());
-                                            }
-                                        });
-                                    }
-                                });
+                        new AddAssignment(dispatcher, role, principal, include));
+                series(new FlowContext(progress.get()), tasks)
+                        .then(__ -> {
+                            String type = principal.getType() == Principal.Type.USER
+                                    ? resources.constants().user()
+                                    : resources.constants().group();
+                            SafeHtml message = include
+                                    ? resources.messages().assignmentIncludeSuccess(type, principal.getName())
+                                    : resources.messages().assignmentExcludeSuccess(type, principal.getName());
+                            MessageEvent.fire(eventBus, Message.success(message));
+                            accessControl.reload(() -> {
+                                refresh(RefreshMode.RESTORE_SELECTION);
+                                if (isCurrentUser(principal)) {
+                                    eventBus.fireEvent(new UserChangedEvent());
+                                }
+                            });
+                            return null;
+                        });
             }
         };
     }

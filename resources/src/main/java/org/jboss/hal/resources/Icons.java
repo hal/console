@@ -17,7 +17,7 @@ package org.jboss.hal.resources;
 
 import elemental2.dom.HTMLElement;
 
-import static org.jboss.gwt.elemento.core.Elements.span;
+import static org.jboss.elemento.Elements.span;
 import static org.jboss.hal.resources.CSS.*;
 
 /** Collection of common icons */

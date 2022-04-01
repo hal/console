@@ -26,6 +26,8 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 
+import elemental2.promise.Promise;
+
 import static java.util.Arrays.asList;
 
 @AsyncColumn(Ids.MESSAGING_CATEGORY_RUNTIME)
@@ -36,7 +38,7 @@ public class MessagingCategoryColumn extends StaticItemColumn {
             Resources resources) {
 
         super(finder, Ids.MESSAGING_CATEGORY_RUNTIME, resources.constants().category(),
-                (context, callback) -> callback.onSuccess(asList(
+                context -> Promise.resolve(asList(
                         new StaticItem.Builder(Names.SERVER)
                                 .id(Ids.build(Names.SERVER, Ids.ITEM, "runtime"))
                                 .nextColumn(Ids.MESSAGING_SERVER_RUNTIME)

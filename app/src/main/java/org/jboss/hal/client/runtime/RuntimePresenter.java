@@ -49,8 +49,8 @@ public class RuntimePresenter extends FinderPresenter<RuntimePresenter.MyView, R
     }
 
     @Override
-    protected PreviewContent initialPreview() {
-        return new PreviewContent(Names.RUNTIME,
+    protected PreviewContent<Void> initialPreview() {
+        return new PreviewContent<>(Names.RUNTIME,
                 environment.isStandalone() ? resources.previews().runtimeStandalone() : resources.previews().runtimeDomain());
     }
 

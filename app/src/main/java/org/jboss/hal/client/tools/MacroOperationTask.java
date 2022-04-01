@@ -20,9 +20,9 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Task;
 
-import rx.Completable;
+import elemental2.promise.Promise;
 
-class MacroOperationTask implements Task<FlowContext> {
+final class MacroOperationTask implements Task<FlowContext> {
 
     private final Dispatcher dispatcher;
     private final Operation operation;
@@ -33,7 +33,7 @@ class MacroOperationTask implements Task<FlowContext> {
     }
 
     @Override
-    public Completable call(FlowContext context) {
-        return dispatcher.execute(operation).toCompletable();
+    public Promise<FlowContext> apply(final FlowContext context) {
+        return dispatcher.execute(operation).then(__ -> Promise.resolve(context));
     }
 }

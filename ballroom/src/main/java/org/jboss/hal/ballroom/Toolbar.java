@@ -19,8 +19,8 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.elemento.Elements;
+import org.jboss.elemento.IsElement;
 import org.jboss.hal.ballroom.dataprovider.DataProvider;
 import org.jboss.hal.ballroom.dataprovider.Display;
 import org.jboss.hal.ballroom.dataprovider.Filter;
@@ -38,24 +38,59 @@ import org.jboss.hal.spi.Callback;
 
 import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
+import com.google.web.bindery.event.shared.HandlerRegistration;
 
 import elemental2.dom.Element;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
-import rx.Subscription;
 
-import static com.intendia.rxgwt.elemento.RxElemento.fromEvent;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.stream.Collectors.toList;
-import static org.jboss.gwt.elemento.core.Elements.*;
-import static org.jboss.gwt.elemento.core.Elements.form;
-import static org.jboss.gwt.elemento.core.Elements.label;
-import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.gwt.elemento.core.EventType.keyup;
-import static org.jboss.gwt.elemento.core.InputType.text;
+import static org.jboss.elemento.Elements.a;
+import static org.jboss.elemento.Elements.button;
+import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.form;
+import static org.jboss.elemento.Elements.h;
+import static org.jboss.elemento.Elements.input;
+import static org.jboss.elemento.Elements.label;
+import static org.jboss.elemento.Elements.li;
+import static org.jboss.elemento.Elements.p;
+import static org.jboss.elemento.Elements.span;
+import static org.jboss.elemento.Elements.ul;
+import static org.jboss.elemento.EventType.bind;
+import static org.jboss.elemento.EventType.click;
+import static org.jboss.elemento.EventType.keyup;
+import static org.jboss.elemento.InputType.text;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.btn;
+import static org.jboss.hal.resources.CSS.btnDefault;
+import static org.jboss.hal.resources.CSS.btnGroup;
+import static org.jboss.hal.resources.CSS.btnLink;
+import static org.jboss.hal.resources.CSS.caret;
+import static org.jboss.hal.resources.CSS.clickable;
+import static org.jboss.hal.resources.CSS.dropdown;
+import static org.jboss.hal.resources.CSS.dropdownKebabPf;
+import static org.jboss.hal.resources.CSS.dropdownMenu;
+import static org.jboss.hal.resources.CSS.dropdownMenuRight;
+import static org.jboss.hal.resources.CSS.dropdownToggle;
+import static org.jboss.hal.resources.CSS.fontAwesome;
+import static org.jboss.hal.resources.CSS.formControl;
+import static org.jboss.hal.resources.CSS.formControlStatic;
+import static org.jboss.hal.resources.CSS.formGroup;
+import static org.jboss.hal.resources.CSS.inputGroupBtn;
 import static org.jboss.hal.resources.CSS.label;
+import static org.jboss.hal.resources.CSS.labelInfo;
+import static org.jboss.hal.resources.CSS.listHalSelected;
+import static org.jboss.hal.resources.CSS.listInline;
+import static org.jboss.hal.resources.CSS.marginRight5;
+import static org.jboss.hal.resources.CSS.pfIcon;
+import static org.jboss.hal.resources.CSS.row;
+import static org.jboss.hal.resources.CSS.selected;
+import static org.jboss.hal.resources.CSS.srOnly;
+import static org.jboss.hal.resources.CSS.toolbarPf;
+import static org.jboss.hal.resources.CSS.toolbarPfActionRight;
+import static org.jboss.hal.resources.CSS.toolbarPfActions;
+import static org.jboss.hal.resources.CSS.toolbarPfFilter;
+import static org.jboss.hal.resources.CSS.toolbarPfResults;
 
 /**
  * PatternFly toolbar. Should be connected to a {@link DataProvider} (which in turn updates its displays e.g. a list view):
@@ -107,7 +142,7 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
     private HTMLElement filterButtonText;
     private HTMLElement filterUl;
     private HTMLInputElement filterInput;
-    private Subscription keyUpSubscription;
+    private HandlerRegistration keyUpSubscription;
 
     private HTMLElement sortButtonText;
     private HTMLElement sortStaticText;
@@ -233,6 +268,7 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
                                 .element());
                     }
                 } else {
+                    // noinspection ConstantConditions
                     ul.appendChild(li()
                             .add(a().css(clickable)
                                     .on(click, e -> action.callback.execute())
@@ -288,16 +324,14 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
     @Override
     public void attach() {
         if (filterInput != null) {
-            keyUpSubscription = fromEvent(filterInput, keyup)
-                    .throttleLast(750, MILLISECONDS)
-                    .subscribe(e -> addOrModifySelectedFilter(selectedFilter));
+            keyUpSubscription = bind(filterInput, keyup, e -> addOrModifySelectedFilter(selectedFilter));
         }
     }
 
     @Override
     public void detach() {
         if (keyUpSubscription != null) {
-            keyUpSubscription.unsubscribe();
+            keyUpSubscription.removeHandler();
         }
     }
 
@@ -307,7 +341,7 @@ public class Toolbar<T> implements Display<T>, IsElement<HTMLElement>, Attachabl
     }
 
     @Override
-    public void updateSelection(SelectionInfo selectionInfo) {
+    public void updateSelection(SelectionInfo<T> selectionInfo) {
         Elements.setVisible(this.selection, selectionInfo.hasSelection());
         if (selectionInfo.hasSelection() && selectionInfo.isMultiSelect()) {
             this.selection.innerHTML = MESSAGES.selected(selectionInfo.getSelectionCount(),

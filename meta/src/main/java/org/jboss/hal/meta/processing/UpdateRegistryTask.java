@@ -26,9 +26,9 @@ import org.jboss.hal.meta.security.SecurityContextRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rx.Completable;
+import elemental2.promise.Promise;
 
-class UpdateRegistryTask implements Task<LookupContext> {
+final class UpdateRegistryTask implements Task<LookupContext> {
 
     private static final Logger logger = LoggerFactory.getLogger(UpdateRegistryTask.class);
 
@@ -42,7 +42,7 @@ class UpdateRegistryTask implements Task<LookupContext> {
     }
 
     @Override
-    public Completable call(LookupContext context) {
+    public Promise<LookupContext> apply(final LookupContext context) {
         if (context.updateRegistry()) {
             for (Map.Entry<ResourceAddress, ResourceDescription> entry : context.toResourceDescriptionRegistry.entrySet()) {
                 ResourceAddress address = entry.getKey();
@@ -57,6 +57,6 @@ class UpdateRegistryTask implements Task<LookupContext> {
             logger.debug("Added {} resource descriptions and {} security contexts to the registries",
                     context.toResourceDescriptionRegistry.size(), context.toSecurityContextRegistry.size());
         }
-        return Completable.complete();
+        return Promise.resolve(context);
     }
 }

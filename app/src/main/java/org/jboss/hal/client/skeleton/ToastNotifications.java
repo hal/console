@@ -18,8 +18,8 @@ package org.jboss.hal.client.skeleton;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.elemento.Elements;
+import org.jboss.elemento.IsElement;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
@@ -33,10 +33,10 @@ import elemental2.dom.HTMLElement;
 import static elemental2.dom.DomGlobal.clearTimeout;
 import static elemental2.dom.DomGlobal.document;
 import static elemental2.dom.DomGlobal.setTimeout;
-import static org.jboss.gwt.elemento.core.Elements.div;
-import static org.jboss.gwt.elemento.core.EventType.bind;
-import static org.jboss.gwt.elemento.core.EventType.mouseout;
-import static org.jboss.gwt.elemento.core.EventType.mouseover;
+import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.EventType.bind;
+import static org.jboss.elemento.EventType.mouseout;
+import static org.jboss.elemento.EventType.mouseover;
 import static org.jboss.hal.resources.CSS.toastNotificationsListPf;
 import static org.jboss.hal.resources.UIConstants.MESSAGE_TIMEOUT;
 

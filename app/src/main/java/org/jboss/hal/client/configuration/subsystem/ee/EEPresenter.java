@@ -59,7 +59,17 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
 import static org.jboss.hal.client.configuration.subsystem.ee.AddressTemplates.EE_SUBSYSTEM_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.ee.AddressTemplates.GLOBAL_DIRECTORY_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.EE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.GLOBAL_DIRECTORY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.GLOBAL_MODULES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LIST_ADD_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LIST_REMOVE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PATH;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RELATIVE_TO;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 
 public class EEPresenter
         extends ApplicationFinderPresenter<EEPresenter.MyView, EEPresenter.MyProxy>

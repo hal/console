@@ -30,9 +30,9 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
 import elemental2.dom.HTMLElement;
 
-import static org.jboss.gwt.elemento.core.Elements.collect;
-import static org.jboss.gwt.elemento.core.Elements.img;
-import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.elemento.Elements.bag;
+import static org.jboss.elemento.Elements.img;
+import static org.jboss.elemento.Elements.p;
 import static org.jboss.hal.resources.CSS.preview;
 
 @SuppressWarnings("HardCodedStringLiteral")
@@ -50,7 +50,7 @@ public class RhcpPresenter extends FinderPresenter<RhcpPresenter.MyView, RhcpPre
 
     @Override
     protected PreviewContent<Void> initialPreview() {
-        Iterable<HTMLElement> elements = collect()
+        Iterable<HTMLElement> elements = bag()
                 .add(p().textContent(
                         "w00t you found a secret page! The main purpose of this page is to test deeply nested columns. Therefore the discography of the Red Hot Chili Peppers is used (obviously one of the developers is a big RHCP fan ;-)"))
                 .add(p().textContent(

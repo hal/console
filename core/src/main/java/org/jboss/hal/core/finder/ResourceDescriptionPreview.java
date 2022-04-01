@@ -24,7 +24,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 import elemental2.dom.HTMLElement;
 
-import static org.jboss.gwt.elemento.core.Elements.section;
+import static org.jboss.elemento.Elements.section;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
 
 /** Preview which shows the description of a {@code :read-resource-description} operation. */

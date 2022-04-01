@@ -20,10 +20,9 @@ import java.util.List;
 
 import javax.inject.Provider;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.client.runtime.RuntimePreview;
-import org.jboss.hal.core.SuccessfulOutcome;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.finder.PreviewAttributes;
@@ -50,19 +49,54 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
 
-import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLLIElement;
+import elemental2.promise.Promise;
 
-import static org.jboss.gwt.elemento.core.Elements.*;
-import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.elemento.Elements.a;
+import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.h;
+import static org.jboss.elemento.Elements.li;
+import static org.jboss.elemento.Elements.span;
+import static org.jboss.elemento.Elements.ul;
+import static org.jboss.elemento.EventType.click;
 import static org.jboss.hal.client.runtime.server.ServerColumn.serverConfigTemplate;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.AUTO_START;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.QUERY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RELOAD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESTART;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESUME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNNING_MODE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SELECT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_STATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDING;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDING_GROUP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDING_PORT_OFFSET;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.START;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STATUS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STOP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SUSPEND_STATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.WHERE;
 import static org.jboss.hal.flow.Flow.series;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.alert;
+import static org.jboss.hal.resources.CSS.alertInfo;
+import static org.jboss.hal.resources.CSS.alertLink;
+import static org.jboss.hal.resources.CSS.clickable;
+import static org.jboss.hal.resources.CSS.hidden;
+import static org.jboss.hal.resources.CSS.key;
+import static org.jboss.hal.resources.CSS.listGroup;
+import static org.jboss.hal.resources.CSS.listGroupItem;
+import static org.jboss.hal.resources.CSS.value;
 
 class ServerPreview extends RuntimePreview<Server> {
 
@@ -71,10 +105,9 @@ class ServerPreview extends RuntimePreview<Server> {
     private static final String ID_HEADER_OPEN_PORTS = "h2-open-ports";
 
     private final ServerActions serverActions;
-    private Dispatcher dispatcher;
-    private EventBus eventBus;
-    private Provider<Progress> progress;
-    private StatementContext statementContext;
+    private final Dispatcher dispatcher;
+    private final Provider<Progress> progress;
+    private final StatementContext statementContext;
     private final HTMLElement startLink;
     private final HTMLElement stopLink;
     private final HTMLElement reloadLink;
@@ -84,13 +117,12 @@ class ServerPreview extends RuntimePreview<Server> {
     private final HTMLElement[] links;
     private final HTMLElement serverUrl;
     private final PreviewAttributes<Server> attributes;
-    private HTMLElement ulOpenPorts = ul().id(ID_OPEN_PORTS).css(listGroup).element();
-    private HTMLElement headerOpenPorts = h(2, resources.constants().openPorts()).id(ID_HEADER_OPEN_PORTS).element();
+    private final HTMLElement ulOpenPorts = ul().id(ID_OPEN_PORTS).css(listGroup).element();
+    private final HTMLElement headerOpenPorts = h(2, resources.constants().openPorts()).id(ID_HEADER_OPEN_PORTS).element();
 
     ServerPreview(ServerActions serverActions,
             Server server,
             Dispatcher dispatcher,
-            EventBus eventBus,
             Provider<Progress> progress,
             StatementContext statementContext,
             PlaceManager placeManager,
@@ -100,7 +132,6 @@ class ServerPreview extends RuntimePreview<Server> {
         super(server.getName(), null, resources);
         this.serverActions = serverActions;
         this.dispatcher = dispatcher;
-        this.eventBus = eventBus;
         this.progress = progress;
         this.statementContext = statementContext;
 
@@ -294,8 +325,7 @@ class ServerPreview extends RuntimePreview<Server> {
                         .param(CHILD_TYPE, SOCKET_BINDING_GROUP)
                         .build();
                 return dispatcher.execute(operation)
-                        .doOnSuccess(result -> flowContext.push(result.get(0).asString()))
-                        .toCompletable();
+                        .then(result -> Promise.resolve(flowContext.push(result.get(0).asString())));
             });
 
             tasks.add(flowContext -> {
@@ -312,24 +342,22 @@ class ServerPreview extends RuntimePreview<Server> {
                         .param(WHERE, where)
                         .build();
                 return dispatcher.execute(operation)
-                        .doOnSuccess(result -> {
+                        .then(result -> {
                             ModelNode openPortsModel = new ModelNode();
                             result.asList().forEach(m -> {
                                 ModelNode sbModel = m.get(RESULT);
                                 openPortsModel.add(sbModel.get(NAME).asString(), sbModel.get("bound-port").asInt());
                                 flowContext.push(openPortsModel);
                             });
-                        })
-                        .toCompletable();
+                            return Promise.resolve(flowContext);
+                        });
             });
 
             series(new FlowContext(progress.get()), tasks)
-                    .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
-                        @Override
-                        public void onSuccess(FlowContext flowContext) {
-                            ModelNode openPorts = flowContext.pop();
-                            buildOpenPortsElement(openPorts);
-                        }
+                    .then(flowContext -> {
+                        ModelNode openPorts = flowContext.pop();
+                        buildOpenPortsElement(openPorts);
+                        return null;
                     });
             serverActions.readUrl(server, serverUrl);
         }

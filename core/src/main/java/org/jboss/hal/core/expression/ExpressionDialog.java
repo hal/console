@@ -17,8 +17,8 @@ package org.jboss.hal.core.expression;
 
 import java.util.Map;
 
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.Key;
+import org.jboss.elemento.Elements;
+import org.jboss.elemento.Key;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.form.Form;
@@ -43,8 +43,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import elemental2.dom.HTMLInputElement;
 
-import static org.jboss.gwt.elemento.core.EventType.bind;
-import static org.jboss.gwt.elemento.core.EventType.keydown;
+import static org.jboss.elemento.EventType.bind;
+import static org.jboss.elemento.EventType.keydown;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.EXPRESSION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;

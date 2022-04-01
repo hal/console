@@ -24,13 +24,10 @@ import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.runtime.TopologyTasks;
 import org.jboss.hal.core.runtime.server.Server;
-import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
-import org.jboss.hal.flow.FlowException;
-import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.StatementContext;
@@ -41,14 +38,20 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 import elemental2.dom.HTMLElement;
-import rx.Completable;
+import elemental2.promise.Promise;
 
-import static org.jboss.gwt.elemento.core.Elements.button;
-import static org.jboss.gwt.elemento.core.Elements.div;
-import static org.jboss.gwt.elemento.core.EventType.click;
+import static java.util.Arrays.asList;
+import static org.jboss.elemento.Elements.button;
+import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.EventType.click;
 import static org.jboss.hal.client.configuration.subsystem.datasource.wizard.DataSourceWizard.addOperation;
 import static org.jboss.hal.core.runtime.TopologyTasks.runningServers;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DATASOURCES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DATA_SOURCE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBSYSTEM;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TEST_CONNECTION_IN_POOL;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.XA_DATA_SOURCE;
 import static org.jboss.hal.dmr.ModelNodeHelper.properties;
 import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.CSS.blankSlatePf;
@@ -60,6 +63,7 @@ class TestStep extends WizardStep<Context, State> {
 
     private static final String WIZARD_TITLE = "wizard-title";
     private static final String WIZARD_TEXT = "wizard-text";
+    private static final String WIZARD_ERROR = "wizard-error";
 
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
@@ -108,12 +112,15 @@ class TestStep extends WizardStep<Context, State> {
         if (!context.isCreated()) {
             // add data source
             tasks.add(flowContext -> dispatcher.execute(addOperation(context, statementContext))
-                    .doOnSuccess((CompositeResult result) -> context.setCreated(true))
-                    .doOnError(throwable -> {
+                    .then(__ -> {
+                        context.setCreated(true);
+                        return Promise.resolve(flowContext);
+                    })
+                    .catch_(error -> {
                         flowContext.set(WIZARD_TITLE, resources.constants().testConnectionError());
                         flowContext.set(WIZARD_TEXT, resources.messages().dataSourceAddError());
-                    })
-                    .toCompletable());
+                        return Promise.resolve(flowContext);
+                    }));
         }
 
         // check running server(s)
@@ -131,42 +138,40 @@ class TestStep extends WizardStep<Context, State> {
                 address = ResourceAddress.root();
             } else {
                 flowContext.set(WIZARD_TITLE, resources.constants().testConnectionError());
-                flowContext.set(WIZARD_TEXT,
-                        SafeHtmlUtils.fromString(resources.constants().noRunningServers()));
-                return Completable.error(new FlowException(resources.messages().testConnectionErrorDomain(),
-                        flowContext));
+                flowContext.set(WIZARD_TEXT, SafeHtmlUtils.fromString(resources.constants().noRunningServers()));
+                flowContext.set(WIZARD_ERROR, resources.messages().testConnectionErrorDomain());
+                return Promise.resolve(flowContext);
             }
             address.add(SUBSYSTEM, DATASOURCES)
                     .add(context.dataSource.isXa() ? XA_DATA_SOURCE : DATA_SOURCE, context.dataSource.getName());
             Operation operation = new Operation.Builder(address, TEST_CONNECTION_IN_POOL).build();
-            return dispatcher.execute(operation).doOnError(throwable -> {
-                flowContext.set(WIZARD_TITLE, resources.constants().testConnectionError());
-                flowContext.set(WIZARD_TEXT,
-                        resources.messages().testConnectionError(context.dataSource.getName()));
-            }).toCompletable();
+            return dispatcher.execute(operation)
+                    .then(__ -> Promise.resolve(flowContext))
+                    .catch_(error -> {
+                        flowContext.set(WIZARD_TITLE, resources.constants().testConnectionError());
+                        flowContext.set(WIZARD_TEXT, resources.messages().testConnectionError(context.dataSource.getName()));
+                        return Promise.resolve(flowContext);
+                    });
         });
 
         series(new FlowContext(progress.get()), tasks)
-                .subscribe(new Outcome<FlowContext>() {
-                    @Override
-                    public void onError(FlowContext flowContext, Throwable error) {
-                        String title;
-                        SafeHtml text;
-                        if (flowContext == null) {
-                            title = resources.constants().unknownError();
-                            text = resources.messages().unknownError();
-                        } else {
-                            title = flowContext.get(WIZARD_TITLE);
-                            text = flowContext.get(WIZARD_TEXT);
-                        }
-                        wizard().showError(title, text, error.getMessage(), false);
-                    }
-
-                    @Override
-                    public void onSuccess(FlowContext flowContext) {
+                .then(flowContext -> {
+                    if (flowContext.keys().containsAll(asList(WIZARD_TITLE, WIZARD_TEXT))) {
+                        String title = flowContext.get(WIZARD_TITLE);
+                        SafeHtml text = flowContext.get(WIZARD_TEXT);
+                        String error = flowContext.get(WIZARD_ERROR, resources.constants().unknownError());
+                        wizard().showError(title, text, error, false);
+                    } else {
                         wizard().showSuccess(resources.constants().testConnectionSuccess(),
                                 resources.messages().testConnectionSuccess(context.dataSource.getName()), false);
                     }
+                    return null;
+                })
+                .catch_(error -> {
+                    String title = resources.constants().unknownError();
+                    SafeHtml text = resources.messages().unknownError();
+                    wizard().showError(title, text, String.valueOf(error), false);
+                    return null;
                 });
     }
 }

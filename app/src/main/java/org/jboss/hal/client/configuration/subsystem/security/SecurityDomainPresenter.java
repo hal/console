@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.client.configuration.subsystem.security;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -24,7 +25,6 @@ import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.core.CrudOperations;
-import org.jboss.hal.core.SuccessfulOutcome;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -40,6 +40,7 @@ import org.jboss.hal.dmr.ResourceCheck;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Progress;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -59,8 +60,9 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
-import rx.Completable;
+import elemental2.promise.Promise;
 
+import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.security.AddressTemplates.SECURITY_DOMAIN_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.security.AddressTemplates.SECURITY_DOMAIN_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.security.AddressTemplates.SELECTED_SECURITY_DOMAIN_TEMPLATE;
@@ -176,38 +178,37 @@ public class SecurityDomainPresenter
         // first check for (and add if necessary) the intermediate singleton
         // then add the final resource
         AddressTemplate singletonTemplate = SELECTED_SECURITY_DOMAIN_TEMPLATE.append(module.singleton);
-        series(new FlowContext(progress.get()),
-                new ResourceCheck(dispatcher, singletonTemplate.resolve(statementContext)),
-                context -> {
-                    int status = context.pop();
-                    if (status == 200) {
-                        return Completable.complete();
-                    } else {
-                        Operation operation = new Operation.Builder(singletonTemplate.resolve(statementContext), ADD)
-                                .build();
-                        return dispatcher.execute(operation).toCompletable();
-                    }
-                })
-                        .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
-                            @Override
-                            public void onSuccess(FlowContext context) {
-                                AddressTemplate metadataTemplate = SECURITY_DOMAIN_TEMPLATE
-                                        .append(module.singleton)
-                                        .append(module.resource + EQ_WILDCARD);
-                                AddressTemplate selectionTemplate = SELECTED_SECURITY_DOMAIN_TEMPLATE
-                                        .append(module.singleton)
-                                        .append(module.resource + EQ_WILDCARD);
-                                Metadata metadata = metadataRegistry.lookup(metadataTemplate);
-                                AddResourceDialog dialog = new AddResourceDialog(module.id,
-                                        resources.messages().addResourceTitle(module.type),
-                                        metadata,
-                                        (name, modelNode) -> {
-                                            ResourceAddress address = selectionTemplate.resolve(statementContext, name);
-                                            crud.add(module.type, name, address, modelNode, (n, a) -> reload());
-                                        });
-                                dialog.show();
-                            }
-                        });
+        Task<FlowContext> check = new ResourceCheck(dispatcher, singletonTemplate.resolve(statementContext));
+        Task<FlowContext> add = context -> {
+            int status = context.pop();
+            if (status == 200) {
+                return Promise.resolve(context);
+            } else {
+                Operation operation = new Operation.Builder(singletonTemplate.resolve(statementContext), ADD)
+                        .build();
+                return dispatcher.execute(operation).then(__ -> Promise.resolve(context));
+            }
+        };
+        List<Task<FlowContext>> tasks = asList(check, add);
+        series(new FlowContext(progress.get()), tasks)
+                .then(__ -> {
+                    AddressTemplate metadataTemplate = SECURITY_DOMAIN_TEMPLATE
+                            .append(module.singleton)
+                            .append(module.resource + EQ_WILDCARD);
+                    AddressTemplate selectionTemplate = SELECTED_SECURITY_DOMAIN_TEMPLATE
+                            .append(module.singleton)
+                            .append(module.resource + EQ_WILDCARD);
+                    Metadata metadata = metadataRegistry.lookup(metadataTemplate);
+                    AddResourceDialog dialog = new AddResourceDialog(module.id,
+                            resources.messages().addResourceTitle(module.type),
+                            metadata,
+                            (name, modelNode) -> {
+                                ResourceAddress address = selectionTemplate.resolve(statementContext, name);
+                                crud.add(module.type, name, address, modelNode, (n, a) -> reload());
+                            });
+                    dialog.show();
+                    return null;
+                });
     }
 
     void saveModule(Form<NamedNode> form, Map<String, Object> changedValues, Module module) {

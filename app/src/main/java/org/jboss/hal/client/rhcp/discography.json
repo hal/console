@@ -1113,5 +1113,118 @@
                 "length" : "6:09"
             }
         ]
+    },
+    "Unlimited Love" : {
+        "title" : "Unlimited Love",
+        "released" : "April 1, 2022",
+        "year" : 2022,
+        "url" : "https://en.wikipedia.org/wiki/Unlimited_Love",
+        "cover" : "https://upload.wikimedia.org/wikipedia/en/1/1f/Red_Hot_Chili_Peppers_-_Unlimited_Love.png",
+        "tracks" : [
+            {
+                "track" : 1,
+                "title" : "Black Summer",
+                "writer" : [
+                    "Kiedis",
+                    "Flea",
+                    "Frusciante",
+                    "Smith"
+                ],
+                "length" : "3:52"
+            },
+            {
+                "track" : 2,
+                "title" : "Here Ever After",
+                "length" : "3:50"
+            },
+            {
+                "track" : 3,
+                "title" : "Aquatic Mouth Dance",
+                "length" : "4:20"
+            },
+            {
+                "track" : 4,
+                "title" : "Not the One",
+                "length" : "4:26"
+            },
+            {
+                "track" : 5,
+                "title" : "Poster Child",
+                "writer" : [
+                    "Kiedis",
+                    "Flea",
+                    "Frusciante",
+                    "Smith"
+                ],
+                "length" : "5:16"
+            },
+            {
+                "track" : 6,
+                "title" : "The Great Apes",
+                "length" : "5:03"
+            },
+            {
+                "track" : 7,
+                "title" : "It's Only Natural",
+                "length" : "5:34"
+            },
+            {
+                "track" : 8,
+                "title" : "She's a Lover",
+                "length" : "3:41"
+            },
+            {
+                "track" : 9,
+                "title" : "These Are the Ways",
+                "writer" : [
+                    " Kiedis",
+                    "Flea",
+                    "Klinghoffer",
+                    "Smith",
+                    "Burton"
+                ],
+                "length" : "3:56"
+            },
+            {
+                "track" : 10,
+                "title" : "Whatchu Thinkin'",
+                "length" : "3:40"
+            },
+            {
+                "track" : 11,
+                "title" : "Bastards of Light",
+                "length" : "3:38"
+            },
+            {
+                "track" : 12,
+                "title" : "White Braids & Pillow Chair",
+                "length" : "3:40"
+            },
+            {
+                "track" : 13,
+                "title" : "One Way Traffic",
+                "length" : "4:10"
+            },
+            {
+                "track" : 14,
+                "title" : "Veronica",
+                "length" : "4:28"
+            },
+            {
+                "track" : 15,
+                "title" : "Let 'Em Cry",
+                "length" : "4:23"
+            },
+            {
+                "track" : 16,
+                "title" : "The Heavy Wing",
+                "length" : "5:31"
+            },
+            {
+                "track" : 17,
+                "title" : "Tangelo",
+                "length" : "3:27"
+            }
+        ]
     }
 }

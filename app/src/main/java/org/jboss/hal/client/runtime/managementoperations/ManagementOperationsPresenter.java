@@ -40,7 +40,6 @@ import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
-import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.AddressTemplate;
@@ -60,11 +59,34 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
-import rx.Completable;
-import rx.Single;
+import elemental2.promise.Promise;
 
+import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ACTIVE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADDRESS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CANCEL_NON_PROGRESSING_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CANCEL_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CORE_SERVICE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.FIND_NON_PROGRESSING_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HAL_ACTIVE_ADDRESS_HOST;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HAL_ACTIVE_ADDRESS_SERVER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HAL_ACTIVE_OP_ADDRESS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOSTS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MANAGEMENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.QUERY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SELECT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_STATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVICE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.WHERE;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.meta.token.NameTokens.MANAGEMENT_OPERATIONS;
@@ -84,10 +106,10 @@ public class ManagementOperationsPresenter extends
     private final FinderPathFactory finderPathFactory;
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
-    private Provider<Progress> progress;
+    private final Provider<Progress> progress;
     private final Resources resources;
-    private EventBus eventBus;
-    private Environment environment;
+    private final EventBus eventBus;
+    private final Environment environment;
 
     @Inject
     public ManagementOperationsPresenter(EventBus eventBus,
@@ -174,13 +196,12 @@ public class ManagementOperationsPresenter extends
                         .param(CHILD_TYPE, HOST)
                         .build();
                 return dispatcher.execute(operation)
-                        .doOnSuccess(result -> {
+                        .then(result -> {
                             List<String> hosts = result.asList().stream()
                                     .map(ModelNode::asString)
                                     .collect(toList());
-                            context.set(HOSTS, hosts);
-                        })
-                        .toCompletable();
+                            return Promise.resolve(context.set(HOSTS, hosts));
+                        });
             };
 
             // return running servers, to later call a find-non-progressing-operation on each runtime server
@@ -194,16 +215,15 @@ public class ManagementOperationsPresenter extends
                         .param(WHERE, new ModelNode().set(SERVER_STATE, "running"))
                         .build();
                 return dispatcher.execute(operation)
-                        .doOnSuccess(result -> {
+                        .then(result -> {
                             List<String> servers = Collections.emptyList();
                             if (result != null && result.isDefined()) {
                                 servers = result.asList().stream()
                                         .map(r -> hostServerAddress(r.get(RESULT)))
                                         .collect(toList());
                             }
-                            context.set("servers", servers);
-                        })
-                        .toCompletable();
+                            return Promise.resolve(context.set("servers", servers));
+                        });
             };
 
             // call find-non-progressing-operation and read-resource of active operations
@@ -240,7 +260,7 @@ public class ManagementOperationsPresenter extends
                     }
                 }
                 return dispatcher.execute(composite)
-                        .doOnSuccess(response -> {
+                        .then(response -> {
                             List<String> nonProgressingOps = new ArrayList<>();
                             List<ManagementOperations> ops = new ArrayList<>();
                             for (ModelNode r : response) {
@@ -288,30 +308,27 @@ public class ManagementOperationsPresenter extends
                             if (!nonProgressingOps.isEmpty()) {
                                 Collections.sort(nonProgressingOps);
                                 for (ManagementOperations mop : ops) {
-                                    if (nonProgressingOps.indexOf(mop.getName()) > -1) {
+                                    if (nonProgressingOps.contains(mop.getName())) {
                                         mop.setAsNonProgressing();
                                     }
                                 }
                             }
-                            context.set("active-operations", ops);
-                        })
-                        .toCompletable();
+                            return Promise.resolve(context.set("active-operations", ops));
+                        });
             };
 
-            series(new FlowContext(progress.get()), hostsTask, serversTask, findNonProgressingTask)
-                    .subscribe(new Outcome<FlowContext>() {
-                        @Override
-                        public void onError(FlowContext context, Throwable error) {
-                            MessageEvent.fire(getEventBus(), Message.error(SafeHtmlUtils.fromString(
-                                    "Error loading management operations: " + error.getMessage())));
-                        }
-
-                        @Override
-                        public void onSuccess(FlowContext context) {
-                            List<ManagementOperations> ops = context.get("active-operations");
-                            getView().update(ops);
-                        }
-                    });
+            series(new FlowContext(progress.get()),
+                    asList(hostsTask, serversTask, findNonProgressingTask))
+                            .then(context -> {
+                                List<ManagementOperations> ops = context.get("active-operations");
+                                getView().update(ops);
+                                return null;
+                            })
+                            .catch_(error -> {
+                                MessageEvent.fire(getEventBus(), Message.error(SafeHtmlUtils.fromString(
+                                        "Error loading management operations: " + error)));
+                                return null;
+                            });
         }
     }
 
@@ -333,16 +350,6 @@ public class ManagementOperationsPresenter extends
                             MessageEvent.fire(eventBus, Message.success(SafeHtmlUtils.fromString(failure)));
                         } else {
                             MessageEvent.fire(eventBus, Message.error(SafeHtmlUtils.fromString(failure)));
-                        }
-                        reload();
-                    },
-                    (operation1, ex) -> {
-                        // the cancel-non-progressing-operation returns an exception message if there are no
-                        // operation to cancel, handle this a non error in HAL
-                        if (ex.getMessage().contains(WFLYDM_0089)) {
-                            MessageEvent.fire(eventBus, Message.success(SafeHtmlUtils.fromString(ex.getMessage())));
-                        } else {
-                            MessageEvent.fire(eventBus, Message.error(SafeHtmlUtils.fromString(ex.getMessage())));
                         }
                         reload();
                     });
@@ -390,7 +397,15 @@ public class ManagementOperationsPresenter extends
                         ResourceAddress hostAddress = new ResourceAddress().add(HOST, host)
                                 .add(CORE_SERVICE, MANAGEMENT)
                                 .add(SERVICE, MANAGEMENT_OPERATIONS);
-                        return buildCancelOperation(hostAddress, context);
+                        Operation operation = new Operation.Builder(hostAddress, CANCEL_NON_PROGRESSING_OPERATION).build();
+                        return dispatcher.execute(operation)
+                                .then(node -> {
+                                    if (node.isDefined()) {
+                                        return Promise.resolve(context.push(node.asString()));
+                                    } else {
+                                        return Promise.resolve(context);
+                                    }
+                                });
                     };
                     tasks.add(task);
                 }
@@ -401,61 +416,45 @@ public class ManagementOperationsPresenter extends
                         ResourceAddress serverAddress = AddressTemplate.of(server)
                                 .append(MANAGEMENT_OPERATIONS_TEMPLATE)
                                 .resolve(statementContext);
-                        return buildCancelOperation(serverAddress, context);
+                        Operation operation = new Operation.Builder(serverAddress, CANCEL_NON_PROGRESSING_OPERATION).build();
+                        return dispatcher.execute(operation)
+                                .then(node -> {
+                                    if (node.isDefined()) {
+                                        return Promise.resolve(context.push(node.asString()));
+                                    } else {
+                                        return Promise.resolve(context);
+                                    }
+                                });
                     };
                     tasks.add(task);
                 }
 
                 series(new FlowContext(progress.get()), tasks)
-                        .subscribe(new Outcome<FlowContext>() {
-                            @Override
-                            public void onError(FlowContext context, Throwable error) {
-                                MessageEvent.fire(getEventBus(), Message.error(SafeHtmlUtils.fromString(
-                                        "Error loading management operations: " + error.getMessage())));
-                            }
-
-                            @Override
-                            public void onSuccess(FlowContext context) {
-                                if (context.emptyStack()) {
-                                    // display the standard message if there is no cancelled operation
-                                    MessageEvent.fire(eventBus,
-                                            Message.success(SafeHtmlUtils.fromString(context.get(WFLYDM_0089))));
-                                } else {
-                                    // display the cancelled non progressing operation ids
-                                    List<String> canceledOps = new ArrayList<>();
-                                    while (!context.emptyStack()) {
-                                        canceledOps.add(context.pop());
-                                    }
-                                    String ids = Joiner.on(", ").join(canceledOps);
-                                    MessageEvent.fire(eventBus,
-                                            Message.success(resources.messages().cancelledOperation(ids)));
+                        .then(context -> {
+                            if (context.emptyStack()) {
+                                // display the standard message if there is no cancelled operation
+                                MessageEvent.fire(eventBus,
+                                        Message.success(SafeHtmlUtils.fromString(context.get(WFLYDM_0089))));
+                            } else {
+                                // display the cancelled non progressing operation ids
+                                List<String> canceledOps = new ArrayList<>();
+                                while (!context.emptyStack()) {
+                                    canceledOps.add(context.pop());
                                 }
-                                reload();
+                                String ids = Joiner.on(", ").join(canceledOps);
+                                MessageEvent.fire(eventBus,
+                                        Message.success(resources.messages().cancelledOperation(ids)));
                             }
+                            reload();
+                            return null;
+                        })
+                        .catch_(error -> {
+                            MessageEvent.fire(getEventBus(), Message.error(SafeHtmlUtils.fromString(
+                                    "Error loading management operations: " + error)));
+                            return null;
                         });
             });
         }
-    }
-
-    private Completable buildCancelOperation(ResourceAddress address, FlowContext context) {
-        Operation operation = new Operation.Builder(address, CANCEL_NON_PROGRESSING_OPERATION).build();
-        return dispatcher.execute(operation)
-                .doOnSuccess(result -> {
-                    if (result.isDefined()) {
-                        context.push(result.asString());
-                    }
-                })
-                .onErrorResumeNext(ex -> {
-                    // the cancel-non-progressing-operation returns an exception message if there are no
-                    // operation to cancel, handle this a non error in HAL
-                    if (ex.getMessage().contains(WFLYDM_0089)) {
-                        context.set(WFLYDM_0089, ex.getMessage());
-                        return Single.just(new ModelNode());
-                    } else {
-                        return Single.error(ex);
-                    }
-                })
-                .toCompletable();
     }
 
     public void cancel(ManagementOperations item) {

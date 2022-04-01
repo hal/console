@@ -65,8 +65,7 @@ import org.slf4j.LoggerFactory;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
 
-import rx.CompletableSubscriber;
-import rx.Subscription;
+import elemental2.promise.Promise;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.core.runtime.Action.RESUME;
@@ -76,7 +75,28 @@ import static org.jboss.hal.core.runtime.Timeouts.serverGroupTimeout;
 import static org.jboss.hal.core.runtime.server.ServerConfigStatus.DISABLED;
 import static org.jboss.hal.core.runtime.server.ServerConfigStatus.STARTED;
 import static org.jboss.hal.core.runtime.server.ServerConfigStatus.STOPPED;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.BLOCKING;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.COPY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DESTROY_SERVERS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.KILL_SERVERS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_ATTRIBUTE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RELOAD_SERVERS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESTART_SERVERS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESUME_SERVERS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.START_MODE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.START_SERVERS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STATUS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STOP_SERVERS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SUSPEND;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SUSPEND_SERVERS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SUSPEND_STATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TIMEOUT;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 import static org.jboss.hal.dmr.ModelNodeHelper.getOrDefault;
 import static org.jboss.hal.dmr.dispatch.TimeoutHandler.repeatCompositeUntil;
@@ -141,13 +161,12 @@ public class ServerGroupActions {
         if (!startedServers.isEmpty()) {
             DialogFactory.showConfirmation(title, question, () -> {
                 prepare(serverGroup, startedServers, action);
-                dispatcher.execute(operation,
-                        result -> repeatCompositeUntil(dispatcher, serverGroupTimeout(serverGroup, action),
-                                readServerConfigStatus(startedServers),
-                                checkServerConfigStatus(startedServers.size(), STARTED))
-                                        .subscribe(new ServerGroupTimeoutCallback(serverGroup, startedServers, successMessage)),
-                        new ServerGroupFailedCallback(serverGroup, startedServers, errorMessage),
-                        new ServerGroupExceptionCallback(serverGroup, startedServers, errorMessage));
+                dispatcher.execute(operation)
+                        .then(__ -> repeatCompositeUntil(dispatcher, readServerConfigStatus(startedServers),
+                                checkServerConfigStatus(startedServers.size(), STARTED),
+                                serverGroupTimeout(serverGroup, action)))
+                        .then(__ -> finish(serverGroup, startedServers, Result.SUCCESS, Message.success(successMessage)))
+                        .catch_(__ -> finish(serverGroup, startedServers, Result.ERROR, Message.error(errorMessage)));
             });
 
         } else {
@@ -170,7 +189,6 @@ public class ServerGroupActions {
                             resources.messages().suspendServerGroupQuestion(serverGroup.getName()),
                             form.element(),
                             () -> {
-
                                 form.save();
                                 int timeout = getOrDefault(form.getModel(), TIMEOUT,
                                         () -> form.getModel().get(TIMEOUT).asInt(), 0);
@@ -180,15 +198,13 @@ public class ServerGroupActions {
                                 Operation operation = new Operation.Builder(serverGroup.getAddress(), SUSPEND_SERVERS)
                                         .param(TIMEOUT, timeout)
                                         .build();
-                                dispatcher.execute(operation, result -> repeatCompositeUntil(dispatcher, uiTimeout,
-                                        readSuspendState(startedServers),
-                                        checkSuspendState(startedServers.size(), SUSPENDED))
-                                                .subscribe(new ServerGroupTimeoutCallback(serverGroup, startedServers,
-                                                        resources.messages().suspendServerGroupSuccess(serverGroup.getName()))),
-                                        new ServerGroupFailedCallback(serverGroup, startedServers, resources
-                                                .messages().suspendServerGroupError(serverGroup.getName())),
-                                        new ServerGroupExceptionCallback(serverGroup, startedServers, resources
-                                                .messages().suspendServerGroupError(serverGroup.getName())));
+                                dispatcher.execute(operation)
+                                        .then(__ -> repeatCompositeUntil(dispatcher, readSuspendState(startedServers),
+                                                checkSuspendState(startedServers.size(), SUSPENDED), uiTimeout))
+                                        .then(__ -> finish(serverGroup, startedServers, Result.SUCCESS, Message.success(
+                                                resources.messages().suspendServerGroupSuccess(serverGroup.getName()))))
+                                        .catch_(__ -> finish(serverGroup, startedServers, Result.ERROR, Message.error(
+                                                resources.messages().suspendServerGroupError(serverGroup.getName()))));
                             });
                     dialog.registerAttachable(form);
                     dialog.show();
@@ -216,15 +232,14 @@ public class ServerGroupActions {
         if (!suspendedServers.isEmpty()) {
             prepare(serverGroup, suspendedServers, RESUME);
             Operation operation = new Operation.Builder(serverGroup.getAddress(), RESUME_SERVERS).build();
-            dispatcher.execute(operation,
-                    result -> repeatCompositeUntil(dispatcher, serverGroupTimeout(serverGroup, RESUME),
-                            readSuspendState(suspendedServers), checkSuspendState(suspendedServers.size(), RUNNING))
-                                    .subscribe(new ServerGroupTimeoutCallback(serverGroup, suspendedServers,
-                                            resources.messages().resumeServerGroupSuccess(serverGroup.getName()))),
-                    new ServerGroupFailedCallback(serverGroup, suspendedServers,
-                            resources.messages().resumeServerGroupError(serverGroup.getName())),
-                    new ServerGroupExceptionCallback(serverGroup, suspendedServers,
-                            resources.messages().resumeServerGroupError(serverGroup.getName())));
+            dispatcher.execute(operation)
+                    .then(__ -> repeatCompositeUntil(dispatcher, readSuspendState(suspendedServers),
+                            checkSuspendState(suspendedServers.size(), RUNNING),
+                            serverGroupTimeout(serverGroup, RESUME)))
+                    .then(__ -> finish(serverGroup, suspendedServers, Result.SUCCESS, Message.success(
+                            resources.messages().resumeServerGroupSuccess(serverGroup.getName()))))
+                    .catch_(__ -> finish(serverGroup, suspendedServers, Result.ERROR, Message.error(
+                            resources.messages().resumeServerGroupError(serverGroup.getName()))));
 
         } else {
             MessageEvent.fire(eventBus,
@@ -247,7 +262,6 @@ public class ServerGroupActions {
                             resources.messages().stopServerGroupQuestion(serverGroup.getName()),
                             form.element(),
                             () -> {
-
                                 form.save();
                                 int timeout = getOrDefault(form.getModel(), TIMEOUT,
                                         () -> form.getModel().get(TIMEOUT).asInt(), 0);
@@ -258,15 +272,15 @@ public class ServerGroupActions {
                                         .param(TIMEOUT, timeout)
                                         .param(BLOCKING, false)
                                         .build();
-                                dispatcher.execute(operation, result -> repeatCompositeUntil(dispatcher, uiTimeout,
-                                        readServerConfigStatus(startedServers),
-                                        checkServerConfigStatus(startedServers.size(), STOPPED, DISABLED))
-                                                .subscribe(new ServerGroupTimeoutCallback(serverGroup, startedServers,
-                                                        resources.messages().stopServerGroupSuccess(serverGroup.getName()))),
-                                        new ServerGroupFailedCallback(serverGroup, startedServers, resources
-                                                .messages().stopServerGroupError(serverGroup.getName())),
-                                        new ServerGroupExceptionCallback(serverGroup, startedServers, resources
-                                                .messages().stopServerGroupError(serverGroup.getName())));
+                                dispatcher.execute(operation)
+                                        .then(__ -> repeatCompositeUntil(dispatcher,
+                                                readServerConfigStatus(startedServers),
+                                                checkServerConfigStatus(startedServers.size(), STOPPED, DISABLED),
+                                                uiTimeout))
+                                        .then(__ -> finish(serverGroup, startedServers, Result.SUCCESS, Message.success(
+                                                resources.messages().stopServerGroupSuccess(serverGroup.getName()))))
+                                        .catch_(__ -> finish(serverGroup, startedServers, Result.ERROR, Message.error(
+                                                resources.messages().stopServerGroupError(serverGroup.getName()))));
                             });
                     dialog.registerAttachable(form);
                     dialog.show();
@@ -296,15 +310,14 @@ public class ServerGroupActions {
             Operation operation = new Operation.Builder(serverGroup.getAddress(), START_SERVERS)
                     .param(BLOCKING, false)
                     .build();
-            dispatcher.execute(operation,
-                    result -> repeatCompositeUntil(dispatcher, serverGroupTimeout(serverGroup, Action.START),
-                            readServerConfigStatus(downServers), checkServerConfigStatus(downServers.size(), STARTED))
-                                    .subscribe(new ServerGroupTimeoutCallback(serverGroup, downServers,
-                                            resources.messages().startServerGroupSuccess(serverGroup.getName()))),
-                    new ServerGroupFailedCallback(serverGroup, downServers,
-                            resources.messages().startServerGroupError(serverGroup.getName())),
-                    new ServerGroupExceptionCallback(serverGroup, downServers,
-                            resources.messages().startServerGroupError(serverGroup.getName())));
+            dispatcher.execute(operation)
+                    .then(__ -> repeatCompositeUntil(dispatcher, readServerConfigStatus(downServers),
+                            checkServerConfigStatus(downServers.size(), STARTED),
+                            serverGroupTimeout(serverGroup, Action.START)))
+                    .then(__ -> finish(serverGroup, downServers, Result.SUCCESS, Message.success(
+                            resources.messages().startServerGroupSuccess(serverGroup.getName()))))
+                    .catch_(__ -> finish(serverGroup, downServers, Result.ERROR, Message.error(
+                            resources.messages().startServerGroupError(serverGroup.getName()))));
 
         } else {
             MessageEvent.fire(eventBus,
@@ -320,17 +333,14 @@ public class ServerGroupActions {
                     .param(START_MODE, SUSPEND)
                     .param(BLOCKING, false)
                     .build();
-            dispatcher.execute(operation,
-                    result -> repeatCompositeUntil(dispatcher, serverGroupTimeout(serverGroup, Action.START),
-                            readServerConfigStatus(downServers), checkServerConfigStatus(downServers.size(), STARTED))
-                                    .subscribe(new ServerGroupTimeoutCallback(serverGroup, downServers,
-                                            resources.messages()
-                                                    .startServerGroupInSuspendedModeSuccess(serverGroup.getName()))),
-                    new ServerGroupFailedCallback(serverGroup, downServers,
-                            resources.messages().startServerGroupError(serverGroup.getName())),
-                    new ServerGroupExceptionCallback(serverGroup, downServers,
-                            resources.messages().startServerGroupError(serverGroup.getName())));
-
+            dispatcher.execute(operation)
+                    .then(__ -> repeatCompositeUntil(dispatcher, readServerConfigStatus(downServers),
+                            checkServerConfigStatus(downServers.size(), STARTED),
+                            serverGroupTimeout(serverGroup, Action.START)))
+                    .then(__ -> finish(serverGroup, downServers, Result.SUCCESS, Message.success(
+                            resources.messages().startServerGroupInSuspendedModeSuccess(serverGroup.getName()))))
+                    .catch_(__ -> finish(serverGroup, downServers, Result.ERROR, Message.error(
+                            resources.messages().startServerGroupError(serverGroup.getName()))));
         } else {
             MessageEvent.fire(eventBus,
                     Message.warning(resources.messages().serverGroupNoStoppedServers(serverGroup.getName())));
@@ -344,16 +354,14 @@ public class ServerGroupActions {
                 () -> {
                     prepare(serverGroup, startedServers, Action.DESTROY);
                     Operation operation = new Operation.Builder(serverGroup.getAddress(), DESTROY_SERVERS).build();
-                    dispatcher.execute(operation,
-                            result -> repeatCompositeUntil(dispatcher, serverGroupTimeout(serverGroup, Action.DESTROY),
-                                    readServerConfigStatus(startedServers),
-                                    checkServerConfigStatus(startedServers.size(), STOPPED, DISABLED))
-                                            .subscribe(new ServerGroupTimeoutCallback(serverGroup, startedServers,
-                                                    resources.messages().destroyServerGroupSuccess(serverGroup.getName()))),
-                            new ServerGroupFailedCallback(serverGroup, startedServers,
-                                    resources.messages().destroyServerError(serverGroup.getName())),
-                            new ServerGroupExceptionCallback(serverGroup, startedServers,
-                                    resources.messages().destroyServerError(serverGroup.getName())));
+                    dispatcher.execute(operation)
+                            .then(__ -> repeatCompositeUntil(dispatcher, readServerConfigStatus(startedServers),
+                                    checkServerConfigStatus(startedServers.size(), STOPPED, DISABLED),
+                                    serverGroupTimeout(serverGroup, Action.DESTROY)))
+                            .then(__ -> finish(serverGroup, startedServers, Result.SUCCESS, Message.success(
+                                    resources.messages().destroyServerGroupSuccess(serverGroup.getName()))))
+                            .catch_(__ -> finish(serverGroup, startedServers, Result.ERROR, Message.error(
+                                    resources.messages().destroyServerError(serverGroup.getName()))));
                 });
     }
 
@@ -364,16 +372,14 @@ public class ServerGroupActions {
                 () -> {
                     prepare(serverGroup, startedServers, Action.KILL);
                     Operation operation = new Operation.Builder(serverGroup.getAddress(), KILL_SERVERS).build();
-                    dispatcher.execute(operation,
-                            result -> repeatCompositeUntil(dispatcher, serverGroupTimeout(serverGroup, Action.KILL),
-                                    readServerConfigStatus(startedServers),
-                                    checkServerConfigStatus(startedServers.size(), STOPPED, DISABLED))
-                                            .subscribe(new ServerGroupTimeoutCallback(serverGroup, startedServers,
-                                                    resources.messages().killServerGroupSuccess(serverGroup.getName()))),
-                            new ServerGroupFailedCallback(serverGroup, startedServers,
-                                    resources.messages().killServerError(serverGroup.getName())),
-                            new ServerGroupExceptionCallback(serverGroup, startedServers,
-                                    resources.messages().killServerError(serverGroup.getName())));
+                    dispatcher.execute(operation)
+                            .then(__ -> repeatCompositeUntil(dispatcher, readServerConfigStatus(startedServers),
+                                    checkServerConfigStatus(startedServers.size(), STOPPED, DISABLED),
+                                    serverGroupTimeout(serverGroup, Action.KILL)))
+                            .then(__ -> finish(serverGroup, startedServers, Result.SUCCESS, Message.success(
+                                    resources.messages().killServerGroupSuccess(serverGroup.getName()))))
+                            .catch_(__ -> finish(serverGroup, startedServers, Result.ERROR, Message.error(
+                                    resources.messages().killServerError(serverGroup.getName()))));
                 });
     }
 
@@ -385,30 +391,18 @@ public class ServerGroupActions {
                 resources.messages().removeConfirmationQuestion(serverGroup.getName()),
                 () -> {
                     prepare(serverGroup, stoppedServers, Action.REMOVE);
-
                     Composite comp = new Composite();
-
                     for (Server server : stoppedServers) {
                         comp.add(new Operation.Builder(server.getServerConfigAddress(), REMOVE).build());
                     }
-
                     Operation operation = new Operation.Builder(serverGroup.getAddress(), REMOVE).build();
                     comp.add(operation);
 
-                    dispatcher.execute(comp, (CompositeResult result) -> finish(serverGroup,
-                            stoppedServers,
-                            Result.SUCCESS,
-                            Message.success(resources.messages()
-                                    .removeResourceSuccess(Names.SERVER_GROUP, serverGroup.getName()))),
-                            (operation1, failure) -> finish(serverGroup,
-                                    stoppedServers,
-                                    Result.ERROR,
-                                    Message.error(resources.messages().removeError(serverGroup.getName(), failure))),
-                            (operation1, exception) -> finish(serverGroup,
-                                    stoppedServers,
-                                    Result.ERROR,
-                                    Message.error(
-                                            resources.messages().removeError(serverGroup.getName(), exception.getMessage()))));
+                    dispatcher.execute(comp)
+                            .then(__ -> finish(serverGroup, stoppedServers, Result.SUCCESS, Message.success(
+                                    resources.messages().removeResourceSuccess(Names.SERVER_GROUP, serverGroup.getName()))))
+                            .catch_(error -> finish(serverGroup, stoppedServers, Result.ERROR, Message.error(
+                                    resources.messages().removeError(serverGroup.getName(), String.valueOf(error)))));
                 });
     }
 
@@ -443,21 +437,11 @@ public class ServerGroupActions {
                         comp.add(opAddServer);
                         addChildOperations(comp, newServerGroup, newServerGroup.getAddress(), 2);
 
-                        dispatcher.execute(comp, (CompositeResult result) -> finish(serverGroup,
-                                Collections.emptyList(),
-                                Result.SUCCESS,
-                                Message.success(
-                                        resources.messages().addResourceSuccess(Names.SERVER_GROUP, newNameItem.getValue()))),
-                                (operation1, failure) -> finish(serverGroup,
-                                        Collections.emptyList(),
-                                        Result.ERROR,
-                                        Message.error(resources.messages().addResourceError(newNameItem.getValue(), failure))),
-                                (operation1, exception) -> finish(serverGroup,
-                                        Collections.emptyList(),
-                                        Result.ERROR,
-                                        Message.error(
-                                                resources.messages().addResourceError(newNameItem.getValue(),
-                                                        exception.getMessage()))));
+                        dispatcher.execute(comp)
+                                .then(__ -> finish(serverGroup, Collections.emptyList(), Result.SUCCESS, Message.success(
+                                        resources.messages().addResourceSuccess(Names.SERVER_GROUP, newNameItem.getValue()))))
+                                .catch_(error -> finish(serverGroup, Collections.emptyList(), Result.ERROR, Message.error(
+                                        resources.messages().addResourceError(newNameItem.getValue(), String.valueOf(error)))));
                     });
                 });
         dialog.show();
@@ -497,11 +481,12 @@ public class ServerGroupActions {
         eventBus.fireEvent(new ServerGroupActionEvent(serverGroup, servers, action));
     }
 
-    private void finish(ServerGroup serverGroup, List<Server> servers, Result result, Message message) {
+    private Promise<Void> finish(ServerGroup serverGroup, List<Server> servers, Result result, Message message) {
         clearPending(serverGroup); // clear pending state *before* firing the event!
         servers.forEach(serverActions::clearPending);
         eventBus.fireEvent(new ServerGroupResultEvent(serverGroup, servers, result));
         MessageEvent.fire(eventBus, message);
+        return Promise.resolve((Void) null);
     }
 
     private void markAsPending(ServerGroup serverGroup) {
@@ -533,7 +518,7 @@ public class ServerGroupActions {
         return compositeResult -> {
             long statusCount = compositeResult.stream()
                     .map(step -> asEnumValue(step, RESULT, ServerConfigStatus::valueOf, ServerConfigStatus.UNDEFINED))
-                    .filter(status -> EnumSet.of(first, rest).contains(status))
+                    .filter(status -> !EnumSet.of(first, rest).contains(status))
                     .count();
             return statusCount == servers;
         };
@@ -551,75 +536,9 @@ public class ServerGroupActions {
         return compositeResult -> {
             long statusCount = compositeResult.stream()
                     .map(step -> asEnumValue(step, RESULT, SuspendState::valueOf, SuspendState.UNDEFINED))
-                    .filter(status -> status == statusToReach)
+                    .filter(status -> status != statusToReach)
                     .count();
             return statusCount == servers;
         };
-    }
-
-    private class ServerGroupTimeoutCallback implements CompletableSubscriber {
-
-        private final ServerGroup serverGroup;
-        private final List<Server> servers;
-        private final SafeHtml successMessage;
-
-        ServerGroupTimeoutCallback(ServerGroup serverGroup, List<Server> servers,
-                SafeHtml successMessage) {
-            this.serverGroup = serverGroup;
-            this.servers = servers;
-            this.successMessage = successMessage;
-        }
-
-        @Override
-        public void onCompleted() {
-            finish(serverGroup, servers, Result.SUCCESS, Message.success(successMessage));
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            finish(serverGroup, servers, Result.TIMEOUT,
-                    Message.error(resources.messages().serverGroupTimeout(serverGroup.getName())));
-        }
-
-        @Override
-        public void onSubscribe(Subscription d) {
-        }
-    }
-
-    private class ServerGroupFailedCallback implements Dispatcher.OnFail {
-
-        private final ServerGroup serverGroup;
-        private final List<Server> servers;
-        private final SafeHtml errorMessage;
-
-        ServerGroupFailedCallback(ServerGroup serverGroup, List<Server> servers,
-                SafeHtml errorMessage) {
-            this.serverGroup = serverGroup;
-            this.servers = servers;
-            this.errorMessage = errorMessage;
-        }
-
-        @Override
-        public void onFailed(Operation operation, String failure) {
-            finish(serverGroup, servers, Result.ERROR, Message.error(errorMessage, failure));
-        }
-    }
-
-    private class ServerGroupExceptionCallback implements Dispatcher.OnError {
-
-        private final ServerGroup serverGroup;
-        private final List<Server> servers;
-        private final SafeHtml errorMessage;
-
-        ServerGroupExceptionCallback(ServerGroup serverGroup, List<Server> servers, SafeHtml errorMessage) {
-            this.serverGroup = serverGroup;
-            this.servers = servers;
-            this.errorMessage = errorMessage;
-        }
-
-        @Override
-        public void onException(Operation operation, Throwable exception) {
-            finish(serverGroup, servers, Result.ERROR, Message.error(errorMessage, exception.getMessage()));
-        }
     }
 }

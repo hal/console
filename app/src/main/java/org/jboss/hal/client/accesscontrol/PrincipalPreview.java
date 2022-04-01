@@ -17,7 +17,7 @@ package org.jboss.hal.client.accesscontrol;
 
 import java.util.List;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.config.Role;
 import org.jboss.hal.config.Roles;
 import org.jboss.hal.core.finder.PreviewContent;
@@ -27,7 +27,7 @@ import org.jboss.hal.resources.Resources;
 import elemental2.dom.HTMLElement;
 
 import static java.util.stream.Collectors.toList;
-import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.elemento.Elements.*;
 
 class PrincipalPreview extends PreviewContent<Principal> {
 

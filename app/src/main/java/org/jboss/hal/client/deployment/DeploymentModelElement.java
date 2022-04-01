@@ -28,7 +28,7 @@ import org.jboss.hal.spi.Callback;
 import elemental2.dom.HTMLElement;
 
 import static java.util.Arrays.asList;
-import static org.jboss.gwt.elemento.core.Elements.setVisible;
+import static org.jboss.elemento.Elements.setVisible;
 import static org.jboss.hal.core.deployment.Deployment.Status.OK;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
 import static org.jboss.hal.resources.CSS.fontAwesome;

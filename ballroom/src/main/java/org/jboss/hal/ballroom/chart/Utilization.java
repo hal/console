@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.ballroom.chart;
 
-import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.elemento.IsElement;
 import org.jboss.hal.ballroom.Tooltip;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Messages;
@@ -28,8 +28,8 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 
 import elemental2.dom.HTMLElement;
 
-import static org.jboss.gwt.elemento.core.Elements.div;
-import static org.jboss.gwt.elemento.core.Elements.span;
+import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.span;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.UIConstants.PROGRESSBAR;
 import static org.jboss.hal.resources.UIConstants.ROLE;

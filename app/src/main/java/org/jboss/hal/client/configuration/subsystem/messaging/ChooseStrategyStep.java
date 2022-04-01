@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.client.configuration.subsystem.messaging;
 
-import org.jboss.gwt.elemento.core.InputType;
+import org.jboss.elemento.InputType;
 import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
@@ -24,8 +24,8 @@ import org.jboss.hal.resources.UIConstants;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 
-import static org.jboss.gwt.elemento.core.Elements.*;
-import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.elemento.Elements.*;
+import static org.jboss.elemento.EventType.click;
 import static org.jboss.hal.resources.CSS.formHorizontal;
 import static org.jboss.hal.resources.CSS.radio;
 

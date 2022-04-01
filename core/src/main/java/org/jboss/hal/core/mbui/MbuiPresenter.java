@@ -21,6 +21,7 @@ import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
+@SuppressWarnings("rawtypes")
 public abstract class MbuiPresenter<V extends MbuiView, Proxy_ extends ProxyPlace<?>>
         extends ApplicationFinderPresenter<V, Proxy_> {
 

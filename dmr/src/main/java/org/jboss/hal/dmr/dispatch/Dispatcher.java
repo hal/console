@@ -58,12 +58,17 @@ import elemental2.dom.BlobPropertyBag;
 import elemental2.dom.File;
 import elemental2.dom.FormData;
 import elemental2.dom.FormData.AppendValueUnionType;
-import elemental2.dom.XMLHttpRequest;
-import rx.Single;
-import rx.SingleSubscriber;
+import elemental2.dom.Headers;
+import elemental2.dom.Request;
+import elemental2.dom.RequestInit;
+import elemental2.dom.Response;
+import elemental2.promise.IThenable.ThenOnFulfilledCallbackFn;
+import elemental2.promise.Promise;
+import elemental2.promise.Promise.CatchOnRejectedCallbackFn;
 
 import static com.google.common.collect.Sets.difference;
 import static elemental2.core.Global.encodeURIComponent;
+import static elemental2.dom.DomGlobal.fetch;
 import static elemental2.dom.DomGlobal.navigator;
 import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.config.Settings.Key.RUN_AS;
@@ -80,6 +85,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUPS;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.GET;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.POST;
+import static org.jboss.hal.dmr.dispatch.PayloadProcessor.PARSE_ERROR;
 import static org.jboss.hal.dmr.dispatch.RequestHeader.ACCEPT;
 import static org.jboss.hal.dmr.dispatch.RequestHeader.CONTENT_TYPE;
 import static org.jboss.hal.dmr.dispatch.RequestHeader.X_MANAGEMENT_CLIENT_NAME;
@@ -91,15 +97,13 @@ public class Dispatcher implements RecordingHandler {
     static final String APPLICATION_JSON = "application/json";
 
     private static final String HEADER_MANAGEMENT_CLIENT_VALUE = "HAL";
-
-    private static final Logger logger = LoggerFactory.getLogger(Dispatcher.class);
-
-    private static boolean pendingLifecycleAction = false;
-
     private static final Set<String> READ_ONLY_OPERATIONS = new HashSet<>(Arrays.asList(QUERY, FIND_NON_PROGRESSING_OPERATION,
             INSTALLED_DRIVER_LIST));
     private static final Predicate<Operation> READ_ONLY = operation -> operation.getName().startsWith("read")
             || READ_ONLY_OPERATIONS.contains(operation.getName());
+
+    private static final Logger logger = LoggerFactory.getLogger(Dispatcher.class);
+    private static boolean pendingLifecycleAction = false;
 
     public static void setPendingLifecycleAction(boolean value) {
         pendingLifecycleAction = value;
@@ -112,8 +116,7 @@ public class Dispatcher implements RecordingHandler {
     private final EventBus eventBus;
     private final ResponseHeadersProcessors responseHeadersProcessors;
     private final Macros macros;
-    private final OnFail failedCallback;
-    private final OnError exceptionCallback;
+    private final ErrorCallback errorCallback;
 
     @Inject
     public Dispatcher(Environment environment, Endpoints endpoints, Settings settings,
@@ -127,18 +130,11 @@ public class Dispatcher implements RecordingHandler {
         this.macros = macros;
 
         this.eventBus.addHandler(RecordingEvent.getType(), this);
-        this.failedCallback = (operation, failure) -> {
-            logger.error("Dispatcher failed: {}, operation: {}", failure, operation.asCli());
+        this.errorCallback = (operation, error) -> {
+            logger.error("Dispatcher error: {}, operation {}", error, operation.asCli());
             if (!pendingLifecycleAction) {
                 eventBus.fireEvent(
-                        new MessageEvent(Message.error(resources.messages().lastOperationFailed(), failure)));
-            }
-        };
-        this.exceptionCallback = (operation, t) -> {
-            logger.error("Dispatcher exception: {}, operation {}", t.getMessage(), operation.asCli());
-            if (!pendingLifecycleAction) {
-                eventBus.fireEvent(
-                        new MessageEvent(Message.error(resources.messages().lastOperationException(), t.getMessage())));
+                        new MessageEvent(Message.error(resources.messages().lastOperationException(), error)));
             }
         };
     }
@@ -146,20 +142,23 @@ public class Dispatcher implements RecordingHandler {
     // ------------------------------------------------------ execute composite
 
     public void execute(Composite operations, Consumer<CompositeResult> success) {
-        dmr(operations, payload -> success.accept(compositeResult(payload)), failedCallback, exceptionCallback);
+        execute(operations, success, errorCallback);
     }
 
-    public void execute(Composite operations, Consumer<CompositeResult> success, OnFail fail) {
-        dmr(operations, payload -> success.accept(compositeResult(payload)), fail, exceptionCallback);
+    public void execute(Composite operations, Consumer<CompositeResult> success, ErrorCallback errorCallback) {
+        dmr(operations)
+                .then(payload -> {
+                    success.accept(compositeResult(payload));
+                    return null;
+                })
+                .catch_(error -> {
+                    errorCallback.onError(operations, String.valueOf(error));
+                    return null;
+                });
     }
 
-    public void execute(Composite operations, Consumer<CompositeResult> success, OnFail fail, OnError error) {
-        dmr(operations, payload -> success.accept(compositeResult(payload)), fail, error);
-    }
-
-    public Single<CompositeResult> execute(Composite operations) {
-        // noinspection Convert2MethodRef
-        return dmr(operations).map(payload -> compositeResult(payload));
+    public Promise<CompositeResult> execute(Composite operations) {
+        return dmr(operations).then(payload -> Promise.resolve(compositeResult(payload)));
     }
 
     private CompositeResult compositeResult(ModelNode payload) {
@@ -169,80 +168,78 @@ public class Dispatcher implements RecordingHandler {
     // ------------------------------------------------------ execute operation
 
     public void execute(Operation operation, Consumer<ModelNode> success) {
-        dmr(operation, payload -> success.accept(payload.get(RESULT)), failedCallback, exceptionCallback);
+        execute(operation, success, errorCallback);
     }
 
-    public void execute(Operation operation, Consumer<ModelNode> success, OnFail fail) {
-        dmr(operation, payload -> success.accept(payload.get(RESULT)), fail, exceptionCallback);
+    public void execute(Operation operation, Consumer<ModelNode> success, ErrorCallback errorCallback) {
+        dmr(operation)
+                .then(payload -> {
+                    success.accept(operationResult(payload));
+                    return null;
+                })
+                .catch_(error -> {
+                    errorCallback.onError(operation, String.valueOf(error));
+                    return null;
+                });
     }
 
-    public void execute(Operation operation, Consumer<ModelNode> success, OnFail fail, OnError error) {
-        dmr(operation, payload -> success.accept(payload.get(RESULT)), fail, error);
+    public Promise<ModelNode> execute(Operation operation) {
+        return dmr(operation).then(payload -> Promise.resolve(operationResult(payload)));
     }
 
-    public Single<ModelNode> execute(Operation operation) {
-        return dmr(operation).map(payload -> payload.get(RESULT));
+    private ModelNode operationResult(ModelNode payload) {
+        return payload.get(RESULT);
     }
 
     /**
-     * Executes the operation and upon successful result calls the success function with the response results, but doesn't
-     * retrieve the "result" payload as the other execute methods does. You should use this execute method if the response node
-     * you want is not in the "result" attribute.
+     * Executes the operation and upon successful result, calls the success function with the response results, but doesn't
+     * retrieve the "result" payload as the other execute methods does. You should use this method if the response node you want
+     * is not in the "result" attribute.
      */
-    public void executeDMR(Operation operation, Consumer<ModelNode> success, OnFail fail, OnError error) {
-        dmr(operation, success, fail, error);
+    public void dmr(Operation operation, Consumer<ModelNode> success, ErrorCallback errorCallback) {
+        dmr(operation)
+                .then(payload -> {
+                    success.accept(payload);
+                    return null;
+                })
+                .catch_(error -> {
+                    errorCallback.onError(operation, String.valueOf(error));
+                    return null;
+                });
     }
 
-    // ------------------------------------------------------ dmr
+    /**
+     * Executes the operation and upon successful result, returns the response results, but doesn't retrieve the "result"
+     * payload as the other execute methods does. You should use this method if the response node you want is not in the
+     * "result" attribute.
+     */
+    public Promise<ModelNode> dmr(Operation operation) {
+        RequestInit init = requestInit(POST);
+        init.setBody(runAs(operation).toBase64String());
+        Request request = new Request(endpoints.dmr(), init);
 
-    private void dmr(Operation operation, Consumer<ModelNode> success, OnFail fail, OnError error) {
-        dmr(operation).subscribe(new ModelNodeSingleSubscriber(operation, success, fail, error));
-    }
-
-    private Single<ModelNode> dmr(Operation operation) {
-        Operation dmrOperation = runAs(operation); // runAs might mutate the operation, so do it synchronously
-        String url = endpoints.dmr();
-        // ^-- those eager fields are useful if we don't want to evaluate it on each Single subscription
-        return Single.fromEmitter(emitter -> {
-            // in general, code inside the RX type should be able to be executed multiple times and always returns
-            // the same result, so we need to be careful to not mutate anything (like the operation). This is useful
-            // for example if we want to use the retry operator which will try again (subscribe again) if it fails.
-            XMLHttpRequest xhr = newDmrXhr(url, dmrOperation, new DmrPayloadProcessor(), emitter::onSuccess,
-                    (op, fail) -> emitter.onError(new DispatchFailure(fail, operation)),
-                    (op, error) -> emitter.onError(error));
-            xhr.setRequestHeader(ACCEPT.header(), APPLICATION_DMR_ENCODED);
-            xhr.setRequestHeader(CONTENT_TYPE.header(), APPLICATION_DMR_ENCODED);
-            xhr.send(dmrOperation.toBase64String());
-            logger.trace("DMR operation: {}", operation);
-            recordOperation(operation);
-        });
+        return fetch(request)
+                .then(processResponse())
+                .then(processText(operation, new DmrPayloadProcessor(), true))
+                .catch_(rejectWithError());
     }
 
     // ------------------------------------------------------ upload
 
     public void upload(File file, Operation operation, Consumer<ModelNode> success) {
-        // noinspection Convert2Diamond
-        SingleSubscriber<ModelNode> subscriber = new SingleSubscriber<ModelNode>() {
-            @Override
-            public void onSuccess(ModelNode modelNode) {
-                success.accept(modelNode);
-            }
-
-            @Override
-            public void onError(Throwable ex) {
-                if (ex instanceof DispatchFailure) {
-                    failedCallback.onFailed(operation, ex.getMessage());
-                } else {
-                    exceptionCallback.onException(operation, ex);
-                }
-            }
-        };
-        upload(file, operation).subscribe(subscriber);
+        upload(file, operation)
+                .then(payload -> {
+                    success.accept(payload);
+                    return null;
+                })
+                .catch_(error -> {
+                    errorCallback.onError(operation, String.valueOf(error));
+                    return null;
+                });
     }
 
-    public Single<ModelNode> upload(File file, Operation operation) {
+    public Promise<ModelNode> upload(File file, Operation operation) {
         Operation uploadOperation = runAs(operation);
-
         ConstructorBlobPartsArrayUnionType blob = ConstructorBlobPartsArrayUnionType.of(
                 uploadOperation.toBase64String());
         BlobPropertyBag options = BlobPropertyBag.create();
@@ -258,40 +255,39 @@ public class Dispatcher implements RecordingHandler {
             formData.append(file.name, AppendValueUnionType.of(file));
         }
         formData.append(OPERATION, new Blob(new ConstructorBlobPartsArrayUnionType[] { blob }, options));
-        return uploadFormData(formData, uploadOperation).map(payload -> payload.get(RESULT));
-    }
 
-    private Single<ModelNode> uploadFormData(FormData formData, Operation operation) {
-        return Single.fromEmitter(emitter -> {
-            XMLHttpRequest xhr = newDmrXhr(endpoints.upload(), operation, new UploadPayloadProcessor(),
-                    emitter::onSuccess,
-                    (op, fail) -> emitter.onError(new DispatchFailure(fail, operation)),
-                    (op, error) -> emitter.onError(error));
-            xhr.send(formData);
-            logger.trace("DMR operation: {}", operation);
-            // Uploads are not supported in macros!
-        });
+        RequestInit init = requestInit(POST);
+        init.setBody(formData);
+        Request request = new Request(endpoints.dmr(), init);
+
+        return fetch(request)
+                .then(processResponse())
+                .then(processText(operation, new UploadPayloadProcessor(), false))
+                .catch_(rejectWithError());
     }
 
     // ------------------------------------------------------ download
 
     public void download(Operation operation, Consumer<String> success) {
         Operation downloadOperation = runAs(operation);
-        String url = downloadUrl(downloadOperation);
-        XMLHttpRequest request = newXhr(url, GET, downloadOperation, exceptionCallback, xhr -> {
-            int status = xhr.status;
-            String responseText = xhr.responseText;
+        RequestInit init = requestInit(GET);
+        init.setBody(downloadOperation.toBase64String());
+        Request request = new Request(downloadUrl(downloadOperation), init);
 
-            if (status == 200) {
-                success.accept(responseText);
-            } else {
-                handleErrorCodes(url, status, downloadOperation, exceptionCallback);
-            }
-        });
-        request.setRequestHeader(ACCEPT.header(), APPLICATION_DMR_ENCODED);
-        request.setRequestHeader(CONTENT_TYPE.header(), APPLICATION_DMR_ENCODED);
-        request.send();
-        // Downloads are not supported in macros!
+        fetch(request)
+                .then(response -> {
+                    if (response.status != 200) {
+                        return Promise.reject(statusError(200));
+                    } else {
+                        return response.text();
+
+                    }
+                })
+                .then(text -> {
+                    success.accept(text);
+                    return null;
+                })
+                .catch_(rejectWithError());
     }
 
     public String downloadUrl(Operation operation) {
@@ -352,96 +348,73 @@ public class Dispatcher implements RecordingHandler {
         return builder.toString();
     }
 
-    // ------------------------------------------------------ xhr
+    // ------------------------------------------------------ request && promise handlers
 
-    private XMLHttpRequest newDmrXhr(String url, Operation operation, PayloadProcessor payloadProcessor,
-            Consumer<ModelNode> success, OnFail fail, OnError error) {
-        return newXhr(url, POST, operation, error, xhr -> {
-            int status = xhr.status;
-            String responseText = xhr.responseText;
-            String contentType = xhr.getResponseHeader(CONTENT_TYPE.header());
+    RequestInit requestInit(HttpMethod method) {
+        Headers headers = new Headers();
+        headers.set(ACCEPT.header(), APPLICATION_DMR_ENCODED);
+        headers.set(CONTENT_TYPE.header(), APPLICATION_DMR_ENCODED);
+        headers.set(X_MANAGEMENT_CLIENT_NAME.header(), HEADER_MANAGEMENT_CLIENT_VALUE);
+        String bearerToken = getBearerToken();
+        if (bearerToken != null) {
+            headers.set("Authorization", "Bearer " + bearerToken);
+        }
 
-            if (status == 200 || status == 500) {
-                ModelNode payload = payloadProcessor.processPayload(POST, contentType, responseText);
-                if (!payload.isFailure()) {
-                    if (environment.isStandalone()) {
-                        if (payload.hasDefined(RESPONSE_HEADERS)) {
-                            Header[] headers = new Header[] { new Header(payload.get(RESPONSE_HEADERS)) };
+        RequestInit init = RequestInit.create();
+        init.setMethod(method.name());
+        init.setHeaders(headers);
+        init.setMode("cors");
+        init.setCredentials("include");
+        return init;
+    }
+
+    // ------------------------------------------------------ promise handlers
+
+    ThenOnFulfilledCallbackFn<Response, String> processResponse() {
+        return response -> {
+            if (!response.ok && response.status != 500) {
+                return Promise.reject(statusError(response.status));
+            }
+            String contentType = response.headers.get(CONTENT_TYPE.header());
+            if (!contentType.startsWith(APPLICATION_DMR_ENCODED)) {
+                return Promise.reject(PARSE_ERROR + contentType);
+            }
+            return response.text();
+        };
+    }
+
+    ThenOnFulfilledCallbackFn<String, ModelNode> processText(Operation operation, PayloadProcessor payloadProcessor,
+            boolean recordOperation) {
+        return text -> {
+            if (recordOperation) {
+                recordOperation(operation);
+            }
+            logger.trace("DMR operation: {}", operation);
+            ModelNode payload = payloadProcessor.processPayload(POST, APPLICATION_DMR_ENCODED, text);
+            if (!payload.isFailure()) {
+                if (environment.isStandalone()) {
+                    if (payload.hasDefined(RESPONSE_HEADERS)) {
+                        Header[] headers = new Header[] { new Header(payload.get(RESPONSE_HEADERS)) };
+                        for (ResponseHeadersProcessor processor : responseHeadersProcessors.processors()) {
+                            processor.process(headers);
+                        }
+                    }
+                } else {
+                    if (payload.hasDefined(SERVER_GROUPS)) {
+                        Header[] headers = collectHeaders(payload.get(SERVER_GROUPS));
+                        if (headers.length != 0) {
                             for (ResponseHeadersProcessor processor : responseHeadersProcessors.processors()) {
                                 processor.process(headers);
                             }
                         }
-                    } else {
-                        if (payload.hasDefined(SERVER_GROUPS)) {
-                            Header[] headers = collectHeaders(payload.get(SERVER_GROUPS));
-                            if (headers.length != 0) {
-                                for (ResponseHeadersProcessor processor : responseHeadersProcessors.processors()) {
-                                    processor.process(headers);
-                                }
-                            }
-                        }
                     }
-                    success.accept(payload);
-                } else {
-                    fail.onFailed(operation, payload.getFailureDescription());
                 }
+                return Promise.resolve(payload);
             } else {
-                if (!pendingLifecycleAction) {
-                    handleErrorCodes(url, status, operation, error);
-                }
+                return Promise.reject(payload.getFailureDescription());
             }
-        });
+        };
     }
-
-    private XMLHttpRequest newXhr(String url, HttpMethod method, Operation operation, OnError error, OnLoad onLoad) {
-        XMLHttpRequest xhr = new XMLHttpRequest();
-
-        // The order of the XHR methods is important! Do not rearrange the code unless you know what you're doing!
-        xhr.onload = event -> onLoad.onLoad(xhr);
-        xhr.addEventListener("error", // NON-NLS
-                event -> handleErrorCodes(url, xhr.status, operation, error), false);
-        xhr.open(method.name(), url, true);
-        xhr.setRequestHeader(X_MANAGEMENT_CLIENT_NAME.header(), HEADER_MANAGEMENT_CLIENT_VALUE);
-        String bearerToken = getBearerToken();
-        if (bearerToken != null) {
-            xhr.setRequestHeader("Authorization", "Bearer " + bearerToken);
-        }
-        xhr.withCredentials = true;
-
-        return xhr;
-    }
-
-    private void handleErrorCodes(String url, int status, Operation operation, OnError error) {
-        switch (status) {
-            case 0:
-                error.onException(operation, new DispatchError(status,
-                        "The response for '" + url + "' could not be processed.", operation));
-                break;
-            case 401:
-            case 403:
-                error.onException(operation, new DispatchError(status,
-                        "Authentication required.", operation));
-                break;
-            case 404:
-                error.onException(operation, new DispatchError(status,
-                        "Management interface at '" + url + "' not found.", operation));
-                break;
-            case 500:
-                error.onException(operation, new DispatchError(status,
-                        "Internal Server Error for '" + operation.asCli() + "'.", operation));
-                break;
-            case 503:
-                error.onException(operation, new DispatchError(status,
-                        "Service temporarily unavailable. Is the server still starting?", operation));
-                break;
-            default:
-                error.onException(operation, new DispatchError(status,
-                        "Unexpected status code.", operation));
-                break;
-        }
-    }
-
-    // ------------------------------------------------------ response headers in domain
 
     private Header[] collectHeaders(ModelNode serverGroups) {
         List<Header> headers = new ArrayList<>();
@@ -463,6 +436,30 @@ public class Dispatcher implements RecordingHandler {
             }
         }
         return headers.toArray(new Header[0]);
+    }
+
+    // ------------------------------------------------------ error handling
+
+    CatchOnRejectedCallbackFn<ModelNode> rejectWithError() {
+        return error -> Promise.reject("Unexpected error: " + error);
+    }
+
+    private String statusError(int status) {
+        switch (status) {
+            case 0:
+                return "The response for could not be processed.";
+            case 401:
+            case 403:
+                return "Authentication required.";
+            case 404:
+                return "Management interface not found.";
+            case 500:
+                return "Internal Server Error.";
+            case 503:
+                return "Service temporarily unavailable. Is the server still starting?";
+            default:
+                return "Unexpected status code.";
+        }
     }
 
     // ------------------------------------------------------ macro recording
@@ -511,7 +508,7 @@ public class Dispatcher implements RecordingHandler {
         }
     }
 
-    // ------------------------------------------------------ Keycloak methods
+    // ------------------------------------------------------ Keycloak
 
     /** Obtains the bearer token from keycloak object attached to the window. */
     public static native String getBearerToken()/*-{
@@ -527,53 +524,12 @@ public class Dispatcher implements RecordingHandler {
     // ------------------------------------------------------ inner classes
 
     @FunctionalInterface
-    public interface OnFail {
+    public interface ErrorCallback {
 
-        void onFailed(Operation operation, String failure);
-    }
-
-    @FunctionalInterface
-    public interface OnError {
-
-        void onException(Operation operation, Throwable exception);
-    }
-
-    @FunctionalInterface
-    private interface OnLoad {
-
-        void onLoad(XMLHttpRequest xhr);
+        void onError(Operation operation, String error);
     }
 
     public enum HttpMethod {
         GET, POST
-    }
-
-    private static class ModelNodeSingleSubscriber extends SingleSubscriber<ModelNode> {
-
-        private final Operation operation;
-        private final Consumer<ModelNode> success;
-        private final OnFail fail;
-        private final OnError error;
-
-        ModelNodeSingleSubscriber(Operation operation, Consumer<ModelNode> success, OnFail fail, OnError error) {
-            this.operation = operation;
-            this.success = success;
-            this.fail = fail;
-            this.error = error;
-        }
-
-        @Override
-        public void onSuccess(ModelNode modelNode) {
-            success.accept(modelNode);
-        }
-
-        @Override
-        public void onError(Throwable ex) {
-            if (ex instanceof DispatchFailure) {
-                fail.onFailed(operation, ex.getMessage());
-            } else {
-                error.onException(operation, ex);
-            }
-        }
     }
 }

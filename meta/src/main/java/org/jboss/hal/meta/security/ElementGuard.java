@@ -18,7 +18,7 @@ package org.jboss.hal.meta.security;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.resources.UIConstants;
 
 import elemental2.dom.Element;

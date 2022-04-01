@@ -45,6 +45,8 @@ import org.jboss.hal.spi.MessageEvent;
 
 import com.google.web.bindery.event.shared.EventBus;
 
+import elemental2.promise.Promise;
+
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_SERVER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HA_POLICY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
@@ -89,9 +91,9 @@ public class ServerSettingsColumn
         this.dispatcher = dispatcher;
         this.resources = resources;
 
-        setItemsProvider((context, callback) -> {
+        setItemsProvider(context -> new Promise<>((resolve, reject) -> {
             List<StaticItem> items = new ArrayList<>();
-            FinderSegment segment = context.getPath().findColumn(Ids.MESSAGING_SERVER_CONFIGURATION);
+            FinderSegment<?> segment = context.getPath().findColumn(Ids.MESSAGING_SERVER_CONFIGURATION);
             if (segment != null) {
                 String server = segment.getItemTitle();
                 StatementContext serverStatementContext = new SelectionAwareStatementContext(statementContext,
@@ -151,13 +153,13 @@ public class ServerSettingsColumn
                     }
                     items.add(builder.build());
 
-                    callback.onSuccess(items);
+                    resolve.onInvoke(items);
                 });
 
             } else {
-                callback.onSuccess(items);
+                resolve.onInvoke(items);
             }
-        });
+        }));
     }
 
     private void addHaPolicy(StatementContext statementContext) {

@@ -44,7 +44,7 @@ import elemental2.dom.HTMLButtonElement;
 import static elemental2.dom.DomGlobal.clearInterval;
 import static elemental2.dom.DomGlobal.document;
 import static elemental2.dom.DomGlobal.setInterval;
-import static org.jboss.gwt.elemento.core.Elements.setVisible;
+import static org.jboss.elemento.Elements.setVisible;
 import static org.jboss.hal.ballroom.Popover.Trigger.MANUAL;
 import static org.jboss.hal.resources.CSS.disabled;
 import static org.jboss.hal.resources.CSS.pfIcon;

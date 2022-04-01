@@ -15,8 +15,8 @@
  */
 package org.jboss.hal.ballroom;
 
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.elemento.Elements;
+import org.jboss.elemento.IsElement;
 import org.jboss.hal.ballroom.dataprovider.DataProvider;
 import org.jboss.hal.ballroom.dataprovider.Display;
 import org.jboss.hal.ballroom.dataprovider.PageInfo;
@@ -33,13 +33,13 @@ import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 import elemental2.dom.HTMLSelectElement;
 
-import static org.jboss.gwt.elemento.core.Elements.*;
-import static org.jboss.gwt.elemento.core.Elements.form;
-import static org.jboss.gwt.elemento.core.Elements.label;
-import static org.jboss.gwt.elemento.core.EventType.change;
-import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.gwt.elemento.core.EventType.submit;
-import static org.jboss.gwt.elemento.core.InputType.text;
+import static org.jboss.elemento.Elements.*;
+import static org.jboss.elemento.Elements.form;
+import static org.jboss.elemento.Elements.label;
+import static org.jboss.elemento.EventType.change;
+import static org.jboss.elemento.EventType.click;
+import static org.jboss.elemento.EventType.submit;
+import static org.jboss.elemento.InputType.text;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.CSS.i;

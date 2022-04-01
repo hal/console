@@ -18,5 +18,6 @@ package org.jboss.hal.core.mbui;
 import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
 
+@SuppressWarnings("rawtypes")
 public interface MbuiView<P extends MbuiPresenter> extends HasPresenter<P>, HalView {
 }

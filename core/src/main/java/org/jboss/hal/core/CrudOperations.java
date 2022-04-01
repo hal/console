@@ -53,7 +53,7 @@ import com.google.common.collect.Iterables;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
 
-import rx.Single;
+import elemental2.promise.Promise;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
@@ -224,10 +224,8 @@ public class CrudOperations {
         dispatcher.execute(builder.build(), result -> {
             MessageEvent.fire(eventBus, Message.success(successMessage));
             callback.execute(name, address);
-        }, (operation, failure) -> MessageEvent.fire(eventBus,
-                Message.error(resources.messages().addResourceError(name, failure))),
-                (operation, exception) -> MessageEvent.fire(eventBus,
-                        Message.error(resources.messages().addResourceError(name, exception.getMessage()))));
+        }, (__, error) -> MessageEvent.fire(eventBus,
+                Message.error(resources.messages().addResourceError(name, error))));
     }
 
     // ------------------------------------------------------ (c)reate singleton with dialog
@@ -373,10 +371,8 @@ public class CrudOperations {
         dispatcher.execute(operation, result -> {
             MessageEvent.fire(eventBus, Message.success(resources.messages().addSingleResourceSuccess(type)));
             callback.execute(operation.getAddress());
-        }, (operation1, failure) -> MessageEvent.fire(eventBus,
-                Message.error(resources.messages().addSingleResourceError(type, failure))),
-                (operation1, exception) -> MessageEvent.fire(eventBus,
-                        Message.error(resources.messages().addSingleResourceError(type, exception.getMessage()))));
+        }, (__, error) -> MessageEvent.fire(eventBus,
+                Message.error(resources.messages().addSingleResourceError(type, error))));
     }
 
     // ------------------------------------------------------ (r)ead using template
@@ -393,6 +389,10 @@ public class CrudOperations {
         read(template.resolve(statementContext), callback);
     }
 
+    public Promise<ModelNode> read(AddressTemplate template) {
+        return read(template.resolve(statementContext));
+    }
+
     /**
      * Executes an {@link org.jboss.hal.dmr.ModelDescriptionConstants#READ_RESOURCE_OPERATION} with the specified depth on the
      * specified template and passes the result to the specified callback.
@@ -404,6 +404,10 @@ public class CrudOperations {
      */
     public void read(AddressTemplate template, int depth, ReadCallback callback) {
         read(template.resolve(statementContext), depth, callback);
+    }
+
+    public Promise<ModelNode> read(AddressTemplate template, int depth) {
+        return read(template.resolve(statementContext), depth);
     }
 
     /**
@@ -418,6 +422,10 @@ public class CrudOperations {
         readRecursive(template.resolve(statementContext), callback);
     }
 
+    public Promise<ModelNode> readRecursive(AddressTemplate template) {
+        return readRecursive(template.resolve(statementContext));
+    }
+
     /**
      * Executes an {@link org.jboss.hal.dmr.ModelDescriptionConstants#READ_CHILDREN_RESOURCES_OPERATION} on the specified
      * template and passes the result as {@code List<Property>} to the specified callback.
@@ -430,6 +438,10 @@ public class CrudOperations {
      */
     public void readChildren(AddressTemplate template, String childType, ReadChildrenCallback callback) {
         readChildren(template.resolve(statementContext), childType, callback);
+    }
+
+    public Promise<List<Property>> readChildren(AddressTemplate template, String childType) {
+        return readChildren(template.resolve(statementContext), childType);
     }
 
     /**
@@ -451,6 +463,13 @@ public class CrudOperations {
                 callback);
     }
 
+    public Promise<List<Property>> readChildren(AddressTemplate template, String childType, int depth) {
+        return readChildren(new Operation.Builder(template.resolve(statementContext), READ_CHILDREN_RESOURCES_OPERATION)
+                .param(CHILD_TYPE, childType)
+                .param(RECURSIVE_DEPTH, depth)
+                .build());
+    }
+
     // ------------------------------------------------------ (r)ead using address
 
     /**
@@ -462,6 +481,10 @@ public class CrudOperations {
      */
     public void read(ResourceAddress address, ReadCallback callback) {
         read(new Operation.Builder(address, READ_RESOURCE_OPERATION).param(INCLUDE_ALIASES, true).build(), callback);
+    }
+
+    public Promise<ModelNode> read(ResourceAddress address) {
+        return read(new Operation.Builder(address, READ_RESOURCE_OPERATION).param(INCLUDE_ALIASES, true).build());
     }
 
     /**
@@ -480,6 +503,13 @@ public class CrudOperations {
                 callback);
     }
 
+    public Promise<ModelNode> read(ResourceAddress address, int depth) {
+        return read(new Operation.Builder(address, READ_RESOURCE_OPERATION)
+                .param(INCLUDE_ALIASES, true)
+                .param(RECURSIVE_DEPTH, depth)
+                .build());
+    }
+
     /**
      * Executes a recursive {@link org.jboss.hal.dmr.ModelDescriptionConstants#READ_RESOURCE_OPERATION} on the specified address
      * and passes the result to the specified callback.
@@ -493,6 +523,13 @@ public class CrudOperations {
                 .param(RECURSIVE, true)
                 .build(),
                 callback);
+    }
+
+    public Promise<ModelNode> readRecursive(ResourceAddress address) {
+        return read(new Operation.Builder(address, READ_RESOURCE_OPERATION)
+                .param(INCLUDE_ALIASES, true)
+                .param(RECURSIVE, true)
+                .build());
     }
 
     /**
@@ -509,6 +546,12 @@ public class CrudOperations {
                 .param(CHILD_TYPE, resource)
                 .build(),
                 callback);
+    }
+
+    public Promise<List<Property>> readChildren(ResourceAddress address, String resource) {
+        return readChildren(new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
+                .param(CHILD_TYPE, resource)
+                .build());
     }
 
     /**
@@ -529,12 +572,27 @@ public class CrudOperations {
                 callback);
     }
 
+    public Promise<List<Property>> readChildren(ResourceAddress address, String resource, int depth) {
+        return readChildren(new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
+                .param(CHILD_TYPE, resource)
+                .param(RECURSIVE_DEPTH, depth)
+                .build());
+    }
+
     private void read(Operation operation, ReadCallback callback) {
         dispatcher.execute(operation, callback::execute);
     }
 
+    private Promise<ModelNode> read(Operation operation) {
+        return dispatcher.execute(operation);
+    }
+
     private void readChildren(Operation operation, ReadChildrenCallback callback) {
         dispatcher.execute(operation, result -> callback.execute(result.asPropertyList()));
+    }
+
+    private Promise<List<Property>> readChildren(Operation operation) {
+        return dispatcher.execute(operation).then(result -> Promise.resolve(result.asPropertyList()));
     }
 
     // ------------------------------------------------------ read different child resources
@@ -552,6 +610,10 @@ public class CrudOperations {
         readChildren(template.resolve(statementContext), resources, callback);
     }
 
+    public Promise<CompositeResult> readChildren(AddressTemplate template, Iterable<String> resources) {
+        return readChildren(template.resolve(statementContext), resources);
+    }
+
     /**
      * Read multiple different child resources using a composite operation. The steps in the composite result map to the
      * position of the resource in the {@code resources} collection.
@@ -567,6 +629,15 @@ public class CrudOperations {
                         .build())
                 .collect(toList());
         dispatcher.execute(new Composite(operations), callback::execute);
+    }
+
+    public Promise<CompositeResult> readChildren(ResourceAddress address, Iterable<String> resources) {
+        List<Operation> operations = stream(resources.spliterator(), false)
+                .map(resource -> new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
+                        .param(CHILD_TYPE, resource)
+                        .build())
+                .collect(toList());
+        return dispatcher.execute(new Composite(operations));
     }
 
     /**
@@ -589,35 +660,14 @@ public class CrudOperations {
         dispatcher.execute(new Composite(operations), callback::execute);
     }
 
-    // ------------------------------------------------------ read using RX
-
-    /**
-     * Executes an {@link org.jboss.hal.dmr.ModelDescriptionConstants#READ_CHILDREN_RESOURCES_OPERATION} on the specified
-     * template and returns the result as {@code Single<List<Property>>}.
-     *
-     * @param template the address template which is resolved against the current statement context to get the resource address
-     *        for the {@code read-children-resource} operation
-     * @param childType the child resource (not human readable, but the actual child resource name!)
-     */
-    public Single<List<Property>> readChildren(AddressTemplate template, String childType) {
-        return readChildren(template.resolve(statementContext), childType);
-    }
-
-    /**
-     * Executes an {@link org.jboss.hal.dmr.ModelDescriptionConstants#READ_CHILDREN_RESOURCES_OPERATION} on the specified
-     * address and returns the result as {@code Single<List<Property>>}.
-     *
-     * @param address the fq address for the {@code read-children-resource} operation
-     * @param resource the child resource (not human readable, but the actual child resource name!)
-     */
-    public Single<List<Property>> readChildren(ResourceAddress address, String resource) {
-        return readChildren(new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
-                .param(CHILD_TYPE, resource)
-                .build());
-    }
-
-    private Single<List<Property>> readChildren(Operation operation) {
-        return dispatcher.execute(operation).map(ModelNode::asPropertyList);
+    public Promise<CompositeResult> readChildren(ResourceAddress address, Iterable<String> resources, int depth) {
+        List<Operation> operations = stream(resources.spliterator(), false)
+                .map(resource -> new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
+                        .param(CHILD_TYPE, resource)
+                        .param(RECURSIVE_DEPTH, depth)
+                        .build())
+                .collect(toList());
+        return dispatcher.execute(new Composite(operations));
     }
 
     // ------------------------------------------------------ (u)pdate using template

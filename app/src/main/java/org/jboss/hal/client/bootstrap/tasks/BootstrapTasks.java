@@ -15,12 +15,19 @@
  */
 package org.jboss.hal.client.bootstrap.tasks;
 
+import java.util.List;
+
 import javax.inject.Inject;
+
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Task;
+
+import static java.util.Arrays.asList;
 
 /** Simple wrapper around an ordered array of bootstrap tasks. */
 public class BootstrapTasks {
 
-    private final BootstrapTask[] tasks;
+    private final List<Task<FlowContext>> tasks;
 
     // Don't change the order unless you know what you're doing!
     @Inject
@@ -32,7 +39,7 @@ public class BootstrapTasks {
             LoadSettings loadSettings,
             SetTitle setTitle,
             StartAnalytics startAnalytics) {
-        this.tasks = new BootstrapTask[] {
+        this.tasks = asList(
                 readEnvironment,
                 readAuthentication,
                 readHostNames,
@@ -40,11 +47,10 @@ public class BootstrapTasks {
                 registerStaticCapabilities,
                 loadSettings,
                 setTitle,
-                startAnalytics,
-        };
+                startAnalytics);
     }
 
-    public BootstrapTask[] tasks() {
+    public List<Task<FlowContext>> tasks() {
         return tasks;
     }
 }

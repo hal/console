@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.client.runtime.subsystem.undertow;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.subsystem.SubsystemMetadata;
@@ -32,7 +32,7 @@ import org.jboss.hal.resources.Resources;
 
 import elemental2.dom.HTMLElement;
 
-import static org.jboss.gwt.elemento.core.Elements.section;
+import static org.jboss.elemento.Elements.section;
 import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_SUBSYSTEM_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.fontAwesome;

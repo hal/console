@@ -82,12 +82,8 @@
 
         <!-- GWT -->
         <dependency>
-            <groupId>org.jboss.gwt.elemento</groupId>
+            <groupId>org.jboss.elemento</groupId>
             <artifactId>elemento-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.gwt.elemento</groupId>
-            <artifactId>elemento-widget</artifactId>
         </dependency>
         <dependency>
             <groupId>com.gwtplatform</groupId>
@@ -106,10 +102,6 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava-gwt</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.intendia.gwt.rxgwt</groupId>
-            <artifactId>rxgwt</artifactId>
         </dependency>
         <dependency>
             <groupId>ru.finam</groupId>

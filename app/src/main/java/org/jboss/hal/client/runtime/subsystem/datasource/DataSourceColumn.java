@@ -33,7 +33,6 @@ import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.dmr.Composite;
-import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
@@ -51,19 +50,50 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
-import static org.jboss.gwt.elemento.core.Elements.span;
-import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.*;
+import static org.jboss.elemento.Elements.span;
+import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.DATA_SOURCE_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.DATA_SOURCE_DEPLOYMENT_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.DATA_SOURCE_DEPLOYMENT_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.DATA_SOURCE_SUBDEPLOYMENT_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.DATA_SOURCE_SUBSYSTEM_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.DATA_SOURCE_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_DEPLOYMENT_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_DEPLOYMENT_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_SUBDEPLOYMENT_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.datasource.DataSourcePresenter.XA_PARAM;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADDRESS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES_ONLY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DATA_SOURCE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DISABLED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ENABLED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.FLUSH_ALL_CONNECTION_IN_POOL;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.FLUSH_GRACEFULLY_CONNECTION_IN_POOL;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.FLUSH_IDLE_CONNECTION_IN_POOL;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.FLUSH_INVALID_CONNECTION_IN_POOL;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STATISTICS_ENABLED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TEST_CONNECTION_IN_POOL;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.XA_DATA_SOURCE;
 import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_HOST;
 import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_SERVER;
 import static org.jboss.hal.resources.CSS.fontAwesome;
@@ -108,7 +138,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
         this.resources = resources;
         this.finder = finder;
 
-        ItemsProvider<DataSource> itemsProvider = (context, callback) -> {
+        ItemsProvider<DataSource> itemsProvider = context -> {
             List<Operation> operations = new ArrayList<>(); // 6 ops in standalone, 7 in domain
 
             // subsystem
@@ -156,7 +186,8 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                         .param(ATTRIBUTES_ONLY, true)
                         .build());
             }
-            dispatcher.execute(new Composite(operations), (CompositeResult result) -> {
+
+            return dispatcher.execute(new Composite(operations)).then(result -> {
                 List<DataSource> combined = new ArrayList<>();
 
                 // 6 steps in standalone, 7 in domain
@@ -190,28 +221,16 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                 server = environment.isStandalone()
                         ? Server.STANDALONE
                         : new Server(statementContext.selectedHost(), result.step(6).get(RESULT));
-                callback.onSuccess(combined);
+                return Promise.resolve(combined);
             });
         };
         setItemsProvider(itemsProvider);
 
         // reuse the items provider to filter breadcrumb items
-        setBreadcrumbItemsProvider((context, callback) -> itemsProvider.get(context, new AsyncCallback<List<DataSource>>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                callback.onFailure(caught);
-            }
-
-            @Override
-            public void onSuccess(List<DataSource> result) {
-                // only datasources defined in configuration w/ enabled statistics
-                // will show up in the breadcrumb dropdown
-                List<DataSource> dataSourceWithStatistics = result.stream()
+        setBreadcrumbItemsProvider(context -> itemsProvider.items(context)
+                .then(result -> Promise.resolve(result.stream()
                         .filter(ds -> !ds.fromDeployment() && ds.isStatisticsEnabled())
-                        .collect(toList());
-                callback.onSuccess(dataSourceWithStatistics);
-            }
-        }));
+                        .collect(toList()))));
 
         setItemRenderer(dataSource -> new ItemDisplay<DataSource>() {
             @Override
@@ -334,13 +353,9 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                     refresh(RESTORE_SELECTION);
                     MessageEvent.fire(eventBus,
                             Message.success(resources.messages().testConnectionSuccess(dataSource.getName())));
-                },
-                (o1, failure) -> MessageEvent.fire(eventBus,
+                }, (o1, failure) -> MessageEvent.fire(eventBus,
                         Message.error(resources.messages().testConnectionError(dataSource.getName()),
-                                failure)),
-                (o2, exception) -> MessageEvent.fire(eventBus,
-                        Message.error(resources.messages().testConnectionError(dataSource.getName()),
-                                exception.getMessage())));
+                                failure)));
     }
 
     private void flush(DataSource dataSource, String flushMode) {

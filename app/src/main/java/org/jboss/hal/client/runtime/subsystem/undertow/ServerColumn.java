@@ -30,6 +30,8 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.AsyncColumn;
 
+import elemental2.promise.Promise;
+
 import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_SUBSYSTEM_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
@@ -48,13 +50,14 @@ public class ServerColumn extends FinderColumn<NamedNode> {
 
         super(new Builder<NamedNode>(finder, Ids.UNDERTOW_RUNTIME_SERVER, Names.SERVER)
                 .columnAction(columnActionFactory.refresh(Ids.UNDERTOW_SERVER_REFRESH))
-                .itemsProvider((context, callback) -> {
+                .itemsProvider(context -> {
                     ResourceAddress address = WEB_SUBSYSTEM_TEMPLATE.resolve(statementContext);
                     Operation operation = new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
                             .param(CHILD_TYPE, SERVER)
                             .param(INCLUDE_RUNTIME, true)
                             .build();
-                    dispatcher.execute(operation, result -> callback.onSuccess(asNamedNodes(result.asPropertyList())));
+                    return dispatcher.execute(operation)
+                            .then(result -> Promise.resolve(asNamedNodes(result.asPropertyList())));
                 })
                 .itemRenderer(item -> new ItemDisplay<NamedNode>() {
                     @Override

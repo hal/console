@@ -35,6 +35,8 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Requires;
 
+import elemental2.promise.Promise;
+
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SERVER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.UNDERTOW_SUBSYSTEM_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
@@ -52,12 +54,13 @@ public class ServerColumn extends FinderColumn<NamedNode> {
             final Places places,
             final CrudOperations crud) {
 
+        // noinspection Convert2MethodRef
         super(new FinderColumn.Builder<NamedNode>(finder, Ids.UNDERTOW_SERVER, Names.SERVER)
 
-                .itemsProvider((context, callback) -> crud.readChildren(UNDERTOW_SUBSYSTEM_TEMPLATE, SERVER,
-                        children -> callback.onSuccess(asNamedNodes(children))))
+                .itemsProvider(context -> crud.readChildren(UNDERTOW_SUBSYSTEM_TEMPLATE, SERVER)
+                        .then(children -> Promise.resolve(asNamedNodes(children))))
 
-                .onPreview(ServerPreview::new)
+                .onPreview(server -> new ServerPreview(server))
                 .useFirstActionAsBreadcrumbHandler()
                 .pinnable()
                 .withFilter());

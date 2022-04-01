@@ -46,7 +46,13 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
-import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.*;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.BINDING_DIRECTORY_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.JOURNAL_DIRECTORY_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.LARGE_MESSAGES_DIRECTORY_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.PAGING_DIRECTORY_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_SERVER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SERVER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SERVER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MESSAGING_ACTIVEMQ;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 

@@ -28,8 +28,8 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.dmr.macro.Macro;
 import org.jboss.hal.dmr.macro.Macros;
 import org.jboss.hal.flow.FlowContext;
-import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -111,24 +111,21 @@ public class MacroEditorPresenter
     }
 
     void play(Macro macro) {
-        List<MacroOperationTask> tasks = macro.getOperations().stream()
+        List<Task<FlowContext>> tasks = macro.getOperations().stream()
                 .map(operation -> new MacroOperationTask(dispatcher, operation)).collect(toList());
         getView().disableMacro(macro);
         series(new FlowContext(progress.get()), tasks)
-                .subscribe(new Outcome<FlowContext>() {
-                    @Override
-                    public void onError(FlowContext context, Throwable error) {
-                        getView().enableMacro(macro);
-                        MessageEvent.fire(getEventBus(), Message.error(resources.messages().macroPlaybackError(),
-                                error.getMessage()));
-                    }
-
-                    @Override
-                    public void onSuccess(FlowContext context) {
-                        getView().enableMacro(macro);
-                        MessageEvent.fire(getEventBus(),
-                                Message.success(resources.messages().macroPlaybackSuccessful()));
-                    }
+                .then(__ -> {
+                    getView().enableMacro(macro);
+                    MessageEvent.fire(getEventBus(),
+                            Message.success(resources.messages().macroPlaybackSuccessful()));
+                    return null;
+                })
+                .catch_(error -> {
+                    getView().enableMacro(macro);
+                    MessageEvent.fire(getEventBus(), Message.error(resources.messages().macroPlaybackError(),
+                            String.valueOf(error)));
+                    return null;
                 });
     }
 

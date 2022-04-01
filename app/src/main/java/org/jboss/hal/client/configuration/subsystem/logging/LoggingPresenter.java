@@ -45,7 +45,38 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
-import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.*;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.ASYNC_HANDLER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.ASYNC_HANDLER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.CONSOLE_HANDLER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.CONSOLE_HANDLER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.CUSTOM_FORMATTER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.CUSTOM_FORMATTER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.CUSTOM_HANDLER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.CUSTOM_HANDLER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.FILE_HANDLER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.FILE_HANDLER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.JSON_FORMATTER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.JSON_FORMATTER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.LOGGER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.LOGGER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.LOGGING_SUBSYSTEM_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.LOGGING_SUBSYSTEM_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.PATTERN_FORMATTER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.PATTERN_FORMATTER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.PERIODIC_ROTATING_FILE_HANDLER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.PERIODIC_ROTATING_FILE_HANDLER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.PERIODIC_SIZE_ROTATING_FILE_HANDLER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.PERIODIC_SIZE_ROTATING_FILE_HANDLER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.ROOT_LOGGER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.ROOT_LOGGER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.SIZE_ROTATING_FILE_HANDLER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.SIZE_ROTATING_FILE_HANDLER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.SOCKET_HANDLER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.SOCKET_HANDLER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.SYSLOG_HANDLER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.SYSLOG_HANDLER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.XML_FORMATTER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.XML_FORMATTER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.FORMATTER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.LOGGING;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
@@ -60,7 +91,7 @@ public class LoggingPresenter
     private final CrudOperations crud;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
-    private ComplexAttributeOperations ca;
+    private final ComplexAttributeOperations ca;
 
     @Inject
     public LoggingPresenter(EventBus eventBus,

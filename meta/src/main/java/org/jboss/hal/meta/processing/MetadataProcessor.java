@@ -24,13 +24,14 @@ import javax.inject.Inject;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Settings;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.flow.Outcome;
+import org.jboss.hal.flow.Flow;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.flow.Task;
 import org.jboss.hal.js.Browser;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
+import org.jboss.hal.meta.MissingMetadataException;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.description.ResourceDescriptionDatabase;
 import org.jboss.hal.meta.description.ResourceDescriptionRegistry;
@@ -41,12 +42,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Stopwatch;
-import com.google.gwt.user.client.rpc.AsyncCallback;
+
+import elemental2.promise.Promise;
 
 import static java.util.Collections.singleton;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.stream.Collectors.toSet;
-import static org.jboss.hal.flow.Flow.series;
 
 /**
  * Reads resource {@linkplain Metadata metadata} using read-resource-description operations and stores it into the
@@ -99,44 +100,46 @@ public class MetadataProcessor {
         this.workerChannel = workerChannel;
     }
 
-    public void process(String id, Progress progress, AsyncCallback<Void> callback) {
+    public void lookup(AddressTemplate template, Progress progress, MetadataCallback callback) {
+        logger.debug("Lookup metadata for {}", template);
+        processInternal(singleton(template), false, progress)
+                .then(c -> {
+                    callback.onMetadata(metadataRegistry.lookup(template));
+                    return null;
+                })
+                .catch_(error -> {
+                    callback.onError(new MissingMetadataException("MetadataContext", template));
+                    return null;
+                });
+    }
+
+    public Promise<Metadata> lookup(AddressTemplate template, Progress progress) {
+        logger.debug("Lookup metadata for {}", template);
+        return processInternal(singleton(template), false, progress)
+                .then(c -> Promise.resolve(metadataRegistry.lookup(template)));
+    }
+
+    public Promise<Void> process(String id, Progress progress) {
         Set<String> resources = requiredResources.getResources(id);
         boolean recursive = requiredResources.isRecursive(id);
         logger.debug("Process required resources {} for id '{}' (recursive={})", resources, id, recursive);
         if (resources.isEmpty()) {
             logger.debug("No required resources found -> callback.onSuccess(null)");
-            callback.onSuccess(null);
+            return Promise.resolve((Void) null);
 
         } else {
             Set<AddressTemplate> templates = resources.stream().map(AddressTemplate::of).collect(toSet());
-            processInternal(templates, recursive, progress, callback);
+            return processInternal(templates, recursive, progress);
         }
     }
 
-    public void lookup(AddressTemplate template, Progress progress, MetadataCallback callback) {
-        logger.debug("Lookup metadata for {}", template);
-        processInternal(singleton(template), false, progress, new AsyncCallback<Void>() {
-            @Override
-            public void onFailure(Throwable throwable) {
-                callback.onError(throwable);
-            }
-
-            @Override
-            public void onSuccess(Void aVoid) {
-                // if we're here all metadata must be in the registry
-                callback.onMetadata(metadataRegistry.lookup(template));
-            }
-        });
-    }
-
-    private void processInternal(Set<AddressTemplate> templates, boolean recursive, Progress progress,
-            AsyncCallback<Void> callback) {
+    private Promise<Void> processInternal(Set<AddressTemplate> templates, boolean recursive, Progress progress) {
         // we can skip the tasks if the metadata is already in the registries
         LookupRegistryTask lookupRegistries = new LookupRegistryTask(resourceDescriptionRegistry,
                 securityContextRegistry);
         if (lookupRegistries.allPresent(templates, recursive)) {
             logger.debug("All metadata have been already processed -> callback.onSuccess(null)");
-            callback.onSuccess(null);
+            return Promise.resolve((Void) null);
 
         } else {
             boolean ie = Browser.isIE();
@@ -153,21 +156,11 @@ public class MetadataProcessor {
 
             LookupContext context = new LookupContext(progress, templates, recursive);
             Stopwatch stopwatch = Stopwatch.createStarted();
-            series(context, tasks)
-                    .subscribe(new Outcome<LookupContext>() {
-                        @Override
-                        public void onError(LookupContext context, Throwable error) {
-                            stopwatch.stop();
-                            logger.debug("Failed to process metadata: {}", error.getMessage());
-                            callback.onFailure(error);
-                        }
-
-                        @Override
-                        public void onSuccess(LookupContext context) {
-                            stopwatch.stop();
-                            logger.info("Successfully processed metadata in {} ms", stopwatch.elapsed(MILLISECONDS));
-                            callback.onSuccess(null);
-                        }
+            return Flow.series(context, tasks).then(
+                    c -> {
+                        stopwatch.stop();
+                        logger.info("Successfully processed metadata in {} ms", stopwatch.elapsed(MILLISECONDS));
+                        return Promise.resolve((Void) null);
                     });
         }
     }

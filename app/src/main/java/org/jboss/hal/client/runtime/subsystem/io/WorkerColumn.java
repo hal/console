@@ -33,12 +33,20 @@ import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Requires;
 
 import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
 
-import static org.jboss.gwt.elemento.core.Elements.small;
-import static org.jboss.gwt.elemento.core.Elements.span;
+import static org.jboss.elemento.Elements.small;
+import static org.jboss.elemento.Elements.span;
 import static org.jboss.hal.client.runtime.subsystem.io.AddressTemplates.WORKER_ADDRESS;
 import static org.jboss.hal.client.runtime.subsystem.io.AddressTemplates.WORKER_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CORE_POOL_SIZE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MAX_POOL_SIZE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TASK_MAX_THREADS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.WORKER;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.resources.CSS.itemText;
 
@@ -54,14 +62,15 @@ public class WorkerColumn extends FinderColumn<NamedNode> {
             StatementContext statementContext) {
 
         super(new FinderColumn.Builder<NamedNode>(finder, Ids.WORKER, Names.WORKER)
-                .itemsProvider((context, callback) -> {
+                .itemsProvider(context -> {
                     ResourceAddress address = WORKER_TEMPLATE.getParent().resolve(statementContext);
                     Operation operation = new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
                             .param(CHILD_TYPE, WORKER)
                             .param(INCLUDE_RUNTIME, true)
                             .param(RECURSIVE, true)
                             .build();
-                    dispatcher.execute(operation, result -> callback.onSuccess(asNamedNodes(result.asPropertyList())));
+                    return dispatcher.execute(operation)
+                            .then(result -> Promise.resolve(asNamedNodes(result.asPropertyList())));
                 })
                 .itemRenderer(item -> new ItemDisplay<NamedNode>() {
                     @Override

@@ -36,13 +36,11 @@ import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.Composite;
-import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
-import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -64,13 +62,33 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.*;
+import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.DATA_SOURCE_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.DATA_SOURCE_SUBSYSTEM_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.DATA_SOURCE_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.JDBC_DRIVER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_TEMPLATE;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.core.runtime.TopologyTasks.runningServers;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DATASOURCES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DATA_SOURCE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DISABLED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ENABLED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBSYSTEM;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TEST_CONNECTION_IN_POOL;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.XA_DATA_SOURCE;
 import static org.jboss.hal.dmr.ModelNodeHelper.properties;
 import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.CSS.pfIcon;
@@ -134,21 +152,22 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
         addColumnActions(Ids.DATA_SOURCE_ADD_ACTIONS, pfIcon("add-circle-o"), resources.constants().add(), addActions);
         addColumnAction(columnActionFactory.refresh(Ids.DATA_SOURCE_REFRESH));
 
-        setItemsProvider((context, callback) -> {
+        setItemsProvider(context -> {
             ResourceAddress dataSourceAddress = DATA_SOURCE_SUBSYSTEM_TEMPLATE.resolve(statementContext);
             Operation dataSourceOperation = new Operation.Builder(dataSourceAddress, READ_CHILDREN_RESOURCES_OPERATION)
                     .param(CHILD_TYPE, DATA_SOURCE).build();
             Operation xaDataSourceOperation = new Operation.Builder(dataSourceAddress, READ_CHILDREN_RESOURCES_OPERATION)
                     .param(CHILD_TYPE, XA_DATA_SOURCE).build();
-            dispatcher.execute(new Composite(dataSourceOperation, xaDataSourceOperation), (CompositeResult result) -> {
-                List<DataSource> combined = new ArrayList<>();
-                combined.addAll(result.step(0).get(RESULT).asPropertyList().stream()
-                        .map(property -> new DataSource(property, false)).collect(toList()));
-                combined.addAll(result.step(1).get(RESULT).asPropertyList().stream()
-                        .map(property -> new DataSource(property, true)).collect(toList()));
-                combined.sort(comparing(NamedNode::getName));
-                callback.onSuccess(combined);
-            });
+            return dispatcher.execute(new Composite(dataSourceOperation, xaDataSourceOperation))
+                    .then(result -> {
+                        List<DataSource> combined = new ArrayList<>();
+                        combined.addAll(result.step(0).get(RESULT).asPropertyList().stream()
+                                .map(property -> new DataSource(property, false)).collect(toList()));
+                        combined.addAll(result.step(1).get(RESULT).asPropertyList().stream()
+                                .map(property -> new DataSource(property, true)).collect(toList()));
+                        combined.sort(comparing(NamedNode::getName));
+                        return Promise.resolve(combined);
+                    });
         });
 
         setItemRenderer(dataSource -> new ItemDisplay<DataSource>() {
@@ -231,12 +250,11 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
     private void prepareWizard(boolean xa) {
         Task<FlowContext> readDataSources = context -> crud
                 .readChildren(DATA_SOURCE_SUBSYSTEM_TEMPLATE, xa ? XA_DATA_SOURCE : DATA_SOURCE)
-                .doOnSuccess(children -> {
+                .then(children -> {
                     List<DataSource> dataSources = children.stream()
                             .map(property -> new DataSource(property, xa)).collect(toList());
-                    context.set(DATASOURCES, dataSources);
-                })
-                .toCompletable();
+                    return Promise.resolve(context.set(DATASOURCES, dataSources));
+                });
 
         List<Task<FlowContext>> tasks = new ArrayList<>();
         tasks.add(readDataSources);
@@ -245,18 +263,15 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
         tasks.add(new JdbcDriverTasks.ReadRuntime(environment, dispatcher));
         tasks.add(new JdbcDriverTasks.CombineDriverResults());
         series(new FlowContext(progress.get()), tasks)
-                .subscribe(new Outcome<FlowContext>() {
-                    @Override
-                    public void onError(FlowContext context, Throwable error) {
-                        showWizard(Collections.emptyList(), Collections.emptyList(), xa);
-                    }
-
-                    @Override
-                    public void onSuccess(FlowContext context) {
-                        List<DataSource> dataSources = context.get(DATASOURCES);
-                        List<JdbcDriver> drivers = context.get(JdbcDriverTasks.DRIVERS);
-                        showWizard(dataSources, drivers, xa);
-                    }
+                .then(context -> {
+                    List<DataSource> dataSources = context.get(DATASOURCES);
+                    List<JdbcDriver> drivers = context.get(JdbcDriverTasks.DRIVERS);
+                    showWizard(dataSources, drivers, xa);
+                    return null;
+                })
+                .catch_(error -> {
+                    showWizard(Collections.emptyList(), Collections.emptyList(), xa);
+                    return null;
                 });
     }
 

@@ -17,7 +17,7 @@ package org.jboss.hal.core;
 
 import javax.inject.Inject;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;

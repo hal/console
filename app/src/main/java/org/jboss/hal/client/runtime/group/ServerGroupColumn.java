@@ -41,7 +41,6 @@ import org.jboss.hal.core.runtime.group.ServerGroupSelectionEvent;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
-import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.security.Constraint;
@@ -58,10 +57,21 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
 
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.core.runtime.TopologyTasks.serverGroups;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DESTROY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.KILL;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RELOAD_SERVERS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESTART_SERVERS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESUME_SERVERS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.START_SERVERS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STOP_SERVERS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SUSPEND_SERVERS;
 import static org.jboss.hal.flow.Flow.series;
 
 @Column(Ids.SERVER_GROUP)
@@ -86,22 +96,11 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
             Resources resources) {
 
         super(new Builder<ServerGroup>(finder, Ids.SERVER_GROUP, Names.SERVER_GROUP)
-
-                .itemsProvider((context, callback) -> series(new FlowContext(progress.get()),
-                        serverGroups(environment, dispatcher))
-                                .subscribe(new Outcome<FlowContext>() {
-                                    @Override
-                                    public void onError(FlowContext context, Throwable error) {
-                                        callback.onFailure(error);
-                                    }
-
-                                    @Override
-                                    public void onSuccess(FlowContext context) {
-                                        List<ServerGroup> serverGroups = context.get(TopologyTasks.SERVER_GROUPS);
-                                        callback.onSuccess(serverGroups);
-                                    }
-                                }))
-
+                .itemsProvider(finderContext -> series(new FlowContext(progress.get()), serverGroups(environment, dispatcher))
+                        .then(flowContext -> {
+                            List<ServerGroup> serverGroups = flowContext.get(TopologyTasks.SERVER_GROUPS);
+                            return Promise.resolve(serverGroups);
+                        }))
                 .onItemSelect(serverGroup -> eventBus.fireEvent(new ServerGroupSelectionEvent(serverGroup.getName())))
                 .onPreview(item -> new ServerGroupPreview(item, places))
                 .pinnable()

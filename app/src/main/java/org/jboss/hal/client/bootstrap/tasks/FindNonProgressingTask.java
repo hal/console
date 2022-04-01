@@ -29,7 +29,6 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
-import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.AddressTemplate;
@@ -37,25 +36,40 @@ import org.jboss.hal.meta.StatementContext;
 
 import com.google.web.bindery.event.shared.EventBus;
 
-import rx.SingleEmitter;
-import rx.functions.Action1;
+import elemental2.promise.Promise;
 
+import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CORE_SERVICE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.FIND_NON_PROGRESSING_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOSTS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MANAGEMENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MANAGEMENT_OPERATIONS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.QUERY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SELECT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_STATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVICE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.WHERE;
 import static org.jboss.hal.flow.Flow.series;
 
-public class FindNonProgressingTask implements Action1<SingleEmitter<ModelNode>> {
+public final class FindNonProgressingTask implements Task<FlowContext> {
 
     private static final String EQ = "=";
     private static final String WILDCARD = "*";
-    private AddressTemplate MGMT_OPERATIONS_TEMPLATE = AddressTemplate
+    private static final AddressTemplate MGMT_OPERATIONS_TEMPLATE = AddressTemplate
             .of("/core-service=management/service=management-operations");
 
-    private EventBus eventBus;
+    private final EventBus eventBus;
     private final Dispatcher dispatcher;
     private final Environment environment;
     private final StatementContext statementContext;
-    private Provider<Progress> progress;
+    private final Provider<Progress> progress;
 
     public FindNonProgressingTask(EventBus eventBus, Dispatcher dispatcher, Environment environment,
             StatementContext statementContext, Provider<Progress> progress) {
@@ -67,36 +81,36 @@ public class FindNonProgressingTask implements Action1<SingleEmitter<ModelNode>>
     }
 
     @Override
-    public void call(SingleEmitter<ModelNode> em) {
+    public Promise<FlowContext> apply(final FlowContext context) {
         if (environment.isStandalone()) {
             ResourceAddress address = MGMT_OPERATIONS_TEMPLATE.resolve(statementContext);
             Operation operation = new Operation.Builder(address, FIND_NON_PROGRESSING_OPERATION).build();
 
-            dispatcher.execute(operation, result -> {
-                boolean hasNonProgressinOp = result != null && result.isDefined();
-                eventBus.fireEvent(new NonProgressingOperationEvent(hasNonProgressinOp));
-                em.onSuccess(result);
-            });
+            return dispatcher.execute(operation)
+                    .then(result -> {
+                        boolean hasNonProgressingOp = result != null && result.isDefined();
+                        eventBus.fireEvent(new NonProgressingOperationEvent(hasNonProgressingOp));
+                        return Promise.resolve(context);
+                    });
         } else {
 
             // return running hosts, to later call a find-non-progressing-operation on each host
-            Task<FlowContext> hostsTask = context -> {
+            Task<FlowContext> hostsTask = c -> {
                 ResourceAddress address = new ResourceAddress();
                 Operation operation = new Operation.Builder(address, READ_CHILDREN_NAMES_OPERATION)
                         .param(CHILD_TYPE, HOST)
                         .build();
                 return dispatcher.execute(operation)
-                        .doOnSuccess(result -> {
+                        .then(result -> {
                             List<String> hosts = result.asList().stream()
                                     .map(ModelNode::asString)
                                     .collect(toList());
-                            context.set(HOSTS, hosts);
-                        })
-                        .toCompletable();
+                            return Promise.resolve(c.set(HOSTS, hosts));
+                        });
             };
 
             // return running servers, to later call a find-non-progressing-operation on each runtime server
-            Task<FlowContext> serversTask = context -> {
+            Task<FlowContext> serversTask = c -> {
                 // /host=*/server=*:query(select=[host,name],where={server-state=running})
                 ResourceAddress address = new ResourceAddress()
                         .add(HOST, WILDCARD)
@@ -106,23 +120,22 @@ public class FindNonProgressingTask implements Action1<SingleEmitter<ModelNode>>
                         .param(WHERE, new ModelNode().set(SERVER_STATE, "running"))
                         .build();
                 return dispatcher.execute(operation)
-                        .doOnSuccess(result -> {
+                        .then(result -> {
                             List<String> servers = Collections.emptyList();
                             if (result != null && result.isDefined()) {
                                 servers = result.asList().stream()
                                         .map(r -> hostServerAddress(r.get(RESULT)))
                                         .collect(Collectors.toList());
                             }
-                            context.set("servers", servers);
-                        })
-                        .toCompletable();
+                            return Promise.resolve(c.set("servers", servers));
+                        });
             };
 
             // call find-non-progressing-operation on each host and server
-            Task<FlowContext> findNonProgressingTask = context -> {
+            Task<FlowContext> findNonProgressingTask = c -> {
 
-                List<String> hosts = context.get(HOSTS);
-                List<String> servers = context.get("servers");
+                List<String> hosts = c.get(HOSTS);
+                List<String> servers = c.get("servers");
 
                 Composite composite = new Composite();
                 for (String host : hosts) {
@@ -142,7 +155,7 @@ public class FindNonProgressingTask implements Action1<SingleEmitter<ModelNode>>
                     }
                 }
                 return dispatcher.execute(composite)
-                        .doOnSuccess(result -> {
+                        .then(result -> {
                             boolean nonProgressingOp = false;
                             for (ModelNode r : result) {
                                 ModelNode findResult = r.get(RESULT);
@@ -151,23 +164,15 @@ public class FindNonProgressingTask implements Action1<SingleEmitter<ModelNode>>
                                     break;
                                 }
                             }
-                            context.set("nonProgressingOp", nonProgressingOp);
-                        })
-                        .toCompletable();
+                            return Promise.resolve(c.set("nonProgressingOp", nonProgressingOp));
+                        });
             };
 
-            series(new FlowContext(progress.get()), hostsTask, serversTask, findNonProgressingTask)
-                    .subscribe(new Outcome<FlowContext>() {
-                        @Override
-                        public void onError(FlowContext context, Throwable error) {
-                            em.onError(error);
-                        }
-
-                        @Override
-                        public void onSuccess(FlowContext context) {
-                            boolean nonProgressingOp = context.get("nonProgressingOp");
-                            eventBus.fireEvent(new NonProgressingOperationEvent(nonProgressingOp));
-                        }
+            return series(new FlowContext(progress.get()), asList(hostsTask, serversTask, findNonProgressingTask))
+                    .then(c -> {
+                        boolean nonProgressingOp = c.get("nonProgressingOp");
+                        eventBus.fireEvent(new NonProgressingOperationEvent(nonProgressingOp));
+                        return Promise.resolve(context);
                     });
         }
     }

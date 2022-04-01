@@ -32,7 +32,6 @@ import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.dmr.Composite;
-import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -45,10 +44,17 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Requires;
 
+import elemental2.promise.Promise;
+
 import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_DEPLOYMENT_ADDRESS;
 import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_DEPLOYMENT_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_SUBDEPLOYMENT_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADDRESS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBDEPLOYMENT;
 
 @AsyncColumn(Ids.UNDERTOW_RUNTIME_DEPLOYMENT)
 @Requires(WEB_DEPLOYMENT_ADDRESS)
@@ -68,7 +74,7 @@ public class DeploymentColumn extends FinderColumn<DeploymentResource> {
 
         super(new Builder<DeploymentResource>(finder, Ids.UNDERTOW_RUNTIME_DEPLOYMENT, Names.DEPLOYMENT)
                 .columnAction(columnActionFactory.refresh(Ids.UNDERTOW_RUNTIME_REFRESH))
-                .itemsProvider((context, callback) -> {
+                .itemsProvider(context -> {
                     // workaround for HAL-1750 before WFCORE-4839 is fixed
                     ResourceAddress baseAddress = AddressTemplate.of("{selected.host}/{selected.server}")
                             .resolve(statementContext);
@@ -85,7 +91,7 @@ public class DeploymentColumn extends FinderColumn<DeploymentResource> {
                             .param(INCLUDE_RUNTIME, true)
                             .build();
                     composite.add(operationDeploy).add(operationSubDeploy);
-                    dispatcher.execute(composite, (CompositeResult result) -> {
+                    return dispatcher.execute(composite).then(result -> {
                         List<DeploymentResource> deployments = new ArrayList<>();
                         result.step(0).get(RESULT).asList().forEach(r -> {
                             ResourceAddress _address = baseAddress.isDefined()
@@ -101,7 +107,7 @@ public class DeploymentColumn extends FinderColumn<DeploymentResource> {
 
                             deployments.add(new DeploymentResource(_address, r.get(RESULT)));
                         });
-                        callback.onSuccess(deployments);
+                        return Promise.resolve(deployments);
                     });
                 })
                 .itemRenderer(item -> new ItemDisplay<DeploymentResource>() {

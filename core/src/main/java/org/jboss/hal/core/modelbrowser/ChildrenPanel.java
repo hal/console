@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.InlineAction;
@@ -52,7 +52,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import elemental2.dom.HTMLElement;
 
 import static java.util.stream.Collectors.toList;
-import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.elemento.Elements.h;
 import static org.jboss.hal.core.modelbrowser.ModelBrowser.asGenericTemplate;
 import static org.jboss.hal.core.modelbrowser.ReadChildren.uniqueId;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
@@ -94,7 +94,7 @@ class ChildrenPanel implements Iterable<HTMLElement>, Attachable {
                 .options();
 
         table = new DataTable<>(Ids.build(Ids.MODEL_BROWSER, "children", Ids.TABLE), options);
-        elements = Elements.collect()
+        elements = Elements.bag()
                 .add(header = h(1).element())
                 .add(table).elements();
     }
@@ -137,13 +137,12 @@ class ChildrenPanel implements Iterable<HTMLElement>, Attachable {
                 metadataProcessor.lookup(template, Progress.NOOP,
                         new MetadataProcessor.MetadataCallback() {
                             @Override
-                            @SuppressWarnings("unchecked")
                             public void onMetadata(Metadata metadata) {
                                 Map<Integer, String> buttonConstraints = new HashMap<>();
                                 buttonConstraints.put(0, Constraint.executable(template, ADD).data());
                                 buttonConstraints.put(1, Constraint.executable(template, REMOVE).data());
 
-                                ((DataTable) table).applySecurity(buttonConstraints,
+                                ((DataTable<?>) table).applySecurity(buttonConstraints,
                                         AuthorisationDecision.from(environment,
                                                 constraint -> Optional.of(metadata.getSecurityContext())));
                             }

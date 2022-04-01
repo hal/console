@@ -17,7 +17,7 @@ package org.jboss.hal.core.modelbrowser;
 
 import javax.inject.Provider;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.tree.Node;
@@ -38,7 +38,7 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import elemental2.dom.HTMLElement;
 
-import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.elemento.Elements.div;
 
 class CreateSingletonStep extends WizardStep<SingletonContext, SingletonState> {
 

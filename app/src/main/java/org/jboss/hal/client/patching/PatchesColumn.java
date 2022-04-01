@@ -60,8 +60,20 @@ import org.jboss.hal.spi.MessageEvent;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
 
+import elemental2.promise.Promise;
+
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.AGEOUT_HISTORY_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES_ONLY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOSTS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PATCH;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PATCHING;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PATCH_ID;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ROLLBACK_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SHOW_HISTORY_OPERATION;
 import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_HOST;
 import static org.jboss.hal.resources.Ids.PATCHES_AGEOUT;
 
@@ -70,15 +82,15 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
 
     public static final AddressTemplate PATCHING_TEMPLATE = AddressTemplate.of(SELECTED_HOST, "core-service=patching");
 
-    private EventBus eventBus;
-    private Dispatcher dispatcher;
-    private StatementContext statementContext;
-    private Environment environment;
-    private HostActions hostActions;
-    private MetadataProcessor metadataProcessor;
-    private ServerActions serverActions;
-    private Provider<Progress> progress;
-    private Resources resources;
+    private final EventBus eventBus;
+    private final Dispatcher dispatcher;
+    private final StatementContext statementContext;
+    private final Environment environment;
+    private final HostActions hostActions;
+    private final MetadataProcessor metadataProcessor;
+    private final ServerActions serverActions;
+    private final Provider<Progress> progress;
+    private final Resources resources;
 
     @Inject
     public PatchesColumn(Finder finder,
@@ -97,10 +109,10 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
 
                 .columnAction(columnActionFactory.refresh(Ids.PATCHES_REFRESH))
 
-                .itemsProvider((context, callback) -> {
+                .itemsProvider(context -> {
                     ResourceAddress address = PATCHING_TEMPLATE.resolve(statementContext);
                     Operation operation = new Operation.Builder(address, SHOW_HISTORY_OPERATION).build();
-                    dispatcher.execute(operation, result -> callback.onSuccess(result.asList()));
+                    return dispatcher.execute(operation).then(result -> Promise.resolve(result.asList()));
                 })
                 .onPreview(PatchesPreview::new)
                 .pinnable()

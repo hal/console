@@ -56,7 +56,12 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
 import static org.jboss.hal.client.configuration.subsystem.distributableweb.AddressTemplates.DISTRIBUTABLE_WEB_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.AFFINITY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ALLOW_RESOURCE_SERVICE_RESTART;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DISTRIBUTABLE_WEB;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ROUTING;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 
@@ -176,7 +181,7 @@ public class DistributableWebPresenter
     void saveAffinity(Affinity affinity, Map<String, Object> changedValues) {
         if (affinity != Affinity.UNDEFINED) {
             Metadata metadata = metadataRegistry.lookup(affinityTemplate(mgmtAffinity));
-            crud.save(affinity.type, AFFINITY, affinityAddress(mgmtAffinity), changedValues, metadata, () -> reload());
+            crud.save(affinity.type, AFFINITY, affinityAddress(mgmtAffinity), changedValues, metadata, this::reload);
         }
     }
 
@@ -249,10 +254,10 @@ public class DistributableWebPresenter
     // @formatter:on
 
     // helper class to keep track of session management and affinity
-    private class ManagementAffinity {
-        private SessionManagement mgmt;
-        private String mgmtName;
-        private Affinity affinity;
+    private static class ManagementAffinity {
+        private final SessionManagement mgmt;
+        private final String mgmtName;
+        private final Affinity affinity;
 
         public ManagementAffinity(SessionManagement mgmt, String mgmtName, Affinity affinity) {
             this.mgmt = mgmt;

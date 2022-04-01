@@ -17,14 +17,18 @@ package org.jboss.hal.core.finder;
 
 import java.util.List;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import elemental2.promise.Promise;
+import jsinterop.annotations.JsAsync;
+import jsinterop.annotations.JsFunction;
 
 /**
  * Function to load the items of the <em>current</em> column. Use the finder context and its path to find out what is selected
  * in <em>previous</em> columns.
  */
+@JsFunction
 @FunctionalInterface
 public interface ItemsProvider<T> {
 
-    void get(FinderContext context, AsyncCallback<List<T>> callback);
+    @JsAsync
+    Promise<List<T>> items(FinderContext context);
 }

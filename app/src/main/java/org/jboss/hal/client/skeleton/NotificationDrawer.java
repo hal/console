@@ -15,8 +15,8 @@
  */
 package org.jboss.hal.client.skeleton;
 
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.elemento.Elements;
+import org.jboss.elemento.IsElement;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
@@ -32,8 +32,8 @@ import elemental2.dom.NodeList;
 
 import static elemental2.dom.DomGlobal.document;
 import static elemental2.dom.DomGlobal.window;
-import static org.jboss.gwt.elemento.core.Elements.*;
-import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.elemento.Elements.*;
+import static org.jboss.elemento.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
 
 /**

@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.client.configuration.subsystem.remoting;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nullable;
@@ -26,7 +27,6 @@ import org.jboss.hal.ballroom.form.Form.FinishRemove;
 import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.PropertiesOperations;
-import org.jboss.hal.core.SuccessfulOutcome;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -41,6 +41,7 @@ import org.jboss.hal.dmr.ResourceCheck;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Progress;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
@@ -59,9 +60,30 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
-import rx.Completable;
+import elemental2.promise.Promise;
 
-import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.*;
+import static java.util.Arrays.asList;
+import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.CONNECTOR_SECURITY_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.CONNECTOR_SECURITY_POLICY_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.CONNECTOR_SECURITY_POLICY_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.CONNECTOR_SECURITY_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.CONNECTOR_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.HTTP_CONNECTOR_SECURITY_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.HTTP_CONNECTOR_SECURITY_POLICY_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.HTTP_CONNECTOR_SECURITY_POLICY_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.HTTP_CONNECTOR_SECURITY_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.HTTP_CONNECTOR_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.LOCAL_OUTBOUND_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.OUTBOUND_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.REMOTE_OUTBOUND_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.REMOTING_SUBSYSTEM_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.REMOTING_SUBSYSTEM_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.SELECTED_CONNECTOR_SECURITY_POLICY_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.SELECTED_CONNECTOR_SECURITY_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.SELECTED_CONNECTOR_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.SELECTED_HTTP_CONNECTOR_SECURITY_POLICY_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.SELECTED_HTTP_CONNECTOR_SECURITY_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.SELECTED_HTTP_CONNECTOR_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROPERTY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOTING;
@@ -431,30 +453,29 @@ public class RemotingPresenter
     private void failSafeCreatePolicy(String type, AddressTemplate securityTemplate, AddressTemplate policyTemplate,
             StatementContext statementContext) {
 
-        series(new FlowContext(progress.get()),
-                new ResourceCheck(dispatcher, securityTemplate.resolve(statementContext)),
-                context -> {
-                    int status = context.pop();
-                    if (status == 200) {
-                        return Completable.complete();
-                    } else {
-                        Operation operation = new Operation.Builder(securityTemplate.resolve(statementContext), ADD)
-                                .build();
-                        return dispatcher.execute(operation).toCompletable();
-                    }
-                },
-                context -> {
-                    Operation operation = new Operation.Builder(policyTemplate.resolve(statementContext), ADD).build();
-                    return dispatcher.execute(operation).toCompletable();
-                })
-                        .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
-                            @Override
-                            public void onSuccess(FlowContext context) {
-                                MessageEvent.fire(getEventBus(),
-                                        Message.success(resources.messages().addSingleResourceSuccess(type)));
-                                reload();
-                            }
-                        });
+        Task<FlowContext> check = new ResourceCheck(dispatcher, securityTemplate.resolve(statementContext));
+        Task<FlowContext> addSecurity = context -> {
+            int status = context.pop();
+            if (status == 200) {
+                return Promise.resolve(context);
+            } else {
+                Operation operation = new Operation.Builder(securityTemplate.resolve(statementContext), ADD)
+                        .build();
+                return dispatcher.execute(operation).then(__ -> Promise.resolve(context));
+            }
+        };
+        Task<FlowContext> addPolicy = context -> {
+            Operation operation = new Operation.Builder(policyTemplate.resolve(statementContext), ADD).build();
+            return dispatcher.execute(operation).then(__ -> Promise.resolve(context));
+        };
+        List<Task<FlowContext>> tasks = asList(check, addSecurity, addPolicy);
+        series(new FlowContext(progress.get()), tasks)
+                .then(__ -> {
+                    MessageEvent.fire(getEventBus(),
+                            Message.success(resources.messages().addSingleResourceSuccess(type)));
+                    reload();
+                    return null;
+                });
     }
 
     // @formatter:off

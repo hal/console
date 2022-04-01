@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.elemento.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.js.JsHelper;
 import org.jboss.hal.resources.UIConstants;
@@ -36,7 +36,7 @@ import jsinterop.base.JsPropertyMap;
 
 import static elemental2.dom.DomGlobal.window;
 import static java.util.Arrays.asList;
-import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.elemento.Elements.div;
 import static org.jboss.hal.ballroom.JQuery.$;
 import static org.jboss.hal.resources.UIConstants.HASH;
 

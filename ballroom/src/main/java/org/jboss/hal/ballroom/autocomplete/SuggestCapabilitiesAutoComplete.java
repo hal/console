@@ -39,31 +39,24 @@ public class SuggestCapabilitiesAutoComplete extends AutoComplete {
                 .param(NAME, capability)
                 .param(DEPENDENT_ADDRESS, template.resolve(statementContext))
                 .build();
-
-        Options options = new OptionsBuilder<String>(
-                (query, response) -> dispatcher.execute(operation,
-                        result -> {
-                            if (result.isDefined()) {
-                                String[] items = result.asList().stream()
-                                        .map(ModelNode::asString)
-                                        .filter(value -> SHOW_ALL_VALUE.equals(query) ||
-                                                value.toLowerCase().contains(query.toLowerCase()))
-                                        .sorted()
-                                        .toArray(String[]::new);
-                                response.response(items);
-                            } else {
-                                response.response(new String[0]);
-                            }
-                        },
-                        (op, failure) -> {
-                            logger.error(ERROR_MESSAGE, capability, template, failure);
-                            response.response(new String[0]);
-                        },
-                        (op, exception) -> {
-                            logger.error(ERROR_MESSAGE, capability, template, exception.getMessage());
-                            response.response(new String[0]);
-                        }))
-                                .build();
+        Options options = new OptionsBuilder<String>((query, response) -> dispatcher.execute(operation,
+                result -> {
+                    if (result.isDefined()) {
+                        String[] items = result.asList().stream()
+                                .map(ModelNode::asString)
+                                .filter(value -> SHOW_ALL_VALUE.equals(query) ||
+                                        value.toLowerCase().contains(query.toLowerCase()))
+                                .sorted()
+                                .toArray(String[]::new);
+                        response.response(items);
+                    } else {
+                        response.response(new String[0]);
+                    }
+                },
+                (op, error) -> {
+                    logger.error(ERROR_MESSAGE, capability, template, error);
+                    response.response(new String[0]);
+                })).build();
 
         init(options);
     }

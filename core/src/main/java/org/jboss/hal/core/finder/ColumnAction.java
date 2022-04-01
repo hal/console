@@ -53,7 +53,7 @@ public class ColumnAction<T> {
         private String title;
         private HTMLElement element;
         private ColumnActionHandler<T> handler;
-        private List<ColumnAction<T>> actions;
+        private final List<ColumnAction<T>> actions;
         private Constraint constraint;
         private Constraints constraints;
 

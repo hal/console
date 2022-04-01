@@ -17,7 +17,7 @@ package org.jboss.hal.ballroom.form;
 
 import java.util.EnumSet;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
 
@@ -28,13 +28,13 @@ import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 
 import static elemental2.dom.DomGlobal.setTimeout;
-import static org.jboss.gwt.elemento.core.Elements.*;
-import static org.jboss.gwt.elemento.core.Elements.i;
-import static org.jboss.gwt.elemento.core.EventType.bind;
-import static org.jboss.gwt.elemento.core.EventType.change;
-import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.gwt.elemento.core.InputType.checkbox;
-import static org.jboss.gwt.elemento.core.InputType.text;
+import static org.jboss.elemento.Elements.*;
+import static org.jboss.elemento.Elements.i;
+import static org.jboss.elemento.EventType.bind;
+import static org.jboss.elemento.EventType.change;
+import static org.jboss.elemento.EventType.click;
+import static org.jboss.elemento.InputType.checkbox;
+import static org.jboss.elemento.InputType.text;
 import static org.jboss.hal.ballroom.form.Decoration.*;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.resources.CSS.*;

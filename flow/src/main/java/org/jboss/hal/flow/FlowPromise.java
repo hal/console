@@ -15,19 +15,15 @@
  */
 package org.jboss.hal.flow;
 
-import rx.SingleSubscriber;
+import elemental2.promise.IThenable;
+import elemental2.promise.Promise;
+import jsinterop.annotations.JsType;
 
-public abstract class Outcome<C> extends SingleSubscriber<C> {
+// We redefine parts of the promise API
+@JsType(isNative = true, name = "Promise", namespace = "<global>")
+class FlowPromise {
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public final void onError(Throwable error) {
-        if (error instanceof FlowException) {
-            onError((C) ((FlowException) error).context, error);
-        } else {
-            onError(null, error);
-        }
-    }
+    static native <V> Promise<Object[]> all(IThenable<? extends V>[] promises);
 
-    public abstract void onError(C context, Throwable error);
+    static native <V> Promise<Object[]> allSettled(IThenable<? extends V>[] promises);
 }

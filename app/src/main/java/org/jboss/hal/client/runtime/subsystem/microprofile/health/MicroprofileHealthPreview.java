@@ -21,8 +21,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
+import org.jboss.elemento.Elements;
+import org.jboss.elemento.HtmlContentBuilder;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.subsystem.SubsystemMetadata;
@@ -42,7 +42,7 @@ import elemental2.dom.HTMLHeadingElement;
 import elemental2.dom.HTMLLIElement;
 import elemental2.dom.HTMLUListElement;
 
-import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.elemento.Elements.*;
 import static org.jboss.hal.client.runtime.subsystem.microprofile.health.AddressTemplates.MICROPROFILE_HEALTH_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.key;

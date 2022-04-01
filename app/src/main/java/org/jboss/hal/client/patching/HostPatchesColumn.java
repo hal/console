@@ -38,7 +38,6 @@ import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
-import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.security.Constraint;
@@ -50,6 +49,8 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Requires;
 
 import com.google.web.bindery.event.shared.EventBus;
+
+import elemental2.promise.Promise;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.patching.PatchTasks.patches;
@@ -84,29 +85,21 @@ public class HostPatchesColumn extends FinderColumn<Host> implements HostActionE
 
         super(new FinderColumn.Builder<Host>(finder, Ids.PATCHING_DOMAIN, Names.HOSTS)
                 .columnAction(columnActionFactory.refresh(Ids.HOST_REFRESH))
-                .itemsProvider(
-                        (context, callback) -> series(new FlowContext(progress.get()), patches(environment, dispatcher))
-                                .subscribe(new Outcome<FlowContext>() {
-                                    @Override
-                                    public void onError(FlowContext context, Throwable error) {
-                                        callback.onFailure(error);
-                                    }
+                .itemsProvider(finderContext -> series(new FlowContext(progress.get()), patches(environment, dispatcher))
+                        .then(flowContext -> {
+                            List<Host> hosts = flowContext.get(TopologyTasks.HOSTS);
+                            List<Host> alive = hosts.stream()
+                                    // alive is not enough here!
+                                    .filter(host -> host.isAlive() && !host.isStarting() && host.isRunning())
+                                    .collect(toList());
 
-                                    @Override
-                                    public void onSuccess(FlowContext context) {
-                                        List<Host> hosts = context.get(TopologyTasks.HOSTS);
-                                        List<Host> alive = hosts.stream()
-                                                // alive is not enough here!
-                                                .filter(host -> host.isAlive() && !host.isStarting() && host.isRunning())
-                                                .collect(toList());
-                                        callback.onSuccess(alive);
-
-                                        // Restore pending visualization
-                                        hosts.stream()
-                                                .filter(item -> hostActions.isPending(namedNodeToHost(item)))
-                                                .forEach(item -> ItemMonitor.startProgress(Ids.host(item.getName())));
-                                    }
-                                }))
+                            // Restore pending visualization
+                            hosts.stream()
+                                    .filter(item -> hostActions.isPending(namedNodeToHost(item)))
+                                    .forEach(item -> ItemMonitor.startProgress(
+                                            Ids.host(item.getName())));
+                            return Promise.resolve(alive);
+                        }))
 
                 .onItemSelect(host -> eventBus.fireEvent(new HostSelectionEvent(host.getName())))
                 .onPreview(item -> new HostPatchesPreview(hostActions, item, resources))

@@ -26,11 +26,11 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Stopwatch;
 
-import rx.Completable;
+import elemental2.promise.Promise;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
-class UpdateDatabaseTask implements Task<LookupContext> {
+final class UpdateDatabaseTask implements Task<LookupContext> {
 
     private static final Logger logger = LoggerFactory.getLogger(UpdateDatabaseTask.class);
 
@@ -40,8 +40,8 @@ class UpdateDatabaseTask implements Task<LookupContext> {
         this.workerChannel = workerChannel;
     }
 
-    @SuppressWarnings("unchecked")
-    public Completable call(LookupContext context) {
+    @Override
+    public Promise<LookupContext> apply(final LookupContext context) {
         if (context.updateDatabase()) {
             Stopwatch watch = Stopwatch.createStarted();
             for (Map.Entry<ResourceAddress, ResourceDescription> entry : context.toResourceDescriptionDatabase
@@ -62,6 +62,6 @@ class UpdateDatabaseTask implements Task<LookupContext> {
                     context.toResourceDescriptionDatabase.size(), context.toSecurityContextDatabase.size(),
                     watch.stop().elapsed(MILLISECONDS));
         }
-        return Completable.complete();
+        return Promise.resolve(context);
     }
 }

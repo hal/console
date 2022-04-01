@@ -15,13 +15,11 @@
  */
 package org.jboss.hal.dmr;
 
-import org.jboss.hal.dmr.dispatch.DispatchFailure;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Task;
 
-import rx.Completable;
-import rx.Single;
+import elemental2.promise.Promise;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 
@@ -29,7 +27,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATIO
  * Function which checks whether a given resource exists. Pushes {@code 200} onto the context stack if it exists, {@code 404}
  * otherwise.
  */
-public class ResourceCheck implements Task<FlowContext> {
+public final class ResourceCheck implements Task<FlowContext> {
 
     private final Dispatcher dispatcher;
     private final ResourceAddress address;
@@ -40,18 +38,10 @@ public class ResourceCheck implements Task<FlowContext> {
     }
 
     @Override
-    public Completable call(FlowContext context) {
+    public Promise<FlowContext> apply(final FlowContext context) {
         Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION).build();
         return dispatcher.execute(operation)
-                .doOnSuccess(result -> context.push(200))
-                .onErrorResumeNext(throwable -> {
-                    if (throwable instanceof DispatchFailure) {
-                        context.push(404);
-                        return Single.just(new ModelNode());
-                    } else {
-                        return Single.error(throwable);
-                    }
-                })
-                .toCompletable();
+                .then(result -> Promise.resolve(context.push(200)))
+                .catch_(error -> Promise.resolve(context.push(404)));
     }
 }

@@ -30,7 +30,6 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
-import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Task;
 import org.jboss.hal.js.JsonObject;
 import org.jboss.hal.meta.StatementContext;
@@ -69,28 +68,24 @@ public class PathsAutoComplete extends AutoComplete {
             List<Task<FlowContext>> tasks = runningServers(environment, dispatcher,
                     properties(PROFILE_NAME, statementContext.selectedProfile()));
             series(new FlowContext(), tasks)
-                    .subscribe(new Outcome<FlowContext>() {
-                        @Override
-                        public void onError(FlowContext context, Throwable error) {
-                            logger.error("Unable to update operation for paths type-ahead: " +
-                                    "Error reading running servers: {}", error.getMessage());
+                    .then(context -> {
+                        List<Server> servers = context.get(TopologyTasks.SERVERS);
+                        boolean readPathsFromServer = !servers.isEmpty() && (servers.get(0)
+                                .isStarted() || servers.get(0).needsReload()
+                                || servers.get(0)
+                                        .needsRestart());
+                        if (readPathsFromServer) {
+                            operation = new Operation.Builder(servers.get(0).getServerAddress(),
+                                    READ_CHILDREN_NAMES_OPERATION).param(CHILD_TYPE, "path").build();
+                        } else {
                             operation = defaultOperation();
                         }
-
-                        @Override
-                        public void onSuccess(FlowContext context) {
-                            List<Server> servers = context.get(TopologyTasks.SERVERS);
-                            boolean readPathsFromServer = !servers.isEmpty() && (servers.get(0)
-                                    .isStarted() || servers.get(0).needsReload()
-                                    || servers.get(0)
-                                            .needsRestart());
-                            if (readPathsFromServer) {
-                                operation = new Operation.Builder(servers.get(0).getServerAddress(),
-                                        READ_CHILDREN_NAMES_OPERATION).param(CHILD_TYPE, "path").build();
-                            } else {
-                                operation = defaultOperation();
-                            }
-                        }
+                        return null;
+                    }).catch_(error -> {
+                        logger.error("Unable to update operation for paths type-ahead: " +
+                                "Error reading running servers: {}", error);
+                        operation = defaultOperation();
+                        return null;
                     });
         }
     }

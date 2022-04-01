@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.client.bootstrap;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.client.logging.LogConfiguration;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.resources.Names;

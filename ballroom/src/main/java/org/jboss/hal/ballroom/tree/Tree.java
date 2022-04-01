@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.ballroom.tree;
 
-import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.elemento.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.JsCallback;
 
@@ -24,7 +24,7 @@ import elemental2.dom.Element;
 import elemental2.dom.HTMLElement;
 
 import static elemental2.dom.DomGlobal.document;
-import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.elemento.Elements.div;
 import static org.jboss.hal.resources.UIConstants.HASH;
 
 public class Tree<T> implements IsElement, Attachable {

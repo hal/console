@@ -26,13 +26,19 @@ enum GetOperation {
      * It is essential that the GET requests exposed over the HTTP interface are for read only operations that do not modify the
      * domain model or update anything server side.
      */
-    READ_RESOURCE_OPERATION(ModelDescriptionConstants.READ_RESOURCE_OPERATION, "resource"), READ_ATTRIBUTE_OPERATION(
-            ModelDescriptionConstants.READ_ATTRIBUTE_OPERATION,
-            "attribute"), READ_RESOURCE_DESCRIPTION_OPERATION(ModelDescriptionConstants.READ_RESOURCE_DESCRIPTION_OPERATION,
-                    "resource-description"), READ_CONTENT(ModelDescriptionConstants.READ_CONTENT, "read-content");
+    READ_RESOURCE_OPERATION(ModelDescriptionConstants.READ_RESOURCE_OPERATION,
+            "resource"),
 
-    private static Map<String, GetOperation> lookup = new HashMap<>();
+    READ_ATTRIBUTE_OPERATION(ModelDescriptionConstants.READ_ATTRIBUTE_OPERATION,
+            "attribute"),
 
+    READ_RESOURCE_DESCRIPTION_OPERATION(ModelDescriptionConstants.READ_RESOURCE_DESCRIPTION_OPERATION,
+            "resource-description"),
+
+    READ_CONTENT(ModelDescriptionConstants.READ_CONTENT,
+            "read-content");
+
+    private static final Map<String, GetOperation> lookup = new HashMap<>();
     static {
         for (GetOperation getOperation : GetOperation.values()) {
             lookup.put(getOperation.dmrOperation, getOperation);
@@ -47,8 +53,8 @@ enum GetOperation {
         return lookup.get(operation);
     }
 
-    private String dmrOperation;
-    private String httpGetOperation;
+    private final String dmrOperation;
+    private final String httpGetOperation;
 
     GetOperation(String dmrOperation, String httpGetOperation) {
         this.dmrOperation = dmrOperation;

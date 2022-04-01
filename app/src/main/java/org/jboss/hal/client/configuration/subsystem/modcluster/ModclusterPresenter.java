@@ -50,7 +50,12 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
-import static org.jboss.hal.client.configuration.subsystem.modcluster.AddressTemplates.*;
+import static org.jboss.hal.client.configuration.subsystem.modcluster.AddressTemplates.CUSTOM_LOAD_METRIC_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.modcluster.AddressTemplates.LOAD_METRIC_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.modcluster.AddressTemplates.LOAD_PROVIDER_DYNAMIC_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.modcluster.AddressTemplates.LOAD_PROVIDER_SIMPLE_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.modcluster.AddressTemplates.PROXY_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.modcluster.AddressTemplates.PROXY_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
@@ -65,7 +70,7 @@ public class ModclusterPresenter
         implements SupportsExpertMode {
 
     private final CrudOperations crud;
-    private MetadataRegistry metadataRegistry;
+    private final MetadataRegistry metadataRegistry;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
     private String proxyName;

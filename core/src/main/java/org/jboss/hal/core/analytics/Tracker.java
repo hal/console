@@ -55,7 +55,7 @@ public class Tracker implements NavigationHandler, FinderContextHandler, ModelBr
     @Override
     public void onNavigation(NavigationEvent event) {
         PlaceRequest request = event.getRequest();
-        if (request == null && !IGNORE_PLACES.contains(request.getNameToken())) {
+        if (request != null && !IGNORE_PLACES.contains(request.getNameToken())) {
 
             StringBuilder page = new StringBuilder();
             page.append("/").append(request.getNameToken());
@@ -73,8 +73,8 @@ public class Tracker implements NavigationHandler, FinderContextHandler, ModelBr
         FinderContext context = event.getFinderContext();
 
         StringBuilder page = new StringBuilder();
-        page.append("/" + context.getToken());
-        for (FinderSegment segment : context.getPath()) {
+        page.append("/").append(context.getToken());
+        for (FinderSegment<?> segment : context.getPath()) {
             append(page, segment.getColumnId(), segment.getItemId());
         }
 

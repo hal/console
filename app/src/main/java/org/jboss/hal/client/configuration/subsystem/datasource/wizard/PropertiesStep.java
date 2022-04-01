@@ -37,8 +37,6 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
@@ -53,17 +51,15 @@ import static org.jboss.hal.flow.Flow.series;
 
 class PropertiesStep extends WizardStep<Context, State> {
 
-    private static final Logger logger = LoggerFactory.getLogger(DataSourceWizard.class);
-
     private final ModelNode dummy;
     private final Form<ModelNode> form;
     private final PropertiesItem propertiesItem;
-    private Dispatcher dispatcher;
-    private StatementContext statementContext;
-    private Environment environment;
-    private Provider<Progress> progress;
-    private Resources resources;
-    private StaticAutoComplete propsAutoComplete;
+    private final Dispatcher dispatcher;
+    private final StatementContext statementContext;
+    private final Environment environment;
+    private final Provider<Progress> progress;
+    private final Resources resources;
+    private final StaticAutoComplete propsAutoComplete;
 
     PropertiesStep(Dispatcher dispatcher, StatementContext statementContext, Environment environment,
             Provider<Progress> progress, Metadata metadata,
@@ -111,7 +107,8 @@ class PropertiesStep extends WizardStep<Context, State> {
         List<Task<FlowContext>> tasks = jdbcDriverProperties(environment, dispatcher, statementContext, driverName,
                 resources);
 
-        series(new FlowContext(progress.get()), tasks).subscribe(new JdbcDriverOutcome(dsClassname, isXa, callback));
+        series(new FlowContext(progress.get()), tasks)
+                .then(context -> new JdbcDriverOutcome(dsClassname, isXa, callback).onInvoke(context));
     }
 
     @Override

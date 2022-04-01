@@ -35,6 +35,8 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Requires;
 
+import elemental2.promise.Promise;
+
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.APPLICATION_SECURITY_DOMAIN_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.UNDERTOW_SUBSYSTEM_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.APPLICATION_SECURITY_DOMAIN;
@@ -52,13 +54,13 @@ public class ApplicationSecurityDomainColumn extends FinderColumn<NamedNode> {
             final Places places,
             final CrudOperations crud) {
 
+        // noinspection Convert2MethodRef
         super(new Builder<NamedNode>(finder, Ids.UNDERTOW_APP_SECURITY_DOMAIN, Names.APPLICATION_SECURITY_DOMAIN)
 
-                .itemsProvider((context, callback) -> crud.readChildren(UNDERTOW_SUBSYSTEM_TEMPLATE,
-                        APPLICATION_SECURITY_DOMAIN,
-                        children -> callback.onSuccess(asNamedNodes(children))))
+                .itemsProvider(context -> crud.readChildren(UNDERTOW_SUBSYSTEM_TEMPLATE, APPLICATION_SECURITY_DOMAIN)
+                        .then(children -> Promise.resolve(asNamedNodes(children))))
 
-                .onPreview(ApplicationSecurityDomainPreview::new)
+                .onPreview(model -> new ApplicationSecurityDomainPreview(model))
                 .useFirstActionAsBreadcrumbHandler()
                 .pinnable()
                 .withFilter());

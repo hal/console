@@ -24,7 +24,7 @@ import com.google.common.base.Strings;
 
 import elemental2.dom.HTMLSelectElement;
 
-import static org.jboss.gwt.elemento.core.Elements.select;
+import static org.jboss.elemento.Elements.select;
 import static org.jboss.hal.ballroom.form.Decoration.DEFAULT;
 import static org.jboss.hal.ballroom.form.Decoration.DEPRECATED;
 import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;

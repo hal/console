@@ -55,8 +55,8 @@ public class PatchingFinderPresenter
     }
 
     @Override
-    protected PreviewContent initialPreview() {
-        return new PreviewContent(Names.PATCHING, resources.previews().patching());
+    protected PreviewContent<Void> initialPreview() {
+        return new PreviewContent<>(Names.PATCHING, resources.previews().patching());
     }
 
     // @formatter:off

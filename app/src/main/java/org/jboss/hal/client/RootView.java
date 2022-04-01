@@ -18,21 +18,22 @@ package org.jboss.hal.client;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.gwt.elemento.core.Widgets;
+import org.jboss.elemento.Elements;
+import org.jboss.elemento.IsElement;
 import org.jboss.hal.core.mvp.Slots;
 import org.jboss.hal.resources.Ids;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.ViewImpl;
 
 import elemental2.dom.HTMLElement;
+import jsinterop.base.Js;
 
 import static elemental2.dom.DomGlobal.document;
-import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.elemento.Elements.div;
 import static org.jboss.hal.client.RootPresenter.SLOT_FOOTER_CONTENT;
 import static org.jboss.hal.client.RootPresenter.SLOT_HEADER_CONTENT;
 import static org.jboss.hal.resources.CSS.containerFluid;
@@ -48,14 +49,16 @@ public class RootView extends ViewImpl implements RootPresenter.MyView {
     public RootView() {
         slots = new HashMap<>();
         rootContainer = div().id(Ids.ROOT_CONTAINER).css(containerFluid).element();
-        initWidget(Widgets.widget(rootContainer));
+        initWidget(widget(rootContainer));
     }
 
     @Override
     public void setInSlot(Object slot, IsWidget content) {
         if (slot == SLOT_HEADER_CONTENT || slot == SLOT_FOOTER_CONTENT) {
             // single elements only!
-            HTMLElement element = content instanceof IsElement ? ((IsElement) content).element() : Widgets.element(content);
+            HTMLElement element = content instanceof IsElement<?>
+                    ? ((IsElement<?>) content).element()
+                    : element(content.asWidget().getElement());
             slots.put(slot, element);
             if (!initialized && slots.containsKey(SLOT_HEADER_CONTENT) && slots.containsKey(SLOT_FOOTER_CONTENT)) {
                 // append all three building blocks to the document body
@@ -91,8 +94,25 @@ public class RootView extends ViewImpl implements RootPresenter.MyView {
         if (!finished) {
             HTMLElement element = content instanceof IsElement
                     ? ((IsElement<HTMLElement>) content).element()
-                    : Widgets.element(content);
+                    : element(content.asWidget().getElement());
             rootContainer.appendChild(element);
+        }
+    }
+
+    // ------------------------------------------------------ element <-> widget
+
+    private static Widget widget(HTMLElement element) {
+        return new ElementWidget(element);
+    }
+
+    private static HTMLElement element(com.google.gwt.dom.client.Element element) {
+        return Js.cast(element);
+    }
+
+    private static class ElementWidget extends Widget {
+
+        ElementWidget(HTMLElement element) {
+            setElement(com.google.gwt.dom.client.Element.as(Js.cast(element)));
         }
     }
 }

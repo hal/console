@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.client.deployment;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.runtime.group.ServerGroup;
 import org.jboss.hal.js.JsHelper;

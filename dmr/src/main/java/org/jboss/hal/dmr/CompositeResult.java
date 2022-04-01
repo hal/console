@@ -70,6 +70,10 @@ public class CompositeResult implements Iterable<ModelNode> {
         return steps.isEmpty();
     }
 
+    public boolean isFailure() {
+        return stream().noneMatch(ModelNode::isFailure);
+    }
+
     public Stream<ModelNode> stream() {
         return StreamSupport.stream(spliterator(), false);
     }

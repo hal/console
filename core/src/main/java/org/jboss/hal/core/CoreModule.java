@@ -50,8 +50,8 @@ public class CoreModule extends AbstractGinModule {
     @Override
     protected void configure() {
         bind(AccessControl.class).in(Singleton.class);
-        bind(ColumnRegistry.class).in(Singleton.class);
         bind(ColumnActionFactory.class).in(Singleton.class);
+        bind(ColumnRegistry.class).in(Singleton.class);
         bind(ComplexAttributeOperations.class).in(Singleton.class);
         bind(CredentialReference.class).in(Singleton.class);
         bind(CrudOperations.class).in(Singleton.class);
@@ -60,8 +60,8 @@ public class CoreModule extends AbstractGinModule {
         bind(Finder.class).in(Singleton.class);
         bind(FinderPathFactory.class).in(Singleton.class);
         bind(HostActions.class).in(Singleton.class);
-        bind(ItemMonitor.class).in(Singleton.class);
         bind(ItemActionFactory.class).in(Singleton.class);
+        bind(ItemMonitor.class).in(Singleton.class);
         bind(ModelBrowser.class);
         bind(Core.class).in(Singleton.class);
         bind(Places.class).in(Singleton.class);

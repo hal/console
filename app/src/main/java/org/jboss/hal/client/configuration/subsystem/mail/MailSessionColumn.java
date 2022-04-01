@@ -48,10 +48,21 @@ import com.google.common.base.Joiner;
 import com.google.web.bindery.event.shared.EventBus;
 
 import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
 
 import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.MAIL_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.MAIL_SESSION_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.MAIL_SESSION_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.MAIL_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.SERVER_ADDRESS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.FROM;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.JNDI_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MAIL_SESSION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
 
 @AsyncColumn(Ids.MAIL_SESSION)
 @Requires({ MAIL_ADDRESS, MAIL_SESSION_ADDRESS, SERVER_ADDRESS })
@@ -73,16 +84,14 @@ public class MailSessionColumn extends FinderColumn<MailSession> {
                 .filterDescription(resources.messages().mailColumnFilterDescription())
                 .useFirstActionAsBreadcrumbHandler());
 
-        setItemsProvider((context, callback) -> {
+        setItemsProvider(context -> {
             ResourceAddress mailAddress = MAIL_TEMPLATE.resolve(statementContext);
             Operation op = new Operation.Builder(mailAddress, READ_RESOURCE_OPERATION)
                     .param(RECURSIVE, true).build();
 
-            dispatcher.execute(op, result -> {
-                List<MailSession> mailSessions = result.get(MAIL_SESSION).asPropertyList().stream()
-                        .map(MailSession::new).collect(toList());
-                callback.onSuccess(mailSessions);
-            });
+            return dispatcher.execute(op)
+                    .then(result -> Promise.resolve(result.get(MAIL_SESSION).asPropertyList().stream()
+                            .map(MailSession::new).collect(toList())));
         });
 
         addColumnAction(columnActionFactory.add(Ids.MAIL_SESSION_ADD, Names.MAIL_SESSION, MAIL_SESSION_TEMPLATE,

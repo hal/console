@@ -19,18 +19,19 @@ import javax.inject.Inject;
 
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.meta.capabilitiy.Capabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rx.Completable;
+import elemental2.promise.Promise;
 
 import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_PROFILE;
 
 /** Reads the capabilities from the capability registry. Depends on {@link ReadHostNames}. */
-public class RegisterStaticCapabilities implements BootstrapTask {
+public final class RegisterStaticCapabilities implements Task<FlowContext> {
 
     private static final Logger logger = LoggerFactory.getLogger(RegisterStaticCapabilities.class);
 
@@ -44,7 +45,7 @@ public class RegisterStaticCapabilities implements BootstrapTask {
     }
 
     @Override
-    public Completable call(FlowContext context) {
+    public Promise<FlowContext> apply(final FlowContext context) {
         if (!ManagementModel.supportsCapabilitiesRegistry(environment.getManagementVersion())) {
             logger.debug("Register static capabilities");
 
@@ -87,6 +88,6 @@ public class RegisterStaticCapabilities implements BootstrapTask {
             capabilities.register("org.wildfly.clustering.singleton.policy",
                     AddressTemplate.of(SELECTED_PROFILE, "subsystem=singleton/singleton-policy=*"));
         }
-        return Completable.complete();
+        return Promise.resolve(context);
     }
 }

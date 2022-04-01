@@ -17,11 +17,11 @@ package org.jboss.hal.ballroom.form;
 
 import java.util.EnumSet;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 
 import elemental2.dom.HTMLElement;
 
-import static org.jboss.gwt.elemento.core.Elements.pre;
+import static org.jboss.elemento.Elements.pre;
 import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
 import static org.jboss.hal.resources.CSS.formControlStatic;
 import static org.jboss.hal.resources.CSS.wrap;

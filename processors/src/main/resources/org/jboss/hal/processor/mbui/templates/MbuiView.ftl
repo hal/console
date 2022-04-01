@@ -26,8 +26,8 @@ import javax.inject.Inject;
 
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
-import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.ElementsBag;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Scope;
 import org.jboss.hal.ballroom.ExpressionUtil;
@@ -51,7 +51,7 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
 import static java.util.Arrays.asList;
-import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.elemento.Elements.*;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;

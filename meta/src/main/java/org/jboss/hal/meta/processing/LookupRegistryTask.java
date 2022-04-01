@@ -26,14 +26,14 @@ import org.jboss.hal.meta.security.SecurityContextRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rx.Completable;
+import elemental2.promise.Promise;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HAL_RECURSIVE;
 import static org.jboss.hal.meta.processing.LookupResult.RESOURCE_DESCRIPTION_PRESENT;
 import static org.jboss.hal.meta.processing.LookupResult.SECURITY_CONTEXT_PRESENT;
 
 /** Task which checks whether metadata is present in the registries. */
-class LookupRegistryTask implements Task<LookupContext> {
+final class LookupRegistryTask implements Task<LookupContext> {
 
     private static final Logger logger = LoggerFactory.getLogger(LookupRegistryTask.class);
 
@@ -47,10 +47,10 @@ class LookupRegistryTask implements Task<LookupContext> {
     }
 
     @Override
-    public Completable call(LookupContext context) {
+    public Promise<LookupContext> apply(final LookupContext context) {
         check(context.lookupResult, context.recursive);
         logger.debug("Registry lookup: {}", context.lookupResult);
-        return Completable.complete();
+        return Promise.resolve(context);
     }
 
     boolean allPresent(Set<AddressTemplate> templates, boolean recursive) {

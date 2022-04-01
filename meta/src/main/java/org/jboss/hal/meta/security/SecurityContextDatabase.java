@@ -77,7 +77,7 @@ public class SecurityContextDatabase extends AbstractDatabase<SecurityContext> {
 
     @Override
     public SecurityContext asMetadata(Document document) {
-        return new SecurityContext(ModelNode.fromBase64(document.getAny(PAYLOAD).asString()));
+        return new SecurityContext(ModelNode.fromBase64(document.getAsAny(PAYLOAD).asString()));
     }
 
     @Override

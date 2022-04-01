@@ -29,7 +29,6 @@ import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.Composite;
-import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
@@ -52,6 +51,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
 
 import static org.jboss.hal.client.runtime.subsystem.ejb.AddressTemplates.EJB3_DEPLOYMENT_ADDRESS;
 import static org.jboss.hal.client.runtime.subsystem.ejb.AddressTemplates.EJB3_DEPLOYMENT_TEMPLATE;
@@ -59,7 +59,19 @@ import static org.jboss.hal.client.runtime.subsystem.ejb.AddressTemplates.EJB3_S
 import static org.jboss.hal.client.runtime.subsystem.ejb.AddressTemplates.ejbDeploymentTemplate;
 import static org.jboss.hal.client.runtime.subsystem.ejb.EjbNode.Type.MDB;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADDRESS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DELIVERY_ACTIVE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.START_DELIVERY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STOP_DELIVERY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBDEPLOYMENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TIMERS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
@@ -83,7 +95,7 @@ public class EjbColumn extends FinderColumn<EjbNode> {
             Resources resources) {
         super(new Builder<EjbNode>(finder, Ids.EJB3, Names.EJB3)
 
-                .itemsProvider((context, callback) -> {
+                .itemsProvider(context -> {
                     ResourceAddress baseAddress = AddressTemplate.of("{selected.host}/{selected.server}")
                             .resolve(statementContext);
                     Composite composite = new Composite(baseAddress);
@@ -104,7 +116,7 @@ public class EjbColumn extends FinderColumn<EjbNode> {
                         }
                     }
 
-                    dispatcher.execute(composite, (CompositeResult result) -> {
+                    return dispatcher.execute(composite).then(result -> {
                         List<EjbNode> ejbs = new ArrayList<>();
                         for (ModelNode step : result) {
                             if (!step.isFailure()) {
@@ -119,7 +131,7 @@ public class EjbColumn extends FinderColumn<EjbNode> {
                             }
                         }
                         ejbs.sort(Comparator.comparing(NamedNode::getName));
-                        callback.onSuccess(ejbs);
+                        return Promise.resolve(ejbs);
                     });
                 })
                 .onPreview(item -> new EjbPreview(item, finderPathFactory, places, dispatcher, resources))
@@ -136,7 +148,8 @@ public class EjbColumn extends FinderColumn<EjbNode> {
         setItemRenderer(item -> new ItemDisplay<EjbNode>() {
             @Override
             public String getId() {
-                return Ids.ejb3(item.getDeployment(), item.getSubdeployment(), item.type.name(), item.getName());
+                return Ids.ejb3(item.getDeployment(), item.getSubdeployment(),
+                        item.type != null ? item.type.name() : "n-a", item.getName());
             }
 
             @Override
@@ -151,7 +164,7 @@ public class EjbColumn extends FinderColumn<EjbNode> {
 
             @Override
             public String getTooltip() {
-                String tt = item.type.type;
+                String tt = item.type != null ? item.type.type : "n/a";
                 if (item.type == MDB && !item.isDeliveryActive()) {
                     tt += " (" + resources.constants().inactive() + ")";
                 }
@@ -163,55 +176,60 @@ public class EjbColumn extends FinderColumn<EjbNode> {
                 if (hasTimer(item)) {
                     return Icons.custom(pfIcon("history"));
                 } else {
-                    switch (item.type) {
-                        case MDB:
-                            return item.isDeliveryActive()
-                                    ? Icons.custom(fontAwesome("exchange"))
-                                    : Icons.paused();
-                        case SINGLETON:
-                            return Icons.custom(fontAwesome("cube"));
-                        case STATEFUL:
-                            return Icons.custom(fontAwesome("file-text-o"));
-                        case STATELESS:
-                            return Icons.custom(fontAwesome("file-o"));
-                        default:
-                            return Icons.unknown();
+                    if (item.type != null) {
+                        switch (item.type) {
+                            case MDB:
+                                return item.isDeliveryActive()
+                                        ? Icons.custom(fontAwesome("exchange"))
+                                        : Icons.paused();
+                            case SINGLETON:
+                                return Icons.custom(fontAwesome("cube"));
+                            case STATEFUL:
+                                return Icons.custom(fontAwesome("file-text-o"));
+                            case STATELESS:
+                                return Icons.custom(fontAwesome("file-o"));
+                            default:
+                                return Icons.unknown();
+                        }
                     }
+                    return Icons.unknown();
                 }
             }
 
             @Override
             public String getFilterData() {
-                return item.getName() + " " + item.type.type +
+                return item.getName() + " " + (item.type != null ? item.type.type : "") +
                         (item.fromDeployment() ? " " + Names.DEPLOYMENT : "");
             }
 
             @Override
             public List<ItemAction<EjbNode>> actions() {
                 List<ItemAction<EjbNode>> actions = new ArrayList<>();
-                PlaceRequest.Builder builder = places.selectedServer(NameTokens.EJB3_RUNTIME)
-                        .with(DEPLOYMENT, item.getDeployment());
-                if (item.getSubdeployment() != null) {
-                    builder.with(SUBDEPLOYMENT, item.getSubdeployment());
-                }
-                PlaceRequest placeRequest = builder
-                        .with(TYPE, item.type.name().toLowerCase())
-                        .with(NAME, item.getName())
-                        .build();
-                actions.add(itemActionFactory.view(placeRequest));
-                if (item.type == MDB) {
-                    if (item.get(DELIVERY_ACTIVE).asBoolean()) {
-                        actions.add(new ItemAction.Builder<EjbNode>()
-                                .title(resources.constants().stopDelivery())
-                                .constraint(Constraint.executable(ejbDeploymentTemplate(MDB), STOP_DELIVERY))
-                                .handler(EjbColumn.this::stopDelivery)
-                                .build());
-                    } else {
-                        actions.add(new ItemAction.Builder<EjbNode>()
-                                .title(resources.constants().startDelivery())
-                                .constraint(Constraint.executable(ejbDeploymentTemplate(MDB), START_DELIVERY))
-                                .handler(EjbColumn.this::startDelivery)
-                                .build());
+                if (item.type != null) {
+                    PlaceRequest.Builder builder = places.selectedServer(NameTokens.EJB3_RUNTIME)
+                            .with(DEPLOYMENT, item.getDeployment());
+                    if (item.getSubdeployment() != null) {
+                        builder.with(SUBDEPLOYMENT, item.getSubdeployment());
+                    }
+                    PlaceRequest placeRequest = builder
+                            .with(TYPE, item.type.name().toLowerCase())
+                            .with(NAME, item.getName())
+                            .build();
+                    actions.add(itemActionFactory.view(placeRequest));
+                    if (item.type == MDB) {
+                        if (item.get(DELIVERY_ACTIVE).asBoolean()) {
+                            actions.add(new ItemAction.Builder<EjbNode>()
+                                    .title(resources.constants().stopDelivery())
+                                    .constraint(Constraint.executable(ejbDeploymentTemplate(MDB), STOP_DELIVERY))
+                                    .handler(EjbColumn.this::stopDelivery)
+                                    .build());
+                        } else {
+                            actions.add(new ItemAction.Builder<EjbNode>()
+                                    .title(resources.constants().startDelivery())
+                                    .constraint(Constraint.executable(ejbDeploymentTemplate(MDB), START_DELIVERY))
+                                    .handler(EjbColumn.this::startDelivery)
+                                    .build());
+                        }
                     }
                 }
                 return actions;

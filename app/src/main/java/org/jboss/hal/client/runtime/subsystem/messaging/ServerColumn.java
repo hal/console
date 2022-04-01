@@ -50,18 +50,25 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_SERVER_ADDRESS;
 import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_SERVER_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_SUBSYSTEM_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.FORCE_FAILOVER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESET_ALL_MESSAGE_COUNTERS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESET_ALL_MESSAGE_COUNTER_HISTORIES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STARTED;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
 @AsyncColumn(Ids.MESSAGING_SERVER_RUNTIME)
@@ -101,30 +108,20 @@ public class ServerColumn extends FinderColumn<NamedNode> {
         this.statementContext = statementContext;
         this.resources = resources;
 
-        ItemsProvider<NamedNode> itemsProvider = (context, callback) -> {
+        ItemsProvider<NamedNode> itemsProvider = context -> {
             ResourceAddress address = MESSAGING_SUBSYSTEM_TEMPLATE.resolve(statementContext);
             Operation operation = new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
                     .param(CHILD_TYPE, SERVER)
                     .param(INCLUDE_RUNTIME, true)
                     .build();
-            dispatcher.execute(operation, result -> callback.onSuccess(asNamedNodes(result.asPropertyList())));
+            return dispatcher.execute(operation).then(result -> Promise.resolve(asNamedNodes(result.asPropertyList())));
         };
         setItemsProvider(itemsProvider);
 
-        setBreadcrumbItemsProvider(
-                (context, callback) -> itemsProvider.get(context, new AsyncCallback<List<NamedNode>>() {
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        callback.onFailure(caught);
-                    }
-
-                    @Override
-                    public void onSuccess(List<NamedNode> result) {
-                        callback.onSuccess(result.stream()
-                                .filter(server -> server.get(STARTED).asBoolean(false))
-                                .collect(toList()));
-                    }
-                }));
+        setBreadcrumbItemsProvider(context -> itemsProvider.items(context)
+                .then(result -> Promise.resolve(result.stream()
+                        .filter(server -> server.get(STARTED).asBoolean(false))
+                        .collect(toList()))));
 
         setItemRenderer(item -> new ItemDisplay<NamedNode>() {
             @Override

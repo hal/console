@@ -31,7 +31,15 @@ import org.jboss.hal.resources.Names;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT_INTERFACE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HTTP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HTTPS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MANAGEMENT_HTTP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MANAGEMENT_HTTPS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PORT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PORT_OFFSET;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDING;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 
 class SocketBindingGroupPreview extends PreviewContent<NamedNode> {

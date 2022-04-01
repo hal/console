@@ -19,7 +19,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.Clipboard;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.Skeleton;
@@ -46,10 +46,10 @@ import static elemental2.dom.DomGlobal.setTimeout;
 import static elemental2.dom.DomGlobal.window;
 import static java.lang.Math.max;
 import static java.util.Arrays.asList;
-import static org.jboss.gwt.elemento.core.Elements.button;
-import static org.jboss.gwt.elemento.core.Elements.collect;
-import static org.jboss.gwt.elemento.core.Elements.div;
-import static org.jboss.gwt.elemento.core.Elements.span;
+import static org.jboss.elemento.Elements.bag;
+import static org.jboss.elemento.Elements.button;
+import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.span;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.ballroom.Skeleton.MARGIN_BIG;
@@ -108,7 +108,7 @@ public class MacroEditorView extends HalViewImpl implements MacroEditorPresenter
 
             @Override
             public Iterable<HTMLElement> getAdditionalInfoElements() {
-                return collect().add(div()
+                return bag().add(div()
                         .add(span().css(pfIcon("image"), marginRight5))
                         .add(span().textContent(resources.messages().operations(macro.getOperationCount()))))
                         .elements();

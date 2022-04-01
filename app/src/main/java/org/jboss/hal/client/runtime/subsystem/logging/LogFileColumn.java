@@ -28,7 +28,6 @@ import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.dmr.Composite;
-import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.Property;
@@ -45,12 +44,23 @@ import org.jboss.hal.spi.Requires;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.runtime.subsystem.logging.AddressTemplates.LOGGING_SUBSYSTEM_ADDRESS;
 import static org.jboss.hal.client.runtime.subsystem.logging.AddressTemplates.LOG_FILE_ADDRESS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LOGGING_PROFILE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LOG_FILE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE_DEPTH;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 
 @Column(Ids.LOG_FILE)
 @Requires(value = { LOGGING_SUBSYSTEM_ADDRESS, LOG_FILE_ADDRESS }, recursive = false)
@@ -67,7 +77,7 @@ public class LogFileColumn extends FinderColumn<LogFile> {
         super(new Builder<LogFile>(finder, Ids.LOG_FILE, resources.constants().logFile())
 
                 .columnAction(columnActionFactory.refresh(Ids.LOG_FILE_REFRESH))
-                .itemsProvider((context, callback) -> {
+                .itemsProvider(context -> {
                     Composite composite = new Composite();
                     ResourceAddress address = AddressTemplates.LOGGING_SUBSYSTEM_TEMPLATE.resolve(statementContext);
                     Operation readLogsOp = new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
@@ -83,7 +93,7 @@ public class LogFileColumn extends FinderColumn<LogFile> {
                             .build();
                     composite.add(readLogProfilesOp);
 
-                    dispatcher.execute(composite, (CompositeResult result) -> {
+                    return dispatcher.execute(composite).then(result -> {
                         List<LogFile> logs = result.step(0).get(RESULT).asList().stream()
                                 .map(node -> {
                                     Property prop = node.asProperty();
@@ -106,7 +116,7 @@ public class LogFileColumn extends FinderColumn<LogFile> {
                         }
 
                         logs.sort(Comparator.comparing(LogFile::getFilename));
-                        callback.onSuccess(logs);
+                        return Promise.resolve(logs);
                     });
                 })
                 .itemRenderer(item -> new ItemDisplay<LogFile>() {

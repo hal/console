@@ -51,8 +51,30 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
-import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.CACHE_CONTAINER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.CACHE_CONTAINER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.SELECTED_CACHE_CONTAINER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.THREAD_POOL_ASYNC_OPERATIONS;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.THREAD_POOL_EXPIRATION;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.THREAD_POOL_LISTENER;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.THREAD_POOL_PERSISTENCE;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.THREAD_POOL_REMOTE_COMMAND;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.THREAD_POOL_SITE_TRANSFER;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.THREAD_POOL_TRANSPORT;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.TRANSPORT_JGROUPS_ADDRESS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_ALIASES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INFINISPAN;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.JGROUPS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBSYSTEM;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.THREAD_POOL;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TRANSPORT;
 
 public class CacheContainerPresenter
         extends ApplicationFinderPresenter<CacheContainerPresenter.MyView, CacheContainerPresenter.MyProxy>

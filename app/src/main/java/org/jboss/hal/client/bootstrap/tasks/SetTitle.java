@@ -24,16 +24,17 @@ import javax.inject.Inject;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Settings;
 import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.resources.Names;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rx.Completable;
+import elemental2.promise.Promise;
 
 import static com.google.common.base.Strings.emptyToNull;
 import static elemental2.dom.DomGlobal.document;
 
-public class SetTitle implements BootstrapTask {
+public final class SetTitle implements Task<FlowContext> {
 
     private static final Logger logger = LoggerFactory.getLogger(SetTitle.class);
     private static final String NAME_PLACEHOLDER = "%n";
@@ -52,7 +53,7 @@ public class SetTitle implements BootstrapTask {
     }
 
     @Override
-    public Completable call(FlowContext context) {
+    public Promise<FlowContext> apply(final FlowContext context) {
         String title = settings.get(Settings.Key.TITLE).value();
         if (emptyToNull(title) != null) {
             for (Map.Entry<String, Supplier<String>> entry : data.entrySet()) {
@@ -70,6 +71,6 @@ public class SetTitle implements BootstrapTask {
             }
             document.title = title;
         }
-        return Completable.complete();
+        return Promise.resolve(context);
     }
 }

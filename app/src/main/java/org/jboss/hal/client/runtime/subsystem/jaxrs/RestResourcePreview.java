@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
+import org.jboss.elemento.Elements;
+import org.jboss.elemento.HtmlContentBuilder;
 import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.form.Form;
@@ -50,6 +50,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import elemental2.core.JsRegExp;
+import elemental2.core.RegExpResult;
 import elemental2.dom.CSSProperties.MarginBottomUnionType;
 import elemental2.dom.HTMLElement;
 
@@ -59,19 +60,19 @@ import static elemental2.dom.DomGlobal.window;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
-import static org.jboss.gwt.elemento.core.Elements.a;
-import static org.jboss.gwt.elemento.core.Elements.asHtmlElement;
-import static org.jboss.gwt.elemento.core.Elements.br;
-import static org.jboss.gwt.elemento.core.Elements.div;
-import static org.jboss.gwt.elemento.core.Elements.h;
-import static org.jboss.gwt.elemento.core.Elements.hr;
-import static org.jboss.gwt.elemento.core.Elements.htmlElements;
-import static org.jboss.gwt.elemento.core.Elements.p;
-import static org.jboss.gwt.elemento.core.Elements.pre;
-import static org.jboss.gwt.elemento.core.Elements.span;
-import static org.jboss.gwt.elemento.core.Elements.stream;
-import static org.jboss.gwt.elemento.core.Elements.strong;
-import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.elemento.Elements.a;
+import static org.jboss.elemento.Elements.asHtmlElement;
+import static org.jboss.elemento.Elements.br;
+import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.h;
+import static org.jboss.elemento.Elements.hr;
+import static org.jboss.elemento.Elements.htmlElements;
+import static org.jboss.elemento.Elements.p;
+import static org.jboss.elemento.Elements.pre;
+import static org.jboss.elemento.Elements.span;
+import static org.jboss.elemento.Elements.stream;
+import static org.jboss.elemento.Elements.strong;
+import static org.jboss.elemento.EventType.click;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CONSUMES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.JAVA_METHOD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PRODUCES;
@@ -210,12 +211,12 @@ class RestResourcePreview extends PreviewContent<RestResource> {
     }
 
     private List<String> extractParams(String url) {
-        String[] match;
+        RegExpResult match;
         List<String> params = new ArrayList<>();
         do {
             match = REGEX.exec(url);
             if (match != null) {
-                params.add(match[1]);
+                params.add(match.getAt(1));
             }
         } while (match != null);
         return params;

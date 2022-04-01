@@ -21,94 +21,58 @@ import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.flow.Flow;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Progress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rx.Completable;
-import rx.Observable;
-import rx.Single;
-
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.FAILED;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.FAILURE_DESCRIPTION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.OUTCOME;
+import elemental2.promise.Promise;
 
 /** Executes a DMR operation until a specific condition is met or a timeout occurs. */
 public class TimeoutHandler {
 
-    private static int INTERVAL = 500;
-    private static Logger logger = LoggerFactory.getLogger(TimeoutHandler.class);
+    private static final String PREDICATE = "org.jboss.hal.dmr.dispatch.TimeoutHandler.predicate";
+    private static final Logger logger = LoggerFactory.getLogger(TimeoutHandler.class);
 
     /** Executes the operation until it successfully returns. */
-    public static Completable repeatUntilTimeout(Dispatcher dispatcher, int timeout, Operation operation) {
-        return operation instanceof Composite
-                ? TimeoutHandler.repeatCompositeUntil(dispatcher, timeout, (Composite) operation, null)
-                : TimeoutHandler.repeatOperationUntil(dispatcher, timeout, operation, null);
+    public static Promise<Void> repeatUntilTimeout(final Dispatcher dispatcher, final Operation operation,
+            final int timeout) {
+        // repeat until there are failures
+        return repeatOperationUntil(dispatcher, operation, ModelNode::isFailure, timeout);
     }
 
-    /**
-     * Executes the operation until the operation successfully returns and the precondition is met. The precondition receives
-     * the result of the operation.
-     */
-    @SuppressWarnings("HardCodedStringLiteral")
-    public static Completable repeatOperationUntil(Dispatcher dispatcher, int timeout, Operation operation,
-            Predicate<ModelNode> until) {
-        logger.debug("Repeat {} using {} seconds timeout", operation.asCli(), timeout);
-
-        Single<ModelNode> execution = Single.fromEmitter(em -> dispatcher.execute(operation, em::onSuccess,
-                (op, fail) -> em.onSuccess(operationFailure("Dispatcher failure: " + fail)),
-                (op, ex) -> em.onSuccess(operationFailure("Dispatcher exception: " + ex.getMessage()))));
-        if (until == null) {
-            until = r -> !r.isFailure(); // default: until success
-        }
-
-        return Observable
-                .interval(INTERVAL, MILLISECONDS) // execute a operation each INTERVAL millis
-                .doOnEach(n -> logger.debug("#{}: execute {}", n.getValue(), operation.asCli()))
-                .flatMapSingle(n -> execution, false, 1)
-                .takeUntil(until::test) // until succeeded
-                .toCompletable().timeout(timeout, SECONDS); // wait succeeded or stop after timeout seconds
+    /** Executes the operation until the predicate no longer is true. */
+    public static Promise<Void> repeatOperationUntil(final Dispatcher dispatcher, final Operation operation,
+            final Predicate<ModelNode> until, final int timeout) {
+        logger.debug("Repeat {} until it returns successfully with {} seconds timeout", operation.asCli(),
+                timeout);
+        // repeat until the predicate returns true
+        return Flow.repeat(new FlowContext(Progress.NOOP),
+                context -> dispatcher.execute(operation)
+                        .then(node -> Promise.resolve(context.set(PREDICATE, until.test(node)))),
+                context -> context.get(PREDICATE, true), timeout)
+                .then(__ -> Promise.resolve((Void) null));
     }
 
-    /**
-     * Executes the composite operation until the operation successfully returns and the precondition is met. The precondition
-     * receives the composite result of the operation.
-     */
-    @SuppressWarnings("HardCodedStringLiteral")
-    public static Completable repeatCompositeUntil(Dispatcher dispatcher, int timeout, Composite composite,
-            Predicate<CompositeResult> until) {
-        logger.debug("Repeat {} using {} seconds as timeout", composite, timeout);
-
-        Single<CompositeResult> execution = Single.fromEmitter(em -> dispatcher.execute(composite, em::onSuccess,
-                (op, fail) -> em.onSuccess(compositeFailure("Dispatcher failure: " + fail)),
-                (op, ex) -> em.onSuccess(compositeFailure("Dispatcher exception: " + ex.getMessage()))));
-        if (until == null) {
-            until = r -> r.stream().noneMatch(ModelNode::isFailure); // default: until success
-        }
-
-        return Observable
-                .interval(INTERVAL, MILLISECONDS) // execute a operation each INTERVAL millis
-                .doOnEach(n -> logger.debug("#{}: execute {}", n.getValue(), composite))
-                .flatMapSingle(n -> execution, false, 1)
-                .takeUntil(until::test) // until succeeded
-                .toCompletable().timeout(timeout, SECONDS); // wait succeeded or stop after timeout seconds
+    /** Executes the composite operation until the operation successfully returns. */
+    public static Promise<Void> repeatCompositeUntil(final Dispatcher dispatcher, final Composite composite,
+            final int timeout) {
+        // repeat until there are failures
+        return repeatCompositeUntil(dispatcher, composite, CompositeResult::isFailure, timeout);
     }
 
-    private static ModelNode operationFailure(String reason) {
-        ModelNode node = new ModelNode();
-        node.get(OUTCOME).set(FAILED);
-        node.get(FAILURE_DESCRIPTION).set(reason);
-        return node;
-    }
-
-    private static CompositeResult compositeFailure(String reason) {
-        ModelNode step1 = new ModelNode();
-        step1.get(OUTCOME).set(FAILED);
-        step1.get(FAILURE_DESCRIPTION).set(reason);
-        ModelNode steps = new ModelNode();
-        steps.get("step-1").set(step1);
-        return new CompositeResult(steps);
+    /** Executes the composite operation until the predicate no longer is true. */
+    public static Promise<Void> repeatCompositeUntil(final Dispatcher dispatcher, final Composite composite,
+            final Predicate<CompositeResult> until, final int timeout) {
+        logger.debug("Repeat {} until it returns successfully with {} seconds timeout", composite.asCli(),
+                timeout);
+        // repeat until the predicate returns true
+        return Flow.repeat(new FlowContext(Progress.NOOP),
+                context -> dispatcher.execute(composite)
+                        .then(cr -> Promise.resolve(context.set(PREDICATE, until.test(cr)))),
+                context -> context.get(PREDICATE, true), timeout)
+                .then(__ -> Promise.resolve((Void) null));
     }
 
     private TimeoutHandler() {

@@ -24,8 +24,8 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
+import org.jboss.elemento.Elements;
+import org.jboss.elemento.HtmlContentBuilder;
 import org.jboss.hal.ballroom.Tooltip;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
@@ -37,7 +37,6 @@ import org.jboss.hal.core.accesscontrol.AccessControl;
 import org.jboss.hal.core.finder.FinderContext;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderSegment;
-import org.jboss.hal.core.finder.FinderSegment.DropdownItem;
 import org.jboss.hal.core.modelbrowser.ModelBrowser;
 import org.jboss.hal.core.modelbrowser.ModelBrowserPath;
 import org.jboss.hal.core.modelbrowser.ModelBrowserPath.Segment;
@@ -66,19 +65,19 @@ import elemental2.dom.HTMLLIElement;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.StreamSupport.stream;
-import static org.jboss.gwt.elemento.core.Elements.a;
-import static org.jboss.gwt.elemento.core.Elements.b;
-import static org.jboss.gwt.elemento.core.Elements.button;
-import static org.jboss.gwt.elemento.core.Elements.div;
-import static org.jboss.gwt.elemento.core.Elements.i;
-import static org.jboss.gwt.elemento.core.Elements.li;
-import static org.jboss.gwt.elemento.core.Elements.nav;
-import static org.jboss.gwt.elemento.core.Elements.ol;
-import static org.jboss.gwt.elemento.core.Elements.setVisible;
-import static org.jboss.gwt.elemento.core.Elements.span;
-import static org.jboss.gwt.elemento.core.Elements.ul;
-import static org.jboss.gwt.elemento.core.EventType.bind;
-import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.elemento.Elements.a;
+import static org.jboss.elemento.Elements.b;
+import static org.jboss.elemento.Elements.button;
+import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.i;
+import static org.jboss.elemento.Elements.li;
+import static org.jboss.elemento.Elements.nav;
+import static org.jboss.elemento.Elements.ol;
+import static org.jboss.elemento.Elements.setVisible;
+import static org.jboss.elemento.Elements.span;
+import static org.jboss.elemento.Elements.ul;
+import static org.jboss.elemento.EventType.bind;
+import static org.jboss.elemento.EventType.click;
 import static org.jboss.hal.client.skeleton.HeaderPresenter.MAX_BREADCRUMB_VALUE_LENGTH;
 import static org.jboss.hal.config.AccessControlProvider.RBAC;
 import static org.jboss.hal.config.Settings.Key.RUN_AS;
@@ -618,7 +617,6 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
     }
 
     @Override
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     public void updateBreadcrumb(FinderContext finderContext) {
         clearBreadcrumb();
         FinderPath currentPath = new FinderPath();
@@ -628,8 +626,8 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
         }
         breadcrumbHandlers.clear();
 
-        for (Iterator<FinderSegment> iterator = finderContext.getPath().iterator(); iterator.hasNext();) {
-            FinderSegment<Object> segment = iterator.next();
+        for (Iterator<FinderSegment<?>> iterator = finderContext.getPath().iterator(); iterator.hasNext();) {
+            FinderSegment<?> segment = iterator.next();
             if (segment.getColumnId() == null || segment.getItemId() == null) {
                 // we need to ignore half filled segments which occur when removing items from a column
                 break;
@@ -681,7 +679,7 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
                                     .element();
                             ul.appendChild(empty);
                         } else {
-                            for (DropdownItem<Object> dropdownItem : items) {
+                            for (FinderSegment.DropdownItem<?> dropdownItem : items) {
                                 HTMLElement element = li()
                                         .add(a().css(clickable)
                                                 .on(click, e -> dropdownItem.onSelect(finderContext))

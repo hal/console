@@ -15,9 +15,14 @@
  */
 package org.jboss.hal.flow;
 
-import rx.Completable;
-import rx.functions.Func1;
+import elemental2.promise.Promise;
+import jsinterop.annotations.JsAsync;
+import jsinterop.annotations.JsFunction;
 
-/** Marker interface for one work item inside a flow */
-public interface Task<C extends FlowContext> extends Func1<C, Completable> {
+@JsFunction
+@FunctionalInterface
+public interface Task<C extends FlowContext> {
+
+    @JsAsync
+    Promise<C> apply(C context);
 }

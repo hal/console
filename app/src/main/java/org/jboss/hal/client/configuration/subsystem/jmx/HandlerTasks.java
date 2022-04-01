@@ -34,15 +34,19 @@ import org.jboss.hal.meta.StatementContext;
 
 import com.google.common.collect.Sets;
 
-import rx.Completable;
+import elemental2.promise.Promise;
 
 import static org.jboss.hal.client.configuration.subsystem.jmx.AddressTemplates.AUDIT_LOG_HANDLER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.jmx.AddressTemplates.AUDIT_LOG_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HANDLER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 
 class HandlerTasks {
 
-    static class SaveAuditLog implements Task<FlowContext> {
+    static final class SaveAuditLog implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final StatementContext statementContext;
@@ -58,17 +62,17 @@ class HandlerTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Promise<FlowContext> apply(final FlowContext context) {
             OperationFactory operationFactory = new OperationFactory();
             Composite operation = operationFactory
                     .fromChangeSet(AUDIT_LOG_TEMPLATE.resolve(statementContext), changedValues, metadata);
             return operation.isEmpty()
-                    ? Completable.complete()
-                    : dispatcher.execute(operation).toCompletable();
+                    ? Promise.resolve(context)
+                    : dispatcher.execute(operation).then(__ -> Promise.resolve(context));
         }
     }
 
-    static class ReadHandlers implements Task<FlowContext> {
+    static final class ReadHandlers implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final StatementContext statementContext;
@@ -79,21 +83,20 @@ class HandlerTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Promise<FlowContext> apply(final FlowContext context) {
             Operation operation = new Operation.Builder(AUDIT_LOG_TEMPLATE.resolve(statementContext),
                     READ_CHILDREN_NAMES_OPERATION)
                             .param(CHILD_TYPE, HANDLER)
                             .build();
             return dispatcher.execute(operation)
-                    .doOnSuccess(result -> context.push(result.asList().stream()
+                    .then(result -> Promise.resolve(context.push(result.asList().stream()
                             .map(ModelNode::asString)
-                            .collect(Collectors.toSet())))
-                    .doOnError(failure -> context.push(Collections.emptySet()))
-                    .toCompletable();
+                            .collect(Collectors.toSet()))))
+                    .catch_(__ -> Promise.resolve(context.push(Collections.emptySet())));
         }
     }
 
-    static class MergeHandler implements Task<FlowContext> {
+    static final class MergeHandler implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final StatementContext statementContext;
@@ -106,7 +109,7 @@ class HandlerTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Promise<FlowContext> apply(final FlowContext context) {
             Set<String> existingHandlers = context.pop();
             Set<String> add = Sets.difference(newHandlers, existingHandlers).immutableCopy();
             Set<String> remove = Sets.difference(existingHandlers, newHandlers).immutableCopy();
@@ -122,8 +125,8 @@ class HandlerTasks {
                     .forEach(operations::add);
             Composite composite = new Composite(operations);
             return composite.isEmpty()
-                    ? Completable.complete()
-                    : dispatcher.execute(new Composite(operations)).toCompletable();
+                    ? Promise.resolve(context)
+                    : dispatcher.execute(new Composite(operations)).then(__ -> Promise.resolve(context));
         }
     }
 }
