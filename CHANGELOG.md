@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - [HAL-1783](https://issues.redhat.com/browse/HAL-1783): Replace Flow implementation based on JS Promise API
 - [HAL-1782](https://issues.redhat.com/browse/HAL-1783): Upgrade Elemental2 and Elemento
+- [HAL-1779](https://issues.redhat.com/browse/HAL-1779): Replace `discovery-group` and `broadcast-group` resources
 - Adjust license URLs
 
 ### Upgrades
