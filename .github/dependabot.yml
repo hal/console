@@ -10,9 +10,6 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-    ignore:
-      - dependency-name: "com.google.elemental2:*"
-      - dependency-name: "com.google.guava:guava"
 
   - package-ecosystem: "npm"
     directory: "/app"
