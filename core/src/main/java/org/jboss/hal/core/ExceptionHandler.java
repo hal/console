@@ -31,7 +31,15 @@ import com.google.gwt.core.client.GWT;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 
+import elemental2.dom.Event;
+import elemental2.dom.EventInit;
+import elemental2.promise.Promise;
+import jsinterop.annotations.JsPackage;
+import jsinterop.annotations.JsType;
+import jsinterop.base.Js;
+
 import static elemental2.dom.DomGlobal.document;
+import static elemental2.dom.DomGlobal.window;
 import static org.jboss.hal.resources.CSS.withProgress;
 
 public class ExceptionHandler {
@@ -61,20 +69,38 @@ public class ExceptionHandler {
     }
 
     public void afterBootstrap() {
+        window.addEventListener("unhandledrejection", e -> {
+            if (!pendingLifecycleAction) {
+                PromiseRejectionEvent event = Js.cast(e);
+                handleError("Unhandled promise rejection", String.valueOf(event.reason));
+            }
+        });
         GWT.setUncaughtExceptionHandler(e -> {
             if (!pendingLifecycleAction) {
-                String errorMessage = e != null ? e.getMessage() : Names.NOT_AVAILABLE;
-                logger.error("Uncaught exception: {}", errorMessage);
-                placeManager.unlock();
-                progress.finish();
-                stopProgress();
-                MessageEvent.fire(eventBus, Message.error(resources.messages().unknownError(), errorMessage));
+                handleError("Uncaught exception", e != null ? e.getMessage() : Names.NOT_AVAILABLE);
             }
         });
     }
 
-    private void stopProgress() {
+    private void handleError(String type, String errorMessage) {
+        logger.error("{}: {}", type, errorMessage);
+        placeManager.unlock();
+        progress.finish();
         Elements.stream(document.querySelectorAll("." + withProgress))
                 .forEach(element -> element.classList.remove(withProgress));
+        MessageEvent.fire(eventBus, Message.error(resources.messages().unknownError(), errorMessage));
+    }
+
+    @SuppressWarnings({"RedundantCast", "unused"})
+    @JsType(isNative = true, namespace = JsPackage.GLOBAL)
+    static class PromiseRejectionEvent extends Event {
+
+        public PromiseRejectionEvent() {
+            // This super call is here only for the code to compile; it is never executed.
+            super((String) null, (EventInit) null);
+        }
+
+        Promise<?> promise;
+        Object reason;
     }
 }
