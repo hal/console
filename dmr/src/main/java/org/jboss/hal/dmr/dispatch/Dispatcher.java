@@ -214,7 +214,7 @@ public class Dispatcher implements RecordingHandler {
      * "result" attribute.
      */
     public Promise<ModelNode> dmr(Operation operation) {
-        RequestInit init = requestInit(POST);
+        RequestInit init = requestInit(POST, true);
         init.setBody(runAs(operation).toBase64String());
         Request request = new Request(endpoints.dmr(), init);
 
@@ -256,9 +256,9 @@ public class Dispatcher implements RecordingHandler {
         }
         formData.append(OPERATION, new Blob(new ConstructorBlobPartsArrayUnionType[] { blob }, options));
 
-        RequestInit init = requestInit(POST);
+        RequestInit init = requestInit(POST, false);
         init.setBody(formData);
-        Request request = new Request(endpoints.dmr(), init);
+        Request request = new Request(endpoints.upload(), init);
 
         return fetch(request)
                 .then(processResponse())
@@ -270,9 +270,9 @@ public class Dispatcher implements RecordingHandler {
 
     public void download(Operation operation, Consumer<String> success) {
         Operation downloadOperation = runAs(operation);
-        RequestInit init = requestInit(GET);
-        init.setBody(downloadOperation.toBase64String());
-        Request request = new Request(downloadUrl(downloadOperation), init);
+        String downloadUrl = downloadUrl(downloadOperation);
+        RequestInit init = requestInit(GET, true);
+        Request request = new Request(downloadUrl, init);
 
         fetch(request)
                 .then(response -> {
@@ -350,10 +350,12 @@ public class Dispatcher implements RecordingHandler {
 
     // ------------------------------------------------------ request && promise handlers
 
-    RequestInit requestInit(HttpMethod method) {
+    RequestInit requestInit(HttpMethod method, boolean dmr) {
         Headers headers = new Headers();
-        headers.set(ACCEPT.header(), APPLICATION_DMR_ENCODED);
-        headers.set(CONTENT_TYPE.header(), APPLICATION_DMR_ENCODED);
+        if (dmr) {
+            headers.set(ACCEPT.header(), APPLICATION_DMR_ENCODED);
+            headers.set(CONTENT_TYPE.header(), APPLICATION_DMR_ENCODED);
+        }
         headers.set(X_MANAGEMENT_CLIENT_NAME.header(), HEADER_MANAGEMENT_CLIENT_VALUE);
         String bearerToken = getBearerToken();
         if (bearerToken != null) {

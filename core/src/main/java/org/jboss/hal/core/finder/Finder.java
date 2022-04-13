@@ -49,7 +49,6 @@ import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.promise.Promise;
 
-import static elemental2.dom.DomGlobal.console;
 import static java.lang.Math.min;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
@@ -448,13 +447,11 @@ public class Finder implements IsElement<HTMLDivElement>, Attachable {
                 }
             }
 
-            console.log("##### Promise selects...");
             List<Task<FlowContext>> tasks = stream(path.spliterator(), false)
                     .map(segment -> new SelectTask(new FinderSegment<>(segment.getColumnId(), segment.getItemId())))
                     .collect(toList());
             Flow.series(new FlowContext(progress.get()), tasks)
                     .then(c -> {
-                        console.log("##### DONE");
                         FinderColumn<?> column = c.pop();
                         column.element().focus();
                         column.refresh(RESTORE_SELECTION);

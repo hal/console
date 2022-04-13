@@ -55,20 +55,7 @@
         "size": 10
       }
     },
-    "com.intendia.gwt.rxgwt": {
-      "type": "box",
-      "style": "rounded",
-      "color": "grey50",
-      "default-font": {
-        "size": 14,
-        "name": "Helvetica",
-        "color": "grey50"
-      },
-      "group-id-font": {
-        "size": 10
-      }
-    },
-    "org.jboss.gwt.elemento": {
+    "org.jboss.elemento": {
       "type": "box",
       "style": "rounded",
       "color": "grey50",
