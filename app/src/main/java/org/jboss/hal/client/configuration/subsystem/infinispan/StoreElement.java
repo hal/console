@@ -19,8 +19,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.elemento.Elements;
+import org.jboss.elemento.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.Tabs;
@@ -42,7 +42,7 @@ import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLSelectElement;
 
 import static java.util.stream.Collectors.toList;
-import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.elemento.Elements.*;
 import static org.jboss.hal.ballroom.JQuery.$;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;

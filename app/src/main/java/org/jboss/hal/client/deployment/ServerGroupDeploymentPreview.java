@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.client.deployment;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.config.Environment;

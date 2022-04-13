@@ -53,7 +53,16 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
-import static org.jboss.hal.client.configuration.subsystem.webservice.AddressTemplates.*;
+import static org.jboss.hal.client.configuration.subsystem.webservice.AddressTemplates.CONFIG_NAME;
+import static org.jboss.hal.client.configuration.subsystem.webservice.AddressTemplates.CONFIG_TYPE;
+import static org.jboss.hal.client.configuration.subsystem.webservice.AddressTemplates.HANDLER_CHAIN_NAME;
+import static org.jboss.hal.client.configuration.subsystem.webservice.AddressTemplates.HANDLER_CHAIN_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.webservice.AddressTemplates.HANDLER_CHAIN_TYPE;
+import static org.jboss.hal.client.configuration.subsystem.webservice.AddressTemplates.HANDLER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.webservice.AddressTemplates.SELECTED_CONFIG_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.webservice.AddressTemplates.SELECTED_HANDLER_CHAIN_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.webservice.AddressTemplates.SELECTED_HANDLER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.webservice.AddressTemplates.WEBSERVICES_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HANDLER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.WEBSERVICES;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;

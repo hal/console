@@ -17,7 +17,7 @@ package org.jboss.hal.client.skeleton;
 
 import javax.inject.Inject;
 
-import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.elemento.IsElement;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.client.bootstrap.endpoint.EndpointManager;
@@ -78,7 +78,7 @@ import elemental2.dom.HTMLElement;
 
 import static elemental2.dom.DomGlobal.location;
 import static elemental2.dom.DomGlobal.window;
-import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.elemento.Elements.p;
 import static org.jboss.hal.config.Settings.Key.RUN_AS;
 
 /**
@@ -108,7 +108,7 @@ import static org.jboss.hal.config.Settings.Key.RUN_AS;
  * The header presenter is not part of the actual presenters such as finder or application presenters, its content can only be
  * controlled by sending events. A direct modification using methods is not allowed.
  */
-public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> implements IsElement,
+public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> implements IsElement<HTMLElement>,
         // handlers (a-z)
         FinderContextHandler,
         HeaderModeHandler,
@@ -133,7 +133,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
     private final User user;
     private final ServerActions serverActions;
     private final Resources resources;
-    private KeycloakHolder keycloakHolder;
+    private final KeycloakHolder keycloakHolder;
 
     private PresenterType presenterType;
     private PlaceRequest normalMode;
@@ -278,9 +278,9 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
     }
 
     void reconnect() {
-        String url = window.location.getProtocol()
-                + "//" + window.location.getHost()
-                + window.location.getPathname()
+        String url = window.location.protocol
+                + "//" + window.location.host
+                + window.location.pathname
                 + "?" + EndpointManager.CONNECT_PARAMETER;
         window.location.assign(url);
     }

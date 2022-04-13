@@ -58,8 +58,47 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
 import static java.util.Arrays.asList;
-import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.AGGREGATE_REALM_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.CACHING_REALM_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.CONSTANT_REALM_MAPPER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.CUSTOM_MODIFIABLE_REALM_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.CUSTOM_REALM_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.CUSTOM_REALM_MAPPER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.ELYTRON_SUBSYSTEM_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.FILESYSTEM_REALM_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.IDENTITY_REALM_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.JDBC_REALM_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.JDBC_REALM_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.KEY_STORE_REALM_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.LDAP_REALM_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.LDAP_REALM_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.MAPPED_REGEX_REALM_MAPPER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.PROPERTIES_REALM_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.PROPERTIES_REALM_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.SIMPLE_REGEX_REALM_MAPPER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.TOKEN_REALM_ADDRESS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ALLOW_BLANK_PASSWORD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTE_MAPPING;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DIRECT_VERIFICATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DIR_CONTEXT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.FROM;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.GROUPS_ATTRIBUTE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HAL_INDEX;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.IDENTITY_MAPPING;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INDEX;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PATH;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PRINCIPAL_QUERY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROPERTIES_REALM;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RDN_IDENTIFIER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_ATTRIBUTE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RELATIVE_TO;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SEARCH_BASE_DN;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TO;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.USERS_PROPERTIES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.USE_RECURSIVE_SEARCH;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeBoolean;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
@@ -83,7 +122,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
     private final Resources resources;
-    private MetadataRegistry metadataRegistry;
+    private final MetadataRegistry metadataRegistry;
 
     @Inject
     public RealmsPresenter(EventBus eventBus,

@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.client.patching;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.client.runtime.RuntimePreview;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.runtime.host.Host;
@@ -27,10 +27,10 @@ import org.jboss.hal.resources.UIConstants;
 
 import elemental2.dom.HTMLElement;
 
-import static org.jboss.gwt.elemento.core.Elements.a;
-import static org.jboss.gwt.elemento.core.Elements.div;
-import static org.jboss.gwt.elemento.core.Elements.span;
-import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.elemento.Elements.a;
+import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.span;
+import static org.jboss.elemento.EventType.click;
 import static org.jboss.hal.client.patching.HostPatchesColumn.hostTemplate;
 import static org.jboss.hal.client.patching.HostPatchesColumn.namedNodeToHost;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CORE_SERVICE_PATCHING;

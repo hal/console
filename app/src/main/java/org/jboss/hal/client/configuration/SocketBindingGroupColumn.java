@@ -38,6 +38,8 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Requires;
 
+import elemental2.promise.Promise;
+
 import static java.util.Arrays.asList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDING_GROUP;
@@ -55,8 +57,8 @@ public class SocketBindingGroupColumn extends FinderColumn<NamedNode> {
             CrudOperations crud) {
 
         super(new FinderColumn.Builder<NamedNode>(finder, Ids.SOCKET_BINDING_GROUP, Names.SOCKET_BINDING_GROUP)
-                .itemsProvider((context, callback) -> crud.readChildren(ResourceAddress.root(), SOCKET_BINDING_GROUP, 1,
-                        result -> callback.onSuccess(ModelNodeHelper.asNamedNodes(result))))
+                .itemsProvider(context -> crud.readChildren(ResourceAddress.root(), SOCKET_BINDING_GROUP, 1)
+                        .then(result -> Promise.resolve(ModelNodeHelper.asNamedNodes(result))))
                 .useFirstActionAsBreadcrumbHandler()
                 .onPreview((socketBinding) -> new SocketBindingGroupPreview(socketBinding, places)));
 
@@ -70,6 +72,7 @@ public class SocketBindingGroupColumn extends FinderColumn<NamedNode> {
         }
         addColumnAction(columnActionFactory.refresh(Ids.SOCKET_BINDING_GROUP_REFRESH));
 
+        // noinspection Convert2Diamond
         setItemRenderer(item -> new ItemDisplay<NamedNode>() {
             @Override
             public String getTitle() {

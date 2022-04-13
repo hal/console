@@ -8,12 +8,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Changed
 
+- [HAL-1783](https://issues.redhat.com/browse/HAL-1783): Replace Flow implementation based on JS Promise API
+- [HAL-1782](https://issues.redhat.com/browse/HAL-1783): Upgrade Elemental2 and Elemento
 - Adjust license URLs
 
 ### Upgrades
 
 - Bump d3 from 5.9.7 to 5.16.0
-- Bump Parcel from 2.3.2 to 2.4.0
+- Bump Elemental2 from 1.0.0-RC1 to 1.1.0
+- Bump Elemento from 0.9.6 to 1.0.10
+- Bump moment.js from 2.29.1 to 2.29.2
+- Bump Parcel from 2.3.2 to 2.4.1
 
 ## [3.5.12] - 2022-03-18
 

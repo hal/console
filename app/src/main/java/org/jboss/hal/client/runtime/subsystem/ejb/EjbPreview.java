@@ -18,7 +18,7 @@ package org.jboss.hal.client.runtime.subsystem.ejb;
 import java.util.Date;
 import java.util.List;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.ProgressElement;
@@ -48,16 +48,30 @@ import static elemental2.dom.DomGlobal.document;
 import static elemental2.dom.DomGlobal.setInterval;
 import static java.lang.Math.round;
 import static java.util.Arrays.asList;
-import static org.jboss.gwt.elemento.core.Elements.a;
-import static org.jboss.gwt.elemento.core.Elements.h;
-import static org.jboss.gwt.elemento.core.Elements.section;
-import static org.jboss.gwt.elemento.core.Elements.span;
+import static org.jboss.elemento.Elements.a;
+import static org.jboss.elemento.Elements.h;
+import static org.jboss.elemento.Elements.section;
+import static org.jboss.elemento.Elements.span;
 import static org.jboss.hal.ballroom.ProgressElement.Label.INLINE;
 import static org.jboss.hal.ballroom.ProgressElement.Size.NORMAL;
 import static org.jboss.hal.client.runtime.subsystem.ejb.EjbNode.Type.MDB;
 import static org.jboss.hal.client.runtime.subsystem.ejb.EjbNode.Type.STATEFUL;
 import static org.jboss.hal.client.runtime.subsystem.ejb.EjbNode.Type.STATELESS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CACHE_SIZE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.COMPONENT_CLASS_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DELIVERY_ACTIVE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.EXECUTION_TIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INVOCATIONS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NEXT_TIMEOUT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PASSIVATED_COUNT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.POOL_CURRENT_SIZE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.POOL_MAX_SIZE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TIMERS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TIME_REMAINING;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TOTAL_SIZE;
 
 class EjbPreview extends PreviewContent<EjbNode> {
 

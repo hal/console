@@ -29,7 +29,7 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
-import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.elemento.Elements.p;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CLOSE_CONNECTIONS_FOR_ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CLOSE_CONNECTIONS_FOR_USER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CLOSE_CONSUMER_CONNECTIONS_FOR_ADDRESS;

@@ -64,8 +64,21 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
 import static java.util.Arrays.asList;
-import static org.jboss.hal.client.configuration.subsystem.jca.AddressTemplates.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.client.configuration.subsystem.jca.AddressTemplates.DISTRIBUTED_WORKMANAGER_SRT_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.jca.AddressTemplates.DISTRIBUTED_WORKMANAGER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.jca.AddressTemplates.JCA_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.jca.AddressTemplates.JCA_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.jca.AddressTemplates.TRACER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.jca.AddressTemplates.WORKMANAGER_LRT_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.jca.AddressTemplates.WORKMANAGER_SRT_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MAX_THREADS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.QUEUE_LENGTH;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.THREAD_FACTORY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
 import static org.jboss.hal.resources.Names.THREAD_POOL;
 
 public class JcaPresenter
@@ -188,11 +201,8 @@ public class JcaPresenter
             MessageEvent.fire(getEventBus(), Message.success(
                     resources.messages().addResourceSuccess(type, name)));
             reload();
-        },
-                (operation, failure) -> MessageEvent.fire(getEventBus(), Message.error(
-                        resources.messages().addResourceError(type, failure))),
-                (operation, e) -> MessageEvent.fire(getEventBus(), Message.error(
-                        resources.messages().addResourceError(type, e.getMessage()))));
+        }, (operation, failure) -> MessageEvent.fire(getEventBus(), Message.error(
+                resources.messages().addResourceError(type, failure))));
     }
 
     // ------------------------------------------------------ tracer

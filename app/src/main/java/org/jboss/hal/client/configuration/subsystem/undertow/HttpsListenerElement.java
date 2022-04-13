@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.client.configuration.subsystem.undertow;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.Button;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
@@ -30,14 +30,14 @@ import org.jboss.hal.resources.Resources;
 
 import elemental2.dom.Element;
 import elemental2.dom.HTMLButtonElement;
-import elemental2.dom.NodeList;
+import elemental2.dom.HTMLCollection;
 
-import static org.jboss.gwt.elemento.core.Elements.button;
-import static org.jboss.gwt.elemento.core.Elements.h;
-import static org.jboss.gwt.elemento.core.Elements.p;
-import static org.jboss.gwt.elemento.core.Elements.section;
-import static org.jboss.gwt.elemento.core.EventType.bind;
-import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.elemento.Elements.button;
+import static org.jboss.elemento.Elements.h;
+import static org.jboss.elemento.Elements.p;
+import static org.jboss.elemento.Elements.section;
+import static org.jboss.elemento.EventType.bind;
+import static org.jboss.elemento.EventType.click;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SERVER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.undertow.Listener.HTTPS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
@@ -49,11 +49,10 @@ import static org.jboss.hal.resources.UIConstants.CONSTRAINT;
 
 class HttpsListenerElement extends ListenerElement {
 
-    private HTMLButtonElement enableSslButton;
-    private HTMLButtonElement disableSslButton;
+    private final HTMLButtonElement enableSslButton;
+    private final HTMLButtonElement disableSslButton;
     private String selectedHttps;
 
-    @SuppressWarnings("ConstantConditions")
     HttpsListenerElement(Resources resources, MetadataRegistry metadataRegistry, TableButtonFactory tableButtonFactory) {
 
         AddressTemplate template = SERVER_TEMPLATE.append(HTTPS.resource + "=*");
@@ -96,7 +95,7 @@ class HttpsListenerElement extends ListenerElement {
     public void attach() {
         super.attach();
 
-        NodeList<Element> elems = table.element().getElementsByClassName(halTableButtons);
+        HTMLCollection<Element> elems = table.element().getElementsByClassName(halTableButtons);
         if (elems.length > 0) {
             Element tableButtonsElement = elems.item(0);
             tableButtonsElement.appendChild(enableSslButton);

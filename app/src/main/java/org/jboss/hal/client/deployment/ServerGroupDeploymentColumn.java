@@ -37,7 +37,6 @@ import org.jboss.hal.client.deployment.wizard.NamesStep;
 import org.jboss.hal.client.deployment.wizard.UploadDeploymentStep;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.CrudOperations;
-import org.jboss.hal.core.SuccessfulOutcome;
 import org.jboss.hal.core.deployment.Content;
 import org.jboss.hal.core.deployment.Deployment.Status;
 import org.jboss.hal.core.deployment.ServerGroupDeployment;
@@ -58,7 +57,6 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
-import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.flow.Task;
 import org.jboss.hal.js.JsHelper;
@@ -79,11 +77,13 @@ import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 
 import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.deployment.ContentColumn.CONTENT_ADDRESS;
 import static org.jboss.hal.client.deployment.ContentColumn.CONTENT_TEMPLATE;
@@ -94,7 +94,16 @@ import static org.jboss.hal.core.deployment.Deployment.Status.OK;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.core.runtime.TopologyTasks.runningServers;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DISABLED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ENABLED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNTIME_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEPLOY;
 import static org.jboss.hal.dmr.ModelNodeHelper.properties;
 import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.CSS.pfIcon;
@@ -165,46 +174,30 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                 addActions);
         addColumnAction(columnActionFactory.refresh(Ids.SERVER_GROUP_DEPLOYMENT_REFRESH));
 
-        ItemsProvider<ServerGroupDeployment> itemsProvider = (context, callback) -> {
+        ItemsProvider<ServerGroupDeployment> itemsProvider = finderContext -> {
             List<Task<FlowContext>> tasks = new ArrayList<>();
             tasks.add(new ReadServerGroupDeployments(environment, dispatcher, statementContext.selectedServerGroup()));
             tasks.addAll(runningServers(environment, dispatcher,
                     properties(SERVER_GROUP, statementContext.selectedServerGroup())));
             tasks.add(new LoadDeploymentsFromRunningServer(environment, dispatcher));
-
-            series(new FlowContext(progress.get()), tasks)
-                    .subscribe(new Outcome<FlowContext>() {
-                        @Override
-                        public void onError(FlowContext context, Throwable error) {
-                            callback.onFailure(error);
-                        }
-
-                        @Override
-                        public void onSuccess(FlowContext context) {
-                            List<ServerGroupDeployment> serverGroupDeployments = context
-                                    .get(DeploymentTasks.SERVER_GROUP_DEPLOYMENTS);
-                            callback.onSuccess(serverGroupDeployments);
-                        }
+            return series(new FlowContext(progress.get()), tasks)
+                    .then(flowContext -> {
+                        List<ServerGroupDeployment> serverGroupDeployments = flowContext
+                                .get(DeploymentTasks.SERVER_GROUP_DEPLOYMENTS);
+                        return Promise.resolve(serverGroupDeployments);
                     });
         };
         setItemsProvider(itemsProvider);
 
         // reuse the items provider to filter breadcrumb items
-        setBreadcrumbItemsProvider(
-                (context, callback) -> itemsProvider.get(context, new AsyncCallback<List<ServerGroupDeployment>>() {
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        callback.onFailure(caught);
-                    }
+        setBreadcrumbItemsProvider(context -> itemsProvider.items(context)
+                .then(result -> {
+                    // only running deployments w/ a reference server will show up in the breadcrumb dropdown
+                    List<ServerGroupDeployment> deploymentsOnServer = result.stream()
+                            .filter(ServerGroupDeployment::runningWithReferenceServer)
+                            .collect(toList());
+                    return Promise.resolve(deploymentsOnServer);
 
-                    @Override
-                    public void onSuccess(List<ServerGroupDeployment> result) {
-                        // only running deployments w/ a reference server will show up in the breadcrumb dropdown
-                        List<ServerGroupDeployment> deploymentsOnServer = result.stream()
-                                .filter(ServerGroupDeployment::runningWithReferenceServer)
-                                .collect(toList());
-                        callback.onSuccess(deploymentsOnServer);
-                    }
                 }));
 
         setItemRenderer(item -> new ItemDisplay<ServerGroupDeployment>() {
@@ -323,84 +316,80 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                             wzd.showProgress(resources.constants().deploymentInProgress(),
                                     resources.messages().deploymentInProgress(name));
 
-                            series(new FlowContext(progress.get()),
-                                    new CheckDeployment(dispatcher, name),
-                                    new UploadOrReplace(environment, dispatcher, name, runtimeName, context.file, false),
+                            List<Task<FlowContext>> tasks = asList(new CheckDeployment(dispatcher, name),
+                                    new UploadOrReplace(environment, dispatcher, name, runtimeName, context.file,
+                                            false),
                                     new AddServerGroupDeployment(environment, dispatcher, name, runtimeName,
-                                            statementContext.selectedServerGroup()))
-                                                    .subscribe(new Outcome<FlowContext>() {
-                                                        @Override
-                                                        public void onError(FlowContext context, Throwable error) {
-                                                            wzd.showError(resources.constants().deploymentError(),
-                                                                    resources.messages().deploymentError(name),
-                                                                    error.getMessage());
-                                                        }
-
-                                                        @Override
-                                                        public void onSuccess(FlowContext context) {
-                                                            refresh(Ids.serverGroupDeployment(
-                                                                    statementContext.selectedServerGroup(), name));
-                                                            wzd.showSuccess(resources.constants().deploymentSuccessful(),
-                                                                    resources.messages().deploymentSuccessful(name),
-                                                                    resources.messages().view(Names.DEPLOYMENT),
-                                                                    cxt -> {
-                                                                        /* nothing to do, content is already selected */ });
-                                                        }
-                                                    });
+                                            statementContext.selectedServerGroup()));
+                            series(new FlowContext(progress.get()), tasks)
+                                    .then(__ -> {
+                                        refresh(Ids.serverGroupDeployment(
+                                                statementContext.selectedServerGroup(), name));
+                                        wzd.showSuccess(resources.constants().deploymentSuccessful(),
+                                                resources.messages().deploymentSuccessful(name),
+                                                resources.messages().view(Names.DEPLOYMENT),
+                                                cxt -> {
+                                                    /* nothing to do, content is already selected */ });
+                                        return null;
+                                    })
+                                    .catch_(error -> {
+                                        wzd.showError(resources.constants().deploymentError(),
+                                                resources.messages().deploymentError(name),
+                                                String.valueOf(error));
+                                        return null;
+                                    });
                         })
                         .build();
         wizard.show();
     }
 
     private void addDeploymentFromContentRepository() {
-        Outcome<FlowContext> outcome = new Outcome<FlowContext>() {
-            @Override
-            public void onError(FlowContext context, Throwable error) {
-                MessageEvent.fire(eventBus, Message.error(resources.messages().loadContentError(), error.getMessage()));
-            }
-
-            @Override
-            public void onSuccess(FlowContext context) {
-                // extract content which is not deployed on statementContext.selectedServerGroup()
-                String serverGroup = statementContext.selectedServerGroup();
-                List<Content> content = context.pop();
-                List<Content> undeployedContentOnSelectedServerGroup = content.stream()
-                        .filter(c -> !c.isDeployedTo(serverGroup))
-                        .collect(toList());
-                if (undeployedContentOnSelectedServerGroup.isEmpty()) {
-                    MessageEvent.fire(eventBus,
-                            Message.warning(resources.messages().allContentAlreadyDeployedToServerGroup(serverGroup)));
-                } else {
-                    new DeployContentDialog2(serverGroup, undeployedContentOnSelectedServerGroup, resources,
-                            (sg, cnt, enable) -> {
-                                List<Operation> operations = cnt.stream()
-                                        .map(c -> {
-                                            ResourceAddress resourceAddress = new ResourceAddress()
-                                                    .add(SERVER_GROUP, serverGroup)
-                                                    .add(DEPLOYMENT, c.getName());
-                                            return new Operation.Builder(resourceAddress, ADD)
-                                                    .param(RUNTIME_NAME, c.getRuntimeName())
-                                                    .param(ENABLED, enable)
-                                                    .build();
-                                        })
-                                        .collect(toList());
-                                if (enable) {
-                                    progress.get().reset();
-                                    progress.get().tick();
-                                }
-                                dispatcher.execute(new Composite(operations), (CompositeResult cr) -> {
+        series(new FlowContext(progress.get()), singletonList(new LoadContent(dispatcher)))
+                .then(context -> {
+                    // extract content which is not deployed on statementContext.selectedServerGroup()
+                    String serverGroup = statementContext.selectedServerGroup();
+                    List<Content> content = context.pop();
+                    List<Content> undeployedContentOnSelectedServerGroup = content.stream()
+                            .filter(c -> !c.isDeployedTo(serverGroup))
+                            .collect(toList());
+                    if (undeployedContentOnSelectedServerGroup.isEmpty()) {
+                        MessageEvent.fire(eventBus,
+                                Message.warning(resources.messages().allContentAlreadyDeployedToServerGroup(serverGroup)));
+                    } else {
+                        new DeployContentDialog2(serverGroup, undeployedContentOnSelectedServerGroup, resources,
+                                (sg, cnt, enable) -> {
+                                    List<Operation> operations = cnt.stream()
+                                            .map(c -> {
+                                                ResourceAddress resourceAddress = new ResourceAddress()
+                                                        .add(SERVER_GROUP, serverGroup)
+                                                        .add(DEPLOYMENT, c.getName());
+                                                return new Operation.Builder(resourceAddress, ADD)
+                                                        .param(RUNTIME_NAME, c.getRuntimeName())
+                                                        .param(ENABLED, enable)
+                                                        .build();
+                                            })
+                                            .collect(toList());
                                     if (enable) {
-                                        progress.get().finish();
+                                        progress.get().reset();
+                                        progress.get().tick();
                                     }
-                                    refresh(Ids.serverGroupDeployment(serverGroup, cnt.get(0).getName()));
-                                    MessageEvent.fire(eventBus,
-                                            Message.success(resources.messages().contentDeployed2(serverGroup)));
-                                });
-                            }).show();
-                }
-            }
-        };
-        series(new FlowContext(progress.get()), new LoadContent(dispatcher)).subscribe(outcome);
+                                    dispatcher.execute(new Composite(operations), (CompositeResult cr) -> {
+                                        if (enable) {
+                                            progress.get().finish();
+                                        }
+                                        refresh(Ids.serverGroupDeployment(serverGroup, cnt.get(0).getName()));
+                                        MessageEvent.fire(eventBus,
+                                                Message.success(resources.messages().contentDeployed2(serverGroup)));
+                                    });
+                                }).show();
+                    }
+                    return null;
+                })
+                .catch_(error -> {
+                    MessageEvent.fire(eventBus, Message.error(
+                            resources.messages().loadContentError(), String.valueOf(error)));
+                    return null;
+                });
     }
 
     private void addUnmanaged() {
@@ -410,17 +399,15 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                     if (model != null) {
                         String serverGroup = statementContext.selectedServerGroup();
                         String runtimeName = model.get(RUNTIME_NAME).asString();
-                        series(new FlowContext(progress.get()),
-                                new AddUnmanagedDeployment(dispatcher, name, model),
-                                new AddServerGroupDeployment(environment, dispatcher, name, runtimeName, serverGroup))
-                                        .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
-                                            @Override
-                                            public void onSuccess(FlowContext context) {
-                                                refresh(Ids.serverGroupDeployment(serverGroup, name));
-                                                MessageEvent.fire(eventBus, Message.success(resources.messages()
-                                                        .addResourceSuccess(Names.UNMANAGED_DEPLOYMENT, name)));
-                                            }
-                                        });
+                        List<Task<FlowContext>> tasks = asList(new AddUnmanagedDeployment(dispatcher, name, model),
+                                new AddServerGroupDeployment(environment, dispatcher, name, runtimeName, serverGroup));
+                        series(new FlowContext(progress.get()), tasks)
+                                .then(context -> {
+                                    refresh(Ids.serverGroupDeployment(serverGroup, name));
+                                    MessageEvent.fire(eventBus, Message.success(resources.messages()
+                                            .addResourceSuccess(Names.UNMANAGED_DEPLOYMENT, name)));
+                                    return null;
+                                });
                     }
                 });
         dialog.getForm().<String> getFormItem(NAME).addValidationHandler(createUniqueValidation());

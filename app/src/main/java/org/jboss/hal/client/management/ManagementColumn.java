@@ -33,9 +33,7 @@ public class ManagementColumn extends StaticItemColumn {
 
     @Inject
     public ManagementColumn(Finder finder, Resources resources) {
-
         super(finder, Ids.MANAGEMENT, Names.MANAGEMENT, asList(
-
                 new StaticItem.Builder(Names.EXTENSIONS)
                         .nextColumn(Ids.EXTENSION)
                         .onPreview(new PreviewContent<>(Names.EXTENSIONS, resources.previews().managementExtensions()))

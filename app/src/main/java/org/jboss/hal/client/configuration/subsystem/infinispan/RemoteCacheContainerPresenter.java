@@ -52,9 +52,19 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
-import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.*;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.COMPONENT_CONNECTION_POOL_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.COMPONENT_SECURITY_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.REMOTE_CACHE_CONTAINER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.REMOTE_CACHE_CONTAINER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.REMOTE_CLUSTER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.SELECTED_REMOTE_CACHE_CONTAINER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.THREAD_POOL_ASYNC_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.infinispan.NearCache.INVALIDATION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INFINISPAN;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
 
 public class RemoteCacheContainerPresenter
         extends ApplicationFinderPresenter<RemoteCacheContainerPresenter.MyView, RemoteCacheContainerPresenter.MyProxy>

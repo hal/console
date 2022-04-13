@@ -29,22 +29,38 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
-import org.jboss.hal.dmr.dispatch.DispatchFailure;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rx.Completable;
-import rx.Single;
+import elemental2.promise.Promise;
 
 import static java.util.stream.Collectors.toSet;
 import static org.jboss.hal.config.AccessControlProvider.RBAC;
 import static org.jboss.hal.config.AccessControlProvider.SIMPLE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ACCESS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.AUTHORIZATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.BASE_ROLE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOSTS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST_SCOPED_ROLE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MAPPED_ROLES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROVIDER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE_DEPTH;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ROLES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUPS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP_SCOPED_ROLE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STANDARD_ROLE_NAMES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VERBOSE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.WHOAMI;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 
 /**
@@ -52,7 +68,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
  * function, because the operation might fail in some corner cases (e.g. when the current user is a host scoped role scoped to a
  * slave host).
  */
-public class ReadAuthentication implements BootstrapTask {
+public final class ReadAuthentication implements Task<FlowContext> {
 
     private static final Logger logger = LoggerFactory.getLogger(ReadAuthentication.class);
     private static final AddressTemplate CORE_SERVICE_TEMPLATE = AddressTemplate.of("/core-service=management");
@@ -69,7 +85,7 @@ public class ReadAuthentication implements BootstrapTask {
     }
 
     @Override
-    public Completable call(FlowContext context) {
+    public Promise<FlowContext> apply(final FlowContext context) {
         logger.debug("Read authentication");
         ResourceAddress address = CORE_SERVICE_TEMPLATE.resolve(statementContext);
         Operation opAuthorization = new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
@@ -81,7 +97,7 @@ public class ReadAuthentication implements BootstrapTask {
                 .param(VERBOSE, true)
                 .build();
         return dispatcher.execute(new Composite(opAuthorization, opWhoami))
-                .doOnSuccess((CompositeResult compositeResult) -> {
+                .then((CompositeResult compositeResult) -> {
 
                     ModelNode result = compositeResult.step(0).get(RESULT);
                     if (result.hasDefined(AUTHORIZATION)) {
@@ -127,23 +143,15 @@ public class ReadAuthentication implements BootstrapTask {
                                     .forEach(role -> environment.getRoles().add(role));
                         }
                     }
-                })
-                .onErrorResumeNext(throwable -> {
-                    if (throwable instanceof DispatchFailure) {
-                        logger.error("Unable to read {}. Use :whoami values as fallback.", CORE_SERVICE_TEMPLATE);
-                        return Single.just(new CompositeResult(new ModelNode()));
-                    } else {
-                        return Single.error(throwable);
-                    }
-                })
-                .toCompletable();
+                    return Promise.resolve(context);
+                });
     }
 
     private Role scopedRole(Property property, Role.Type type, String scopeAttribute) {
         Role baseRole = environment.getRoles().get(Ids.role(property.getValue().get(BASE_ROLE).asString()));
         Set<String> scope = property.getValue().hasDefined(scopeAttribute)
                 ? property.getValue().get(scopeAttribute).asList().stream().map(ModelNode::asString).collect(toSet())
-                : Collections.<String> emptySet();
+                : Collections.emptySet();
         return new Role(property.getName(), baseRole, type, scope);
     }
 }

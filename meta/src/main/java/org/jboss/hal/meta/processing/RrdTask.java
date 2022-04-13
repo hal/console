@@ -23,10 +23,9 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Settings;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
-import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
-import org.jboss.hal.dmr.dispatch.DispatchFailure;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.Flow;
 import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.StatementContext;
 import org.slf4j.Logger;
@@ -34,14 +33,12 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
-import rx.Completable;
-import rx.Single;
-import rx.functions.Action1;
+import elemental2.promise.Promise;
 
 import static java.util.stream.Collectors.toList;
 
 /** Creates, executes and parses the {@code read-resource-description} operations to read the missing metadata. */
-class RrdTask implements Task<LookupContext> {
+final class RrdTask implements Task<LookupContext> {
 
     private static final Logger logger = LoggerFactory.getLogger(RrdTask.class);
 
@@ -58,18 +55,19 @@ class RrdTask implements Task<LookupContext> {
     }
 
     @Override
-    public Completable call(LookupContext context) {
+    public Promise<LookupContext> apply(final LookupContext context) {
         boolean recursive = context.recursive;
-        List<Completable> completables = new ArrayList<>();
+        List<Task<LookupContext>> tasks = new ArrayList<>();
 
         // create and partition non-optional operations
         List<Operation> operations = rrdOps.create(context, recursive, false);
         List<List<Operation>> piles = Lists.partition(operations, batchSize);
         List<Composite> composites = piles.stream().map(Composite::new).collect(toList());
         for (Composite composite : composites) {
-            completables.add(dispatcher.execute(composite)
-                    .doOnSuccess(parseRrdAction(context, composite))
-                    .toCompletable());
+            tasks.add((LookupContext c) -> dispatcher.execute(composite).then(result -> {
+                parseRrdAction(context, composite, result);
+                return Promise.resolve(c);
+            }));
         }
 
         // create optional operations w/o partitioning!
@@ -80,20 +78,18 @@ class RrdTask implements Task<LookupContext> {
         List<Composite> optionalComposites = new ArrayList<>();
         optionalOperations.forEach(operation -> optionalComposites.add(new Composite(operation)));
         for (Composite composite : optionalComposites) {
-            completables.add(dispatcher.execute(composite)
-                    .onErrorResumeNext(throwable -> {
-                        if (throwable instanceof DispatchFailure) {
-                            logger.debug("Ignore errors on optional resource operation {}", composite.asCli());
-                            return Single.just(new CompositeResult(new ModelNode()));
-                        } else {
-                            return Single.error(throwable);
-                        }
+            tasks.add((LookupContext c) -> dispatcher.execute(composite)
+                    .then(result -> {
+                        parseRrdAction(context, composite, result);
+                        return Promise.resolve(c);
                     })
-                    .doOnSuccess(parseRrdAction(context, composite))
-                    .toCompletable());
+                    .catch_(error -> {
+                        logger.debug("Ignore errors on optional resource operation {}", composite.asCli());
+                        return Promise.resolve(c);
+                    }));
         }
 
-        if (!completables.isEmpty()) {
+        if (!tasks.isEmpty()) {
             if (logger.isDebugEnabled()) {
                 logger.debug("About to execute {} ({}+{}) composite operations (regular+optional)",
                         composites.size() + optionalComposites.size(), composites.size(), optionalComposites.size());
@@ -106,20 +102,18 @@ class RrdTask implements Task<LookupContext> {
                     logger.debug("Optional operations: {}", optionalOps);
                 }
             }
-            return Completable.concat(completables);
+            return Flow.series(context, tasks);
         } else {
             logger.debug("No DMR operations necessary");
-            return Completable.complete();
+            return Promise.resolve(context);
         }
     }
 
-    private Action1<CompositeResult> parseRrdAction(LookupContext context, Composite composite) {
-        return (CompositeResult compositeResult) -> {
-            RrdResult rrdResult = new CompositeRrdParser(composite).parse(compositeResult);
-            context.toResourceDescriptionRegistry.putAll(rrdResult.resourceDescriptions);
-            context.toResourceDescriptionDatabase.putAll(rrdResult.resourceDescriptions);
-            context.toSecurityContextRegistry.putAll(rrdResult.securityContexts);
-            context.toSecurityContextDatabase.putAll(rrdResult.securityContexts);
-        };
+    private void parseRrdAction(LookupContext context, Composite composite, CompositeResult compositeResult) {
+        RrdResult rrdResult = new CompositeRrdParser(composite).parse(compositeResult);
+        context.toResourceDescriptionRegistry.putAll(rrdResult.resourceDescriptions);
+        context.toResourceDescriptionDatabase.putAll(rrdResult.resourceDescriptions);
+        context.toSecurityContextRegistry.putAll(rrdResult.securityContexts);
+        context.toSecurityContextDatabase.putAll(rrdResult.securityContexts);
     }
 }

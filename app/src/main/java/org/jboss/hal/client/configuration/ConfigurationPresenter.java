@@ -22,6 +22,7 @@ import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.mvp.FinderPresenter;
 import org.jboss.hal.core.mvp.FinderView;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -55,8 +56,8 @@ public class ConfigurationPresenter
     }
 
     @Override
-    protected PreviewContent initialPreview() {
-        return new PreviewContent(Names.CONFIGURATION,
+    protected PreviewContent<ModelNode> initialPreview() {
+        return new PreviewContent<>(Names.CONFIGURATION,
                 environment.isStandalone() ? resources.previews().configurationStandalone()
                         : resources.previews().configurationDomain());
     }

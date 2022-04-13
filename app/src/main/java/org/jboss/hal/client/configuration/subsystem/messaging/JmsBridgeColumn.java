@@ -46,6 +46,8 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Requires;
 
+import elemental2.promise.Promise;
+
 import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.CONNECTION_FACTORY_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.JMS_BRIDGE_TEMPLATE;
@@ -78,8 +80,8 @@ public class JmsBridgeColumn extends FinderColumn<NamedNode> {
             Resources resources) {
 
         super(new FinderColumn.Builder<NamedNode>(finder, Ids.JMS_BRIDGE, Names.JMS_BRIDGE)
-                .itemsProvider((context, callback) -> crud.readChildren(MESSAGING_SUBSYSTEM_TEMPLATE, JMS_BRIDGE,
-                        children -> callback.onSuccess(asNamedNodes(children))))
+                .itemsProvider(context -> crud.readChildren(MESSAGING_SUBSYSTEM_TEMPLATE, JMS_BRIDGE)
+                        .then(children -> Promise.resolve(asNamedNodes(children))))
                 .onPreview(JmsBridgePreview::new)
                 .useFirstActionAsBreadcrumbHandler()
                 .withFilter());

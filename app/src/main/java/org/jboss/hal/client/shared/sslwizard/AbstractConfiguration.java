@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.client.shared.sslwizard;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.wizard.WizardStep;

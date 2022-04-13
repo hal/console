@@ -36,7 +36,6 @@ import org.jboss.hal.client.deployment.wizard.UploadDeploymentStep;
 import org.jboss.hal.client.shared.uploadwizard.UploadElement;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.CrudOperations;
-import org.jboss.hal.core.SuccessfulOutcome;
 import org.jboss.hal.core.deployment.Deployment;
 import org.jboss.hal.core.deployment.Deployment.Status;
 import org.jboss.hal.core.finder.ColumnAction;
@@ -56,8 +55,8 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
-import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.js.JsHelper;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
@@ -80,15 +79,34 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
 
 import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
-import static org.jboss.gwt.elemento.core.Elements.span;
+import static org.jboss.elemento.Elements.span;
 import static org.jboss.hal.client.deployment.StandaloneDeploymentColumn.DEPLOYMENT_ADDRESS;
 import static org.jboss.hal.client.deployment.wizard.DeploymentState.NAMES;
 import static org.jboss.hal.client.deployment.wizard.DeploymentState.UPLOAD;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CONTENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DISABLED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.EMPTY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ENABLED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.EXPLODE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.FULL_REPLACE_DEPLOYMENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PATH;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE_DEPTH;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEPLOY;
 import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
@@ -125,19 +143,17 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
 
         super(new Builder<Deployment>(finder, Ids.DEPLOYMENT, Names.DEPLOYMENT)
 
-                .itemsProvider((context, callback) -> {
+                .itemsProvider(context -> {
                     Operation operation = new Operation.Builder(ResourceAddress.root(),
                             READ_CHILDREN_RESOURCES_OPERATION)
                                     .param(CHILD_TYPE, DEPLOYMENT)
                                     .param(INCLUDE_RUNTIME, true)
                                     .param(RECURSIVE_DEPTH, 2)
                                     .build();
-                    dispatcher.execute(operation, result -> {
-                        List<Deployment> deployments = result.asPropertyList().stream()
-                                .map(property -> new Deployment(Server.STANDALONE, property.getValue()))
-                                .collect(toList());
-                        callback.onSuccess(deployments);
-                    });
+                    return dispatcher.execute(operation)
+                            .then(result -> Promise.resolve(result.asPropertyList().stream()
+                                    .map(property -> new Deployment(Server.STANDALONE, property.getValue()))
+                                    .collect(toList())));
                 })
 
                 .useFirstActionAsBreadcrumbHandler()
@@ -294,28 +310,26 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
                             wzd.showProgress(resources.constants().deploymentInProgress(),
                                     resources.messages().deploymentInProgress(name));
 
-                            series(new FlowContext(progress.get()),
-                                    new CheckDeployment(dispatcher, name),
+                            List<Task<FlowContext>> tasks = asList(new CheckDeployment(dispatcher, name),
                                     new UploadOrReplace(environment, dispatcher, name, runtimeName, context.file,
-                                            context.enabled))
-                                                    .subscribe(new Outcome<FlowContext>() {
-                                                        @Override
-                                                        public void onError(FlowContext context, Throwable error) {
-                                                            wzd.showError(resources.constants().deploymentError(),
-                                                                    resources.messages().deploymentError(name),
-                                                                    error.getMessage());
-                                                        }
-
-                                                        @Override
-                                                        public void onSuccess(FlowContext context) {
-                                                            refresh(Ids.deployment(name));
-                                                            wzd.showSuccess(resources.constants().uploadSuccessful(),
-                                                                    resources.messages().uploadSuccessful(name),
-                                                                    resources.messages().view(Names.DEPLOYMENT),
-                                                                    cxt -> {
-                                                                        /* nothing to do, deployment is already selected */ });
-                                                        }
-                                                    });
+                                            context.enabled));
+                            series(new FlowContext(progress.get()), tasks)
+                                    .then(__ -> {
+                                        refresh(Ids.deployment(name));
+                                        wzd.showSuccess(resources.constants().uploadSuccessful(),
+                                                resources.messages().uploadSuccessful(name),
+                                                resources.messages().view(Names.DEPLOYMENT),
+                                                cxt -> {
+                                                    /* nothing to do, deployment is already selected */
+                                                });
+                                        return null;
+                                    })
+                                    .catch_(error -> {
+                                        wzd.showError(resources.constants().deploymentError(),
+                                                resources.messages().deploymentError(name),
+                                                String.valueOf(error));
+                                        return null;
+                                    });
                         })
                         .build();
         wizard.show();
@@ -331,29 +345,26 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
                     if (valid) {
                         ReplaceDeploymentPanel replaceDeploymentPanel = new ReplaceDeploymentPanel();
                         replaceDeploymentPanel.on();
-                        series(new FlowContext(progress.get()),
-                                new CheckDeployment(dispatcher, deployment.getName()),
-                                // To replace an existing deployment, the original name and runtime-name must be preserved.
+                        // To replace an existing deployment, the original name and runtime-name must be preserved.
+                        List<Task<FlowContext>> tasks = asList(new CheckDeployment(dispatcher, deployment.getName()),
                                 new UploadOrReplace(environment, dispatcher, deployment.getName(),
-                                        deployment.getRuntimeName(), uploadElement.getFiles().item(0), false))
-                                                .subscribe(new Outcome<FlowContext>() {
-                                                    @Override
-                                                    public void onError(FlowContext context, Throwable error) {
-                                                        replaceDeploymentPanel.off();
-                                                        MessageEvent.fire(eventBus, Message.error(
-                                                                resources.messages().contentReplaceError(deployment.getName()),
-                                                                error.getMessage()));
-                                                    }
-
-                                                    @Override
-                                                    public void onSuccess(FlowContext context) {
-                                                        refresh(Ids.content(deployment.getName()));
-                                                        replaceDeploymentPanel.off();
-                                                        MessageEvent.fire(eventBus, Message.success(
-                                                                resources.messages()
-                                                                        .contentReplaceSuccess(deployment.getName())));
-                                                    }
-                                                });
+                                        deployment.getRuntimeName(), uploadElement.getFiles().item(0), false));
+                        series(new FlowContext(progress.get()), tasks)
+                                .then(__ -> {
+                                    refresh(Ids.content(deployment.getName()));
+                                    replaceDeploymentPanel.off();
+                                    MessageEvent.fire(eventBus, Message.success(
+                                            resources.messages()
+                                                    .contentReplaceSuccess(deployment.getName())));
+                                    return null;
+                                })
+                                .catch_(error -> {
+                                    replaceDeploymentPanel.off();
+                                    MessageEvent.fire(eventBus, Message.error(
+                                            resources.messages().contentReplaceError(deployment.getName()),
+                                            String.valueOf(error)));
+                                    return null;
+                                });
                     }
                     return valid;
                 })
@@ -365,15 +376,13 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
         Metadata metadata = metadataRegistry.lookup(DEPLOYMENT_TEMPLATE);
         AddUnmanagedDialog dialog = new AddUnmanagedDialog(metadata, resources,
                 (name, model) -> series(new FlowContext(progress.get()),
-                        new AddUnmanagedDeployment(dispatcher, name, model))
-                                .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
-                                    @Override
-                                    public void onSuccess(FlowContext context) {
-                                        refresh(Ids.deployment(name));
-                                        MessageEvent.fire(eventBus, Message.success(
-                                                resources.messages()
-                                                        .addResourceSuccess(Names.UNMANAGED_DEPLOYMENT, name)));
-                                    }
+                        singletonList(new AddUnmanagedDeployment(dispatcher, name, model)))
+                                .then(__ -> {
+                                    refresh(Ids.deployment(name));
+                                    MessageEvent.fire(eventBus, Message.success(
+                                            resources.messages()
+                                                    .addResourceSuccess(Names.UNMANAGED_DEPLOYMENT, name)));
+                                    return null;
                                 }));
         dialog.getForm().<String> getFormItem(NAME).addValidationHandler(createUniqueValidation());
         dialog.show();
@@ -423,10 +432,6 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
                 (o, failure) -> {
                     ItemMonitor.stopProgress(id);
                     MessageEvent.fire(eventBus, Message.error(errorMessage, failure));
-                },
-                (o, exception) -> {
-                    ItemMonitor.stopProgress(id);
-                    MessageEvent.fire(eventBus, Message.error(errorMessage, exception.getMessage()));
                 });
     }
 

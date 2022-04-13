@@ -62,7 +62,6 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
-import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.AddressTemplate;
@@ -85,12 +84,12 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Requires;
 
 import com.google.common.collect.Iterables;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
 
 import static elemental2.dom.DomGlobal.document;
 import static java.util.Arrays.asList;
@@ -101,7 +100,31 @@ import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationCha
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.core.runtime.TopologyTasks.serversOfHost;
 import static org.jboss.hal.core.runtime.TopologyTasks.serversOfServerGroup;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.AUTO_START;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DESTROY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.GROUP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.KILL;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LIST_CHANGES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RELOAD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESTART;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESUME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_CONFIG;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDING_DEFAULT_INTERFACE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDING_GROUP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDING_PORT_OFFSET;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.START;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STOP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SUSPEND;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.UPDATE_AUTO_START_WITH_SERVER_STATUS;
 import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.Ids.FORM;
 
@@ -199,7 +222,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                 .showCount()
                 .withFilter()
                 .filterDescription(resources.messages().serverFilterDescription())
-                .onPreview(item -> new ServerPreview(serverActions, item, dispatcher, eventBus, progress,
+                .onPreview(item -> new ServerPreview(serverActions, item, dispatcher, progress,
                         statementContext, placeManager, places, finderPathFactory, resources)));
         this.finder = finder;
         this.dispatcher = dispatcher;
@@ -213,58 +236,40 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
         this.crud = crud;
         this.resources = resources;
 
-        ItemsProvider<Server> itemsProvider = (context, callback) -> {
+        ItemsProvider<Server> itemsProvider = finderContext -> {
             List<Task<FlowContext>> tasks;
-            if (BrowseByColumn.browseByHosts(context)) {
+            if (BrowseByColumn.browseByHosts(finderContext)) {
                 processAddColumnAction(statementContext.selectedHost());
                 tasks = serversOfHost(environment, dispatcher, statementContext.selectedHost());
 
             } else {
                 tasks = serversOfServerGroup(environment, dispatcher, statementContext.selectedServerGroup());
             }
-
-            series(new FlowContext(progress.get()), tasks)
-                    .subscribe(new Outcome<FlowContext>() {
-                        @Override
-                        public void onError(FlowContext context, Throwable error) {
-                            callback.onFailure(error);
+            return series(new FlowContext(progress.get()), tasks)
+                    .then(flowContext -> {
+                        List<Server> servers = flowContext.get(TopologyTasks.SERVERS);
+                        if (servers == null) {
+                            servers = emptyList();
                         }
-
-                        @Override
-                        public void onSuccess(FlowContext context) {
-                            List<Server> servers = context.get(TopologyTasks.SERVERS);
-                            if (servers == null) {
-                                servers = emptyList();
-                            }
-                            callback.onSuccess(servers.stream().sorted(comparing(Server::getName))
-                                    .collect(toList()));
-
-                            // Restore pending servers visualization
-                            servers.stream()
-                                    .filter(serverActions::isPending)
-                                    .forEach(server -> ItemMonitor.startProgress(server.getId()));
-                        }
+                        // Restore pending servers visualization
+                        servers.stream()
+                                .filter(serverActions::isPending)
+                                .forEach(server -> ItemMonitor.startProgress(server.getId()));
+                        return Promise.resolve(servers.stream().sorted(comparing(Server::getName))
+                                .collect(toList()));
                     });
         };
         setItemsProvider(itemsProvider);
 
         // reuse the items provider to filter breadcrumb items
-        setBreadcrumbItemsProvider((context, callback) -> itemsProvider.get(context, new AsyncCallback<List<Server>>() {
-            @Override
-            public void onFailure(Throwable throwable) {
-                callback.onFailure(throwable);
-            }
-
-            @Override
-            public void onSuccess(List<Server> servers) {
-                if (!serverIsLastSegment()) {
-                    // When the server is not the last segment in the finder path, we assume that
-                    // the current path is related to something which requires a running server.
-                    // In that case return only started servers.
-                    callback.onSuccess(servers.stream().filter(Server::isStarted).collect(toList()));
-                } else {
-                    callback.onSuccess(servers);
-                }
+        setBreadcrumbItemsProvider(context -> itemsProvider.items(context).then(servers -> {
+            if (!serverIsLastSegment()) {
+                // When the server is not the last segment in the finder path, we assume that
+                // the current path is related to something which requires a running server.
+                // In that case return only started servers.
+                return Promise.resolve(servers.stream().filter(Server::isStarted).collect(toList()));
+            } else {
+                return Promise.resolve(servers);
             }
         }));
 
@@ -504,8 +509,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
                                                     .resolve(statementContext, serverName);
 
                                             crud.add(serverName, address, payload,
-                                                    resources.messages().addResourceSuccess(Names.SERVER,
-                                                            serverName),
+                                                    resources.messages().addResourceSuccess(Names.SERVER, serverName),
                                                     (name, address1) -> refresh(RESTORE_SELECTION));
                                         });
                                 dialog.getForm().<String> getFormItem(NAME).addValidationHandler(
@@ -523,7 +527,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
     }
 
     private boolean serverIsLastSegment() {
-        FinderSegment segment = Iterables.getLast(finder.getContext().getPath(), null);
+        FinderSegment<?> segment = Iterables.getLast(finder.getContext().getPath(), null);
         return segment != null && Ids.SERVER.equals(segment.getColumnId());
     }
 

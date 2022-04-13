@@ -38,7 +38,16 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
-import static org.jboss.hal.client.configuration.subsystem.batch.AddressTemplates.*;
+import static org.jboss.hal.client.configuration.subsystem.batch.AddressTemplates.BATCH_SUBSYSTEM_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.batch.AddressTemplates.BATCH_SUBSYSTEM_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.batch.AddressTemplates.IN_MEMORY_JOB_REPO_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.batch.AddressTemplates.IN_MEMORY_JOB_REPO_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.batch.AddressTemplates.JDBC_JOB_REPO_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.batch.AddressTemplates.JDBC_JOB_REPO_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.batch.AddressTemplates.THREAD_FACTORY_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.batch.AddressTemplates.THREAD_FACTORY_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.batch.AddressTemplates.THREAD_POOL_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.batch.AddressTemplates.THREAD_POOL_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.BATCH_JBERET;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;

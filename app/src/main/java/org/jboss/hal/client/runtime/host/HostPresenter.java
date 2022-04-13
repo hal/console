@@ -35,7 +35,6 @@ import org.jboss.hal.client.shared.sslwizard.EnableSSLWizard;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.OperationFactory;
-import org.jboss.hal.core.SuccessfulOutcome;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -74,6 +73,7 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
 import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
 
 import static elemental2.dom.DomGlobal.window;
 import static org.jboss.hal.client.runtime.host.AddressTemplates.ELYTRON_TEMPLATE;
@@ -284,25 +284,22 @@ public class HostPresenter
                     .build();
 
             return dispatcher.execute(readDcOp)
-                    .doOnSuccess(value -> flowContext.push(new Host(value)))
-                    .toCompletable();
+                    .then(value -> Promise.resolve(flowContext.push(new Host(value))));
         };
         tasks.add(loadDc);
 
-        series(new FlowContext(progress.get()), tasks).subscribe(
-                new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
-                    @Override
-                    public void onSuccess(FlowContext flowContext) {
-                        Map<String, List<String>> existingResources = new HashMap<>();
-                        flowContext.keys().forEach(key -> existingResources.put(key, flowContext.get(key)));
-                        Host host = flowContext.emptyStack() ? null : flowContext.pop();
+        series(new FlowContext(progress.get()), tasks)
+                .then(flowContext -> {
+                    Map<String, List<String>> existingResources = new HashMap<>();
+                    flowContext.keys().forEach(key -> existingResources.put(key, flowContext.get(key)));
+                    Host host = flowContext.emptyStack() ? null : flowContext.pop();
 
-                        EnableSSLWizard wzd = new EnableSSLWizard.Builder(existingResources, resources, getEventBus(),
-                                statementContext, dispatcher, progress, HostPresenter.this, environment)
-                                        .host(host)
-                                        .build();
-                        wzd.show();
-                    }
+                    EnableSSLWizard wzd = new EnableSSLWizard.Builder(existingResources, resources, getEventBus(),
+                            statementContext, dispatcher, progress, HostPresenter.this, environment)
+                                    .host(host)
+                                    .build();
+                    wzd.show();
+                    return null;
                 });
     }
 
@@ -314,15 +311,15 @@ public class HostPresenter
                     .build();
 
             return dispatcher.execute(keyStoreOp)
-                    .doOnSuccess(result -> {
+                    .then(result -> {
                         List<String> res = result.asList().stream()
                                 .map(ModelNode::asString)
                                 .collect(Collectors.toList());
                         if (!res.isEmpty()) {
                             context.set(resourceName, res);
                         }
-                    })
-                    .toCompletable();
+                        return Promise.resolve(context);
+                    });
         };
     }
 
@@ -354,7 +351,7 @@ public class HostPresenter
                         Operation readHttpInterface = new Operation.Builder(httpAddress, READ_RESOURCE_OPERATION)
                                 .build();
                         return dispatcher.execute(readHttpInterface)
-                                .doOnSuccess(value -> {
+                                .then(value -> {
                                     if (value.hasDefined(PORT)) {
                                         // only domain mode contains "port" attribute
                                         String port = value.get(PORT).asString();
@@ -372,8 +369,8 @@ public class HostPresenter
                                             flowContext.set(PORT, port);
                                         }
                                     }
-                                })
-                                .toCompletable();
+                                    return Promise.resolve(flowContext);
+                                });
 
                     };
                     tasks.add(loadHttpInterface);
@@ -388,8 +385,7 @@ public class HostPresenter
                                 .build();
 
                         return dispatcher.execute(readDcOp)
-                                .doOnSuccess(value -> flowContext.set(HOST, new Host(value)))
-                                .toCompletable();
+                                .then(value -> Promise.resolve(flowContext.set(HOST, new Host(value))));
                     };
                     tasks.add(loadDc);
 
@@ -398,8 +394,7 @@ public class HostPresenter
                         Operation op = new Operation.Builder(httpAddress, UNDEFINE_ATTRIBUTE_OPERATION)
                                 .param(NAME, SECURE_PORT)
                                 .build();
-                        return dispatcher.execute(op)
-                                .toCompletable();
+                        return dispatcher.execute(op).then(__ -> Promise.resolve(flowContext));
                     };
                     tasks.add(undefineSecurePortTask);
                     // as part of the disable ssl task, undefine the ssl-context
@@ -407,39 +402,35 @@ public class HostPresenter
                         Operation op = new Operation.Builder(httpAddress, UNDEFINE_ATTRIBUTE_OPERATION)
                                 .param(NAME, SSL_CONTEXT)
                                 .build();
-                        return dispatcher.execute(op)
-                                .toCompletable();
+                        return dispatcher.execute(op).then(__ -> Promise.resolve(flowContext));
                     };
                     tasks.add(undefineSslContextTask);
 
                     series(new FlowContext(progress.get()), tasks)
-                            .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
-                                @Override
-                                public void onSuccess(FlowContext flowContext) {
-                                    if (reload.getValue() != null && reload.getValue()) {
-                                        String port = flowContext.get(PORT).toString();
-                                        // extracts the url search path, so the reload shows the same view the use is on
-                                        String urlSuffix = window.location.getHref();
-                                        urlSuffix = urlSuffix.substring(urlSuffix.indexOf("//") + 2);
-                                        urlSuffix = urlSuffix.substring(urlSuffix.indexOf("/"));
-                                        // the location to redirect the browser to the unsecure URL
-                                        // TODO Replace hardcoded scheme
-                                        String location = "http://" + window.location.getHostname() + ":" + port + urlSuffix;
-                                        Host host = flowContext.get(HOST);
-                                        reloadServer(host, location);
-                                    } else {
-                                        reloadView();
-                                        MessageEvent.fire(getEventBus(),
-                                                Message.success(resources.messages().disableSSLManagementSuccess()));
-                                    }
-                                }
-
-                                @Override
-                                public void onError(FlowContext context, Throwable throwable) {
+                            .then(flowContext -> {
+                                if (reload.getValue() != null && reload.getValue()) {
+                                    String port = flowContext.get(PORT).toString();
+                                    // extracts the url search path, so the reload shows the same view the use is on
+                                    String urlSuffix = window.location.href;
+                                    urlSuffix = urlSuffix.substring(urlSuffix.indexOf("//") + 2);
+                                    urlSuffix = urlSuffix.substring(urlSuffix.indexOf("/"));
+                                    // the location to redirect the browser to the unsecure URL
+                                    // TODO Replace hardcoded scheme
+                                    String location = "http://" + window.location.hostname + ":" + port + urlSuffix;
+                                    Host host = flowContext.get(HOST);
+                                    reloadServer(host, location);
+                                } else {
+                                    reloadView();
                                     MessageEvent.fire(getEventBus(),
-                                            Message.error(resources.messages()
-                                                    .disableSSLManagementError(throwable.getMessage())));
+                                            Message.success(resources.messages().disableSSLManagementSuccess()));
                                 }
+                                return null;
+                            })
+                            .catch_(error -> {
+                                MessageEvent.fire(getEventBus(),
+                                        Message.error(resources.messages()
+                                                .disableSSLManagementError(String.valueOf(error))));
+                                return null;
                             });
                 })
                 .show();

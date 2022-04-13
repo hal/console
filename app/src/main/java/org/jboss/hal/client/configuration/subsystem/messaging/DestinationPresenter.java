@@ -26,7 +26,6 @@ import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.core.CrudOperations;
-import org.jboss.hal.core.SuccessfulOutcome;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -63,11 +62,36 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
-import rx.Completable;
+import elemental2.promise.Promise;
 
 import static java.util.Arrays.asList;
-import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.ADDRESS_SETTING_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.CORE_QUEUE_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.CORE_QUEUE_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.DIVERT_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.JMS_QUEUE_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.JMS_QUEUE_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.JMS_TOPIC_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.ROLE_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SECURITY_SETTING_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_SERVER_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADDRESS_SETTING;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DIVERT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DURABLE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.FILTER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.JMS_QUEUE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.JMS_TOPIC;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MESSAGING_ACTIVEMQ;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PATTERN;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.QUEUE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ROLE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURITY_SETTING;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SELECTOR;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.flow.Flow.series;
 
@@ -207,23 +231,20 @@ public class DestinationPresenter
             Task<FlowContext> add = context -> {
                 Operation addSecuritySetting = new Operation.Builder(securitySettingAddress, ADD).build();
                 Operation addRole = new Operation.Builder(roleAddress, ADD).payload(model).build();
-
                 int status = context.pop();
                 if (status == 404) {
-                    return dispatcher.execute(new Composite(addSecuritySetting, addRole)).toCompletable();
+                    return dispatcher.execute(new Composite(addSecuritySetting, addRole)).then(__ -> Promise.resolve(context));
                 } else {
-                    return dispatcher.execute(addRole).toCompletable();
+                    return dispatcher.execute(addRole).then(__ -> Promise.resolve(context));
                 }
             };
 
-            series(new FlowContext(progress.get()), check, add)
-                    .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
-                        @Override
-                        public void onSuccess(FlowContext context) {
-                            MessageEvent.fire(getEventBus(), Message.success(resources.messages()
-                                    .addResourceSuccess(Names.SECURITY_SETTING, pattern + "/" + name)));
-                            reload();
-                        }
+            series(new FlowContext(progress.get()), asList(check, add))
+                    .then(__ -> {
+                        MessageEvent.fire(getEventBus(), Message.success(resources.messages()
+                                .addResourceSuccess(Names.SECURITY_SETTING, pattern + "/" + name)));
+                        reload();
+                        return null;
                     });
         }).show();
     }
@@ -278,7 +299,8 @@ public class DestinationPresenter
                                     .append(ROLE + EQUALS + roleName)
                                     .resolve(statementContext);
                             Operation operation = new Operation.Builder(address, REMOVE).build();
-                            return dispatcher.execute(operation).toCompletable();
+                            return dispatcher.execute(operation)
+                                    .then(__ -> Promise.resolve(context));
                         };
 
                         Task<FlowContext> readRemainingRoles = context -> {
@@ -289,8 +311,7 @@ public class DestinationPresenter
                                     .param(CHILD_TYPE, ROLE)
                                     .build();
                             return dispatcher.execute(operation)
-                                    .doOnSuccess(result -> context.push(result.asList()))
-                                    .toCompletable();
+                                    .then(result -> Promise.resolve(context.push(result.asList())));
                         };
 
                         Task<FlowContext> removeSecuritySetting = context -> {
@@ -300,22 +321,19 @@ public class DestinationPresenter
                                         .append(SECURITY_SETTING + EQUALS + securitySetting)
                                         .resolve(statementContext);
                                 Operation operation = new Operation.Builder(address, REMOVE).build();
-                                return dispatcher.execute(operation).toCompletable();
+                                return dispatcher.execute(operation).then(__ -> Promise.resolve(context));
                             } else {
-                                return Completable.complete();
+                                return Promise.resolve(context);
                             }
                         };
 
-                        series(new FlowContext(progress.get()),
-                                removeRole, readRemainingRoles, removeSecuritySetting)
-                                        .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
-                                            @Override
-                                            public void onSuccess(FlowContext context) {
-                                                MessageEvent.fire(getEventBus(), Message.success(resources.messages()
-                                                        .removeResourceSuccess(Names.SECURITY_SETTING, combinedName)));
-                                                reload();
-                                            }
-                                        });
+                        series(new FlowContext(progress.get()), asList(removeRole, readRemainingRoles, removeSecuritySetting))
+                                .then(__ -> {
+                                    MessageEvent.fire(getEventBus(), Message.success(resources.messages()
+                                            .removeResourceSuccess(Names.SECURITY_SETTING, combinedName)));
+                                    reload();
+                                    return null;
+                                });
                     });
 
         } else {

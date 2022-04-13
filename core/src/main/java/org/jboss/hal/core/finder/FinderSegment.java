@@ -21,8 +21,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-
 /** A segment inside a {@link FinderPath}. */
 public class FinderSegment<T> {
 
@@ -54,7 +52,7 @@ public class FinderSegment<T> {
         this.columnTitle = column.getTitle();
         this.column = column;
 
-        FinderRow selectedRow = column.selectedRow();
+        FinderRow<?> selectedRow = column.selectedRow();
         if (selectedRow != null) {
             this.itemId = selectedRow.getId();
             this.itemTitle = selectedRow.getDisplay().getTitle();
@@ -137,30 +135,25 @@ public class FinderSegment<T> {
 
     public void dropdown(FinderContext context, DropdownCallback<T> callback) {
         List<DropdownItem<T>> elements = new ArrayList<>();
-        AsyncCallback<List<T>> asyncCallback = new AsyncCallback<List<T>>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                logger.error("Cannot provide dropdown items for breadcrumb segment '{}': {}", this,
-                        caught.getMessage());
-            }
-
-            @Override
-            public void onSuccess(List<T> result) {
-                collectDropdownElements(elements, result);
-                callback.onItems(elements);
-            }
-        };
 
         // check the different ways to provide breadcrumb items in this order
         if (column.getBreadcrumbItemsProvider() != null) {
-            column.getBreadcrumbItemsProvider().get(context, asyncCallback);
+            column.getBreadcrumbItemsProvider().items(context).then(items -> {
+                collectDropdownElements(elements, items);
+                callback.onItems(elements);
+                return null;
+            });
 
         } else if (column.getInitialItems() != null && !column.getInitialItems().isEmpty()) {
             collectDropdownElements(elements, column.getInitialItems());
             callback.onItems(elements);
 
         } else if (column.getItemsProvider() != null) {
-            column.getItemsProvider().get(context, asyncCallback);
+            column.getItemsProvider().items(context).then(items -> {
+                collectDropdownElements(elements, items);
+                callback.onItems(elements);
+                return null;
+            });
         }
     }
 

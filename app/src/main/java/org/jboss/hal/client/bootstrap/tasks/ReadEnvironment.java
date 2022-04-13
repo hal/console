@@ -29,33 +29,51 @@ import org.jboss.hal.config.keycloak.Keycloak;
 import org.jboss.hal.config.keycloak.KeycloakHolder;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.Composite;
-import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.ManagementModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rx.Completable;
+import elemental2.promise.Promise;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES_ONLY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CORE_SERVICE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DOMAIN_ORGANIZATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LAUNCH_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ORGANIZATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PATCHING;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PRODUCT_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PRODUCT_VERSION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RELEASE_CODENAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RELEASE_VERSION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VERBOSE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.WHOAMI;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 
 /**
  * Reads important information from the root resource like product name and version, operation mode and management version.
  * Executes the {@code :whoami} operation to get the current user / roles.
  */
-public class ReadEnvironment implements BootstrapTask {
+public final class ReadEnvironment implements Task<FlowContext> {
 
     private static final Logger logger = LoggerFactory.getLogger(ReadEnvironment.class);
 
     private final Dispatcher dispatcher;
     private final Environment environment;
     private final User user;
-    private KeycloakHolder keycloakHolder;
+    private final KeycloakHolder keycloakHolder;
 
     @Inject
     public ReadEnvironment(Dispatcher dispatcher, Environment environment, User user, KeycloakHolder keycloakHolder) {
@@ -66,7 +84,7 @@ public class ReadEnvironment implements BootstrapTask {
     }
 
     @Override
-    public Completable call(FlowContext context) {
+    public Promise<FlowContext> apply(final FlowContext context) {
         logger.debug("Read environment");
 
         Keycloak keycloak = keycloakHolder.getKeycloak();
@@ -87,11 +105,11 @@ public class ReadEnvironment implements BootstrapTask {
                 .build());
 
         return dispatcher.execute(new Composite(ops))
-                .doOnSuccess((CompositeResult result) -> {
+                .then(result -> {
                     ModelNode node = result.step(0).get(RESULT);
 
                     // operation mode
-                    OperationMode operationMode = asEnumValue(node, LAUNCH_TYPE, (name) -> OperationMode.valueOf(name),
+                    OperationMode operationMode = asEnumValue(node, LAUNCH_TYPE, OperationMode::valueOf,
                             OperationMode.UNDEFINED);
                     environment.setOperationMode(operationMode);
                     logger.debug("Operation mode: {}", operationMode);
@@ -121,7 +139,7 @@ public class ReadEnvironment implements BootstrapTask {
                     }
 
                     // user info
-                    if (environment.isSingleSignOn()) {
+                    if (environment.isSingleSignOn() && keycloak != null) {
                         user.setName(keycloak.userProfile.username);
                         // as Keycloak is a native js object, the Java 8 collection methods as: stream, foreach, iterator
                         // are not supported on the javascript side when run in the browser.
@@ -148,7 +166,7 @@ public class ReadEnvironment implements BootstrapTask {
 
                     ModelNode step = result.step(2).get(RESULT);
                     environment.setPatchingEnabled(!environment.isStandalone() || step.get(PATCHING).isDefined());
-                })
-                .toCompletable();
+                    return Promise.resolve(context);
+                });
     }
 }

@@ -21,7 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.dmr.Deprecation;
 import org.jboss.hal.resources.Ids;
 
@@ -29,8 +29,8 @@ import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 import elemental2.dom.HTMLLabelElement;
 
-import static org.jboss.gwt.elemento.core.Elements.div;
-import static org.jboss.gwt.elemento.core.Elements.label;
+import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.label;
 import static org.jboss.hal.ballroom.form.Decoration.*;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.resources.CSS.*;

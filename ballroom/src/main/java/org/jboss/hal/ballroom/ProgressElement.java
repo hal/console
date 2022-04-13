@@ -15,8 +15,8 @@
  */
 package org.jboss.hal.ballroom;
 
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.elemento.Elements;
+import org.jboss.elemento.IsElement;
 import org.jboss.hal.flow.Progress;
 
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -26,8 +26,8 @@ import elemental2.dom.HTMLElement;
 import static elemental2.dom.DomGlobal.setTimeout;
 import static java.lang.Math.min;
 import static java.lang.Math.round;
-import static org.jboss.gwt.elemento.core.Elements.div;
-import static org.jboss.gwt.elemento.core.Elements.span;
+import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.span;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.UIConstants.MEDIUM_TIMEOUT;
 import static org.jboss.hal.resources.UIConstants.ROLE;

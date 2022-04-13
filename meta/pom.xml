@@ -77,10 +77,6 @@
             <artifactId>gin</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.intendia.gwt.rxgwt</groupId>
-            <artifactId>rxgwt</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>

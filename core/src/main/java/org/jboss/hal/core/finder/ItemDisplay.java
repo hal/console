@@ -18,7 +18,7 @@ package org.jboss.hal.core.finder;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.elemento.IsElement;
 import org.jboss.hal.ballroom.HasTitle;
 import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.resources.CSS;
@@ -26,8 +26,8 @@ import org.jboss.hal.resources.Ids;
 
 import elemental2.dom.HTMLElement;
 
-import static org.jboss.gwt.elemento.core.Elements.small;
-import static org.jboss.gwt.elemento.core.Elements.span;
+import static org.jboss.elemento.Elements.small;
+import static org.jboss.elemento.Elements.span;
 import static org.jboss.hal.resources.CSS.itemText;
 
 /**
@@ -35,7 +35,7 @@ import static org.jboss.hal.resources.CSS.itemText;
  * the default implementations if you need more control over the display and behaviour of the item.
  */
 @FunctionalInterface
-public interface ItemDisplay<T> extends IsElement, HasTitle {
+public interface ItemDisplay<T> extends IsElement<HTMLElement>, HasTitle {
 
     /**
      * An unique id for this item.
@@ -108,11 +108,6 @@ public interface ItemDisplay<T> extends IsElement, HasTitle {
     /**
      * Factory methods which can be used when overriding {@link #element()}. Creates a {@code <div>} element with two nested
      * {@code <span>} elements. One for the title and a smaller one for the subtitle.
-     *
-     * @param title
-     * @param subtitle
-     *
-     * @return
      */
     static HTMLElement withSubtitle(String title, String subtitle) {
         return span().css(itemText)

@@ -39,7 +39,7 @@ import static com.google.common.base.Strings.nullToEmpty;
  * itemId}</li>
  * </ol>
  */
-public class FinderPath implements Iterable<FinderSegment> {
+public class FinderPath implements Iterable<FinderSegment<?>> {
 
     /** Separator used in URL tokens. Must be securely encodable in URLs. */
     static final String SEPARATOR = "!";
@@ -47,15 +47,16 @@ public class FinderPath implements Iterable<FinderSegment> {
     // ------------------------------------------------------ static methods
 
     public static FinderPath from(String path) {
-        List<FinderSegment> segments = new ArrayList<>();
+        List<FinderSegment<?>> segments = new ArrayList<>();
 
         if (nullToEmpty(path).trim().length() != 0) {
+            // noinspection UnstableApiUsage
             Map<String, String> parts = Splitter
                     .on(FinderPath.SEPARATOR)
                     .withKeyValueSeparator(FinderSegment.SEPARATOR)
                     .split(path);
             for (Map.Entry<String, String> entry : parts.entrySet()) {
-                segments.add(new FinderSegment(entry.getKey(), entry.getValue()));
+                segments.add(new FinderSegment<>(entry.getKey(), entry.getValue()));
             }
         }
 
@@ -64,13 +65,13 @@ public class FinderPath implements Iterable<FinderSegment> {
 
     // ------------------------------------------------------ instance section
 
-    private final List<FinderSegment> segments;
+    private final List<FinderSegment<?>> segments;
 
     public FinderPath() {
         this(Collections.emptyList());
     }
 
-    public FinderPath(List<FinderSegment> segments) {
+    public FinderPath(List<FinderSegment<?>> segments) {
         this.segments = new ArrayList<>();
         this.segments.addAll(segments);
     }
@@ -80,18 +81,18 @@ public class FinderPath implements Iterable<FinderSegment> {
     }
 
     public FinderPath append(String columnId, String itemId, String columnTitle, String itemTitle) {
-        segments.add(new FinderSegment(columnId, itemId, columnTitle, itemTitle));
+        segments.add(new FinderSegment<>(columnId, itemId, columnTitle, itemTitle));
         return this;
     }
 
     public <T> FinderPath append(FinderColumn<T> finderColumn) {
-        FinderSegment<T> segment = new FinderSegment<>(finderColumn);
+        FinderSegment<T> segment = new FinderSegment<T>(finderColumn);
         segments.add(segment);
         return this;
     }
 
     @Override
-    public Iterator<FinderSegment> iterator() {
+    public Iterator<FinderSegment<?>> iterator() {
         return segments.iterator();
     }
 
@@ -108,31 +109,31 @@ public class FinderPath implements Iterable<FinderSegment> {
     }
 
     public FinderPath copy() {
-        List<FinderSegment> copy = new ArrayList<>();
-        for (FinderSegment segment : this) {
+        List<FinderSegment<?>> copy = new ArrayList<>();
+        for (FinderSegment<?> segment : this) {
             copy.add(segment.copy());
         }
         return new FinderPath(copy);
     }
 
-    public FinderSegment findColumn(String columnId) {
+    public FinderSegment<?> findColumn(String columnId) {
         return findSegment(segment -> segment.getColumnId().equals(columnId));
     }
 
-    public FinderSegment findColumn(Predicate<String> condition) {
+    public FinderSegment<?> findColumn(Predicate<String> condition) {
         return findSegment(segment -> condition.test(segment.getColumnId()));
     }
 
-    public FinderSegment findItem(String itemId) {
+    public FinderSegment<?> findItem(String itemId) {
         return findSegment(segment -> segment.getItemId().equals(itemId));
     }
 
-    public FinderSegment findItem(Predicate<String> condition) {
+    public FinderSegment<?> findItem(Predicate<String> condition) {
         return findSegment(segment -> condition.test(segment.getItemId()));
     }
 
-    private FinderSegment findSegment(Predicate<FinderSegment> condition) {
-        for (FinderSegment segment : this) {
+    private FinderSegment<?> findSegment(Predicate<FinderSegment<?>> condition) {
+        for (FinderSegment<?> segment : this) {
             if (condition.test(segment)) {
                 return segment;
             }

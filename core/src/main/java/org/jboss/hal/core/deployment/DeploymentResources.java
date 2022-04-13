@@ -32,8 +32,15 @@ import org.jboss.hal.meta.StatementContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import elemental2.promise.Promise;
+
 import static java.util.Collections.emptyList;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADDRESS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBSYSTEM;
 
 /** Provides methods to read subsystem resources from (sub)deployments. */
 public class DeploymentResources {
@@ -91,6 +98,47 @@ public class DeploymentResources {
                 (operation, failure) -> {
                     logger.error("Unable to read {}/{} deployment resources: {}", subsystem, resource, failure);
                     callback.accept(emptyList());
+                });
+    }
+
+    public <T extends DeploymentResource> Promise<List<T>> readChildren(String subsystem, String resource,
+            DeploymentResourceSupplier<T> supplier) {
+        // /deployment=*/subsystem=<subsystem>:read-children-resources(child-type=<resource>)
+        // fails with "WFLYCTL0217: Child resource '\"deployment\" => \"*\"' not found"
+        // That's why we use: /deployment=*/subsystem=<subsystem>/<resource>=*:read-resource()
+
+        ResourceAddress deploymentAddress = DEPLOYMENT_TEMPLATE
+                .append(SUBSYSTEM + "=" + subsystem)
+                .append(resource + "=*")
+                .resolve(statementContext);
+        Operation deploymentJobOperation = new Operation.Builder(deploymentAddress, READ_RESOURCE_OPERATION)
+                .param(INCLUDE_RUNTIME, true)
+                .param(RECURSIVE, true)
+                .build();
+
+        ResourceAddress subdeploymentAddress = SUBDEPLOYMENT_TEMPLATE
+                .append(SUBSYSTEM + "=" + subsystem)
+                .append(resource + "=*")
+                .resolve(statementContext);
+        Operation subdeploymentJobOperation = new Operation.Builder(subdeploymentAddress, READ_RESOURCE_OPERATION)
+                .param(INCLUDE_RUNTIME, true)
+                .param(RECURSIVE, true)
+                .build();
+
+        return dispatcher.execute(new Composite(deploymentJobOperation, subdeploymentJobOperation))
+                .then(result -> {
+                    List<T> nodes = new ArrayList<>();
+                    Consumer<ModelNode> nodeConsumer = node -> {
+                        ResourceAddress address = new ResourceAddress(node.get(ADDRESS));
+                        nodes.add(supplier.get(address, node.get(RESULT)));
+                    };
+                    result.step(0).get(RESULT).asList().forEach(nodeConsumer);
+                    result.step(1).get(RESULT).asList().forEach(nodeConsumer);
+                    return Promise.resolve(nodes);
+                })
+                .catch_(error -> {
+                    logger.error("Unable to read {}/{} deployment resources: {}", subsystem, resource, error);
+                    return Promise.resolve(emptyList());
                 });
     }
 }

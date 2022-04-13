@@ -67,7 +67,13 @@ import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTem
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.datasource.JdbcDriverTasks.jdbcDriverProperties;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CONNECTION_PROPERTIES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DATASOURCES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.XA_DATASOURCE_PROPERTIES;
 import static org.jboss.hal.flow.Flow.series;
 
 /** Presenter which is used for both XA and normal data sources. */
@@ -77,13 +83,13 @@ public class DataSourcePresenter
 
     static final String XA_PARAM = "xa";
 
-    private Dispatcher dispatcher;
+    private final Dispatcher dispatcher;
     private final CrudOperations crud;
-    private Environment environment;
-    private OperationFactory operationFactory;
+    private final Environment environment;
+    private final OperationFactory operationFactory;
     private final FinderPathFactory finderPathFactory;
-    private Resources resources;
-    private Provider<Progress> progress;
+    private final Resources resources;
+    private final Provider<Progress> progress;
     private final MetadataRegistry metadataRegistry;
     private final StatementContext statementContext;
     private String name;
@@ -125,7 +131,7 @@ public class DataSourcePresenter
     public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
         name = request.getParameter(NAME, null);
-        xa = Boolean.valueOf(request.getParameter(XA_PARAM, String.valueOf(false)));
+        xa = Boolean.parseBoolean(request.getParameter(XA_PARAM, String.valueOf(false)));
     }
 
     @Override
@@ -192,8 +198,8 @@ public class DataSourcePresenter
             Consumer<List<String>> callback) {
         List<Task<FlowContext>> tasks = jdbcDriverProperties(environment, dispatcher, statementContext, driverName,
                 resources);
-
-        series(new FlowContext(progress.get()), tasks).subscribe(new JdbcDriverOutcome(dsClassname, isXa, callback));
+        series(new FlowContext(progress.get()), tasks)
+                .then(context -> new JdbcDriverOutcome(dsClassname, isXa, callback).onInvoke(context));
     }
 
     void resetDataSource(Form<DataSource> form) {

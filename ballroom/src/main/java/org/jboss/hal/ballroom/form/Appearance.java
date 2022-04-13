@@ -17,16 +17,16 @@ package org.jboss.hal.ballroom.form;
 
 import javax.annotation.Nullable;
 
-import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.elemento.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 
 import com.google.gwt.user.client.ui.Focusable;
 
 import elemental2.dom.HTMLElement;
 
-import static org.jboss.gwt.elemento.core.Elements.div;
-import static org.jboss.gwt.elemento.core.Elements.i;
-import static org.jboss.gwt.elemento.core.Elements.span;
+import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.i;
+import static org.jboss.elemento.Elements.span;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.helpBlock;
 import static org.jboss.hal.resources.CSS.inputGroup;

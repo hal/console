@@ -43,8 +43,8 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 
 import elemental2.dom.HTMLElement;
 
-import static org.jboss.gwt.elemento.core.Elements.h;
-import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.elemento.Elements.h;
+import static org.jboss.elemento.Elements.p;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
 

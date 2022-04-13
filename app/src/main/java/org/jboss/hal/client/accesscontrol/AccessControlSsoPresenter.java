@@ -22,7 +22,6 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.core.SuccessfulOutcome;
 import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.TopLevelPresenter;
@@ -38,32 +37,37 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
-import org.jboss.hal.spi.Message;
-import org.jboss.hal.spi.MessageEvent;
 
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import elemental2.promise.Promise;
+
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADDRESS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.AUTH_SERVER_URL;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.KEYCLOAK_SERVER_URL;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REALM;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REALM_PUBLIC_KEY;
 import static org.jboss.hal.flow.Flow.series;
 
 public class AccessControlSsoPresenter
         extends TopLevelPresenter<AccessControlSsoPresenter.MyView, AccessControlSsoPresenter.MyProxy> {
 
     // keycloak subsystem for http-management works only in standalone mode
-    private static String KEYCLOAK_REALM_ADDRESS = "/subsystem=keycloak/realm=*";
+    private static final String KEYCLOAK_REALM_ADDRESS = "/subsystem=keycloak/realm=*";
     // the wildfly-console is the default name for the http management interface
-    private static String KEYCLOAK_SECURE_SERVER_ADDRESS = "/subsystem=keycloak/secure-server=wildfly-console";
-    private static AddressTemplate KEYCLOAK_REALM_TEMPLATE = AddressTemplate.of(KEYCLOAK_REALM_ADDRESS);
-    private static AddressTemplate KEYCLOAK_SECURE_SERVER_TEMPLATE = AddressTemplate.of(KEYCLOAK_SECURE_SERVER_ADDRESS);
+    private static final String KEYCLOAK_SECURE_SERVER_ADDRESS = "/subsystem=keycloak/secure-server=wildfly-console";
+    private static final AddressTemplate KEYCLOAK_REALM_TEMPLATE = AddressTemplate.of(KEYCLOAK_REALM_ADDRESS);
+    private static final AddressTemplate KEYCLOAK_SECURE_SERVER_TEMPLATE = AddressTemplate.of(KEYCLOAK_SECURE_SERVER_ADDRESS);
 
-    private Dispatcher dispatcher;
-    private StatementContext statementContext;
+    private final Dispatcher dispatcher;
+    private final StatementContext statementContext;
     private final Resources resources;
-    private Provider<Progress> progress;
-    private Environment environment;
+    private final Provider<Progress> progress;
+    private final Environment environment;
 
     @Inject
     public AccessControlSsoPresenter(EventBus eventBus, MyView view, MyProxy myProxy, Dispatcher dispatcher,
@@ -94,12 +98,9 @@ public class AccessControlSsoPresenter
             flowContext.set(ADDRESS, address.toString());
 
             return dispatcher.execute(op)
-                    .doOnSuccess(response -> {
-                        flowContext.set(REALM, response.get(REALM).asString());
-                    })
-                    .doOnError(ex -> MessageEvent.fire(getEventBus(), Message.error(
-                            resources.messages().failedReadKeycloak(address.toString(), ex.getMessage()))))
-                    .toCompletable();
+                    .then(response -> Promise.resolve(flowContext.set(REALM, response.get(REALM).asString())))
+                    .catch_(error -> Promise.resolve(flowContext.failure(
+                            resources.messages().failedReadKeycloak(address.toString(), String.valueOf(error)))));
         });
 
         tasks.add(flowContext -> {
@@ -109,33 +110,27 @@ public class AccessControlSsoPresenter
             flowContext.set(ADDRESS, address.toString());
 
             return dispatcher.execute(op)
-                    .doOnSuccess(response -> {
+                    .then(response -> {
                         flowContext.set(KEYCLOAK_SERVER_URL, response.get(AUTH_SERVER_URL).asString());
                         flowContext.set(REALM_PUBLIC_KEY, response.get(REALM_PUBLIC_KEY).asString());
+                        return Promise.resolve(flowContext);
                     })
-                    .doOnError(ex -> MessageEvent.fire(getEventBus(), Message.error(
-                            resources.messages().failedReadKeycloak(address.toString(), ex.getMessage()))))
-                    .toCompletable();
+                    .catch_(error -> Promise.resolve(flowContext.failure(
+                            resources.messages().failedReadKeycloak(address.toString(), String.valueOf(error)))));
         });
 
-        series(new FlowContext(progress.get()), tasks)
-                .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
-                    @Override
-                    public void onSuccess(FlowContext flowContext) {
-                        ModelNode payload = new ModelNode();
-                        payload.get(REALM).set(flowContext.<String> get(REALM));
-                        payload.get(REALM_PUBLIC_KEY).set(flowContext.<String> get(REALM_PUBLIC_KEY));
-                        payload.get(KEYCLOAK_SERVER_URL).set(flowContext.<String> get(KEYCLOAK_SERVER_URL));
-                        getView().update(payload);
-                    }
-
-                    @Override
-                    public void onError(FlowContext context, Throwable throwable) {
-                        String address = context.get(ADDRESS);
-                        MessageEvent.fire(getEventBus(), Message.error(
-                                resources.messages().failedReadKeycloak(address, throwable.getMessage())));
-                    }
-                });
+        series(new FlowContext(progress.get()), tasks).then(flowContext -> {
+            if (flowContext.hasFailure()) {
+                flowContext.showFailure(getEventBus());
+            } else {
+                ModelNode payload = new ModelNode();
+                payload.get(REALM).set(flowContext.<String> get(REALM));
+                payload.get(REALM_PUBLIC_KEY).set(flowContext.<String> get(REALM_PUBLIC_KEY));
+                payload.get(KEYCLOAK_SERVER_URL).set(flowContext.<String> get(KEYCLOAK_SERVER_URL));
+                getView().update(payload);
+            }
+            return null;
+        });
     }
 
     public Environment getEnvironment() {

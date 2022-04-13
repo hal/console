@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.client.deployment;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.config.Environment;
@@ -39,10 +39,23 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental2.dom.HTMLElement;
 
 import static java.util.Arrays.asList;
-import static org.jboss.gwt.elemento.core.Elements.*;
-import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.elemento.Elements.a;
+import static org.jboss.elemento.Elements.bag;
+import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.h;
+import static org.jboss.elemento.Elements.li;
+import static org.jboss.elemento.Elements.p;
+import static org.jboss.elemento.Elements.span;
+import static org.jboss.elemento.Elements.ul;
+import static org.jboss.elemento.EventType.click;
 import static org.jboss.hal.client.deployment.ServerGroupDeploymentColumn.SERVER_GROUP_DEPLOYMENT_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CONTENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.EXPLODED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MANAGED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PATH;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNTIME_NAME;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeBoolean;
 import static org.jboss.hal.resources.CSS.clickable;
 import static org.jboss.hal.resources.CSS.marginLeft5;
@@ -79,7 +92,7 @@ class ContentPreview extends PreviewContent<Content> {
         attributes = new PreviewAttributes<>(content, asList(NAME, RUNTIME_NAME));
         attributes.append(model -> {
             String label = String.join(", ", labelBuilder.label(MANAGED), labelBuilder.label(EXPLODED));
-            Iterable<HTMLElement> elements = collect()
+            Iterable<HTMLElement> elements = bag()
                     .add(span()
                             .title(labelBuilder.label(MANAGED))
                             .css(flag(failSafeBoolean(model, MANAGED)), marginRight5))

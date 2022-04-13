@@ -16,6 +16,7 @@
 package org.jboss.hal.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +48,7 @@ import org.jboss.hal.spi.MessageEvent;
 import com.google.common.collect.Sets;
 import com.google.web.bindery.event.shared.EventBus;
 
-import rx.Completable;
+import elemental2.promise.Promise;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
@@ -233,28 +234,26 @@ public class PropertiesOperations {
             Composite operations, String psr, Map<String, String> properties, Callback callback) {
 
         // TODO Check if the steps can be replaced with a composite operation
-        series(new FlowContext(progress.get()),
-                context -> operations.isEmpty()
-                        ? Completable.complete()
-                        : dispatcher.execute(operations).toCompletable(),
-                new ReadProperties(dispatcher, address, psr),
-                new MergeProperties(dispatcher, address, psr, properties))
-                        .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
-                            @Override
-                            public void onSuccess(FlowContext context) {
-                                if (name == null) {
-                                    MessageEvent.fire(eventBus,
-                                            Message.success(resources.messages().modifySingleResourceSuccess(type)));
-                                } else {
-                                    MessageEvent.fire(eventBus,
-                                            Message.success(resources.messages().modifyResourceSuccess(type, name)));
-                                }
-                                callback.execute();
-                            }
-                        });
+        Task<FlowContext> task = context -> operations.isEmpty()
+                ? Promise.resolve(context)
+                : dispatcher.execute(operations).then(result -> Promise.resolve(context));
+        List<Task<FlowContext>> tasks = Arrays.asList(task, new ReadProperties(dispatcher, address, psr),
+                new MergeProperties(dispatcher, address, psr, properties));
+        series(new FlowContext(progress.get()), tasks)
+                .then(c -> {
+                    if (name == null) {
+                        MessageEvent.fire(eventBus,
+                                Message.success(resources.messages().modifySingleResourceSuccess(type)));
+                    } else {
+                        MessageEvent.fire(eventBus,
+                                Message.success(resources.messages().modifyResourceSuccess(type, name)));
+                    }
+                    callback.execute();
+                    return null;
+                });
     }
 
-    private static class ReadProperties implements Task<FlowContext> {
+    private static final class ReadProperties implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final ResourceAddress address;
@@ -267,20 +266,19 @@ public class PropertiesOperations {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Promise<FlowContext> apply(final FlowContext context) {
             Operation operation = new Operation.Builder(address, READ_CHILDREN_NAMES_OPERATION)
                     .param(CHILD_TYPE, psr)
                     .build();
             return dispatcher.execute(operation)
-                    .doOnSuccess(result -> context.push(result.asList().stream()
+                    .then(result -> Promise.resolve(context.push(result.asList().stream()
                             .map(ModelNode::asString)
-                            .collect(Collectors.toSet())))
-                    .doOnError(failure -> context.push(Collections.emptySet()))
-                    .toCompletable();
+                            .collect(Collectors.toSet()))))
+                    .catch_(error -> Promise.resolve(context.push(Collections.emptySet())));
         }
     }
 
-    private static class MergeProperties implements Task<FlowContext> {
+    private static final class MergeProperties implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
         private final ResourceAddress address;
@@ -296,7 +294,7 @@ public class PropertiesOperations {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Promise<FlowContext> apply(final FlowContext context) {
             Set<String> existingProperties = context.pop();
             Set<String> add = Sets.difference(properties.keySet(), existingProperties).immutableCopy();
             Set<String> modify = Sets.intersection(properties.keySet(), existingProperties).immutableCopy();
@@ -331,8 +329,8 @@ public class PropertiesOperations {
 
             Composite composite = new Composite(operations);
             return composite.isEmpty()
-                    ? Completable.complete()
-                    : dispatcher.execute(new Composite(operations)).toCompletable();
+                    ? Promise.resolve(context)
+                    : dispatcher.execute(new Composite(operations)).then(result -> Promise.resolve(context));
         }
     }
 }

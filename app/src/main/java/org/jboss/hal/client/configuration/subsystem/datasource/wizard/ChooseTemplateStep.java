@@ -17,7 +17,7 @@ package org.jboss.hal.client.configuration.subsystem.datasource.wizard;
 
 import java.util.List;
 
-import org.jboss.gwt.elemento.core.InputType;
+import org.jboss.elemento.InputType;
 import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplate;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplates;
@@ -30,8 +30,8 @@ import elemental2.dom.HTMLInputElement;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
-import static org.jboss.gwt.elemento.core.Elements.*;
-import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.elemento.Elements.*;
+import static org.jboss.elemento.EventType.click;
 
 class ChooseTemplateStep extends WizardStep<Context, State> {
 

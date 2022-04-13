@@ -46,7 +46,6 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
-import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
@@ -63,9 +62,10 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+
+import elemental2.promise.Promise;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
@@ -74,7 +74,16 @@ import static org.jboss.hal.client.runtime.host.AddressTemplates.HOST_CONNECTION
 import static org.jboss.hal.client.runtime.managementoperations.ManagementOperationsPresenter.MANAGEMENT_OPERATIONS_ADDRESS;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.core.runtime.TopologyTasks.hosts;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CORE_SERVICE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST_CONNECTION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MANAGEMENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PRUNE_DISCONNECTED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PRUNE_EXPIRED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RELOAD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SHUTDOWN;
 import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.meta.AddressTemplate.OPTIONAL;
 import static org.jboss.hal.resources.CSS.pfIcon;
@@ -141,41 +150,21 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                 .build());
         addColumnActions(Ids.HOST_PRUNE_ACTIONS, pfIcon("remove"), resources.constants().prune(), pruneActions);
 
-        ItemsProvider<Host> itemsProvider = (context, callback) -> series(new FlowContext(progress.get()),
-                hosts(environment, dispatcher))
-                        .subscribe(new Outcome<FlowContext>() {
-                            @Override
-                            public void onError(FlowContext context, Throwable error) {
-                                callback.onFailure(error);
-                            }
-
-                            @Override
-                            public void onSuccess(FlowContext context) {
-                                List<Host> hosts = context.get(TopologyTasks.HOSTS);
-                                callback.onSuccess(hosts);
-
-                                // Restore pending visualization
-                                hosts.stream()
-                                        .filter(hostActions::isPending)
-                                        .forEach(host -> ItemMonitor.startProgress(Ids.host(host.getAddressName())));
-                            }
-                        });
+        ItemsProvider<Host> itemsProvider = finderContext -> series(new FlowContext(progress.get()),
+                hosts(environment, dispatcher)).then(flowContext -> {
+                    List<Host> hosts = flowContext.get(TopologyTasks.HOSTS);
+                    // Restore pending visualization
+                    hosts.stream()
+                            .filter(hostActions::isPending)
+                            .forEach(host -> ItemMonitor.startProgress(Ids.host(host.getAddressName())));
+                    return Promise.resolve(hosts);
+                });
         setItemsProvider(itemsProvider);
 
-        setBreadcrumbItemsProvider((context, callback) -> itemsProvider.get(context, new AsyncCallback<List<Host>>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                callback.onFailure(caught);
-            }
-
-            @Override
-            public void onSuccess(List<Host> result) {
-                // only connected hosts which are not booting please!
-                callback.onSuccess(result.stream()
+        setBreadcrumbItemsProvider(context -> itemsProvider.items(context)
+                .then(result -> Promise.resolve(result.stream()
                         .filter(Host::isAlive)
-                        .collect(toList()));
-            }
-        }));
+                        .collect(toList()))));
 
         setItemRenderer(item -> new HostDisplay(item, hostActions, resources) {
             @Override

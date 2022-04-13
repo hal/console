@@ -56,8 +56,36 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
 import static java.util.Arrays.asList;
-import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.ADD_PREFIX_ROLE_MAPPER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.ADD_SUFFIX_ROLE_MAPPER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.AGGREGATE_EVIDENCE_DECODER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.AGGREGATE_PRINCIPAL_DECODER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.AGGREGATE_ROLE_MAPPER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.CONCATENATING_PRINCIPAL_DECODER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.CONSTANT_PERMISSION_MAPPER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.CONSTANT_PRINCIPAL_DECODER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.CONSTANT_ROLE_MAPPER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.CUSTOM_EVIDENCE_DECODER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.CUSTOM_PERMISSION_MAPPER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.CUSTOM_PRINCIPAL_DECODER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.CUSTOM_ROLE_DECODER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.CUSTOM_ROLE_MAPPER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.ELYTRON_SUBSYSTEM_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.LOGICAL_PERMISSION_MAPPER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.LOGICAL_ROLE_MAPPER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.MAPPED_ROLE_MAPPER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.MAPPED_ROLE_MAPPER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.SIMPLE_PERMISSION_MAPPER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.SIMPLE_PERMISSION_MAPPER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.SIMPLE_ROLE_DECODER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.X500_ATTRIBUTE_PRINCIPAL_DECODER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.X500_SUBJECT_EVIDENCE_DECODER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.X509_SUBJECT_ALT_NAME_EVIDENCE_DECODER_ADDRESS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MAPPED_ROLE_MAPPER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PERMISSIONS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PERMISSION_MAPPINGS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ROLE_MAP;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
 public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter.MyView, MapperDecoderPresenter.MyProxy>
@@ -68,8 +96,8 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
     private final StatementContext statementContext;
     private final Dispatcher dispatcher;
     private final Resources resources;
-    private ComplexAttributeOperations ca;
-    private MetadataRegistry metadataRegistry;
+    private final ComplexAttributeOperations ca;
+    private final MetadataRegistry metadataRegistry;
 
     @Inject
     public MapperDecoderPresenter(EventBus eventBus,

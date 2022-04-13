@@ -21,18 +21,23 @@ import java.util.List;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.runtime.TopologyTasks;
 import org.jboss.hal.core.runtime.host.Host;
-import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Progress;
 import org.jboss.hal.flow.Task;
 
-import rx.Completable;
-import rx.Single;
+import elemental2.promise.Promise;
 
 import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CORE_SERVICE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CORE_SERVICE_PATCHING;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PATCHING;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
+import static org.jboss.hal.flow.Flow.series;
 
 final class PatchTasks {
 
@@ -52,7 +57,7 @@ final class PatchTasks {
         return tasks;
     }
 
-    private static class Patches implements Task<FlowContext> {
+    private static final class Patches implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
 
@@ -61,12 +66,11 @@ final class PatchTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
-            Completable completable = Completable.complete();
+        public Promise<FlowContext> apply(final FlowContext context) {
             List<Host> hosts = context.get(TopologyTasks.HOSTS);
 
             if (hosts != null && !hosts.isEmpty()) {
-                List<Completable> completables = hosts.stream()
+                List<Task<FlowContext>> tasks = hosts.stream()
                         .filter(host -> host.isAlive() && !host.isStarting() && host.isRunning()) // alive is not enough here!
                         .map(host -> {
                             ResourceAddress address = host.getAddress().add(CORE_SERVICE, PATCHING);
@@ -74,15 +78,17 @@ final class PatchTasks {
                                     .param(INCLUDE_RUNTIME, true)
                                     .param(RECURSIVE, true)
                                     .build();
-                            return dispatcher.execute(operation)
-                                    .doOnSuccess(result -> host.get(CORE_SERVICE_PATCHING).set(result))
-                                    .onErrorResumeNext(error -> Single.just(new ModelNode()))
-                                    .toCompletable();
+                            return (Task<FlowContext>) c -> dispatcher.execute(operation)
+                                    .then(result -> {
+                                        host.get(CORE_SERVICE_PATCHING).set(result);
+                                        return Promise.resolve(c);
+                                    });
                         })
                         .collect(toList());
-                completable = Completable.concat(completables);
+                return series(new FlowContext(Progress.NOOP), tasks).then(Promise::resolve);
+            } else {
+                return Promise.resolve(context);
             }
-            return completable;
         }
     }
 

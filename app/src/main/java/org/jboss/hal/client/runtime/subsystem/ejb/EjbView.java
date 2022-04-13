@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.Form;
@@ -42,8 +42,8 @@ import org.jboss.hal.resources.Ids;
 
 import elemental2.dom.HTMLElement;
 
-import static org.jboss.gwt.elemento.core.Elements.h;
-import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.elemento.Elements.h;
+import static org.jboss.elemento.Elements.p;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.client.runtime.subsystem.ejb.AddressTemplates.ejbDeploymentTemplate;

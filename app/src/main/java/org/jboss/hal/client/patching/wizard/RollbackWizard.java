@@ -26,7 +26,6 @@ import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
-import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.Metadata;
@@ -35,12 +34,20 @@ import org.jboss.hal.resources.Messages;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Callback;
 
-import rx.Completable;
+import elemental2.promise.Promise;
 
+import static java.util.Collections.singletonList;
 import static org.jboss.hal.client.patching.PatchesColumn.PATCHING_TEMPLATE;
 import static org.jboss.hal.client.patching.wizard.PatchState.CHECK_SERVERS;
 import static org.jboss.hal.client.patching.wizard.PatchState.ROLLBACK;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.OVERRIDE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.OVERRIDE_ALL;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.OVERRIDE_MODULE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PATCH_ID;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PRESERVE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESET_CONFIGURATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ROLLBACK_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ROLLBACK_TO;
 import static org.jboss.hal.flow.Flow.series;
 
 public class RollbackWizard extends PatchWizard {
@@ -100,22 +107,20 @@ public class RollbackWizard extends PatchWizard {
                         wzd.showProgress(resources.constants().rollbackInProgress(), messages.rollbackInProgress(name));
 
                         series(new FlowContext(progress.get()),
-                                new RollbackTask(statementContext, dispatcher, serverActions, context))
-                                        .subscribe(new Outcome<FlowContext>() {
-                                            @Override
-                                            public void onError(FlowContext context, Throwable error) {
-                                                wzd.showError(resources.constants().rollbackError(),
-                                                        messages.rollbackError(error.getMessage()),
-                                                        error.getMessage());
-                                            }
-
-                                            @Override
-                                            public void onSuccess(FlowContext context) {
-                                                callback.execute();
-                                                wzd.showSuccess(
-                                                        resources.constants().rollbackSuccessful(),
-                                                        messages.rollbackSucessful(name));
-                                            }
+                                singletonList(new RollbackTask(statementContext, dispatcher, serverActions, context)))
+                                        .then(__ -> {
+                                            callback.execute();
+                                            wzd.showSuccess(
+                                                    resources.constants().rollbackSuccessful(),
+                                                    messages.rollbackSucessful(name));
+                                            return null;
+                                        })
+                                        .catch_(error -> {
+                                            String message = String.valueOf(error);
+                                            wzd.showError(resources.constants().rollbackError(),
+                                                    messages.rollbackError(message),
+                                                    message);
+                                            return null;
                                         });
                     });
             Wizard<PatchContext, PatchState> wizard = wb.build();
@@ -123,12 +128,12 @@ public class RollbackWizard extends PatchWizard {
         });
     }
 
-    static class RollbackTask implements Task<FlowContext> {
+    static final class RollbackTask implements Task<FlowContext> {
 
         private final Dispatcher dispatcher;
-        private StatementContext statementContext;
-        private ServerActions serverActions;
-        private PatchContext patchContext;
+        private final StatementContext statementContext;
+        private final ServerActions serverActions;
+        private final PatchContext patchContext;
 
         RollbackTask(StatementContext statementContext, Dispatcher dispatcher,
                 ServerActions serverActions, PatchContext patchContext) {
@@ -140,8 +145,7 @@ public class RollbackWizard extends PatchWizard {
         }
 
         @Override
-        public Completable call(FlowContext context) {
-
+        public Promise<FlowContext> apply(final FlowContext context) {
             if (patchContext.restartServers) {
                 for (Property serverProp : patchContext.servers) {
                     Server server = new Server(statementContext.selectedHost(), serverProp);
@@ -165,7 +169,7 @@ public class RollbackWizard extends PatchWizard {
             }
             Operation operation = opBuilder.build();
 
-            return dispatcher.execute(operation).toCompletable();
+            return dispatcher.execute(operation).then(__ -> Promise.resolve(context));
         }
     }
 }

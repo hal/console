@@ -18,7 +18,7 @@ package org.jboss.hal.client.runtime.managementoperations;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
+import org.jboss.elemento.HtmlContentBuilder;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.listview.ItemAction;
 import org.jboss.hal.ballroom.listview.ItemDisplay;
@@ -31,12 +31,19 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 
 import elemental2.dom.HTMLElement;
 
-import static org.jboss.gwt.elemento.core.Elements.collect;
-import static org.jboss.gwt.elemento.core.Elements.div;
-import static org.jboss.gwt.elemento.core.Elements.p;
-import static org.jboss.gwt.elemento.core.Elements.span;
+import static org.jboss.elemento.Elements.bag;
+import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.p;
+import static org.jboss.elemento.Elements.span;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CANCEL_OPERATION;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.errorCircleO;
+import static org.jboss.hal.resources.CSS.halConfChangesAdditionalInfo;
+import static org.jboss.hal.resources.CSS.listHalIconBig;
+import static org.jboss.hal.resources.CSS.listHalIconError;
+import static org.jboss.hal.resources.CSS.listHalIconSuccess;
+import static org.jboss.hal.resources.CSS.ok;
+import static org.jboss.hal.resources.CSS.pfIcon;
+import static org.jboss.hal.resources.CSS.textRight;
 import static org.jboss.hal.resources.Ids.ACTIVE_OPERATION;
 
 class ManagementOperationsDisplay implements ItemDisplay<ManagementOperations> {
@@ -100,7 +107,7 @@ class ManagementOperationsDisplay implements ItemDisplay<ManagementOperations> {
     @SuppressWarnings("HardCodedStringLiteral")
     public Iterable<HTMLElement> getAdditionalInfoElements() {
         Messages messages = resources.messages();
-        return collect()
+        return bag()
                 .add(div().css(halConfChangesAdditionalInfo)
                         .add(p().css(textRight).innerHtml(new SafeHtmlBuilder()
                                 .append(messages.accessMechanismLabel(operation.getAccessMechanism()))

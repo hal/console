@@ -52,20 +52,52 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
 import static java.util.Arrays.asList;
-import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.CONNECTION_FACTORY_REMOTE_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.CONNECTOR_REMOTE_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.CONNECTOR_REMOTE_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.EXTERNAL_JMS_QUEUE_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.EXTERNAL_JMS_TOPIC_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.HTTP_CONNECTOR_REMOTE_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.HTTP_CONNECTOR_REMOTE_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.IN_VM_CONNECTOR_REMOTE_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.IN_VM_CONNECTOR_REMOTE_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.JGROUPS_DISCOVERY_GROUP_REMOTE_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.JGROUPS_DISCOVERY_GROUP_REMOTE_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.MESSAGING_SUBSYSTEM_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.POOLED_CONNECTION_FACTORY_REMOTE_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.POOLED_CONNECTION_FACTORY_REMOTE_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.REMOTE_CONNECTOR_REMOTE_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.REMOTE_CONNECTOR_REMOTE_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SOCKET_DISCOVERY_GROUP_REMOTE_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SOCKET_DISCOVERY_GROUP_REMOTE_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CONNECTION_FACTORY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CONNECTOR;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CONNECTORS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DISCOVERY_GROUP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ENTRIES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.EXTERNAL_JMS_QUEUE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.EXTERNAL_JMS_TOPIC;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HTTP_CONNECTOR;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.IN_VM_CONNECTOR;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.JGROUPS_DISCOVERY_GROUP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MESSAGING_ACTIVEMQ;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.POOLED_CONNECTION_FACTORY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOTE_CONNECTOR;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDING;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_DISCOVERY_GROUP;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
 public class RemoteActiveMQPresenter
         extends MbuiPresenter<RemoteActiveMQPresenter.MyView, RemoteActiveMQPresenter.MyProxy>
         implements SupportsExpertMode {
 
-    private MetadataRegistry metadataRegistry;
+    private final MetadataRegistry metadataRegistry;
     private final Dispatcher dispatcher;
-    private CrudOperations crud;
-    private FinderPathFactory finderPathFactory;
+    private final CrudOperations crud;
+    private final FinderPathFactory finderPathFactory;
+    private final Resources resources;
     protected final StatementContext statementContext;
-    private Resources resources;
 
     @Inject
     public RemoteActiveMQPresenter(

@@ -40,7 +40,6 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
-import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.Metadata;
@@ -58,14 +57,22 @@ import org.jboss.hal.spi.Requires;
 import com.google.web.bindery.event.shared.EventBus;
 
 import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
 
-import static org.jboss.gwt.elemento.core.Elements.span;
+import static org.jboss.elemento.Elements.span;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.JDBC_DRIVER_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.JDBC_DRIVER_TEMPLATE;
 import static org.jboss.hal.core.datasource.JdbcDriver.Provider.DEPLOYMENT;
 import static org.jboss.hal.core.datasource.JdbcDriver.Provider.MODULE;
 import static org.jboss.hal.core.datasource.JdbcDriver.Provider.UNKNOWN;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_CLASS_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_DATASOURCE_CLASS_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_MODULE_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_XA_DATASOURCE_CLASS_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MODULE_SLOT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE_NAME;
 import static org.jboss.hal.dmr.ModelNodeHelper.properties;
 import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.CSS.fontAwesome;
@@ -89,26 +96,15 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
 
         super(new FinderColumn.Builder<JdbcDriver>(finder, Ids.JDBC_DRIVER, Names.JDBC_DRIVER)
 
-                .itemsProvider((context, callback) -> {
+                .itemsProvider(finderContext -> {
                     List<Task<FlowContext>> tasks = new ArrayList<>();
                     tasks.add(new JdbcDriverTasks.ReadConfiguration(crud));
                     tasks.addAll(TopologyTasks.runningServers(environment, dispatcher,
                             properties(PROFILE_NAME, statementContext.selectedProfile())));
                     tasks.add(new JdbcDriverTasks.ReadRuntime(environment, dispatcher));
                     tasks.add(new JdbcDriverTasks.CombineDriverResults());
-
-                    series(new FlowContext(progress.get()), tasks)
-                            .subscribe(new Outcome<FlowContext>() {
-                                @Override
-                                public void onError(FlowContext context, Throwable error) {
-                                    callback.onFailure(error);
-                                }
-
-                                @Override
-                                public void onSuccess(FlowContext context) {
-                                    callback.onSuccess(context.get(JdbcDriverTasks.DRIVERS));
-                                }
-                            });
+                    return series(new FlowContext(progress.get()), tasks)
+                            .then(flowContext -> Promise.resolve(flowContext.<List<JdbcDriver>> get(JdbcDriverTasks.DRIVERS)));
                 })
                 .withFilter()
                 .filterDescription(resources.messages().jdbcDriverColumnFilterDescription()));

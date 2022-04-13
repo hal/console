@@ -17,7 +17,7 @@ package org.jboss.hal.client.runtime.subsystem.batch;
 
 import java.util.Map;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.ballroom.chart.Donut;
@@ -34,9 +34,13 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.groupingBy;
-import static org.jboss.gwt.elemento.core.Elements.a;
-import static org.jboss.gwt.elemento.core.Elements.setVisible;
-import static org.jboss.hal.client.runtime.subsystem.batch.ExecutionNode.BatchStatus.*;
+import static org.jboss.elemento.Elements.a;
+import static org.jboss.elemento.Elements.setVisible;
+import static org.jboss.hal.client.runtime.subsystem.batch.ExecutionNode.BatchStatus.ABANDONED;
+import static org.jboss.hal.client.runtime.subsystem.batch.ExecutionNode.BatchStatus.COMPLETED;
+import static org.jboss.hal.client.runtime.subsystem.batch.ExecutionNode.BatchStatus.FAILED;
+import static org.jboss.hal.client.runtime.subsystem.batch.ExecutionNode.BatchStatus.STARTED;
+import static org.jboss.hal.client.runtime.subsystem.batch.ExecutionNode.BatchStatus.STOPPED;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INSTANCE_COUNT;
 

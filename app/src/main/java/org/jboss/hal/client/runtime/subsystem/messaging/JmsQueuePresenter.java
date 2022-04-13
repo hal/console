@@ -22,13 +22,12 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.client.runtime.subsystem.messaging.Destination.Type;
-import org.jboss.hal.core.SuccessfulOutcome;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -64,13 +63,40 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
-import rx.Completable;
+import elemental2.promise.Promise;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_CORE_QUEUE_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_CORE_QUEUE_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_DEPLOYMENT_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_SERVER_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_SUBDEPLOYMENT_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHANGE_MESSAGES_PRIORITY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHANGE_MESSAGE_PRIORITY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.COUNT_MESSAGES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.EXPIRE_MESSAGE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.EXPIRE_MESSAGES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.FILTER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.JMS_MESSAGE_ID;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.JMS_PRIORITY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LIST_MESSAGES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MESSAGE_ID;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MESSAGING_ACTIVEMQ;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MOVE_MESSAGE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MOVE_MESSAGES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NEW_PRIORITY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.OTHER_QUEUE_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REJECT_DUPLICATES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE_MESSAGE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE_MESSAGES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SEND_MESSAGES_TO_DEAD_LETTER_ADDRESS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SEND_MESSAGE_TO_DEAD_LETTER_ADDRESS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBDEPLOYMENT;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeBoolean;
 import static org.jboss.hal.flow.Flow.series;
 
@@ -149,36 +175,33 @@ public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresen
             Task<FlowContext> count = context -> {
                 Operation operation = new Operation.Builder(address, COUNT_MESSAGES).build();
                 return dispatcher.execute(operation)
-                        .doOnSuccess(result -> context.set(MESSAGES_COUNT, result.asLong()))
-                        .toCompletable();
+                        .then(result -> Promise.resolve(context.set(MESSAGES_COUNT, result.asLong())));
             };
             Task<FlowContext> list = context -> {
                 long messages = context.get(MESSAGES_COUNT);
                 if (messages > MESSAGES_THRESHOLD) {
                     context.set(MESSAGES, emptyList());
-                    return Completable.complete();
+                    return Promise.resolve(context);
                 } else {
                     Operation operation = new Operation.Builder(address, LIST_MESSAGES).build();
                     return dispatcher.execute(operation)
-                            .doOnSuccess(result -> context.set(MESSAGES,
-                                    result.asList().stream().map(JmsMessage::new).collect(toList())))
-                            .toCompletable();
+                            .then(result -> Promise.resolve(context.set(MESSAGES,
+                                    result.asList().stream().map(JmsMessage::new).collect(toList()))));
                 }
             };
-            series(new FlowContext(progress.get()), count, list)
-                    .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
-                        @Override
-                        public void onSuccess(FlowContext context) {
-                            long count = context.get(MESSAGES_COUNT);
-                            List<JmsMessage> messages = context.get(MESSAGES);
-                            if (count > MESSAGES_THRESHOLD) {
-                                logger.debug("More than {} messages in queue {}. Skip :list-messages operation.",
-                                        MESSAGES_THRESHOLD, queueAddress());
-                                getView().showMany(count);
-                            } else {
-                                getView().showAll(messages);
-                            }
+            List<Task<FlowContext>> tasks = asList(count, list);
+            series(new FlowContext(progress.get()), tasks)
+                    .then(context -> {
+                        long c = context.get(MESSAGES_COUNT);
+                        List<JmsMessage> messages = context.get(MESSAGES);
+                        if (c > MESSAGES_THRESHOLD) {
+                            logger.debug("More than {} messages in queue {}. Skip :list-messages operation.",
+                                    MESSAGES_THRESHOLD, queueAddress());
+                            getView().showMany(c);
+                        } else {
+                            getView().showAll(messages);
                         }
+                        return null;
                     });
         }
     }

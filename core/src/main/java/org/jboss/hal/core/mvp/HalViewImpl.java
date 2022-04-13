@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.elemento.IsElement;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.PatternFly;
@@ -32,10 +32,10 @@ import com.gwtplatform.mvp.client.ViewImpl;
 
 import elemental2.dom.HTMLElement;
 
-import static org.jboss.gwt.elemento.core.Elements.code;
-import static org.jboss.gwt.elemento.core.Elements.div;
-import static org.jboss.gwt.elemento.core.Elements.p;
-import static org.jboss.gwt.elemento.core.Elements.span;
+import static org.jboss.elemento.Elements.code;
+import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.p;
+import static org.jboss.elemento.Elements.span;
 import static org.jboss.hal.resources.CSS.marginTopLarge;
 
 /**

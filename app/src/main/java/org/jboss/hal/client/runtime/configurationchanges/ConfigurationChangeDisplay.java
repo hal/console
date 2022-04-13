@@ -18,7 +18,7 @@ package org.jboss.hal.client.runtime.configurationchanges;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
+import org.jboss.elemento.HtmlContentBuilder;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.listview.ItemAction;
 import org.jboss.hal.ballroom.listview.ItemDisplay;
@@ -33,11 +33,24 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLPreElement;
 
-import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.elemento.Elements.bag;
+import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.p;
+import static org.jboss.elemento.Elements.pre;
+import static org.jboss.elemento.Elements.span;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.OPERATION_HEADERS;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.errorCircleO;
+import static org.jboss.hal.resources.CSS.formControlStatic;
+import static org.jboss.hal.resources.CSS.halConfChangesAdditionalInfo;
+import static org.jboss.hal.resources.CSS.listHalIconBig;
+import static org.jboss.hal.resources.CSS.listHalIconError;
+import static org.jboss.hal.resources.CSS.listHalIconSuccess;
+import static org.jboss.hal.resources.CSS.ok;
+import static org.jboss.hal.resources.CSS.pfIcon;
+import static org.jboss.hal.resources.CSS.textRight;
+import static org.jboss.hal.resources.CSS.wrap;
 import static org.jboss.hal.resources.Ids.CONFIGURATION_CHANGES;
 
 class ConfigurationChangeDisplay implements ItemDisplay<ConfigurationChange> {
@@ -110,7 +123,7 @@ class ConfigurationChangeDisplay implements ItemDisplay<ConfigurationChange> {
     @Override
     @SuppressWarnings("HardCodedStringLiteral")
     public Iterable<HTMLElement> getAdditionalInfoElements() {
-        return collect()
+        return bag()
                 .add(div().css(halConfChangesAdditionalInfo)
                         .add(p().css(textRight).innerHtml(new SafeHtmlBuilder()
                                 .appendEscaped(resources.constants().accessMechanism() + COLON)

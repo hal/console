@@ -18,7 +18,7 @@ package org.jboss.hal.client.runtime.subsystem.webservice;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.ballroom.chart.Donut;
@@ -42,20 +42,34 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
-import static org.jboss.gwt.elemento.core.Elements.a;
-import static org.jboss.gwt.elemento.core.Elements.h;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.elemento.Elements.a;
+import static org.jboss.elemento.Elements.h;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.AVERAGE_PROCESSING_TIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CLASS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CONTEXT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ENDPOINT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.FAULT_COUNT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MAX_PROCESSING_TIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MIN_PROCESSING_TIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUEST_COUNT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESPONSE_COUNT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TOTAL_PROCESSING_TIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.WSDL_URL;
 import static org.jboss.hal.resources.Strings.abbreviateFqClassName;
 
 class EndpointPreview extends PreviewContent<DeploymentResource> {
 
-    private Dispatcher dispatcher;
-    private PreviewAttributes<DeploymentResource> previewAttributes;
-    private PreviewAttributes<DeploymentResource> totalProcessingTimeAttribute;
-    private PreviewAttributes<DeploymentResource> responseAttribute;
-    private GroupedBar processingTime;
-    private Donut requests;
-    private LabelBuilder lblBuilder = new LabelBuilder();
+    private final Dispatcher dispatcher;
+    private final PreviewAttributes<DeploymentResource> previewAttributes;
+    private final PreviewAttributes<DeploymentResource> totalProcessingTimeAttribute;
+    private final PreviewAttributes<DeploymentResource> responseAttribute;
+    private final GroupedBar processingTime;
+    private final Donut requests;
+    private final LabelBuilder lblBuilder = new LabelBuilder();
 
     EndpointPreview(FinderPathFactory finderPathFactory, Places places,
             DeploymentResource deploymentResource, Dispatcher dispatcher, Resources resources) {

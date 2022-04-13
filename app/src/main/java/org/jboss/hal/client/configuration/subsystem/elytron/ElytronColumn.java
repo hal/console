@@ -34,6 +34,8 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 
+import elemental2.promise.Promise;
+
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
@@ -51,9 +53,10 @@ public class ElytronColumn
             Places places,
             Resources resources) {
 
+        // noinspection Convert2MethodRef
         super(new Builder<StaticItem>(finder, Ids.ELYTRON, resources.constants().settings())
-                .itemRenderer(StaticItemColumn.StaticItemDisplay::new)
-                .onPreview(StaticItem::getPreviewContent)
+                .itemRenderer(item -> new StaticItemColumn.StaticItemDisplay(item))
+                .onPreview(staticItem -> staticItem.getPreviewContent())
                 .useFirstActionAsBreadcrumbHandler()
                 .withFilter());
 
@@ -100,9 +103,9 @@ public class ElytronColumn
                         .keywords("realm")
                         .build());
 
-        setItemsProvider((context, callback) -> callback.onSuccess(itemsSupplier.get()));
-        setBreadcrumbItemsProvider(
-                (context, callback) -> callback.onSuccess(
-                        itemsSupplier.get().stream().filter(item -> item.getNextColumn() == null).collect(toList())));
+        setItemsProvider(context -> Promise.resolve(itemsSupplier.get()));
+        setBreadcrumbItemsProvider(context -> Promise.resolve(itemsSupplier.get().stream()
+                .filter(item -> item.getNextColumn() == null)
+                .collect(toList())));
     }
 }

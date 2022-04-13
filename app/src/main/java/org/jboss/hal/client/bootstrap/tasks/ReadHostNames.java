@@ -25,8 +25,9 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Task;
 
-import rx.Completable;
+import elemental2.promise.Promise;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
@@ -34,7 +35,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
 
 /** Reads the domain controller. Only executed in domain mode. Depends on {@link ReadEnvironment}. */
-public class ReadHostNames implements BootstrapTask {
+public final class ReadHostNames implements Task<FlowContext> {
 
     static final String HOST_NAMES = "bootstrap.hostNames";
 
@@ -48,21 +49,21 @@ public class ReadHostNames implements BootstrapTask {
     }
 
     @Override
-    public Completable call(FlowContext context) {
+    public Promise<FlowContext> apply(final FlowContext context) {
         if (environment.isStandalone()) {
-            return Completable.complete();
+            return Promise.resolve(context);
         } else {
             Operation operation = new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_NAMES_OPERATION)
                     .param(CHILD_TYPE, HOST)
                     .build();
             return dispatcher.execute(operation)
-                    .doOnSuccess(result -> {
+                    .then(result -> {
                         List<String> hosts = result.asList().stream()
                                 .map(ModelNode::asString)
                                 .collect(toList());
                         context.set(HOST_NAMES, hosts);
-                    })
-                    .toCompletable();
+                        return Promise.resolve(context);
+                    });
         }
     }
 }

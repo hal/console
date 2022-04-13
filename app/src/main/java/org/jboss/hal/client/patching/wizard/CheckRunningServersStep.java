@@ -18,7 +18,7 @@ package org.jboss.hal.client.patching.wizard;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.gwt.elemento.core.InputType;
+import org.jboss.elemento.InputType;
 import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.resources.Ids;
@@ -30,8 +30,8 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 
 import elemental2.dom.HTMLElement;
 
-import static org.jboss.gwt.elemento.core.Elements.*;
-import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.elemento.Elements.*;
+import static org.jboss.elemento.EventType.click;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PATCHING;
 import static org.jboss.hal.resources.CSS.formHorizontal;

@@ -16,6 +16,7 @@
 package org.jboss.hal.client.runtime.subsystem.undertow;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,7 +24,6 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import org.jboss.hal.ballroom.dialog.DialogFactory;
-import org.jboss.hal.core.SuccessfulOutcome;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -32,7 +32,6 @@ import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.Composite;
-import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
@@ -58,7 +57,7 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
-import rx.Completable;
+import elemental2.promise.Promise;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_DEPLOYMENT_ADDRESS;
@@ -160,7 +159,7 @@ public class DeploymentPresenter
                 .build();
         Operation listSessionsOp = new Operation.Builder(address, LIST_SESSIONS).build();
         Task<FlowContext> task1 = context -> dispatcher.execute(new Composite(readResourceOp, listSessionsOp))
-                .doOnSuccess((CompositeResult result) -> {
+                .then(result -> {
                     ModelNode readResourceResult = result.step(0).get(RESULT);
                     List<NamedNode> servlets = asNamedNodes(failSafePropertyList(readResourceResult, SERVLET));
                     List<NamedNode> websockets = asNamedNodes(failSafePropertyList(readResourceResult, WEBSOCKET));
@@ -174,15 +173,15 @@ public class DeploymentPresenter
                     context.set(SERVLETS, servlets);
                     context.set(WEBSOCKETS, websockets);
                     context.set(SESSION_IDS, sessionIds);
-                })
-                .toCompletable();
+                    return Promise.resolve(context);
+                });
 
         // task 2: read session creation and last access times
         Task<FlowContext> task2 = context -> {
             List<String> sessionIds = context.get(SESSION_IDS);
             if (sessionIds.isEmpty()) {
                 context.set(SESSIONS, Collections.emptyList());
-                return Completable.complete();
+                return Promise.resolve(context);
             } else {
                 List<Operation> operations = new ArrayList<>();
                 for (String id : sessionIds) {
@@ -194,7 +193,7 @@ public class DeploymentPresenter
                             .build());
                 }
                 return dispatcher.execute(new Composite(operations))
-                        .doOnSuccess((CompositeResult result) -> {
+                        .then(result -> {
                             int i = 0;
                             List<Session> sessions = new ArrayList<>();
                             for (String sessionId : sessionIds) {
@@ -210,23 +209,21 @@ public class DeploymentPresenter
                                 sessions.add(new Session(sessionId, modelNode));
                             }
                             context.set(SESSIONS, sessions);
-                        })
-                        .toCompletable();
+                            return Promise.resolve(context);
+                        });
             }
         };
 
-        series(new FlowContext(progress.get()), task1, task2)
-                .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
-                    @Override
-                    public void onSuccess(FlowContext context) {
-                        List<Session> sessions = context.get(SESSIONS);
-                        List<NamedNode> servlets = context.get(SERVLETS);
-                        List<NamedNode> websockets = context.get(WEBSOCKETS);
+        series(new FlowContext(progress.get()), Arrays.asList(task1, task2))
+                .then(context -> {
+                    List<Session> sessions = context.get(SESSIONS);
+                    List<NamedNode> servlets = context.get(SERVLETS);
+                    List<NamedNode> websockets = context.get(WEBSOCKETS);
 
-                        getView().updateSessions(sessions);
-                        getView().updateServlets(servlets);
-                        getView().updateWebsockets(websockets);
-                    }
+                    getView().updateSessions(sessions);
+                    getView().updateServlets(servlets);
+                    getView().updateWebsockets(websockets);
+                    return null;
                 });
     }
 

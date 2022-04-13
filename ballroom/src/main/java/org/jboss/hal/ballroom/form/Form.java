@@ -17,7 +17,7 @@ package org.jboss.hal.ballroom.form;
 
 import java.util.Map;
 
-import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.elemento.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.spi.Callback;
 

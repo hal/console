@@ -32,8 +32,9 @@ import org.slf4j.LoggerFactory;
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import elemental2.promise.Promise;
+
 /** Registry for finder columns. Manages both sync and async columns behind a split point. */
-@SuppressWarnings("rawtypes")
 public class ColumnRegistry {
 
     private static final Logger logger = LoggerFactory.getLogger(ColumnRegistry.class);
@@ -44,9 +45,9 @@ public class ColumnRegistry {
     // Do not use columns directly instead use providers to ensure late initialization. Background: Some columns use
     // Environment.isStandalone() in their constructors. If they were referenced by instance this flag would not yet
     // be initialized.
-    private final Map<String, Provider<?>> columns;
-    private final Map<String, AsyncProvider> asyncColumns;
-    private final Map<String, FinderColumn> resolvedColumns;
+    private final Map<String, Provider<? extends FinderColumn<?>>> columns;
+    private final Map<String, AsyncProvider<? extends FinderColumn<?>>> asyncColumns;
+    private final Map<String, FinderColumn<?>> resolvedColumns;
 
     @Inject
     public ColumnRegistry(MetadataProcessor metadataProcessor, RequiredResources requiredResources,
@@ -63,93 +64,73 @@ public class ColumnRegistry {
         columns.put(id, column);
     }
 
-    public void registerColumn(String id, AsyncProvider column) {
+    public <C extends FinderColumn<T>, T> void registerColumn(String id, AsyncProvider<C> column) {
         asyncColumns.put(id, column);
     }
 
-    void lookup(String id, LookupCallback callback) {
+    <C extends FinderColumn<T>, T> Promise<C> lookup(String id) {
         Set<String> resources = requiredResources.getResources(id);
         if (resolvedColumns.containsKey(id)) {
             if (resources.stream().anyMatch(r -> r.contains("{selected."))) {
-                // resources dependent on selected.host/server are processed for the current selection only
-                // if the column is already resolved resources need to be processed for the new selection
-                logger.debug("Column '{}' has the following required resources attached to it: {}", id, resources);
-                metadataProcessor.process(id, progress.get(), createAsyncCallback(id, callback, false));
+                // Column depends on a selection (e.g. selected.host/server). These columns are processed for the
+                // current selection only. If the column is already resolved, the resources need to be processed for
+                // the new selection
+                logger.debug("Column '{}' has depends on selection: {}", id, resources);
+                metadataProcessor.process(id, progress.get());
             }
-            callback.found(resolvedColumns.get(id));
+            // noinspection unchecked
+            return Promise.resolve((C) resolvedColumns.get(id));
         } else {
             logger.debug("Try to lookup column '{}'", id);
             if (!resources.isEmpty()) {
-                // first of all process the required resources attached to this column
+                // process the required resources attached to this column
                 logger.debug("Column '{}' has the following required resources attached to it: {}", id, resources);
-                metadataProcessor.process(id, progress.get(), createAsyncCallback(id, callback, true));
+                return metadataProcessor.process(id, progress.get()).then(v -> lookupInternal(id));
             } else {
                 logger.debug("No required resources attached to column '{}'", id);
-                lookupInternal(id, callback);
+                return lookupInternal(id);
             }
         }
     }
 
     @SuppressWarnings("unchecked")
-    private void lookupInternal(String id, LookupCallback callback) {
+    private <C extends FinderColumn<T>, T> Promise<C> lookupInternal(String id) {
         if (columns.containsKey(id)) {
             // this is a regular column: we're ready to go
-            FinderColumn column = (FinderColumn) columns.get(id).get();
+            Provider<C> provider = (Provider<C>) columns.get(id);
+            C column = provider.get();
             resolve(id, column);
-            callback.found(column);
+            return Promise.resolve(column);
 
         } else if (asyncColumns.containsKey(id)) {
             // the column sits behind a split point: load it asynchronously
             logger.debug("Load async column '{}'", id);
-            AsyncProvider<FinderColumn> asyncProvider = asyncColumns.get(id);
-            asyncProvider.get(new AsyncCallback<FinderColumn>() {
-                @Override
-                public void onFailure(final Throwable throwable) {
-                    callback.error("Unable to load column '" + id + "': " + throwable.getMessage()); // NON-NLS
-                }
+            AsyncProvider<C> asyncProvider = (AsyncProvider<C>) asyncColumns.get(id);
+            return new Promise<>((resolve, reject) -> {
+                asyncProvider.get(new AsyncCallback<C>() {
+                    @Override
+                    public void onFailure(final Throwable throwable) {
+                        reject.onInvoke("Unable to load column '" + id + "': " + throwable.getMessage());
+                    }
 
-                @Override
-                public void onSuccess(final FinderColumn column) {
-                    resolve(id, column);
-                    callback.found(column);
-                }
+                    @Override
+                    public void onSuccess(final C column) {
+                        resolve(id, column);
+                        resolve.onInvoke(column);
+                    }
+                });
             });
 
         } else {
-            // noinspection HardCodedStringLiteral
-            callback.error("Unknown column '" + id + "'. Please make sure to register all columns, before using them.");
+            throw new RuntimeException(
+                    "Unknown column '" + id + "'. Please make sure to register all columns, before using them.");
         }
     }
 
-    private void resolve(String id, FinderColumn column) {
+    private <C extends FinderColumn<T>, T> void resolve(String id, C column) {
         logger.info("Successfully resolved column '{}'", id);
         columns.remove(id);
         asyncColumns.remove(id);
         resolvedColumns.put(id, column);
-    }
-
-    private AsyncCallback<Void> createAsyncCallback(String id, LookupCallback callback, boolean lookUpOnSuccess) {
-        return new AsyncCallback<Void>() {
-            @Override
-            public void onFailure(final Throwable throwable) {
-                // noinspection HardCodedStringLiteral
-                callback.error("Unable to load required resources for column '" + id +
-                        ((throwable != null) ? "': " + throwable.getMessage() : "'"));
-            }
-
-            @Override
-            public void onSuccess(final Void aVoid) {
-                if (lookUpOnSuccess) {
-                    lookupInternal(id, callback);
-                }
-            }
-        };
-    }
-
-    interface LookupCallback {
-
-        void found(FinderColumn column);
-
-        void error(String failure);
     }
 }

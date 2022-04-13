@@ -19,7 +19,7 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.core.deployment.Deployment;
 import org.jboss.hal.core.deployment.ServerGroupDeployment;

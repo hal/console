@@ -18,7 +18,7 @@ package org.jboss.hal.ballroom.table;
 import java.util.List;
 import java.util.function.Function;
 
-import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.elemento.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.form.Form;
 

@@ -36,6 +36,8 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Requires;
 
+import elemental2.promise.Promise;
+
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INET_ADDRESS;
@@ -56,8 +58,8 @@ public class InterfaceColumn extends FinderColumn<NamedNode> {
             CrudOperations crud) {
 
         super(new Builder<NamedNode>(finder, Ids.INTERFACE, Names.INTERFACE)
-                .itemsProvider((context, callback) -> crud.readChildren(ResourceAddress.root(), INTERFACE,
-                        result -> callback.onSuccess(asNamedNodes(result))))
+                .itemsProvider(context -> crud.readChildren(ResourceAddress.root(), INTERFACE)
+                        .then(result -> Promise.resolve(asNamedNodes(result))))
                 .useFirstActionAsBreadcrumbHandler()
                 .onPreview(item -> new InterfacePreview(item, dispatcher, places)));
 

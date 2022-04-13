@@ -17,9 +17,9 @@ package org.jboss.hal.core.finder;
 
 import java.util.List;
 
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
+import org.jboss.elemento.Elements;
+import org.jboss.elemento.HtmlContentBuilder;
+import org.jboss.elemento.IsElement;
 import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.meta.security.AuthorisationDecision;
 import org.jboss.hal.meta.security.ElementGuard;
@@ -37,12 +37,34 @@ import elemental2.dom.HTMLLIElement;
 import elemental2.dom.HTMLUListElement;
 
 import static java.util.stream.Collectors.toList;
-import static org.jboss.gwt.elemento.core.Elements.*;
-import static org.jboss.gwt.elemento.core.EventType.bind;
-import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.elemento.Elements.a;
+import static org.jboss.elemento.Elements.button;
+import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.li;
+import static org.jboss.elemento.Elements.span;
+import static org.jboss.elemento.Elements.ul;
+import static org.jboss.elemento.EventType.bind;
+import static org.jboss.elemento.EventType.click;
 import static org.jboss.hal.core.finder.Finder.DATA_BREADCRUMB;
 import static org.jboss.hal.core.finder.Finder.DATA_FILTER;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.active;
+import static org.jboss.hal.resources.CSS.btn;
+import static org.jboss.hal.resources.CSS.btnFinder;
+import static org.jboss.hal.resources.CSS.btnGroup;
+import static org.jboss.hal.resources.CSS.caret;
+import static org.jboss.hal.resources.CSS.clickable;
+import static org.jboss.hal.resources.CSS.divider;
+import static org.jboss.hal.resources.CSS.dropdownMenu;
+import static org.jboss.hal.resources.CSS.dropdownToggle;
+import static org.jboss.hal.resources.CSS.finderItem;
+import static org.jboss.hal.resources.CSS.folder;
+import static org.jboss.hal.resources.CSS.fontAwesome;
+import static org.jboss.hal.resources.CSS.itemIcon;
+import static org.jboss.hal.resources.CSS.itemText;
+import static org.jboss.hal.resources.CSS.pfIcon;
+import static org.jboss.hal.resources.CSS.pullRight;
+import static org.jboss.hal.resources.CSS.srOnly;
+import static org.jboss.hal.resources.CSS.unpinned;
 import static org.jboss.hal.resources.Names.NOT_AVAILABLE;
 import static org.jboss.hal.resources.UIConstants.HASH;
 import static org.jboss.hal.resources.UIConstants.data;
@@ -253,7 +275,7 @@ class FinderRow<T> implements IsElement<HTMLLIElement> {
         finder.updateContext();
         finder.updateHistory();
         if (nextColumn != null) {
-            finder.appendColumn(nextColumn, null);
+            finder.appendColumn(nextColumn);
         }
         // </keep>
         updatePreview();

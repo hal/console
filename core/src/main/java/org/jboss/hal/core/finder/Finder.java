@@ -26,14 +26,12 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.elemento.Elements;
+import org.jboss.elemento.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.core.finder.ColumnRegistry.LookupCallback;
-import org.jboss.hal.core.finder.FinderColumn.RefreshMode;
+import org.jboss.hal.flow.Flow;
 import org.jboss.hal.flow.FlowContext;
-import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.security.SecurityContextRegistry;
@@ -43,30 +41,32 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Iterables;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
-import rx.Completable;
-import rx.CompletableEmitter;
+import elemental2.promise.Promise;
 
+import static elemental2.dom.DomGlobal.console;
 import static java.lang.Math.min;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
-import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.elemento.Elements.div;
 import static org.jboss.hal.ballroom.Skeleton.applicationOffset;
-import static org.jboss.hal.flow.Flow.series;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
+import static org.jboss.hal.resources.CSS.column;
+import static org.jboss.hal.resources.CSS.finder;
+import static org.jboss.hal.resources.CSS.finderPreview;
+import static org.jboss.hal.resources.CSS.row;
+import static org.jboss.hal.resources.CSS.vh;
 import static org.jboss.hal.resources.Ids.FINDER;
 
 /**
  * The one and only finder which is shared across all different top level categories in HAL. The very same finder instance gets
  * injected into the different top level presenters. Only the columns will change when navigating between the different places
  */
-@SuppressWarnings("rawtypes")
 public class Finder implements IsElement<HTMLDivElement>, Attachable {
 
     static final String DATA_BREADCRUMB = "breadcrumb";
@@ -87,12 +87,12 @@ public class Finder implements IsElement<HTMLDivElement>, Attachable {
     private final SecurityContextRegistry securityContextRegistry;
     private final Provider<Progress> progress;
     private final FinderContext context;
-    private final LinkedHashMap<String, FinderColumn> columns;
+    private final LinkedHashMap<String, FinderColumn<?>> columns;
     private final Map<String, String> initialColumnsByToken;
-    private final Map<String, PreviewContent> initialPreviewsByToken;
+    private final Map<String, PreviewContent<?>> initialPreviewsByToken;
     private final HTMLDivElement root;
     private final HTMLElement previewColumn;
-    private PreviewContent currentPreview;
+    private PreviewContent<?> currentPreview;
 
     // ------------------------------------------------------ ui
 
@@ -138,7 +138,7 @@ public class Finder implements IsElement<HTMLDivElement>, Attachable {
         columns.values().forEach(Attachable::detach);
     }
 
-    private FinderColumn initialColumn() {
+    private FinderColumn<?> initialColumn() {
         String columnId = initialColumnsByToken.get(context.getToken());
         if (columnId != null) {
             return columns.get(columnId);
@@ -154,24 +154,12 @@ public class Finder implements IsElement<HTMLDivElement>, Attachable {
 
     // ------------------------------------------------------ internal API
 
-    void appendColumn(String columnId, AsyncCallback<FinderColumn> callback) {
-        columnRegistry.lookup(columnId, new LookupCallback() {
-            @Override
-            public void found(FinderColumn column) {
-                appendColumn(column, callback);
-            }
-
-            @Override
-            public void error(String failure) {
-                logger.error(failure);
-                if (callback != null) {
-                    callback.onFailure(new RuntimeException(failure));
-                }
-            }
-        });
+    <C extends FinderColumn<T>, T> Promise<C> appendColumn(String columnId) {
+        Promise<C> lookup = columnRegistry.lookup(columnId);
+        return lookup.then(this::appendColumn);
     }
 
-    private void appendColumn(FinderColumn<?> column, AsyncCallback<FinderColumn> callback) {
+    private <C extends FinderColumn<T>, T> Promise<C> appendColumn(C column) {
         column.resetSelection();
         column.markHiddenColumns(false);
         Elements.setVisible(column.element(), true);
@@ -180,12 +168,12 @@ public class Finder implements IsElement<HTMLDivElement>, Attachable {
         if (visibleColumns() >= MAX_VISIBLE_COLUMNS) {
             int index = 0;
             int hideUntilHere = columns.size() - MAX_VISIBLE_COLUMNS;
-            for (FinderColumn c : columns.values()) {
+            for (FinderColumn<?> c : columns.values()) {
                 Elements.setVisible(c.element(), index >= hideUntilHere);
                 index++;
             }
             if (hideUntilHere > 0) {
-                for (FinderColumn c : columns.values()) {
+                for (FinderColumn<?> c : columns.values()) {
                     if (Elements.isVisible(c.element())) {
                         c.markHiddenColumns(true);
                         break;
@@ -196,8 +184,9 @@ public class Finder implements IsElement<HTMLDivElement>, Attachable {
 
         root.insertBefore(column.element(), previewColumn);
         column.attach();
-        column.setItems(callback);
         resizePreview();
+        // noinspection unchecked
+        return (Promise<C>) column.setItems();
     }
 
     private long visibleColumns() {
@@ -205,7 +194,7 @@ public class Finder implements IsElement<HTMLDivElement>, Attachable {
     }
 
     private void markHiddenColumns() {
-        Optional<FinderColumn> hiddenColumn = columns.values().stream()
+        Optional<FinderColumn<?>> hiddenColumn = columns.values().stream()
                 .filter(column -> !Elements.isVisible(column.element()))
                 .findAny();
         if (hiddenColumn.isPresent()) {
@@ -216,9 +205,9 @@ public class Finder implements IsElement<HTMLDivElement>, Attachable {
         }
     }
 
-    void revealHiddenColumns(FinderColumn firstVisibleColumn) {
+    <C extends FinderColumn<T>, T> void revealHiddenColumns(C firstVisibleColumn) {
         // show the last hidden column
-        List<FinderColumn> hiddenColumns = columns.values().stream()
+        List<FinderColumn<?>> hiddenColumns = columns.values().stream()
                 .filter(column -> !Elements.isVisible(column.element()))
                 .collect(toList());
         if (!hiddenColumns.isEmpty()) {
@@ -235,13 +224,13 @@ public class Finder implements IsElement<HTMLDivElement>, Attachable {
             if (element == previewColumn) {
                 break;
             }
-            FinderColumn removeColumn = columns.remove(element.id);
+            FinderColumn<?> removeColumn = columns.remove(element.id);
             iterator.remove();
             removeColumn.detach();
         }
     }
 
-    void reduceTo(FinderColumn<?> column) {
+    <C extends FinderColumn<T>, T> void reduceTo(C column) {
         boolean removeFromHere = false;
         for (Iterator<HTMLElement> iterator = Elements.children(root).iterator(); iterator.hasNext();) {
             HTMLElement element = iterator.next();
@@ -253,7 +242,7 @@ public class Finder implements IsElement<HTMLDivElement>, Attachable {
                 break;
             }
             if (removeFromHere) {
-                FinderColumn removeColumn = columns.remove(element.id);
+                FinderColumn<?> removeColumn = columns.remove(element.id);
                 iterator.remove();
                 removeColumn.detach();
             }
@@ -290,7 +279,7 @@ public class Finder implements IsElement<HTMLDivElement>, Attachable {
     }
 
     void selectColumn(String columnId) {
-        FinderColumn finderColumn = columns.get(columnId);
+        FinderColumn<?> finderColumn = columns.get(columnId);
         if (finderColumn != null) {
             finderColumn.element().focus();
         }
@@ -308,9 +297,9 @@ public class Finder implements IsElement<HTMLDivElement>, Attachable {
         if (index > 0 && index < columnIds.size()) {
             String previousId = columnIds.get(index - 1);
             selectColumn(previousId);
-            FinderColumn previousColumn = columns.get(previousId);
+            FinderColumn<?> previousColumn = columns.get(previousId);
             if (previousColumn != null) {
-                FinderRow selectedRow = previousColumn.selectedRow();
+                FinderRow<?> selectedRow = previousColumn.selectedRow();
                 if (selectedRow != null) {
                     selectedRow.click();
                 }
@@ -341,7 +330,7 @@ public class Finder implements IsElement<HTMLDivElement>, Attachable {
     }
 
     void showInitialPreview() {
-        PreviewContent previewContent = initialPreviewsByToken.get(context.getToken());
+        PreviewContent<?> previewContent = initialPreviewsByToken.get(context.getToken());
         if (previewContent != null) {
             showPreview(previewContent);
         }
@@ -360,12 +349,11 @@ public class Finder implements IsElement<HTMLDivElement>, Attachable {
     /**
      * Resets the finder to its initial state by showing the initial column and preview.
      */
-    public void reset(String token, String initialColumn, PreviewContent initialPreview,
-            AsyncCallback<FinderColumn> callback) {
+    public void reset(String token, String initialColumn, PreviewContent<?> initialPreview) {
         initialColumnsByToken.put(token, initialColumn);
         initialPreviewsByToken.put(token, initialPreview);
 
-        for (FinderColumn column : columns.values()) {
+        for (FinderColumn<?> column : columns.values()) {
             column.detach();
         }
         columns.clear();
@@ -373,9 +361,9 @@ public class Finder implements IsElement<HTMLDivElement>, Attachable {
             root.removeChild(root.firstChild);
         }
         context.reset(token);
-        appendColumn(initialColumn, callback);
+        appendColumn(initialColumn);
         selectColumn(initialColumn);
-        for (FinderColumn column : columns.values()) {
+        for (FinderColumn<?> column : columns.values()) {
             Elements.setVisible(column.element(), true);
             column.markHiddenColumns(false);
         }
@@ -393,31 +381,25 @@ public class Finder implements IsElement<HTMLDivElement>, Attachable {
     /**
      * Refreshes the specified path.
      * <p>
-     * Please note that this might be a complex and long running operation since each segment in the path is turned into a
+     * Please note that this might be a complex and long-running operation since each segment in the path is turned into a
      * function which reloads and re-selects the items.
      */
     public void refresh(FinderPath path) {
         if (!path.isEmpty()) {
 
-            List<RefreshTask> tasks = stream(path.spliterator(), false)
-                    .map(segment -> new RefreshTask(new FinderSegment(segment.getColumnId(), segment.getItemId())))
+            List<Task<FlowContext>> tasks = stream(path.spliterator(), false)
+                    .map(segment -> new RefreshTask(new FinderSegment<>(segment.getColumnId(), segment.getItemId())))
                     .collect(toList());
-            series(new FlowContext(progress.get()), tasks)
-                    .subscribe(new Outcome<FlowContext>() {
-                        @Override
-                        public void onError(FlowContext context, Throwable error) {
-                        }
-
-                        @Override
-                        public void onSuccess(FlowContext context) {
-                            if (!context.emptyStack()) {
-                                FinderColumn column = context.pop();
-                                column.element().focus();
-                                if (column.selectedRow() != null) {
-                                    column.selectedRow().click();
-                                }
+            Flow.series(new FlowContext(progress.get()), tasks)
+                    .then(c -> {
+                        if (!c.emptyStack()) {
+                            FinderColumn<?> column = c.pop();
+                            column.element().focus();
+                            if (column.selectedRow() != null) {
+                                column.selectedRow().click();
                             }
                         }
+                        return null;
                     });
         }
     }
@@ -449,8 +431,8 @@ public class Finder implements IsElement<HTMLDivElement>, Attachable {
                 String match = null;
                 FinderPath newPath = path.reversed();
                 FinderPath currentPath = context.getPath().reversed();
-                for (FinderSegment newSegment : newPath) {
-                    for (FinderSegment currentSegment : currentPath) {
+                for (FinderSegment<?> newSegment : newPath) {
+                    for (FinderSegment<?> currentSegment : currentPath) {
                         if (newSegment.getColumnId().equals(currentSegment.getColumnId())) {
                             match = newSegment.getColumnId();
                             break;
@@ -460,132 +442,105 @@ public class Finder implements IsElement<HTMLDivElement>, Attachable {
                         break;
                     }
                 }
-                FinderColumn lastCommonColumn = match != null ? columns.get(match) : initialColumn();
+                FinderColumn<?> lastCommonColumn = match != null ? columns.get(match) : initialColumn();
                 if (lastCommonColumn != null) {
                     reduceTo(lastCommonColumn);
                 }
             }
 
-            List<SelectTask> tasks = stream(path.spliterator(), false)
-                    .map(segment -> new SelectTask(new FinderSegment(segment.getColumnId(), segment.getItemId())))
+            console.log("##### Promise selects...");
+            List<Task<FlowContext>> tasks = stream(path.spliterator(), false)
+                    .map(segment -> new SelectTask(new FinderSegment<>(segment.getColumnId(), segment.getItemId())))
                     .collect(toList());
-            series(new FlowContext(progress.get()), tasks)
-                    .subscribe(new Outcome<FlowContext>() {
-                        @Override
-                        public void onError(FlowContext context, Throwable error) {
-                            if (Finder.this.context.getPath().isEmpty()) {
-                                fallback.run();
-
-                            } else if (!context.emptyStack()) {
-                                FinderColumn column = context.pop();
-                                markHiddenColumns(); // only in case of an error!
-                                f1nally(column);
-                            }
+            Flow.series(new FlowContext(progress.get()), tasks)
+                    .then(c -> {
+                        console.log("##### DONE");
+                        FinderColumn<?> column = c.pop();
+                        column.element().focus();
+                        column.refresh(RESTORE_SELECTION);
+                        return null;
+                    })
+                    .catch_(error -> {
+                        if (Finder.this.context.getPath().isEmpty()) {
+                            fallback.run();
                         }
-
-                        @Override
-                        public void onSuccess(FlowContext context) {
-                            FinderColumn column = context.pop();
-                            f1nally(column);
-                        }
-
-                        @SuppressWarnings("SpellCheckingInspection")
-                        private void f1nally(FinderColumn column) {
-                            column.element().focus();
-                            column.refresh(RefreshMode.RESTORE_SELECTION);
-                        }
+                        return null;
                     });
         }
     }
 
-    public FinderColumn getColumn(String columnId) {
-        return columns.get(columnId);
+    public <C extends FinderColumn<T>, T> C getColumn(String columnId) {
+        // noinspection unchecked
+        return (C) columns.get(columnId);
     }
 
     public FinderContext getContext() {
         return context;
     }
 
-    private class SelectTask implements Task<FlowContext> {
+    private final class SelectTask implements Task<FlowContext> {
 
-        private final FinderSegment segment;
+        private final FinderSegment<?> segment;
 
-        private SelectTask(FinderSegment segment) {
+        private SelectTask(final FinderSegment<?> segment) {
             this.segment = segment;
         }
 
         @Override
-        public Completable call(FlowContext context) {
-            return Completable.fromEmitter(emitter -> appendColumn(segment.getColumnId(),
-                    new AsyncCallback<FinderColumn>() {
-                        @Override
-                        public void onFailure(Throwable throwable) {
-                            emitter.onError(
-                                    new RuntimeException("Error in Finder.SelectTask: Unable to append column '" +
-                                            segment.getColumnId() + "'"));
+        public Promise<FlowContext> apply(final FlowContext context) {
+            return new Promise<>((resolve, reject) -> appendColumn(segment.getColumnId())
+                    .then(column -> {
+                        if (column.contains(segment.getItemId())) {
+                            column.markSelected(segment.getItemId());
+                            column.row(segment.getItemId()).element().scrollIntoView(false);
+                            updateContext();
+                            context.push(column);
+                        } else {
+                            // Ignore items which cannot be selected. If a deployment was disabled
+                            // runtime items might no longer be available.
+                            logger.warn("Unable to select item '{} in column '{}'", segment.getItemId(),
+                                    segment.getColumnId());
                         }
-
-                        @Override
-                        public void onSuccess(FinderColumn column) {
-                            if (column.contains(segment.getItemId())) {
-                                column.markSelected(segment.getItemId());
-                                column.row(segment.getItemId()).element().scrollIntoView(false);
-                                updateContext();
-                                context.push(column);
-                                emitter.onCompleted();
-                            } else {
-                                // Ignore items which cannot be selected. If a deployment was disabled
-                                // runtime items might no longer be available.
-                                logger.warn("Unable to select item '{} in column '{}'", segment.getItemId(),
-                                        segment.getColumnId());
-                                emitter.onCompleted();
-                            }
-                        }
+                        resolve.onInvoke(context);
+                        return null;
                     }));
         }
     }
 
-    private class RefreshTask implements Task<FlowContext> {
+    private final class RefreshTask implements Task<FlowContext> {
 
-        private final FinderSegment segment;
+        private final FinderSegment<?> segment;
 
-        private RefreshTask(FinderSegment segment) {
+        private RefreshTask(final FinderSegment<?> segment) {
             this.segment = segment;
         }
 
         @Override
-        public Completable call(FlowContext context) {
-            return Completable.fromEmitter(emitter -> {
-                FinderColumn column = getColumn(segment.getColumnId());
+        public Promise<FlowContext> apply(final FlowContext context) {
+            FinderColumn<?> column = getColumn(segment.getColumnId());
+            return new Promise<>((resolve, reject) -> {
                 if (column != null) {
-                    // refresh the existing column
-                    column.refresh(() -> selectItem(column, context, emitter));
+                    column.refresh(() -> {
+                        selectItem(column, context);
+                        resolve.onInvoke(context);
+                    });
                 } else {
-                    // append the column
-                    appendColumn(segment.getColumnId(), new AsyncCallback<FinderColumn>() {
-                        @Override
-                        public void onFailure(Throwable throwable) {
-                            emitter.onError(throwable);
-                        }
-
-                        @Override
-                        public void onSuccess(FinderColumn finderColumn) {
-                            selectItem(finderColumn, context, emitter);
-                        }
+                    appendColumn(segment.getColumnId()).then(c -> {
+                        selectItem(c, context);
+                        resolve.onInvoke(context);
+                        return null;
                     });
                 }
             });
         }
 
-        private void selectItem(FinderColumn column, FlowContext context, CompletableEmitter emitter) {
+        private void selectItem(FinderColumn<?> column, FlowContext context) {
             if (column.contains(segment.getItemId())) {
                 column.markSelected(segment.getItemId());
                 context.push(column);
-                emitter.onCompleted();
             } else {
-                // noinspection HardCodedStringLiteral
-                emitter.onError(new RuntimeException("Error in Finder.RefreshTask: Unable to select item '" +
-                        segment.getItemId() + "' in column '" + segment.getColumnId() + "'"));
+                throw new RuntimeException("Error in Finder.RefreshTask: Unable to select item '" +
+                        segment.getItemId() + "' in column '" + segment.getColumnId() + "'");
             }
         }
     }

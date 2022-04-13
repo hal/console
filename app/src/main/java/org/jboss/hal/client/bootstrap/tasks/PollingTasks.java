@@ -15,15 +15,13 @@
  */
 package org.jboss.hal.client.bootstrap.tasks;
 
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.inject.Provider;
 
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Settings;
-import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.spi.Footer;
@@ -32,24 +30,23 @@ import org.slf4j.LoggerFactory;
 
 import com.google.web.bindery.event.shared.EventBus;
 
-import rx.Observable;
-import rx.Single;
-
+import static elemental2.dom.DomGlobal.setTimeout;
 import static java.util.Collections.singletonList;
-import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.jboss.hal.config.Settings.DEFAULT_POLL_TIME;
 import static org.jboss.hal.config.Settings.Key.POLL;
 import static org.jboss.hal.config.Settings.Key.POLL_TIME;
+import static org.jboss.hal.flow.Flow.parallel;
 
 public class PollingTasks implements InitializedTask {
 
-    private static Logger logger = LoggerFactory.getLogger(PollingTasks.class);
-    private EventBus eventBus;
-    private Dispatcher dispatcher;
-    private StatementContext statementContext;
-    private Settings settings;
-    private Provider<Progress> progress;
-    private Environment environment;
+    private static final Logger logger = LoggerFactory.getLogger(PollingTasks.class);
+
+    private final EventBus eventBus;
+    private final Dispatcher dispatcher;
+    private final StatementContext statementContext;
+    private final Settings settings;
+    private final Provider<Progress> progress;
+    private final Environment environment;
 
     @Inject
     public PollingTasks(EventBus eventBus, Dispatcher dispatcher, StatementContext statementContext, Settings settings,
@@ -68,16 +65,9 @@ public class PollingTasks implements InitializedTask {
         int pollTime = settings.get(POLL_TIME).asInt(DEFAULT_POLL_TIME);
         logger.info("Polling mechanism is: {}", (pollEnabled ? "on" : "off"));
         if (pollEnabled) {
-            // polling implementations should be added in the pollingActions list
-            List<Single<ModelNode>> pollingActions = singletonList(Single.fromEmitter(
-                    new FindNonProgressingTask(eventBus, dispatcher, environment, statementContext, progress)));
-            for (Single<ModelNode> singleAction : pollingActions) {
-                Observable
-                        .interval(pollTime, SECONDS) // execute a operation each INTERVAL millis
-                        .flatMapSingle(n -> singleAction, false, 1)
-                        .toCompletable()
-                        .subscribe();
-            }
+            setTimeout(__ -> parallel(new FlowContext(Progress.NOOP), singletonList(
+                    new FindNonProgressingTask(eventBus, dispatcher, environment, statementContext, progress))),
+                    pollTime * 1000);
         }
     }
 }

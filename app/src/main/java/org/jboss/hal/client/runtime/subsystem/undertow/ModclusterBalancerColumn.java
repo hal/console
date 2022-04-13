@@ -31,9 +31,16 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.AsyncColumn;
 
+import elemental2.promise.Promise;
+
 import static java.util.Collections.emptyList;
 import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.MODCLUSTER_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.BALANCER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MODCLUSTER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDERTOW;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
 @AsyncColumn(Ids.UNDERTOW_RUNTIME_MODCLUSTER_BALANCER)
@@ -47,9 +54,8 @@ public class ModclusterBalancerColumn extends FinderColumn<NamedNode> {
 
         super(new Builder<NamedNode>(finder, Ids.UNDERTOW_RUNTIME_MODCLUSTER_BALANCER, Names.BALANCER)
                 .columnAction(columnActionFactory.refresh(Ids.UNDERTOW_MODCLUSTER_BALANCER_REFRESH))
-                .itemsProvider((context, callback) -> {
-
-                    FinderSegment segment = context.getPath().findColumn(Ids.UNDERTOW_RUNTIME_MODCLUSTER);
+                .itemsProvider(context -> {
+                    FinderSegment<?> segment = context.getPath().findColumn(Ids.UNDERTOW_RUNTIME_MODCLUSTER);
                     if (segment != null) {
                         String modcluster = Ids.extractUndertowModcluster(segment.getItemId());
                         ResourceAddress address = MODCLUSTER_TEMPLATE.resolve(statementContext, modcluster);
@@ -57,10 +63,10 @@ public class ModclusterBalancerColumn extends FinderColumn<NamedNode> {
                                 .param(CHILD_TYPE, BALANCER)
                                 .param(INCLUDE_RUNTIME, true)
                                 .build();
-                        dispatcher.execute(operation,
-                                result -> callback.onSuccess(asNamedNodes(result.asPropertyList())));
+                        return dispatcher.execute(operation)
+                                .then(result -> Promise.resolve(asNamedNodes(result.asPropertyList())));
                     } else {
-                        callback.onSuccess(emptyList());
+                        return Promise.resolve(emptyList());
                     }
                 })
                 .itemRenderer(item -> new ItemDisplay<NamedNode>() {

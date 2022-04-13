@@ -43,10 +43,10 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -141,7 +141,7 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                 .pinnable()
                 .filterDescription(resources.messages().susbsystemFilterDescription()));
 
-        ItemsProvider<SubsystemMetadata> itemsProvider = (context, callback) -> {
+        ItemsProvider<SubsystemMetadata> itemsProvider = (context) -> new Promise<>((resolve, reject) -> {
             ResourceAddress address = SUBSYSTEM_TEMPLATE.resolve(statementContext).getParent();
             Operation operation = new Operation.Builder(address, READ_CHILDREN_NAMES_OPERATION)
                     .param(CHILD_TYPE, SUBSYSTEM).build();
@@ -149,7 +149,7 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                 List<SubsystemMetadata> combined = new ArrayList<>();
                 for (ModelNode modelNode : result.asList()) {
                     String name = modelNode.asString();
-                    boolean emptySubsystem = DISABLE_EMPTY_SUBSYSTEM && EMPTY_SUBSYSTEMS.indexOf(name) > -1;
+                    boolean emptySubsystem = DISABLE_EMPTY_SUBSYSTEM && EMPTY_SUBSYSTEMS.contains(name);
                     if (emptySubsystem) {
                         continue;
                     }
@@ -161,27 +161,17 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                     }
                 }
                 combined.sort(comparing(SubsystemMetadata::getTitle));
-                callback.onSuccess(combined);
+                resolve.onInvoke(combined);
             });
-        };
+        });
         setItemsProvider(itemsProvider);
 
         // reuse the items provider to filter breadcrumb items
-        setBreadcrumbItemsProvider(
-                (context, callback) -> itemsProvider.get(context, new AsyncCallback<List<SubsystemMetadata>>() {
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        callback.onFailure(caught);
-                    }
-
-                    @Override
-                    public void onSuccess(List<SubsystemMetadata> result) {
-                        // only subsystems w/o next columns will show up in the breadcrumb dropdown
-                        List<SubsystemMetadata> subsystemsWithTokens = result.stream()
-                                .filter(metadata -> metadata.getToken() != null || metadata.isGeneric())
-                                .collect(toList());
-                        callback.onSuccess(subsystemsWithTokens);
-                    }
-                }));
+        setBreadcrumbItemsProvider(context -> itemsProvider.items(context).then(result -> {
+            List<SubsystemMetadata> subsystemsWithTokens = result.stream()
+                    .filter(metadata -> metadata.getToken() != null || metadata.isGeneric())
+                    .collect(toList());
+            return Promise.resolve(subsystemsWithTokens);
+        }));
     }
 }

@@ -66,8 +66,70 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
 import static java.util.Arrays.asList;
-import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.AGGREGATE_PROVIDERS_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.AGGREGATE_SECURITY_EVENT_LISTENER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.AUTHENTICATION_CONFIGURATION_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.AUTHENTICATION_CONTEXT_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.CERTIFICATE_AUTHORITY_ACCOUNT_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.CERTIFICATE_AUTHORITY_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.CLIENT_SSL_CONTEXT_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.CREDENTIAL_STORE_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.CREDENTIAL_STORE_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.CUSTOM_SECURITY_EVENT_LISTENER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.DIR_CONTEXT_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.ELYTRON_SUBSYSTEM_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.FILE_AUDIT_LOG_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.FILTERING_KEY_STORE_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.JASPI_CONFIGURATION_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.KEY_MANAGER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.KEY_MANAGER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.KEY_STORE_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.KEY_STORE_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.LDAP_KEY_STORE_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.PERIODIC_FILE_AUDIT_LOG_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.PERMISSION_SET_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.POLICY_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.POLICY_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.PROVIDER_LOADER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.SECURITY_DOMAIN_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.SECURITY_DOMAIN_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.SERVER_SSL_CONTEXT_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.SERVER_SSL_SNI_CONTEXT_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.SIZE_ROTATING_FILE_AUDIT_LOG_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.SYSLOG_AUDIT_LOG_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.TRUST_MANAGER_ADDRESS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ALIAS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CAPABILITY_REFERENCE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CLASS_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CLEAR_TEXT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CREATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CREDENTIAL_REFERENCE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CREDENTIAL_STORE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT_REALM;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.FLAG;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.JASPI_CONFIGURATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.KEY_MANAGER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.KEY_STORE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MODULE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NEW_ITEM_ATTRIBUTES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NEW_ITEM_PATH;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NEW_ITEM_RDN;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NEW_ITEM_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PATH;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_ATTRIBUTE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REALM;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REALMS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RELATIVE_TO;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURITY_DOMAIN;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_AUTH_MODULES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_SSL_SNI_CONTEXT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STORE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE_TYPE;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.move;
 
@@ -81,7 +143,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
     private final StatementContext statementContext;
     private final MetadataRegistry metadataRegistry;
     private final Resources resources;
-    private Dispatcher dispatcher;
+    private final Dispatcher dispatcher;
 
     @Inject
     public OtherSettingsPresenter(EventBus eventBus,
@@ -462,12 +524,10 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                         serverAuthModule.get(FLAG).set(model.remove(FLAG));
                     }
                     model.get(SERVER_AUTH_MODULES).add(serverAuthModule);
-                    crud.add(type, name, AddressTemplates.JASPI_CONFIGURATION_TEMPLATE, model, (name1, address) -> {
-                        reload(JASPI_CONFIGURATION,
-                                nodes -> getView().updateResourceElement(JASPI_CONFIGURATION, nodes));
-                    });
-                })
-                        .show();
+                    crud.add(type, name, AddressTemplates.JASPI_CONFIGURATION_TEMPLATE, model,
+                            (name1, address) -> reload(JASPI_CONFIGURATION,
+                                    nodes -> getView().updateResourceElement(JASPI_CONFIGURATION, nodes)));
+                }).show();
     }
 
     // -------------------------------------------- server ssl sni context
@@ -485,12 +545,10 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
         form.getFormItem("host-context-map").setRequired(true);
         String type = new LabelBuilder().label(SERVER_SSL_SNI_CONTEXT);
         new AddResourceDialog(resources.messages().addResourceTitle(type), form,
-                (name, model) -> {
-                    crud.add(type, name, AddressTemplates.SERVER_SSL_SNI_CONTEXT_TEMPLATE, model,
-                            (name1, address) -> reload(SERVER_SSL_SNI_CONTEXT,
-                                    nodes -> getView().updateResourceElement(SERVER_SSL_SNI_CONTEXT, nodes)));
-                })
-                        .show();
+                (name, model) -> crud.add(type, name, AddressTemplates.SERVER_SSL_SNI_CONTEXT_TEMPLATE, model,
+                        (name1, address) -> reload(SERVER_SSL_SNI_CONTEXT,
+                                nodes -> getView().updateResourceElement(SERVER_SSL_SNI_CONTEXT, nodes))))
+                                        .show();
     }
 
     // -------------------------------------------- Policy

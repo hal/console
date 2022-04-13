@@ -27,7 +27,7 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
-import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.elemento.Elements.p;
 
 public class CreateEmptyDialog {
 

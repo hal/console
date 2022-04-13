@@ -34,7 +34,6 @@ import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.finder.ItemsProvider;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.Composite;
-import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
@@ -53,19 +52,37 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.*;
+import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_CORE_QUEUE_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_DEPLOYMENT_JMS_QUEUE_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_DEPLOYMENT_JMS_TOPIC_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_DEPLOYMENT_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_JMS_QUEUE_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_JMS_TOPIC_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_SERVER_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.SELECTED_HOST_SELECTED_SERVER_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.messaging.Destination.Type.DEPLOYMENT_RESOURCES;
 import static org.jboss.hal.client.runtime.subsystem.messaging.Destination.Type.SUBSYSTEM_RESOURCES;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADDRESS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DROP_ALL_SUBSCRIPTIONS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PAUSE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESUME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBDEPLOYMENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEFINED;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
 @AsyncColumn(Ids.MESSAGING_SERVER_DESTINATION_RUNTIME)
@@ -104,9 +121,9 @@ public class DestinationColumn extends FinderColumn<Destination> {
         this.eventBus = eventBus;
         this.resources = resources;
 
-        ItemsProvider<Destination> itemsProvider = (context, callback) -> {
+        ItemsProvider<Destination> itemsProvider = context -> {
             // extract server name from the finder path
-            FinderSegment segment = context.getPath().findColumn(Ids.MESSAGING_SERVER_RUNTIME);
+            FinderSegment<?> segment = context.getPath().findColumn(Ids.MESSAGING_SERVER_RUNTIME);
             if (segment != null) {
                 String server = segment.getItemTitle();
                 List<Operation> operations = new ArrayList<>();
@@ -124,7 +141,7 @@ public class DestinationColumn extends FinderColumn<Destination> {
                             .param(INCLUDE_RUNTIME, true)
                             .build());
                 }
-                dispatcher.execute(new Composite(operations), (CompositeResult result) -> {
+                return dispatcher.execute(new Composite(operations)).then(result -> {
                     List<Destination> destinations = new ArrayList<>();
                     for (ModelNode step : result) {
                         if (!step.isFailure()) {
@@ -139,27 +156,17 @@ public class DestinationColumn extends FinderColumn<Destination> {
                         }
                     }
                     destinations.sort(Comparator.comparing(NamedNode::getName));
-                    callback.onSuccess(destinations);
+                    return Promise.resolve(destinations);
                 });
             } else {
-                callback.onSuccess(emptyList());
+                return Promise.resolve(emptyList());
             }
         };
         setItemsProvider(itemsProvider);
-        setBreadcrumbItemsProvider(
-                (context, callback) -> itemsProvider.get(context, new AsyncCallback<List<Destination>>() {
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        callback.onFailure(caught);
-                    }
-
-                    @Override
-                    public void onSuccess(List<Destination> result) {
-                        callback.onSuccess(result.stream()
-                                .filter(d -> d.type == Type.QUEUE || d.type == Type.JMS_QUEUE)
-                                .collect(toList()));
-                    }
-                }));
+        setBreadcrumbItemsProvider(context -> itemsProvider.items(context)
+                .then(result -> Promise.resolve(result.stream()
+                        .filter(d -> d.type == Type.QUEUE || d.type == Type.JMS_QUEUE)
+                        .collect(toList()))));
 
         setItemRenderer(item -> new ItemDisplay<Destination>() {
             @Override

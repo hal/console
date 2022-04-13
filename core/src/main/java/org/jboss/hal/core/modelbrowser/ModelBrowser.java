@@ -24,8 +24,8 @@ import java.util.Stack;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.elemento.Elements;
+import org.jboss.elemento.IsElement;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.Form.FinishReset;
@@ -45,7 +45,6 @@ import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
-import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.AddressTemplate;
@@ -68,16 +67,16 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLElement;
-import rx.Completable;
+import elemental2.promise.Promise;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
-import static org.jboss.gwt.elemento.core.Elements.a;
-import static org.jboss.gwt.elemento.core.Elements.button;
-import static org.jboss.gwt.elemento.core.Elements.div;
-import static org.jboss.gwt.elemento.core.Elements.span;
-import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.elemento.Elements.a;
+import static org.jboss.elemento.Elements.button;
+import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.span;
+import static org.jboss.elemento.EventType.click;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.ballroom.Skeleton.MARGIN_BIG;
@@ -120,8 +119,8 @@ public class ModelBrowser implements IsElement<HTMLElement> {
     static final HTMLElement PLACE_HOLDER_ELEMENT = div().element();
 
     private final CrudOperations crud;
-    private MetadataProcessor metadataProcessor;
-    private Provider<Progress> progress;
+    private final MetadataProcessor metadataProcessor;
+    private final Provider<Progress> progress;
     private final Dispatcher dispatcher;
     private final EventBus eventBus;
     private final Resources resources;
@@ -282,20 +281,17 @@ public class ModelBrowser implements IsElement<HTMLElement> {
             FilterInfo previousFilter = filterStack.pop();
             filter(filterStack.isEmpty() ? FilterInfo.ROOT : filterStack.peek());
 
-            List<OpenNodeTask> tasks = previousFilter.parents.stream()
+            List<Task<FlowContext>> tasks = previousFilter.parents.stream()
                     .map(OpenNodeTask::new)
                     .collect(toList());
             series(new FlowContext(progress.get()), tasks)
-                    .subscribe(new Outcome<FlowContext>() {
-                        @Override
-                        public void onError(FlowContext context, Throwable error) {
-                            logger.debug("Failed to restore selection {}", previousFilter.parents);
-                        }
-
-                        @Override
-                        public void onSuccess(FlowContext context) {
-                            tree.selectNode(previousFilter.node.id);
-                        }
+                    .then(__ -> {
+                        tree.selectNode(previousFilter.node.id);
+                        return null;
+                    })
+                    .catch_(error -> {
+                        logger.debug("Failed to restore selection {}", previousFilter.parents);
+                        return null;
                     });
         }
     }
@@ -559,14 +555,6 @@ public class ModelBrowser implements IsElement<HTMLElement> {
                             resources.messages().unknownResourceDetails(root.toString(), failure)));
 
                     adjustHeight();
-                },
-
-                (operation, exception) -> {
-                    emptyTree();
-                    MessageEvent.fire(eventBus, Message.error(resources.messages().unknownResource(),
-                            resources.messages().unknownResourceDetails(root.toString(), exception.getMessage())));
-
-                    adjustHeight();
                 });
     }
 
@@ -602,7 +590,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
         }
     }
 
-    private class OpenNodeTask implements Task<FlowContext> {
+    private final class OpenNodeTask implements Task<FlowContext> {
 
         private final String id;
 
@@ -611,12 +599,12 @@ public class ModelBrowser implements IsElement<HTMLElement> {
         }
 
         @Override
-        public Completable call(FlowContext context) {
-            return Completable.fromEmitter(emitter -> {
+        public Promise<FlowContext> apply(final FlowContext context) {
+            return new Promise<>((resolve, reject) -> {
                 if (tree.getNode(id) != null) {
-                    tree.openNode(id, emitter::onCompleted);
+                    tree.openNode(id, () -> resolve.onInvoke(context));
                 } else {
-                    emitter.onCompleted();
+                    resolve.onInvoke(context);
                 }
             });
         }

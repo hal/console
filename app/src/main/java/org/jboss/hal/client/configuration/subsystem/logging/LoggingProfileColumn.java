@@ -41,6 +41,8 @@ import org.jboss.hal.spi.Requires;
 
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
+import elemental2.promise.Promise;
+
 import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.LOGGING_PROFILE_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.LOGGING_PROFILE_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.LOGGING_SUBSYSTEM_TEMPLATE;
@@ -65,8 +67,8 @@ public class LoggingProfileColumn extends FinderColumn<NamedNode> {
 
         super(new FinderColumn.Builder<NamedNode>(finder, Ids.LOGGING_PROFILE, Names.LOGGING_PROFILES)
 
-                .itemsProvider((context, callback) -> crud.readChildren(LOGGING_SUBSYSTEM_TEMPLATE, LOGGING_PROFILE, 1,
-                        children -> callback.onSuccess(asNamedNodes(children))))
+                .itemsProvider(context -> crud.readChildren(LOGGING_SUBSYSTEM_TEMPLATE, LOGGING_PROFILE, 1)
+                        .then(children -> Promise.resolve(asNamedNodes(children))))
 
                 .onPreview(item -> new LoggingPreview<>(dispatcher, resources, item.getName(),
                         resources.previews().configurationLoggingProfiles(),
@@ -98,11 +100,12 @@ public class LoggingProfileColumn extends FinderColumn<NamedNode> {
             }
         });
 
+        // noinspection Convert2MethodRef
         addColumnAction(columnActionFactory.add(
                 Ids.LOGGING_PROFILE_ADD,
                 Names.LOGGING_PROFILE,
                 LOGGING_PROFILE_TEMPLATE,
-                Ids::loggingProfile,
-                this::createUniqueValidation));
+                name -> Ids.loggingProfile(name),
+                () -> createUniqueValidation()));
     }
 }

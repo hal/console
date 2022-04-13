@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
+import org.jboss.elemento.HtmlContentBuilder;
 import org.jboss.hal.ballroom.listview.ItemAction;
 import org.jboss.hal.ballroom.listview.ItemDisplay;
 import org.jboss.hal.resources.Ids;
@@ -31,10 +31,10 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 
 import elemental2.dom.HTMLElement;
 
-import static org.jboss.gwt.elemento.core.Elements.collect;
-import static org.jboss.gwt.elemento.core.Elements.div;
-import static org.jboss.gwt.elemento.core.Elements.p;
-import static org.jboss.gwt.elemento.core.Elements.span;
+import static org.jboss.elemento.Elements.bag;
+import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.p;
+import static org.jboss.elemento.Elements.span;
 import static org.jboss.hal.ballroom.Format.humanReadableDuration;
 import static org.jboss.hal.ballroom.Format.mediumDateTime;
 import static org.jboss.hal.client.runtime.subsystem.batch.ExecutionNode.BatchStatus.STARTED;
@@ -42,7 +42,22 @@ import static org.jboss.hal.client.runtime.subsystem.batch.ExecutionNode.BatchSt
 import static org.jboss.hal.dmr.ModelDescriptionConstants.END_TIME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.EXECUTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.LAST_UPDATED_TIME;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.errorCircleO;
+import static org.jboss.hal.resources.CSS.faSpin;
+import static org.jboss.hal.resources.CSS.fontAwesome;
+import static org.jboss.hal.resources.CSS.halExecutionDuration;
+import static org.jboss.hal.resources.CSS.halExecutionTime;
+import static org.jboss.hal.resources.CSS.lead;
+import static org.jboss.hal.resources.CSS.listHalIconBig;
+import static org.jboss.hal.resources.CSS.listHalIconError;
+import static org.jboss.hal.resources.CSS.listHalIconInfo;
+import static org.jboss.hal.resources.CSS.listHalIconProgress;
+import static org.jboss.hal.resources.CSS.listHalIconSuccess;
+import static org.jboss.hal.resources.CSS.marginRight5;
+import static org.jboss.hal.resources.CSS.ok;
+import static org.jboss.hal.resources.CSS.pfIcon;
+import static org.jboss.hal.resources.CSS.stopCircleO;
+import static org.jboss.hal.resources.CSS.textRight;
 import static org.jboss.hal.resources.FontAwesomeSize.x2;
 
 class ExecutionNodeDisplay implements ItemDisplay<ExecutionNode> {
@@ -114,7 +129,7 @@ class ExecutionNodeDisplay implements ItemDisplay<ExecutionNode> {
     @Override
     @SuppressWarnings("HardCodedStringLiteral")
     public Iterable<HTMLElement> getAdditionalInfoElements() {
-        return collect()
+        return bag()
                 .add(div().css(halExecutionTime)
                         .add(p().css(textRight).innerHtml(new SafeHtmlBuilder()
                                 .appendEscaped(resources.constants().start() + COLON)

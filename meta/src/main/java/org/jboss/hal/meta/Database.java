@@ -21,7 +21,7 @@ import java.util.Set;
 import org.jboss.hal.db.Document;
 import org.jboss.hal.dmr.ResourceAddress;
 
-import rx.Single;
+import elemental2.promise.Promise;
 
 public interface Database<T> {
 
@@ -34,10 +34,10 @@ public interface Database<T> {
     Map<ResourceAddress, AddressTemplate> resolveTemplates(Set<AddressTemplate> templates);
 
     /** Returns a map with metadata for the specified templates. */
-    Single<Map<ResourceAddress, T>> getAll(Set<AddressTemplate> templates);
+    Promise<Map<ResourceAddress, T>> getAll(Set<AddressTemplate> templates);
 
     /** Returns a map with metadata whose address starts with the specified template */
-    Single<Map<ResourceAddress, T>> getRecursive(AddressTemplate template);
+    Promise<Map<ResourceAddress, T>> getRecursive(AddressTemplate template);
 
     /** Returns metadata for a given document */
     T asMetadata(Document document);

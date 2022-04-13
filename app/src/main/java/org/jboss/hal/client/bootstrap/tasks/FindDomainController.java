@@ -20,22 +20,27 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.Flow;
 import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import rx.Completable;
-import rx.Single;
+import elemental2.promise.Promise;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.bootstrap.tasks.ReadHostNames.HOST_NAMES;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES_ONLY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MASTER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 
-public class FindDomainController implements BootstrapTask {
+public final class FindDomainController implements Task<FlowContext> {
 
     private static final Logger logger = LoggerFactory.getLogger(FindDomainController.class);
 
@@ -49,39 +54,34 @@ public class FindDomainController implements BootstrapTask {
     }
 
     @Override
-    public Completable call(FlowContext context) {
+    public Promise<FlowContext> apply(final FlowContext context) {
         if (!environment.isStandalone()) {
             List<String> hosts = context.get(HOST_NAMES);
             if (hosts != null) {
-                List<Completable> completables = hosts.stream()
+                List<Task<FlowContext>> hostTasks = hosts.stream()
                         .map(host -> {
                             ResourceAddress address = new ResourceAddress().add(HOST, host);
                             Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                                     .param(ATTRIBUTES_ONLY, true)
                                     .param(INCLUDE_RUNTIME, true)
                                     .build();
-                            return dispatcher.execute(operation)
-                                    .doOnSuccess(result -> {
-                                        boolean master = result.get(MASTER).asBoolean();
-                                        if (master) {
-                                            String name = result.get(NAME).asString();
-                                            environment.setDomainController(name);
-                                            logger.info("Found domain controller: {}", name);
-                                        }
-                                    })
-                                    .onErrorResumeNext(error -> {
-                                        logger.warn("Unable to read host: {}", error.getMessage());
-                                        return Single.just(new ModelNode());
-                                    })
-                                    .toCompletable();
+                            return (Task<FlowContext>) c -> dispatcher.execute(operation).then(result -> {
+                                boolean master = result.get(MASTER).asBoolean();
+                                if (master) {
+                                    String name = result.get(NAME).asString();
+                                    environment.setDomainController(name);
+                                    logger.info("Found domain controller: {}", name);
+                                }
+                                return Promise.resolve(c);
+                            });
                         })
                         .collect(toList());
-                return Completable.concat(completables);
+                return Flow.series(context, hostTasks);
             } else {
-                return Completable.complete();
+                return Promise.resolve(context);
             }
         } else {
-            return Completable.complete();
+            return Promise.resolve(context);
         }
     }
 }

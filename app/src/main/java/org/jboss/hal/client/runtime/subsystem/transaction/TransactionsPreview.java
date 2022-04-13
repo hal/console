@@ -18,7 +18,7 @@ package org.jboss.hal.client.runtime.subsystem.transaction;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.LabelBuilder;
@@ -40,7 +40,7 @@ import org.jboss.hal.resources.Resources;
 
 import elemental2.dom.HTMLElement;
 
-import static org.jboss.gwt.elemento.core.Elements.section;
+import static org.jboss.elemento.Elements.section;
 import static org.jboss.hal.client.runtime.subsystem.transaction.AddressTemplates.TRANSACTION_CONFIGURATION_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.transaction.AddressTemplates.TRANSACTION_RUNTIME_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;

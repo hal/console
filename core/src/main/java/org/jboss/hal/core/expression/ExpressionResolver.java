@@ -39,7 +39,13 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.EXPRESSION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESOLVE_EXPRESSION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESOLVE_EXPRESSION_ON_DOMAIN;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESPONSE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUPS;
 
 public class ExpressionResolver implements ResolveExpressionEvent.ResolveExpressionHandler {
 
@@ -76,16 +82,14 @@ public class ExpressionResolver implements ResolveExpressionEvent.ResolveExpress
                     .build();
             dispatcher.execute(operation,
                     (result) -> callback.onSuccess(ImmutableMap.of(Server.STANDALONE.getName(), result.asString())),
-                    (op1, failure) -> callback.onFailure(new RuntimeException(failure)),
-                    (op2, exception) -> callback.onFailure(exception));
+                    (op1, error) -> callback.onFailure(new RuntimeException(error)));
         } else {
             Operation operation = new Operation.Builder(ResourceAddress.root(), RESOLVE_EXPRESSION_ON_DOMAIN)
                     .param(EXPRESSION, expression.toString())
                     .build();
-            dispatcher.executeDMR(operation,
+            dispatcher.dmr(operation,
                     (res) -> callback.onSuccess(parseServerGroups(res.get(SERVER_GROUPS))),
-                    (op1, failure) -> callback.onFailure(new RuntimeException(failure)),
-                    (op2, exception) -> callback.onFailure(exception));
+                    (op1, error) -> callback.onFailure(new RuntimeException(error)));
         }
     }
 

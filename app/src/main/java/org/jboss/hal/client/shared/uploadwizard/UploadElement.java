@@ -15,8 +15,8 @@
  */
 package org.jboss.hal.client.shared.uploadwizard;
 
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.elemento.Elements;
+import org.jboss.elemento.IsElement;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.js.JsHelper;
 import org.jboss.hal.resources.Constants;
@@ -29,11 +29,11 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 
-import static org.jboss.gwt.elemento.core.Elements.*;
-import static org.jboss.gwt.elemento.core.Elements.form;
-import static org.jboss.gwt.elemento.core.Elements.label;
-import static org.jboss.gwt.elemento.core.EventType.change;
-import static org.jboss.gwt.elemento.core.InputType.file;
+import static org.jboss.elemento.Elements.*;
+import static org.jboss.elemento.Elements.form;
+import static org.jboss.elemento.Elements.label;
+import static org.jboss.elemento.EventType.change;
+import static org.jboss.elemento.InputType.file;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.FontAwesomeSize.x4;
 

@@ -57,7 +57,7 @@ public class AccessControlPresenter extends
         if (environment.isSingleSignOn()) {
             super.onReset();
         } else {
-            accessControl.reload(() -> super.onReset());
+            accessControl.reload(super::onReset);
         }
     }
 
@@ -67,7 +67,7 @@ public class AccessControlPresenter extends
     }
 
     @Override
-    protected PreviewContent initialPreview() {
+    protected PreviewContent<Void> initialPreview() {
         return new AccessControlPreview(accessControl, environment, resources);
     }
 

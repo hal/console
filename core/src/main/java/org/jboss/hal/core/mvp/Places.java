@@ -59,9 +59,6 @@ public class Places {
         this.tokenFormatter = tokenFormatter;
     }
 
-    /**
-     * Returns a place request builder for the specified finder path.
-     */
     public PlaceRequest.Builder finderPlace(String token, FinderPath path) {
         return new PlaceRequest.Builder().nameToken(token).with(PATH_PARAM, path.toString());
     }
@@ -97,7 +94,7 @@ public class Places {
 
     private boolean browseByServerGroups() {
         if (!finder.getContext().getPath().isEmpty()) {
-            FinderSegment firstSegment = finder.getContext().getPath().iterator().next();
+            FinderSegment<?> firstSegment = finder.getContext().getPath().iterator().next();
             return firstSegment.getItemId().equals(Ids.asId(Names.SERVER_GROUPS));
         }
         return false;

@@ -40,9 +40,9 @@ import org.jboss.hal.spi.MbuiView;
 
 import elemental2.dom.HTMLElement;
 
-import static org.jboss.gwt.elemento.core.Elements.h;
-import static org.jboss.gwt.elemento.core.Elements.p;
-import static org.jboss.gwt.elemento.core.Elements.section;
+import static org.jboss.elemento.Elements.h;
+import static org.jboss.elemento.Elements.p;
+import static org.jboss.elemento.Elements.section;
 import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.*;
 import static org.jboss.hal.client.configuration.subsystem.security.AddressTemplates.SECURITY_DOMAIN_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;

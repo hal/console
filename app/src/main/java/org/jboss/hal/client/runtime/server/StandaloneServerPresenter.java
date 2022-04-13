@@ -35,7 +35,6 @@ import org.jboss.hal.client.shared.sslwizard.EnableSSLWizard;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.OperationFactory;
-import org.jboss.hal.core.SuccessfulOutcome;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -74,6 +73,7 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
 import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
 
 import static elemental2.dom.DomGlobal.window;
 import static org.jboss.hal.client.shared.sslwizard.AbstractConfiguration.SOCKET_BINDING_GROUP_TEMPLATE;
@@ -223,18 +223,16 @@ public class StandaloneServerPresenter
         Task<FlowContext> loadTrustManagerTask = loadResourceTask(TRUST_MANAGER);
         tasks.add(loadTrustManagerTask);
 
-        series(new FlowContext(progress.get()), tasks).subscribe(
-                new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
-                    @Override
-                    public void onSuccess(FlowContext flowContext) {
-                        Map<String, List<String>> existingResources = new HashMap<>();
-                        flowContext.keys().forEach(key -> existingResources.put(key, flowContext.get(key)));
+        series(new FlowContext(progress.get()), tasks)
+                .then(flowContext -> {
+                    Map<String, List<String>> existingResources = new HashMap<>();
+                    flowContext.keys().forEach(key -> existingResources.put(key, flowContext.get(key)));
 
-                        new EnableSSLWizard.Builder(existingResources, resources, getEventBus(), statementContext,
-                                dispatcher, progress, StandaloneServerPresenter.this, environment)
-                                        .build()
-                                        .show();
-                    }
+                    new EnableSSLWizard.Builder(existingResources, resources, getEventBus(), statementContext,
+                            dispatcher, progress, StandaloneServerPresenter.this, environment)
+                                    .build()
+                                    .show();
+                    return null;
                 });
     }
 
@@ -246,15 +244,15 @@ public class StandaloneServerPresenter
                     .build();
 
             return dispatcher.execute(keyStoreOp)
-                    .doOnSuccess(result -> {
+                    .then(result -> {
                         List<String> res = result.asList().stream()
                                 .map(ModelNode::asString)
                                 .collect(Collectors.toList());
                         if (!res.isEmpty()) {
                             context.set(resourceName, res);
                         }
-                    })
-                    .toCompletable();
+                        return Promise.resolve(context);
+                    });
         };
     }
 
@@ -287,7 +285,7 @@ public class StandaloneServerPresenter
                         Operation readHttpInterface = new Operation.Builder(httpAddress, READ_RESOURCE_OPERATION)
                                 .build();
                         return dispatcher.execute(readHttpInterface)
-                                .doOnSuccess(value -> {
+                                .then(value -> {
                                     if (value.hasDefined(SOCKET_BINDING)) {
                                         // standalone mode uses a socket-binding for port
                                         // store the socket-binding name in the flow context and on a later call
@@ -295,8 +293,8 @@ public class StandaloneServerPresenter
                                         // retrieve the port number
                                         flowContext.set(SOCKET_BINDING, value.get(SOCKET_BINDING).asString());
                                     }
-                                })
-                                .toCompletable();
+                                    return Promise.resolve(flowContext);
+                                });
 
                     };
                     tasks.add(loadHttpInterface);
@@ -308,7 +306,7 @@ public class StandaloneServerPresenter
                                 .param(CHILD_TYPE, SOCKET_BINDING_GROUP)
                                 .build();
                         return dispatcher.execute(op)
-                                .doOnSuccess(result -> {
+                                .then(result -> {
                                     String sbg = result.asList().get(0).asString();
                                     String httpBinding = flowContext.get(SOCKET_BINDING);
                                     ResourceAddress address = SOCKET_BINDING_GROUP_TEMPLATE.resolve(statementContext,
@@ -317,10 +315,9 @@ public class StandaloneServerPresenter
                                             .param(NAME, PORT)
                                             .param(RESOLVE_EXPRESSIONS, true)
                                             .build();
-                                    dispatcher.execute(readPort,
-                                            portResult -> flowContext.set(PORT, portResult.asString()));
+                                    return dispatcher.execute(readPort);
                                 })
-                                .toCompletable();
+                                .then(result -> Promise.resolve(flowContext.set(PORT, result.asString())));
                     };
                     tasks.add(readHttpPortTask);
 
@@ -330,8 +327,7 @@ public class StandaloneServerPresenter
                         Operation op = new Operation.Builder(httpAddress, UNDEFINE_ATTRIBUTE_OPERATION)
                                 .param(NAME, SECURE_SOCKET_BINDING)
                                 .build();
-                        return dispatcher.execute(op)
-                                .toCompletable();
+                        return dispatcher.execute(op).then(__ -> Promise.resolve(flowContext));
 
                     };
                     tasks.add(undefSslTask);
@@ -341,38 +337,34 @@ public class StandaloneServerPresenter
                         Operation op = new Operation.Builder(httpAddress, UNDEFINE_ATTRIBUTE_OPERATION)
                                 .param(NAME, SSL_CONTEXT)
                                 .build();
-                        return dispatcher.execute(op)
-                                .toCompletable();
+                        return dispatcher.execute(op).then(__ -> Promise.resolve(flowContext));
                     };
                     tasks.add(undefineSslContextTask);
 
                     series(new FlowContext(progress.get()), tasks)
-                            .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
-                                @Override
-                                public void onSuccess(FlowContext flowContext) {
-                                    if (reload.getValue() != null && reload.getValue()) {
-                                        String port = flowContext.get(PORT).toString();
-                                        // extracts the url search path, so the reload shows the same view the use is on
-                                        String urlSuffix = window.location.getHref();
-                                        urlSuffix = urlSuffix.substring(urlSuffix.indexOf("//") + 2);
-                                        urlSuffix = urlSuffix.substring(urlSuffix.indexOf("/"));
-                                        // the location to redirect the browser to the unsecure URL
-                                        // TODO Replace hardcoded scheme
-                                        String location = "http://" + window.location.getHostname() + ":" + port + urlSuffix;
-                                        reloadServer(null, location);
-                                    } else {
-                                        reload();
-                                        MessageEvent.fire(getEventBus(),
-                                                Message.success(resources.messages().disableSSLManagementSuccess()));
-                                    }
-                                }
-
-                                @Override
-                                public void onError(FlowContext context, Throwable throwable) {
+                            .then(flowContext -> {
+                                if (reload.getValue() != null && reload.getValue()) {
+                                    String port = flowContext.get(PORT).toString();
+                                    // extracts the url search path, so the reload shows the same view the use is on
+                                    String urlSuffix = window.location.href;
+                                    urlSuffix = urlSuffix.substring(urlSuffix.indexOf("//") + 2);
+                                    urlSuffix = urlSuffix.substring(urlSuffix.indexOf("/"));
+                                    // the location to redirect the browser to the unsecure URL
+                                    // TODO Replace hardcoded scheme
+                                    String location = "http://" + window.location.hostname + ":" + port + urlSuffix;
+                                    reloadServer(null, location);
+                                } else {
+                                    reload();
                                     MessageEvent.fire(getEventBus(),
-                                            Message.error(resources.messages()
-                                                    .disableSSLManagementError(throwable.getMessage())));
+                                            Message.success(resources.messages().disableSSLManagementSuccess()));
                                 }
+                                return null;
+                            })
+                            .catch_(error -> {
+                                MessageEvent.fire(getEventBus(),
+                                        Message.error(resources.messages()
+                                                .disableSSLManagementError(String.valueOf(error))));
+                                return null;
                             });
                 })
                 .show();

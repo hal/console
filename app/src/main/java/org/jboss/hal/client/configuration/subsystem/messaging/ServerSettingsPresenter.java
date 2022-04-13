@@ -39,6 +39,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_SERVER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 
+@SuppressWarnings("rawtypes")
 abstract class ServerSettingsPresenter<V extends MbuiView, Proxy_ extends ProxyPlace<?>>
         extends MbuiPresenter<V, Proxy_>
         implements SupportsExpertMode {

@@ -48,14 +48,19 @@ import org.jboss.hal.spi.Requires;
 import com.google.common.base.Strings;
 
 import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
-import static org.jboss.gwt.elemento.core.Elements.span;
+import static org.jboss.elemento.Elements.span;
 import static org.jboss.hal.client.configuration.subsystem.resourceadapter.AddressTemplates.RESOURCE_ADAPTER_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.resourceadapter.AddressTemplates.RESOURCE_ADAPTER_SUBSYSTEM_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.resourceadapter.AddressTemplates.RESOURCE_ADAPTER_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ARCHIVE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MODULE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESOURCE_ADAPTER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TRANSACTION_SUPPORT;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
 @AsyncColumn(Ids.RESOURCE_ADAPTER)
@@ -73,13 +78,10 @@ public class ResourceAdapterColumn extends FinderColumn<ResourceAdapter> {
 
         super(new Builder<ResourceAdapter>(finder, Ids.RESOURCE_ADAPTER, Names.RESOURCE_ADAPTER)
 
-                .itemsProvider((context, callback) -> crud.readChildren(RESOURCE_ADAPTER_SUBSYSTEM_TEMPLATE, RESOURCE_ADAPTER,
-                        children -> {
-                            List<ResourceAdapter> resourceAdapters = children.stream()
-                                    .map(ResourceAdapter::new)
-                                    .collect(toList());
-                            callback.onSuccess(resourceAdapters);
-                        }))
+                .itemsProvider(context -> crud.readChildren(RESOURCE_ADAPTER_SUBSYSTEM_TEMPLATE, RESOURCE_ADAPTER)
+                        .then(children -> Promise.resolve(children.stream()
+                                .map(ResourceAdapter::new)
+                                .collect(toList()))))
 
                 .withFilter()
                 .filterDescription(resources.messages().resourceAdapterColumnFilterDescription())

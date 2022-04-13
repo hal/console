@@ -24,10 +24,23 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Task;
 
-import rx.Completable;
+import elemental2.promise.Promise;
 
 import static java.util.Comparator.comparing;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.BOUND;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.BOUND_ADDRESS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.BOUND_PORT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_ATTRIBUTE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDING;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDING_GROUP;
 
 /** Umbrella class for functions to read the server URL */
 class ServerUrlTasks {
@@ -43,7 +56,7 @@ class ServerUrlTasks {
      * reads the {@code socket-binding-group} attribute of the selected group in the statement context.
      * </p>
      */
-    static class ReadSocketBindingGroup implements Task<FlowContext> {
+    static final class ReadSocketBindingGroup implements Task<FlowContext> {
 
         private final boolean standalone;
         private final String serverGroup;
@@ -56,30 +69,27 @@ class ServerUrlTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
+        public Promise<FlowContext> apply(final FlowContext context) {
             if (standalone) {
                 Operation operation = new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_NAMES_OPERATION)
                         .param(CHILD_TYPE, SOCKET_BINDING_GROUP)
                         .build();
                 return dispatcher.execute(operation)
-                        .doOnSuccess(result -> {
+                        .then(result -> {
                             if (result.asList().isEmpty()) {
-                                throw new RuntimeException(
-                                        "ReadSocketBindingGroup: No socket binding groups defined"); // NON-NLS
+                                return Promise.reject("ReadSocketBindingGroup: No socket binding groups defined");
                             } else {
                                 String sbg = result.asList().get(0).asString();
-                                context.set(SOCKET_BINDING_GROUP_KEY, sbg);
+                                return Promise.resolve(context.set(SOCKET_BINDING_GROUP_KEY, sbg));
                             }
-                        })
-                        .toCompletable();
+                        });
             } else {
                 ResourceAddress address = new ResourceAddress().add(SERVER_GROUP, serverGroup);
                 Operation operation = new Operation.Builder(address, READ_ATTRIBUTE_OPERATION)
                         .param(NAME, SOCKET_BINDING_GROUP)
                         .build();
                 return dispatcher.execute(operation)
-                        .doOnSuccess(result -> context.set(SOCKET_BINDING_GROUP_KEY, result.asString()))
-                        .toCompletable();
+                        .then(result -> Promise.resolve(context.set(SOCKET_BINDING_GROUP_KEY, result.asString())));
             }
         }
     }
@@ -88,7 +98,7 @@ class ServerUrlTasks {
      * Checks whether there's a {@code http} or {@code https} socket binding and puts the name of that socket binding into the
      * context. Aborts otherwise. Expects the name of the socket binding group in the context.
      */
-    static class ReadSocketBinding implements Task<FlowContext> {
+    static final class ReadSocketBinding implements Task<FlowContext> {
 
         private final boolean standalone;
         private final String host;
@@ -103,9 +113,7 @@ class ServerUrlTasks {
         }
 
         @Override
-        public Completable call(FlowContext context) {
-            Completable completable;
-
+        public Promise<FlowContext> apply(final FlowContext context) {
             String sbg = context.get(SOCKET_BINDING_GROUP_KEY);
             if (sbg != null) {
                 ResourceAddress address = new ResourceAddress();
@@ -117,13 +125,11 @@ class ServerUrlTasks {
                         .param(CHILD_TYPE, SOCKET_BINDING)
                         .param(INCLUDE_RUNTIME, true)
                         .build();
-                completable = dispatcher.execute(operation).doOnSuccess(result -> {
+                return dispatcher.execute(operation).then(result -> {
                     Optional<Property> optional = result.asPropertyList().stream()
                             .filter(p -> p.getName().startsWith("http"))
                             .filter(p -> p.getValue().hasDefined(BOUND))
-                            .filter(p -> p.getValue().get(BOUND).asBoolean())
-                            .sorted(comparing(Property::getName))
-                            .findFirst();
+                            .filter(p -> p.getValue().get(BOUND).asBoolean()).min(comparing(Property::getName));
                     if (optional.isPresent()) {
                         Property property = optional.get();
                         if (property.getValue().hasDefined(BOUND_ADDRESS)) {
@@ -134,20 +140,18 @@ class ServerUrlTasks {
                             if (property.getValue().hasDefined(BOUND_PORT)) {
                                 url.append(":").append(property.getValue().get(BOUND_PORT).asInt());
                             }
-                            context.set(URL_KEY, new ServerUrl(url.toString(), false));
+                            return Promise.resolve(context.set(URL_KEY, new ServerUrl(url.toString(), false)));
                         } else {
-                            throw new RuntimeException(
-                                    "ReadSocketBinding: No address defined for " + sbg + " / " + property.getName());
+                            return Promise
+                                    .reject("ReadSocketBinding: No address defined for " + sbg + " / " + property.getName());
                         }
                     } else {
-                        throw new RuntimeException("ReadSocketBinding: No http(s) socket binding defined for " + sbg);
+                        return Promise.reject("ReadSocketBinding: No http(s) socket binding defined for " + sbg);
                     }
-                }).toCompletable();
+                });
             } else {
-                completable = Completable.error(
-                        new RuntimeException("ReadSocketBinding: No socket binding group in context"));
+                return Promise.reject("ReadSocketBinding: No socket binding group in context");
             }
-            return completable;
         }
     }
 

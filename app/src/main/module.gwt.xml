@@ -22,9 +22,9 @@
     <inherits name="com.gwtplatform.mvp.MvpWithEntryPoint"/>
     <inherits name="elemental2.core.Core"/>
     <inherits name="elemental2.dom.Dom"/>
+    <inherits name="elemental2.promise.Promise"/>
     <inherits name="elemental2.webstorage.WebStorage"/>
-    <inherits name="com.intendia.rxgwt.RxElemento"/>
-    <inherits name="org.jboss.gwt.elemento.Core"/>
+    <inherits name="org.jboss.elemento.Core"/>
     <inherits name="ru.finam.slf4jgwt.logging.gwt.Logging"/>
 
     <set-configuration-property name="gwtp.prebootstrapper"

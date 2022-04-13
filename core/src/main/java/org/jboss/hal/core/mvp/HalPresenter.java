@@ -17,7 +17,7 @@ package org.jboss.hal.core.mvp;
 
 import java.util.Iterator;
 
-import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.elemento.IsElement;
 import org.jboss.hal.core.header.HeaderModeEvent;
 
 import com.google.gwt.event.shared.GwtEvent;

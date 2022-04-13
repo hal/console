@@ -31,8 +31,19 @@ import org.jboss.hal.resources.Names;
 import elemental2.dom.HTMLElement;
 
 import static java.util.stream.Collectors.joining;
-import static org.jboss.gwt.elemento.core.Elements.span;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.elemento.Elements.span;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ALLOWED_ORIGINS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ENABLED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HTTP_UPGRADE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INTERFACE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PORT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SASL_PROTOCOL;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURE_INTERFACE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURE_PORT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURE_SOCKET_BINDING;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURITY_REALM;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDING;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SSL_CONTEXT;
 import static org.jboss.hal.resources.Icons.flag;
 
 class ManagementInterfacePreview extends PreviewContent<StaticItem> {

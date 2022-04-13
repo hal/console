@@ -57,6 +57,8 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
+import elemental2.promise.Promise;
+
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.SECURITY_DOMAIN_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.BINDING_DIRECTORY_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.JOURNAL_DIRECTORY_TEMPLATE;
@@ -94,8 +96,8 @@ public class ServerColumn extends FinderColumn<NamedNode> {
 
         super(new FinderColumn.Builder<NamedNode>(finder, Ids.MESSAGING_SERVER_CONFIGURATION, Names.SERVER)
 
-                .itemsProvider((context, callback) -> crud.readChildren(MESSAGING_SUBSYSTEM_TEMPLATE, SERVER,
-                        children -> callback.onSuccess(asNamedNodes(children))))
+                .itemsProvider(context -> crud.readChildren(MESSAGING_SUBSYSTEM_TEMPLATE, SERVER)
+                        .then(children -> Promise.resolve(asNamedNodes(children))))
 
                 .onBreadcrumbItem((item, context) -> {
                     // replace 'server' request parameter
@@ -207,11 +209,7 @@ public class ServerColumn extends FinderColumn<NamedNode> {
 
                                                         }, (operation, failure) -> MessageEvent.fire(eventBus,
                                                                 Message.error(resources.messages()
-                                                                        .addResourceError(name, failure))),
-                                                        (operation, e) -> MessageEvent.fire(eventBus,
-                                                                Message.error(resources.messages()
-                                                                        .addResourceError(name,
-                                                                                e.getMessage()))));
+                                                                        .addResourceError(name, failure))));
                                             }
                                         });
                                 dialog.getForm().<String> getFormItem(NAME).addValidationHandler(

@@ -95,8 +95,8 @@
         <version.auto.service>1.0.1</version.auto.service>
         <version.apt.tools>0.0.3</version.apt.tools>
         <version.compile.testing>0.19</version.compile.testing>
-        <version.elemental>1.0.0-RC1</version.elemental>
-        <version.elemento>0.9.6-gwt2</version.elemento>
+        <version.elemental>1.1.0</version.elemental>
+        <version.elemento>1.0.10-gwtcom</version.elemento>
         <version.gin>2.1.2</version.gin>
         <version.guava>25.0-jre</version.guava>
         <version.gwt>2.9.0</version.gwt>
@@ -108,7 +108,6 @@
         <version.mockito>4.4.0</version.mockito>
         <version.node>v16.14.0</version.node>
         <version.quarkus>2.7.5.Final</version.quarkus>
-        <version.rx.gwt>0.4</version.rx.gwt>
         <version.slf4j>1.7.36</version.slf4j>
         <version.slf4j.gwt>1.7.7.1</version.slf4j.gwt>
         <version.validation>1.0.0.GA</version.validation>
@@ -350,9 +349,7 @@
                         <include>com.google.gwt:gwt-user</include>
                         <include>com.google.guava:guava</include>
                         <include>com.gwtplatform:gwtp-all</include>
-                        <include>com.intendia.gwt.rxgwt:rxgwt</include>
-                        <include>org.jboss.gwt.elemento:elemento-core</include>
-                        <include>org.jboss.gwt.elemento:elemento-template-api</include>
+                        <include>org.jboss.elemento:elemento-core</include>
                         <include>org.slf4j:slf4j-api</include>
                     </includes>
                     <mergeTypes>true</mergeTypes>

@@ -32,8 +32,14 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Requires;
 
-import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import elemental2.promise.Promise;
+
+import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_JMS_BRIDGE_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_SUBSYSTEM_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.JMS_BRIDGE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
 @AsyncColumn(Ids.JMS_BRIDGE_RUNTIME)
@@ -48,15 +54,15 @@ public class JmsBridgeColumn extends FinderColumn<NamedNode> {
 
         super(new Builder<NamedNode>(finder, Ids.JMS_BRIDGE_RUNTIME, Names.JMS_BRIDGE)
                 .columnAction(columnActionFactory.refresh(Ids.JMS_BRIDGE_REFRESH))
-                .onPreview(bridge -> new JmsBridgePreview(bridge)));
+                .onPreview(JmsBridgePreview::new));
 
-        ItemsProvider<NamedNode> itemsProvider = (context, callback) -> {
+        ItemsProvider<NamedNode> itemsProvider = context -> {
             ResourceAddress address = MESSAGING_SUBSYSTEM_TEMPLATE.resolve(statementContext);
             Operation operation = new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
                     .param(CHILD_TYPE, JMS_BRIDGE)
                     .param(INCLUDE_RUNTIME, true)
                     .build();
-            dispatcher.execute(operation, result -> callback.onSuccess(asNamedNodes(result.asPropertyList())));
+            return dispatcher.execute(operation).then(result -> Promise.resolve(asNamedNodes(result.asPropertyList())));
         };
         setItemsProvider(itemsProvider);
 

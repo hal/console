@@ -42,7 +42,6 @@ import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.subsystem.SubsystemMetadata;
 import org.jboss.hal.core.subsystem.Subsystems;
 import org.jboss.hal.dmr.Composite;
-import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
@@ -56,17 +55,29 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
 
 import static java.util.Collections.singletonList;
 import static java.util.Comparator.comparing;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES_ONLY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.BATCH_JBERET;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.EJB3;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LOGGING;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MICROPROFILE_HEALTH_SMALLRYE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBSYSTEM;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TRANSACTIONS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDERTOW;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.WEBSERVICES;
 import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_HOST;
 import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_SERVER;
 
@@ -96,7 +107,7 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
         customPreviews.put(UNDERTOW, new UndertowPreview(dispatcher, statementContext, resources));
         customPreviews.put(WEBSERVICES, new WebservicesPreview(dispatcher, statementContext, resources));
 
-        ItemsProvider<SubsystemMetadata> itemsProvider = (context, callback) -> {
+        ItemsProvider<SubsystemMetadata> itemsProvider = context -> {
             ResourceAddress address = AddressTemplate.of(SELECTED_HOST, SELECTED_SERVER)
                     .resolve(statementContext);
             Operation subsystemsOp = new Operation.Builder(address, READ_CHILDREN_NAMES_OPERATION)
@@ -105,7 +116,7 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
             Operation versionOp = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                     .param(ATTRIBUTES_ONLY, true)
                     .build();
-            dispatcher.execute(new Composite(subsystemsOp, versionOp), (CompositeResult result) -> {
+            return dispatcher.execute(new Composite(subsystemsOp, versionOp)).then(result -> {
                 Map<String, SubsystemMetadata> existingSubsystems = result.step(0).get(RESULT).asList().stream()
                         .map(ModelNode::asString)
                         .filter(subsystems::containsRuntime)
@@ -138,27 +149,15 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                 items.addAll(existingSubsystems.values().stream()
                         .sorted(comparing(SubsystemMetadata::getTitle))
                         .collect(toList()));
-                callback.onSuccess(items);
+                return Promise.resolve(items);
             });
         };
         setItemsProvider(itemsProvider);
 
-        setBreadcrumbItemsProvider(
-                (context, callback) -> itemsProvider.get(context, new AsyncCallback<List<SubsystemMetadata>>() {
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        callback.onFailure(caught);
-                    }
-
-                    @Override
-                    public void onSuccess(List<SubsystemMetadata> result) {
-                        // only subsystems w/o next columns will show up in the breadcrumb dropdown
-                        List<SubsystemMetadata> subsystemsWithTokens = result.stream()
-                                .filter(metadata -> metadata.getToken() != null)
-                                .collect(toList());
-                        callback.onSuccess(subsystemsWithTokens);
-                    }
-                }));
+        setBreadcrumbItemsProvider(context -> itemsProvider.items(context)
+                .then(result -> Promise.resolve(result.stream()
+                        .filter(metadata -> metadata.getToken() != null)
+                        .collect(toList()))));
 
         setItemRenderer(item -> new ItemDisplay<SubsystemMetadata>() {
             @Override

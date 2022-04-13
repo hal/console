@@ -17,7 +17,7 @@ package org.jboss.hal.client.deployment.dialog;
 
 import java.util.List;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.form.SwitchBridge;
@@ -36,8 +36,12 @@ import elemental2.dom.HTMLInputElement;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
-import static org.jboss.gwt.elemento.core.Elements.*;
-import static org.jboss.gwt.elemento.core.InputType.checkbox;
+import static org.jboss.elemento.Elements.bag;
+import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.input;
+import static org.jboss.elemento.Elements.label;
+import static org.jboss.elemento.Elements.p;
+import static org.jboss.elemento.InputType.checkbox;
 import static org.jboss.hal.resources.CSS.marginTopLarge;
 
 /** Dialog used to deploy one or several one content items to one server group. */
@@ -71,7 +75,7 @@ public class DeployContentDialog2 {
                 .options();
         table = new DataTable<>(Ids.SERVER_GROUP_DEPLOYMENT_TABLE, options);
 
-        Iterable<HTMLElement> elements = collect()
+        Iterable<HTMLElement> elements = bag()
                 .add(div().add(noContentSelected))
                 .add(p().innerHtml(resources.messages().chooseContentToDeploy(serverGroup)))
                 .add(table)

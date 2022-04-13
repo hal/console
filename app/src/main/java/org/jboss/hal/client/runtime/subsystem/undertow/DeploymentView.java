@@ -19,7 +19,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
@@ -39,8 +39,8 @@ import org.jboss.hal.resources.Resources;
 
 import elemental2.dom.HTMLElement;
 
-import static org.jboss.gwt.elemento.core.Elements.*;
-import static org.jboss.gwt.elemento.core.Elements.table;
+import static org.jboss.elemento.Elements.*;
+import static org.jboss.elemento.Elements.table;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_DEPLOYMENT_SERVLET_TEMPLATE;

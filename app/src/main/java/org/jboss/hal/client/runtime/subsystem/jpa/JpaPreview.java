@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.client.runtime.subsystem.jpa;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.chart.Utilization;
 import org.jboss.hal.config.Environment;
@@ -35,8 +35,8 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import elemental2.dom.HTMLElement;
 
-import static org.jboss.gwt.elemento.core.Elements.a;
-import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.elemento.Elements.a;
+import static org.jboss.elemento.Elements.h;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;

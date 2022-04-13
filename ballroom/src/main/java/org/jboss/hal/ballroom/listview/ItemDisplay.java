@@ -18,7 +18,7 @@ package org.jboss.hal.ballroom.listview;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.elemento.IsElement;
 import org.jboss.hal.ballroom.HasTitle;
 import org.jboss.hal.ballroom.dataprovider.DataProvider;
 import org.jboss.hal.resources.Ids;

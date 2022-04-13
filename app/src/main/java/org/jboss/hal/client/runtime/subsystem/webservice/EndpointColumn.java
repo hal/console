@@ -16,7 +16,6 @@
 package org.jboss.hal.client.runtime.subsystem.webservice;
 
 import java.util.Comparator;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -25,7 +24,6 @@ import org.jboss.hal.core.deployment.DeploymentResources;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
-import org.jboss.hal.core.finder.FinderContext;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mvp.Places;
@@ -35,9 +33,8 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-
 import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ENDPOINT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.WEBSERVICES;
@@ -57,19 +54,14 @@ public class EndpointColumn extends FinderColumn<DeploymentResource> {
 
                 .columnAction(columnActionFactory.refresh(Ids.ENDPOINT_REFRESH))
 
-                .itemsProvider((FinderContext context, AsyncCallback<List<DeploymentResource>> callback) -> {
-                    deploymentResources.readChildren(WEBSERVICES, ENDPOINT,
-                            (address, modelNode) -> {
-                                String name = address.lastValue().replaceAll("%3A", ":");
-                                DeploymentResource deploymentResource = new DeploymentResource(name, address,
-                                        modelNode);
-                                return deploymentResource;
-
-                            }, endpoints -> {
-                                endpoints.sort(Comparator.comparing(DeploymentResource::getName));
-                                callback.onSuccess(endpoints);
-                            });
-                })
+                .itemsProvider(context -> deploymentResources.readChildren(WEBSERVICES, ENDPOINT,
+                        (address, modelNode) -> {
+                            String name = address.lastValue().replaceAll("%3A", ":");
+                            return new DeploymentResource(name, address, modelNode);
+                        }).then(endpoints -> {
+                            endpoints.sort(Comparator.comparing(DeploymentResource::getName));
+                            return Promise.resolve(endpoints);
+                        }))
 
                 .itemRenderer(item -> new ItemDisplay<DeploymentResource>() {
                     @Override

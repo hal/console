@@ -56,6 +56,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
 
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.joining;
@@ -89,8 +90,8 @@ public class ProfileColumn extends FinderColumn<NamedNode> {
             Resources resources) {
 
         super(new Builder<NamedNode>(finder, Ids.PROFILE, Names.PROFILE)
-                .itemsProvider((context, callback) -> crud.readChildren(ResourceAddress.root(), PROFILE,
-                        children -> callback.onSuccess(asNamedNodes(children))))
+                .itemsProvider(context -> crud.readChildren(ResourceAddress.root(), PROFILE)
+                        .then(children -> Promise.resolve(asNamedNodes(children))))
 
                 .onItemSelect(item -> eventBus.fireEvent(new ProfileSelectionEvent(item.getName())))
 

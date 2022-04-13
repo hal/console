@@ -32,7 +32,7 @@ import static elemental2.dom.DomGlobal.setTimeout;
 
 public class CheckTargetVersion implements InitializedTask {
 
-    private static Logger logger = LoggerFactory.getLogger(CheckTargetVersion.class);
+    private static final Logger logger = LoggerFactory.getLogger(CheckTargetVersion.class);
 
     private final Environment environment;
     private final EventBus eventBus;

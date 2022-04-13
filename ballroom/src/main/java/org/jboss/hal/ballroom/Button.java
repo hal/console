@@ -15,15 +15,15 @@
  */
 package org.jboss.hal.ballroom;
 
-import org.jboss.gwt.elemento.core.EventCallbackFn;
-import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.elemento.EventCallbackFn;
+import org.jboss.elemento.IsElement;
 
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.MouseEvent;
 
-import static org.jboss.gwt.elemento.core.Elements.button;
-import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.elemento.Elements.button;
+import static org.jboss.elemento.EventType.click;
 import static org.jboss.hal.resources.CSS.btn;
 import static org.jboss.hal.resources.CSS.btnDefault;
 import static org.jboss.hal.resources.CSS.btnHal;

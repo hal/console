@@ -39,7 +39,6 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Role;
 import org.jboss.hal.config.RolesChangedEvent;
 import org.jboss.hal.config.Settings;
-import org.jboss.hal.core.SuccessfulOutcome;
 import org.jboss.hal.core.finder.ColumnAction;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
@@ -71,14 +70,25 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.web.bindery.event.shared.EventBus;
 
 import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
 
+import static java.util.Arrays.asList;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
-import static org.jboss.gwt.elemento.core.Elements.small;
-import static org.jboss.gwt.elemento.core.Elements.span;
-import static org.jboss.hal.client.accesscontrol.AddressTemplates.*;
+import static org.jboss.elemento.Elements.small;
+import static org.jboss.elemento.Elements.span;
+import static org.jboss.hal.client.accesscontrol.AddressTemplates.HOST_SCOPED_ROLE_ADDRESS;
+import static org.jboss.hal.client.accesscontrol.AddressTemplates.HOST_SCOPED_ROLE_TEMPLATE;
+import static org.jboss.hal.client.accesscontrol.AddressTemplates.ROLE_MAPPING_ADDRESS;
+import static org.jboss.hal.client.accesscontrol.AddressTemplates.ROLE_MAPPING_TEMPLATE;
+import static org.jboss.hal.client.accesscontrol.AddressTemplates.SERVER_GROUP_SCOPED_ROLE_ADDRESS;
+import static org.jboss.hal.client.accesscontrol.AddressTemplates.SERVER_GROUP_SCOPED_ROLE_TEMPLATE;
 import static org.jboss.hal.config.Settings.Key.RUN_AS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.BASE_ROLE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOSTS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_ALL;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUPS;
 import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.CSS.itemText;
 import static org.jboss.hal.resources.CSS.pfIcon;
@@ -125,7 +135,7 @@ public class RoleColumn extends FinderColumn<Role> {
             Resources resources) {
 
         super(new Builder<Role>(finder, Ids.ROLE, resources.constants().role())
-                .itemsProvider((context, callback) -> {
+                .itemsProvider((context) -> new Promise<>((resolve, reject) -> {
                     List<Role> roles = new ArrayList<>();
                     accessControl.roles().standardRoles().stream()
                             .sorted(comparing(Role::getName))
@@ -135,8 +145,8 @@ public class RoleColumn extends FinderColumn<Role> {
                                 .sorted(comparing(Role::getName))
                                 .forEach(roles::add);
                     }
-                    callback.onSuccess(roles);
-                })
+                    resolve.onInvoke(roles);
+                }))
                 .onPreview(item -> new RolePreview(accessControl, tokens, item, resources))
                 .showCount()
                 .filterDescription(resources.messages().roleColumnFilterDescription())
@@ -307,16 +317,14 @@ public class RoleColumn extends FinderColumn<Role> {
                         tasks.add(new ModifyIncludeAll(dispatcher, transientRole, includeAll));
                     }
                     series(new FlowContext(progress.get()), tasks)
-                            .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
-                                @Override
-                                public void onSuccess(FlowContext context) {
-                                    MessageEvent.fire(eventBus,
-                                            Message.success(resources.messages().addResourceSuccess(typeName, name)));
-                                    accessControl.reload(() -> {
-                                        refresh(Ids.role(name));
-                                        eventBus.fireEvent(new RolesChangedEvent());
-                                    });
-                                }
+                            .then(__ -> {
+                                MessageEvent.fire(eventBus,
+                                        Message.success(resources.messages().addResourceSuccess(typeName, name)));
+                                accessControl.reload(() -> {
+                                    refresh(Ids.role(name));
+                                    eventBus.fireEvent(new RolesChangedEvent());
+                                });
+                                return null;
                             });
                 });
         dialog.getForm().<String> getFormItem(NAME).addValidationHandler(createUniqueValidation());
@@ -337,22 +345,21 @@ public class RoleColumn extends FinderColumn<Role> {
         ModelNode modelNode = new ModelNode();
         modelNode.get(INCLUDE_ALL).set(role.isIncludeAll());
         new ModifyResourceDialog(resources.messages().modifyResourceTitle(resources.constants().role()),
-                form, (frm, changedValues) -> series(new FlowContext(progress.get()),
-                        new CheckRoleMapping(dispatcher, role),
-                        new AddRoleMapping(dispatcher, role, status -> status == 404),
-                        new ModifyIncludeAll(dispatcher, role, frm.getModel().get(INCLUDE_ALL).asBoolean()))
-                                .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
-                                    @Override
-                                    public void onSuccess(FlowContext context) {
-                                        MessageEvent.fire(eventBus, Message.success(resources.messages()
-                                                .modifyResourceSuccess(resources.constants().role(), role.getName())));
-                                        accessControl.reload(() -> {
-                                            refresh(role.getId());
-                                            eventBus.fireEvent(new RolesChangedEvent());
-                                        });
-                                    }
-                                }))
-                                        .show(modelNode);
+                form, (frm, changedValues) -> {
+                    List<Task<FlowContext>> tasks = asList(new CheckRoleMapping(dispatcher, role),
+                            new AddRoleMapping(dispatcher, role, status -> status == 404),
+                            new ModifyIncludeAll(dispatcher, role, frm.getModel().get(INCLUDE_ALL).asBoolean()));
+                    series(new FlowContext(progress.get()), tasks)
+                            .then(__ -> {
+                                MessageEvent.fire(eventBus, Message.success(resources.messages()
+                                        .modifyResourceSuccess(resources.constants().role(), role.getName())));
+                                accessControl.reload(() -> {
+                                    refresh(role.getId());
+                                    eventBus.fireEvent(new RolesChangedEvent());
+                                });
+                                return null;
+                            });
+                }).show(modelNode);
         form.getFormItem(NAME).setValue(role.getName());
     }
 
@@ -390,16 +397,14 @@ public class RoleColumn extends FinderColumn<Role> {
                 tasks.add(new ModifyIncludeAll(dispatcher, role, includeAll));
             }
             series(new FlowContext(progress.get()), tasks)
-                    .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
-                        @Override
-                        public void onSuccess(FlowContext context) {
-                            MessageEvent.fire(eventBus,
-                                    Message.success(resources.messages().modifyResourceSuccess(type, role.getName())));
-                            accessControl.reload(() -> {
-                                refresh(role.getId());
-                                eventBus.fireEvent(new RolesChangedEvent());
-                            });
-                        }
+                    .then(__ -> {
+                        MessageEvent.fire(eventBus,
+                                Message.success(resources.messages().modifyResourceSuccess(type, role.getName())));
+                        accessControl.reload(() -> {
+                            refresh(role.getId());
+                            eventBus.fireEvent(new RolesChangedEvent());
+                        });
+                        return null;
                     });
         }).show(modelNode);
     }
@@ -417,16 +422,14 @@ public class RoleColumn extends FinderColumn<Role> {
         tasks.add(new RemoveScopedRole(dispatcher, role));
 
         series(new FlowContext(progress.get()), tasks)
-                .subscribe(new SuccessfulOutcome<FlowContext>(eventBus, resources) {
-                    @Override
-                    public void onSuccess(FlowContext context) {
-                        MessageEvent.fire(eventBus,
-                                Message.success(resources.messages().removeResourceSuccess(type, role.getName())));
-                        accessControl.reload(() -> {
-                            refresh(RefreshMode.CLEAR_SELECTION);
-                            eventBus.fireEvent(new RolesChangedEvent());
-                        });
-                    }
+                .then(__ -> {
+                    MessageEvent.fire(eventBus,
+                            Message.success(resources.messages().removeResourceSuccess(type, role.getName())));
+                    accessControl.reload(() -> {
+                        refresh(RefreshMode.CLEAR_SELECTION);
+                        eventBus.fireEvent(new RolesChangedEvent());
+                    });
+                    return null;
                 });
     }
 }

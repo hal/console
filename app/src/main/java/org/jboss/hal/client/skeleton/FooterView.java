@@ -17,7 +17,7 @@ package org.jboss.hal.client.skeleton;
 
 import javax.inject.Inject;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.ProgressElement;
 import org.jboss.hal.ballroom.Tooltip;
 import org.jboss.hal.config.Environment;
@@ -34,11 +34,11 @@ import org.slf4j.LoggerFactory;
 
 import elemental2.dom.HTMLElement;
 
-import static org.jboss.gwt.elemento.core.Elements.*;
-import static org.jboss.gwt.elemento.core.Elements.footer;
-import static org.jboss.gwt.elemento.core.Elements.nav;
-import static org.jboss.gwt.elemento.core.EventType.bind;
-import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.elemento.Elements.*;
+import static org.jboss.elemento.Elements.footer;
+import static org.jboss.elemento.Elements.nav;
+import static org.jboss.elemento.EventType.bind;
+import static org.jboss.elemento.EventType.click;
 import static org.jboss.hal.ballroom.ProgressElement.Label.NONE;
 import static org.jboss.hal.ballroom.ProgressElement.Size.XS;
 import static org.jboss.hal.resources.CSS.*;

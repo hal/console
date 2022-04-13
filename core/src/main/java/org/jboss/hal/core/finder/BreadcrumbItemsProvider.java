@@ -17,14 +17,18 @@ package org.jboss.hal.core.finder;
 
 import java.util.List;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import elemental2.promise.Promise;
+import jsinterop.annotations.JsAsync;
+import jsinterop.annotations.JsFunction;
 
 /**
  * Function to load the items shown in the breadcrumb dropdown. Normally this list equals to the list which is returned by
  * {@link ItemsProvider}.
  */
+@JsFunction
 @FunctionalInterface
 public interface BreadcrumbItemsProvider<T> {
 
-    void get(FinderContext context, AsyncCallback<List<T>> callback);
+    @JsAsync
+    Promise<List<T>> items(FinderContext context);
 }

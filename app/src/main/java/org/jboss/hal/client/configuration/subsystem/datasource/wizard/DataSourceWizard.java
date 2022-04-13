@@ -50,9 +50,20 @@ import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTem
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.JDBC_DRIVER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_PROPERTIES_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.datasource.wizard.State.*;
+import static org.jboss.hal.client.configuration.subsystem.datasource.wizard.State.CHOOSE_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.datasource.wizard.State.CONNECTION;
+import static org.jboss.hal.client.configuration.subsystem.datasource.wizard.State.DRIVER;
+import static org.jboss.hal.client.configuration.subsystem.datasource.wizard.State.NAMES;
+import static org.jboss.hal.client.configuration.subsystem.datasource.wizard.State.REVIEW;
+import static org.jboss.hal.client.configuration.subsystem.datasource.wizard.State.TEST;
+import static org.jboss.hal.client.configuration.subsystem.datasource.wizard.State.XA_PROPERTIES;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DATASOURCE_CLASS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_CLASS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 
 public class DataSourceWizard {
 

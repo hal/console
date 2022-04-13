@@ -21,7 +21,7 @@ import java.util.Set;
 import org.jboss.hal.db.PouchDB;
 import org.jboss.hal.dmr.ResourceAddress;
 
-import rx.Single;
+import elemental2.promise.Promise;
 
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
@@ -30,7 +30,7 @@ import static java.util.stream.Collectors.toSet;
 /** Abstract database which uses the specified statement context to resolve address templates. */
 public abstract class AbstractDatabase<T> implements Database<T> {
 
-    private StatementContext statementContext;
+    private final StatementContext statementContext;
     private final String type;
 
     protected AbstractDatabase(StatementContext statementContext, String type) {
@@ -49,40 +49,29 @@ public abstract class AbstractDatabase<T> implements Database<T> {
     }
 
     @Override
-    public Single<Map<ResourceAddress, T>> getAll(Set<AddressTemplate> templates) {
+    public Promise<Map<ResourceAddress, T>> getAll(Set<AddressTemplate> templates) {
         Set<String> ids = templates.stream()
                 .map(template -> template.resolve(statementContext).toString())
                 .collect(toSet());
-
-        return Single.create(em -> database().getAll(ids)
+        return database().getAll(ids)
                 .then(documents -> {
                     Map<ResourceAddress, T> metadata = documents.stream().collect(toMap(
                             document -> ResourceAddress.from(document.getId()),
                             this::asMetadata));
-                    em.onSuccess(metadata);
-                    return null;
-                })
-                .catch_(failure -> {
-                    em.onError(new RuntimeException(String.valueOf(failure)));
-                    return null;
-                }));
+                    return Promise.resolve(metadata);
+                });
     }
 
     @Override
-    public Single<Map<ResourceAddress, T>> getRecursive(AddressTemplate template) {
+    public Promise<Map<ResourceAddress, T>> getRecursive(AddressTemplate template) {
         String id = template.resolve(statementContext).toString();
-        return Single.create(em -> database().prefixSearch(id)
+        return database().prefixSearch(id)
                 .then(documents -> {
                     Map<ResourceAddress, T> metadata = documents.stream().collect(toMap(
                             document -> ResourceAddress.from(document.getId()),
                             this::asMetadata));
-                    em.onSuccess(metadata);
-                    return null;
-                })
-                .catch_(failure -> {
-                    em.onError(new RuntimeException(String.valueOf(failure)));
-                    return null;
-                }));
+                    return Promise.resolve(metadata);
+                });
     }
 
     @Override

@@ -53,12 +53,12 @@ public abstract class ApplicationFinderPresenter<V extends HalView, Proxy_ exten
         reload();
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private void updateBreadcrumb() {
         FinderPath applicationPath = finderPath();
         if (applicationPath != null) {
             // try to connect segments with existing columns from the finder
-            for (FinderSegment segment : applicationPath) {
+            for (FinderSegment<?> segment : applicationPath) {
                 FinderColumn column = finder.getColumn(segment.getColumnId());
                 if (column != null) {
                     segment.connect(column);

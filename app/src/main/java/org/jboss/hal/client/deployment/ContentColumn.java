@@ -16,6 +16,7 @@
 package org.jboss.hal.client.deployment;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -56,8 +57,8 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
-import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.js.JsHelper;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.ManagementModel;
@@ -83,11 +84,13 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
 
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
-import static org.jboss.gwt.elemento.core.Elements.span;
+import static org.jboss.elemento.Elements.span;
 import static org.jboss.hal.client.deployment.ContentColumn.CONTENT_ADDRESS;
 import static org.jboss.hal.client.deployment.ContentColumn.ROOT_ADDRESS;
 import static org.jboss.hal.client.deployment.ContentColumn.SERVER_GROUP_DEPLOYMENT_ADDRESS;
@@ -95,7 +98,20 @@ import static org.jboss.hal.client.deployment.wizard.DeploymentState.NAMES;
 import static org.jboss.hal.client.deployment.wizard.DeploymentState.UPLOAD;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CONTENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.EMPTY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ENABLED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.EXPLODE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.FULL_REPLACE_DEPLOYMENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CONTENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNTIME_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
@@ -139,19 +155,11 @@ public class ContentColumn extends FinderColumn<Content> {
             Resources resources) {
 
         super(new FinderColumn.Builder<Content>(finder, Ids.CONTENT, resources.constants().content())
-                .itemsProvider((context, callback) -> series(new FlowContext(progress.get()),
-                        new LoadContent(dispatcher))
-                                .subscribe(new Outcome<FlowContext>() {
-                                    @Override
-                                    public void onError(FlowContext context, Throwable error) {
-                                        callback.onFailure(error);
-                                    }
-
-                                    @Override
-                                    public void onSuccess(FlowContext context) {
-                                        List<Content> content = context.pop();
-                                        callback.onSuccess(content);
-                                    }
+                .itemsProvider(
+                        finderContext -> series(new FlowContext(progress.get()), singletonList(new LoadContent(dispatcher)))
+                                .then(flowContext -> {
+                                    List<Content> content = flowContext.pop();
+                                    return Promise.resolve(content);
                                 }))
 
                 .useFirstActionAsBreadcrumbHandler()
@@ -326,26 +334,23 @@ public class ContentColumn extends FinderColumn<Content> {
                             wzd.showProgress(resources.constants().uploadInProgress(),
                                     resources.messages().uploadInProgress(name));
 
-                            series(new FlowContext(progress.get()),
-                                    new CheckDeployment(dispatcher, name),
-                                    new UploadOrReplace(environment, dispatcher, name, runtimeName, context.file, false))
-                                            .subscribe(new Outcome<FlowContext>() {
-                                                @Override
-                                                public void onError(FlowContext context, Throwable error) {
-                                                    wzd.showError(resources.constants().uploadError(),
-                                                            resources.messages().uploadError(name), error.getMessage());
-                                                }
-
-                                                @Override
-                                                public void onSuccess(FlowContext context) {
-                                                    refresh(Ids.content(name));
-                                                    wzd.showSuccess(resources.constants().uploadSuccessful(),
-                                                            resources.messages().uploadSuccessful(name),
-                                                            resources.messages().view(resources.constants().content()),
-                                                            cxt -> {
-                                                                /* nothing to do, content is already selected */ });
-                                                }
-                                            });
+                            List<Task<FlowContext>> tasks = Arrays.asList(new CheckDeployment(dispatcher, name),
+                                    new UploadOrReplace(environment, dispatcher, name, runtimeName, context.file, false));
+                            series(new FlowContext(progress.get()), tasks)
+                                    .then(__ -> {
+                                        refresh(Ids.content(name));
+                                        wzd.showSuccess(resources.constants().uploadSuccessful(),
+                                                resources.messages().uploadSuccessful(name),
+                                                resources.messages().view(resources.constants().content()),
+                                                cxt -> {
+                                                    /* nothing to do, content is already selected */ });
+                                        return null;
+                                    })
+                                    .catch_(error -> {
+                                        wzd.showError(resources.constants().uploadError(),
+                                                resources.messages().uploadError(name), String.valueOf(error));
+                                        return null;
+                                    });
                         })
                         .build();
         wizard.show();
@@ -355,15 +360,12 @@ public class ContentColumn extends FinderColumn<Content> {
         Metadata metadata = metadataRegistry.lookup(CONTENT_TEMPLATE);
         AddUnmanagedDialog dialog = new AddUnmanagedDialog(metadata, resources,
                 (name, model) -> series(new FlowContext(progress.get()),
-                        new AddUnmanagedDeployment(dispatcher, name, model))
-                                .subscribe(new org.jboss.hal.core.SuccessfulOutcome<FlowContext>(eventBus, resources) {
-                                    @Override
-                                    public void onSuccess(FlowContext context) {
-                                        refresh(Ids.content(name));
-                                        MessageEvent.fire(eventBus, Message.success(
-                                                resources.messages()
-                                                        .addResourceSuccess(Names.UNMANAGED_DEPLOYMENT, name)));
-                                    }
+                        singletonList(new AddUnmanagedDeployment(dispatcher, name, model)))
+                                .then(context -> {
+                                    refresh(Ids.content(name));
+                                    MessageEvent.fire(eventBus, Message.success(
+                                            resources.messages().addResourceSuccess(Names.UNMANAGED_DEPLOYMENT, name)));
+                                    return null;
                                 }));
         dialog.getForm().<String> getFormItem(NAME).addValidationHandler(createUniqueValidation());
         dialog.show();
@@ -396,28 +398,24 @@ public class ContentColumn extends FinderColumn<Content> {
                     if (valid) {
                         ReplaceDeploymentPanel replaceDeploymentPanel = new ReplaceDeploymentPanel();
                         replaceDeploymentPanel.on();
-                        series(new FlowContext(progress.get()),
-                                new CheckDeployment(dispatcher, content.getName()),
-                                // To replace an existing content, the original name and runtime-name must be preserved.
-                                new UploadOrReplace(environment, dispatcher, content.getName(),
-                                        content.getRuntimeName(), uploadElement.getFiles().item(0), false))
-                                                .subscribe(new Outcome<FlowContext>() {
-                                                    @Override
-                                                    public void onError(FlowContext context, Throwable error) {
-                                                        replaceDeploymentPanel.off();
-                                                        MessageEvent.fire(eventBus, Message.error(
-                                                                resources.messages().contentReplaceError(content.getName()),
-                                                                error.getMessage()));
-                                                    }
-
-                                                    @Override
-                                                    public void onSuccess(FlowContext context) {
-                                                        refresh(Ids.content(content.getName()));
-                                                        replaceDeploymentPanel.off();
-                                                        MessageEvent.fire(eventBus, Message.success(
-                                                                resources.messages().contentReplaceSuccess(content.getName())));
-                                                    }
-                                                });
+                        List<Task<FlowContext>> tasks = Arrays.asList(new CheckDeployment(dispatcher, content.getName()),
+                                new UploadOrReplace(environment, dispatcher, content.getName(), content.getRuntimeName(),
+                                        uploadElement.getFiles().item(0), false));
+                        series(new FlowContext(progress.get()), tasks)
+                                .then(context -> {
+                                    refresh(Ids.content(content.getName()));
+                                    replaceDeploymentPanel.off();
+                                    MessageEvent.fire(eventBus, Message.success(
+                                            resources.messages().contentReplaceSuccess(content.getName())));
+                                    return null;
+                                })
+                                .catch_(error -> {
+                                    replaceDeploymentPanel.off();
+                                    MessageEvent.fire(eventBus, Message.error(
+                                            resources.messages().contentReplaceError(content.getName()),
+                                            String.valueOf(error)));
+                                    return null;
+                                });
                     }
                     return valid;
                 })
@@ -472,7 +470,7 @@ public class ContentColumn extends FinderColumn<Content> {
                                 if (enable) {
                                     ItemMonitor.stopProgress(Ids.content(cnt.getName()));
                                 }
-                                refresh(RESTORE_SELECTION);
+                                refresh(CLEAR_SELECTION);
                                 MessageEvent.fire(eventBus,
                                         Message.success(resources.messages().contentDeployed1(content.getName())));
                             });

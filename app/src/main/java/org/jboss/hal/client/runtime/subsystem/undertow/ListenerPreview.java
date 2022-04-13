@@ -40,9 +40,9 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 
 import static java.util.Arrays.asList;
-import static org.jboss.gwt.elemento.core.Elements.h;
-import static org.jboss.gwt.elemento.core.Elements.section;
-import static org.jboss.gwt.elemento.core.Elements.setVisible;
+import static org.jboss.elemento.Elements.h;
+import static org.jboss.elemento.Elements.section;
+import static org.jboss.elemento.Elements.setVisible;
 import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_SERVER_ADDRESS;
 import static org.jboss.hal.client.runtime.subsystem.undertow.ListenerColumn.HAL_LISTENER_TYPE;
 import static org.jboss.hal.client.runtime.subsystem.undertow.ListenerColumn.HAL_WEB_SERVER;

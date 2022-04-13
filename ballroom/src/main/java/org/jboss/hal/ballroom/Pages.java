@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.elemento.Elements;
+import org.jboss.elemento.IsElement;
 import org.jboss.hal.resources.Ids;
 
 import com.google.common.base.Strings;
@@ -31,7 +31,7 @@ import com.google.common.collect.Lists;
 
 import elemental2.dom.HTMLElement;
 
-import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.elemento.Elements.div;
 import static org.jboss.hal.resources.CSS.page;
 
 /**

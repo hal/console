@@ -28,10 +28,10 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 
-import static org.jboss.gwt.elemento.core.Elements.div;
-import static org.jboss.gwt.elemento.core.Elements.input;
-import static org.jboss.gwt.elemento.core.Elements.span;
-import static org.jboss.gwt.elemento.core.InputType.text;
+import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.input;
+import static org.jboss.elemento.Elements.span;
+import static org.jboss.elemento.InputType.text;
 import static org.jboss.hal.ballroom.form.Decoration.DEFAULT;
 import static org.jboss.hal.ballroom.form.Decoration.DEPRECATED;
 import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;

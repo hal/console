@@ -19,9 +19,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jboss.gwt.elemento.core.EventCallbackFn;
-import org.jboss.gwt.elemento.core.InputType;
-import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.elemento.EventCallbackFn;
+import org.jboss.elemento.InputType;
+import org.jboss.elemento.IsElement;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -36,9 +36,9 @@ import elemental2.dom.HTMLInputElement;
 import elemental2.dom.HTMLUListElement;
 import elemental2.dom.MouseEvent;
 
-import static org.jboss.gwt.elemento.core.Elements.*;
-import static org.jboss.gwt.elemento.core.EventType.bind;
-import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.elemento.Elements.*;
+import static org.jboss.elemento.EventType.bind;
+import static org.jboss.elemento.EventType.click;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.UIConstants.HASH;
 

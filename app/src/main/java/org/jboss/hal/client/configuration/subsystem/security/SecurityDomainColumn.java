@@ -36,6 +36,8 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Requires;
 
+import elemental2.promise.Promise;
+
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.configuration.subsystem.security.AddressTemplates.SECURITY_DOMAIN_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.security.AddressTemplates.SECURITY_DOMAIN_TEMPLATE;
@@ -58,20 +60,17 @@ public class SecurityDomainColumn extends FinderColumn<SecurityDomain> {
 
         super(new FinderColumn.Builder<SecurityDomain>(finder, Ids.SECURITY_DOMAIN, Names.SECURITY_DOMAIN)
 
-                .itemsProvider(
-                        (context, callback) -> crud.readChildren(SECURITY_SUBSYSTEM_TEMPLATE, SECURITY_DOMAIN, children -> {
-                            List<SecurityDomain> securityDomains = children.stream()
-                                    .map(SecurityDomain::new)
-                                    .collect(toList());
-                            callback.onSuccess(securityDomains);
-                        }))
+                .itemsProvider(context -> crud.readChildren(SECURITY_SUBSYSTEM_TEMPLATE, SECURITY_DOMAIN)
+                        .then(children -> Promise.resolve(children.stream()
+                                .map(SecurityDomain::new)
+                                .collect(toList()))))
 
                 .withFilter()
                 .filterDescription(resources.messages().securityDomainColumnFilterDescription())
                 .useFirstActionAsBreadcrumbHandler()
                 // Do not optimize this lambda to a method reference,
                 // the JavaToJavaScript transpiler can't handle a method reference here
-                .onPreview(item -> new SecurityDomainPreview(item)));
+                .onPreview(SecurityDomainPreview::new));
 
         addColumnAction(columnActionFactory.add(
                 Ids.SECURITY_DOMAIN_ADD,

@@ -17,7 +17,7 @@ package org.jboss.hal.client.runtime.subsystem.jndi;
 
 import javax.inject.Inject;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.Search;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.tree.Node;
@@ -33,9 +33,9 @@ import org.jboss.hal.resources.Resources;
 import elemental2.core.JsArray;
 import elemental2.dom.HTMLElement;
 
-import static org.jboss.gwt.elemento.core.Elements.*;
-import static org.jboss.gwt.elemento.core.Elements.i;
-import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.elemento.Elements.*;
+import static org.jboss.elemento.Elements.i;
+import static org.jboss.elemento.EventType.click;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.ballroom.Skeleton.MARGIN_BIG;

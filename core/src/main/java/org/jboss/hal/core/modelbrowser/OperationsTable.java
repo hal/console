@@ -17,8 +17,8 @@ package org.jboss.hal.core.modelbrowser;
 
 import java.util.List;
 
-import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
+import org.jboss.elemento.HtmlContentBuilder;
+import org.jboss.elemento.IsElement;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.resources.CSS;
@@ -31,14 +31,14 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLTableRowElement;
 
-import static org.jboss.gwt.elemento.core.Elements.li;
-import static org.jboss.gwt.elemento.core.Elements.table;
-import static org.jboss.gwt.elemento.core.Elements.tbody;
-import static org.jboss.gwt.elemento.core.Elements.td;
-import static org.jboss.gwt.elemento.core.Elements.th;
-import static org.jboss.gwt.elemento.core.Elements.thead;
-import static org.jboss.gwt.elemento.core.Elements.tr;
-import static org.jboss.gwt.elemento.core.Elements.ul;
+import static org.jboss.elemento.Elements.li;
+import static org.jboss.elemento.Elements.table;
+import static org.jboss.elemento.Elements.tbody;
+import static org.jboss.elemento.Elements.td;
+import static org.jboss.elemento.Elements.th;
+import static org.jboss.elemento.Elements.thead;
+import static org.jboss.elemento.Elements.tr;
+import static org.jboss.elemento.Elements.ul;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REPLY_PROPERTIES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUEST_PROPERTIES;

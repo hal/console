@@ -108,9 +108,7 @@ public class PasswordWizard {
                     dispatcher.execute(operation, result -> MessageEvent.fire(eventBus, Message.success(
                             resources.messages().setIdentityPasswordSuccess(selectedIdentity, resourceName))),
                             (operation1, failure) -> MessageEvent.fire(eventBus, Message.error(resources.messages()
-                                    .setIdentityPasswordError(selectedIdentity, resourceName, failure))),
-                            (operation1, exception) -> MessageEvent.fire(eventBus, Message.error(resources.messages()
-                                    .setIdentityPasswordError(selectedIdentity, resourceName, exception.getMessage()))));
+                                    .setIdentityPasswordError(selectedIdentity, resourceName, failure))));
 
                 });
         Wizard<PasswordContext, PasswordState> wizard = wb.build();

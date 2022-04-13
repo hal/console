@@ -29,6 +29,8 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
 
+import elemental2.promise.Promise;
+
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
@@ -64,10 +66,9 @@ public class UndertowColumn extends FinderColumn<StaticItem> {
                         .build()
 
         );
-        setItemsProvider((context, callback) -> callback.onSuccess(items));
+        setItemsProvider(context -> Promise.resolve(items));
         setBreadcrumbItemsProvider(
-                (context, callback) -> callback.onSuccess(
-                        items.stream().filter(item -> item.getNextColumn() == null).collect(toList())));
+                context -> Promise.resolve(items.stream().filter(item -> item.getNextColumn() == null).collect(toList())));
 
     }
 }

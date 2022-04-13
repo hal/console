@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.client.runtime.subsystem.batch;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.chart.Utilization;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewContent;
@@ -31,8 +31,8 @@ import org.jboss.hal.resources.Resources;
 import elemental2.dom.HTMLElement;
 
 import static java.util.Arrays.asList;
-import static org.jboss.gwt.elemento.core.Elements.h;
-import static org.jboss.gwt.elemento.core.Elements.section;
+import static org.jboss.elemento.Elements.h;
+import static org.jboss.elemento.Elements.section;
 import static org.jboss.hal.client.runtime.subsystem.batch.AddressTemplates.BATCH_SUBSYSTEM_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ACTIVE_COUNT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CURRENT_THREAD_COUNT;

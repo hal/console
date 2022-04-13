@@ -59,6 +59,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
 
 import static elemental2.dom.DomGlobal.clearInterval;
 import static elemental2.dom.DomGlobal.setInterval;
@@ -66,7 +67,21 @@ import static java.util.Arrays.asList;
 import static org.jboss.hal.client.runtime.subsystem.batch.AddressTemplates.BATCH_DEPLOYMENT_ADDRESS;
 import static org.jboss.hal.client.runtime.subsystem.batch.AddressTemplates.BATCH_DEPLOYMENT_TEMPLATE;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ACCESS_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ALLOWED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.BATCH_JBERET;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.JOB;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.JOB_XML_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.JOB_XML_NAMES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROPERTIES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_ATTRIBUTE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_ONLY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNNING_EXECUTIONS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.START_JOB;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBDEPLOYMENT;
 import static org.jboss.hal.resources.UIConstants.POLLING_INTERVAL;
 
 @AsyncColumn(Ids.JOB)
@@ -104,22 +119,20 @@ public class JobColumn extends FinderColumn<JobNode> {
         this.resources = resources;
         this.intervalHandles = new HashMap<>();
 
-        setItemsProvider(
-                (context, callback) -> deploymentResources.readChildren(BATCH_JBERET, JOB, JobNode::new, jobs -> {
-                    callback.onSuccess(jobs);
-
-                    // turn progress animation on/off
-                    clearIntervals();
-                    for (JobNode job : jobs) {
-                        String jobId = Ids.job(job.getDeployment(), job.getSubdeployment(), job.getName());
-                        if (job.getRunningExecutions() > 0) {
-                            ItemMonitor.startProgress(jobId);
-                            intervalHandles.put(jobId, setInterval(o -> pollJob(job), POLLING_INTERVAL));
-                        } else {
-                            ItemMonitor.stopProgress(jobId);
-                        }
-                    }
-                }));
+        setItemsProvider(context -> deploymentResources.readChildren(BATCH_JBERET, JOB, JobNode::new).then(jobs -> {
+            // turn progress animation on/off
+            clearIntervals();
+            for (JobNode job : jobs) {
+                String jobId = Ids.job(job.getDeployment(), job.getSubdeployment(), job.getName());
+                if (job.getRunningExecutions() > 0) {
+                    ItemMonitor.startProgress(jobId);
+                    intervalHandles.put(jobId, setInterval(o -> pollJob(job), POLLING_INTERVAL));
+                } else {
+                    ItemMonitor.stopProgress(jobId);
+                }
+            }
+            return Promise.resolve(jobs);
+        }));
 
         setItemRenderer(item -> new ItemDisplay<JobNode>() {
             @Override
@@ -212,9 +225,7 @@ public class JobColumn extends FinderColumn<JobNode> {
                         }
                         JobColumn.this.refresh(RESTORE_SELECTION);
                     }
-                },
-                (o, failure) -> ItemMonitor.stopProgress(jobId),
-                (o, exception) -> ItemMonitor.stopProgress(jobId));
+                }, (o, failure) -> ItemMonitor.stopProgress(jobId));
     }
 
     private void startJob(JobNode job) {

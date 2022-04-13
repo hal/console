@@ -22,7 +22,7 @@ import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.resources.Resources;
 
-import static org.jboss.gwt.elemento.core.Elements.p;
+import static org.jboss.elemento.Elements.p;
 import static org.jboss.hal.client.configuration.subsystem.resourceadapter.ResourceAdapter.AdapterType.ARCHIVE;
 import static org.jboss.hal.client.configuration.subsystem.resourceadapter.ResourceAdapter.AdapterType.MODULE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.STATISTICS_ENABLED;

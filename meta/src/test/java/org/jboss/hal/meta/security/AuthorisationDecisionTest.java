@@ -30,7 +30,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@SuppressWarnings({ "DuplicateStringLiteralInspection", "HardCodedStringLiteral" })
 public class AuthorisationDecisionTest {
 
     private Environment rbac;
@@ -56,43 +55,43 @@ public class AuthorisationDecisionTest {
     }
 
     @Test
-    public void rbacAllowed() throws Exception {
+    public void rbacAllowed() {
         assertTrue(AuthorisationDecision.from(rbac, c -> Optional.of(RWX)).isAllowed(foo));
     }
 
     @Test
-    public void rbacForbidden() throws Exception {
+    public void rbacForbidden() {
         assertFalse(AuthorisationDecision.from(rbac, c -> Optional.of(READ_ONLY)).isAllowed(foo));
     }
 
     @Test
-    public void simpleAllowed() throws Exception {
+    public void simpleAllowed() {
         assertTrue(AuthorisationDecision.from(simple, c -> Optional.of(RWX)).isAllowed(foo));
     }
 
     @Test
-    public void simpleForbidden() throws Exception {
+    public void simpleForbidden() {
         assertTrue(AuthorisationDecision.from(simple, c -> Optional.of(READ_ONLY)).isAllowed(foo));
     }
 
     @Test
-    public void emptyReadOnly() throws Exception {
+    public void emptyReadOnly() {
         assertTrue(AuthorisationDecision.from(rbac, c -> Optional.of(READ_ONLY)).isAllowed(Constraints.empty()));
     }
 
     @Test
-    public void emptyRwx() throws Exception {
+    public void emptyRwx() {
         assertTrue(AuthorisationDecision.from(rbac, c -> Optional.of(RWX)).isAllowed(Constraints.empty()));
     }
 
     @Test
-    public void singleReadOnly() throws Exception {
+    public void singleReadOnly() {
         assertFalse(AuthorisationDecision.from(rbac, c -> Optional.of(READ_ONLY))
                 .isAllowed(Constraints.single(foo)));
     }
 
     @Test
-    public void singleRwx() throws Exception {
+    public void singleRwx() {
         assertTrue(AuthorisationDecision.from(rbac, c -> Optional.of(RWX)).isAllowed(Constraints.single(foo)));
     }
 

@@ -17,7 +17,7 @@ package org.jboss.hal.ballroom.form;
 
 import java.util.Set;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.form.AbstractFormItem.ExpressionContext;
 import org.jboss.hal.dmr.Deprecation;
 import org.jboss.hal.resources.CSS;
@@ -28,12 +28,12 @@ import com.google.web.bindery.event.shared.HandlerRegistration;
 
 import elemental2.dom.HTMLElement;
 
-import static org.jboss.gwt.elemento.core.Elements.div;
-import static org.jboss.gwt.elemento.core.Elements.label;
-import static org.jboss.gwt.elemento.core.Elements.p;
-import static org.jboss.gwt.elemento.core.Elements.span;
-import static org.jboss.gwt.elemento.core.EventType.bind;
-import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.label;
+import static org.jboss.elemento.Elements.p;
+import static org.jboss.elemento.Elements.span;
+import static org.jboss.elemento.EventType.bind;
+import static org.jboss.elemento.EventType.click;
 import static org.jboss.hal.ballroom.form.Decoration.EXPRESSION;
 import static org.jboss.hal.ballroom.form.Decoration.HINT;
 import static org.jboss.hal.ballroom.form.Decoration.SENSITIVE;

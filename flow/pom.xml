@@ -31,12 +31,24 @@
     <artifactId>hal-flow</artifactId>
     <packaging>gwt-lib</packaging>
     <name>HAL :: Flow</name>
-    <description>Async Flow based on RxGWT</description>
+    <description>Async Flow based on Promise API</description>
 
     <dependencies>
         <dependency>
-            <groupId>com.intendia.gwt.rxgwt</groupId>
-            <artifactId>rxgwt</artifactId>
+            <groupId>org.jboss.hal</groupId>
+            <artifactId>hal-spi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.elemental2</groupId>
+            <artifactId>elemental2-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.elemental2</groupId>
+            <artifactId>elemental2-dom</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.elemental2</groupId>
+            <artifactId>elemental2-promise</artifactId>
         </dependency>
     </dependencies>
 

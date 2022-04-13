@@ -32,7 +32,6 @@ import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.config.Environment;
-import org.jboss.hal.core.SuccessfulOutcome;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -73,11 +72,48 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
 import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
 
-import static org.jboss.gwt.elemento.core.Elements.div;
-import static org.jboss.gwt.elemento.core.Elements.p;
-import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.p;
+import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.CREDENTIAL_STORE_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.CREDENTIAL_STORE_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.ELYTRON_PROFILE_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.ELYTRON_SUBSYSTEM_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.FILTERING_KEY_STORE_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.FILTERING_KEY_STORE_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.KEY_STORE_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.KEY_STORE_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.LDAP_KEY_STORE_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.LDAP_KEY_STORE_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD_ALIAS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ALIAS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CAPABILITY_REFERENCE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CERTIFICATE_AUTHORITY_ACCOUNT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHANGE_ALIAS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.EXPORT_CERTIFICATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.GENERATE_CERTIFICATE_SIGNING_REQUEST;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.GENERATE_KEY_PAIR;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.IMPORT_CERTIFICATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.KEY_STORE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LOAD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.OBTAIN_CERTIFICATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PATH;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_ALIAS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_ALIASES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RELOAD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE_ALIAS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REVOKE_CERTIFICATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURITY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SET_SECRET;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SHOULD_RENEW_CERTIFICATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STORE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VALIDATE;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.flow.Flow.series;
 import static org.jboss.hal.resources.Ids.FORM;
@@ -86,12 +122,12 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
         implements SupportsExpertMode {
 
     private static final String SPACE = " ";
-    private Environment environment;
+    private final Environment environment;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
-    private Resources resources;
-    private Provider<Progress> progress;
-    private Dispatcher dispatcher;
+    private final Resources resources;
+    private final Provider<Progress> progress;
+    private final Dispatcher dispatcher;
 
     @Inject
     public StoresPresenter(EventBus eventBus,
@@ -163,11 +199,8 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
         dispatcher.execute(operation, result -> {
             MessageEvent.fire(getEventBus(), Message.success(resources.messages().reloadSuccess(resource)));
             reload();
-        },
-                (operation1, failure) -> MessageEvent.fire(getEventBus(),
-                        Message.error(resources.messages().reloadError(resource, failure))),
-                (operation1, exception) -> MessageEvent.fire(getEventBus(),
-                        Message.error(resources.messages().reloadError(resource, exception.getMessage()))));
+        }, (operation1, failure) -> MessageEvent.fire(getEventBus(),
+                Message.error(resources.messages().reloadError(resource, failure))));
     }
 
     void addAlias(Metadata metadata, String name, Consumer<List<ModelNode>> callback) {
@@ -198,11 +231,8 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
                 } else {
                     callback.accept(Collections.emptyList());
                 }
-            },
-                    (op, failure) -> MessageEvent.fire(getEventBus(),
-                            Message.error(resources.messages().addError(ALIAS, alias, resource, failure))),
-                    (op, ex) -> MessageEvent.fire(getEventBus(),
-                            Message.error(resources.messages().addError(ALIAS, alias, resource, ex.getMessage()))));
+            }, (op, failure) -> MessageEvent.fire(getEventBus(),
+                    Message.error(resources.messages().addError(ALIAS, alias, resource, failure))));
 
         });
         dialog.show();
@@ -226,11 +256,7 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
             dispatcher.execute(op, result -> MessageEvent.fire(getEventBus(),
                     Message.success(resources.messages().setSecretPasswordSuccess(alias, resource))),
                     (operation, failure) -> MessageEvent.fire(getEventBus(),
-                            Message.error(
-                                    resources.messages().setSecretPasswordError(alias, resource, failure))),
-                    (operation, ex) -> MessageEvent.fire(getEventBus(),
-                            Message.error(resources.messages()
-                                    .setSecretPasswordError(alias, resource, ex.getMessage()))));
+                            Message.error(resources.messages().setSecretPasswordError(alias, resource, failure))));
         });
         Dialog dialog = new Dialog.Builder(resources.constants().setSecret())
                 .add(p().textContent(opMetadata.getDescription().getDescription()).element())
@@ -254,11 +280,8 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
         dispatcher.execute(operation, result -> {
             MessageEvent.fire(getEventBus(), Message.success(resources.messages().reloadSuccess(resource)));
             reload();
-        },
-                (operation1, failure) -> MessageEvent.fire(getEventBus(),
-                        Message.error(resources.messages().reloadError(resource, failure))),
-                (operation1, exception) -> MessageEvent.fire(getEventBus(),
-                        Message.error(resources.messages().reloadError(resource, exception.getMessage()))));
+        }, (operation1, failure) -> MessageEvent.fire(getEventBus(),
+                Message.error(resources.messages().reloadError(resource, failure))));
     }
 
     void storeKeyStore(String name) {
@@ -267,9 +290,7 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
         dispatcher.execute(operation, result -> MessageEvent.fire(getEventBus(),
                 Message.success(resources.messages().storeSuccess(name))),
                 (operation1, failure) -> MessageEvent.fire(getEventBus(),
-                        Message.error(resources.messages().storeError(name, failure))),
-                (operation1, exception) -> MessageEvent.fire(getEventBus(),
-                        Message.error(resources.messages().storeError(name, exception.getMessage()))));
+                        Message.error(resources.messages().storeError(name, failure))));
     }
 
     void changeAlias(Metadata metadata, String name, String alias, Consumer<List<ModelNode>> callback) {
@@ -283,52 +304,41 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
             ResourceAddress address = template.resolve(statementContext, name);
 
             List<Task<FlowContext>> tasks = new ArrayList<>();
-            tasks.add(flowContext -> {
+            tasks.add(context -> {
                 Operation operation = new Operation.Builder(address, CHANGE_ALIAS)
                         .payload(form.getModel())
                         .build();
-
-                return dispatcher.execute(operation)
-                        .toCompletable();
+                return dispatcher.execute(operation).then(__ -> Promise.resolve(context));
             });
-            tasks.add(flowContext -> {
+            tasks.add(context -> {
                 Operation operation = new Operation.Builder(KEY_STORE_TEMPLATE.resolve(statementContext, name), STORE)
                         .build();
-
-                return dispatcher.execute(operation)
-                        .toCompletable();
+                return dispatcher.execute(operation).then(__ -> Promise.resolve(context));
             });
-            tasks.add(flowContext -> {
+            tasks.add(context -> {
                 Operation operation = new Operation.Builder(address, READ_ALIASES_OPERATION)
                         .build();
-
-                return dispatcher.execute(operation)
-                        .doOnSuccess(flowContext::push)
-                        .toCompletable();
+                return dispatcher.execute(operation).then(result -> Promise.resolve(context.push(resource)));
             });
 
             series(new FlowContext(progress.get()), tasks)
-                    .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
-                        @Override
-                        public void onSuccess(FlowContext flowContext) {
-                            MessageEvent.fire(getEventBus(),
-                                    Message.success(
-                                            resources.messages().changeAliasSuccess(alias, newAlias, resource)));
-                            ModelNode aliases = flowContext.pop();
-                            if (aliases.isDefined()) {
-                                callback.accept(aliases.asList());
-                            } else {
-                                callback.accept(Collections.emptyList());
-                            }
+                    .then(context -> {
+                        MessageEvent.fire(getEventBus(),
+                                Message.success(
+                                        resources.messages().changeAliasSuccess(alias, newAlias, resource)));
+                        ModelNode aliases = context.pop(new ModelNode());
+                        if (aliases.isDefined()) {
+                            callback.accept(aliases.asList());
+                        } else {
+                            callback.accept(Collections.emptyList());
                         }
-
-                        @Override
-                        public void onError(FlowContext context, Throwable ex) {
-                            MessageEvent.fire(getEventBus(),
-                                    Message.error(
-                                            resources.messages()
-                                                    .changeAliasError(alias, newAlias, resource, ex.getMessage())));
-                        }
+                        return null;
+                    })
+                    .catch_(error -> {
+                        MessageEvent.fire(getEventBus(), Message.error(
+                                resources.messages()
+                                        .changeAliasError(alias, newAlias, resource, String.valueOf(error))));
+                        return null;
                     });
         });
         ModelNode model = new ModelNode();
@@ -362,10 +372,7 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
             dispatcher.execute(operation, result -> MessageEvent.fire(getEventBus(),
                     Message.success(resources.messages().exportCertificateSuccess(alias, path, resource))),
                     (op, failure) -> MessageEvent.fire(getEventBus(),
-                            Message.error(resources.messages().exportCertificateError(alias, path, resource, failure))),
-                    (op, ex) -> MessageEvent.fire(getEventBus(),
-                            Message.error(resources.messages()
-                                    .exportCertificateError(alias, path, resource, ex.getMessage()))));
+                            Message.error(resources.messages().exportCertificateError(alias, path, resource, failure))));
         });
         ModelNode model = new ModelNode();
         model.get(ALIAS).set(alias);
@@ -399,10 +406,7 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
             dispatcher.execute(operation, result -> MessageEvent.fire(getEventBus(),
                     Message.success(resources.messages().generateCSRSuccess(alias, path, resource))),
                     (op, failure) -> MessageEvent.fire(getEventBus(),
-                            Message.error(resources.messages().generateCSRError(alias, path, resource, failure))),
-                    (op, ex) -> MessageEvent.fire(getEventBus(),
-                            Message.error(
-                                    resources.messages().generateCSRError(alias, path, resource, ex.getMessage()))));
+                            Message.error(resources.messages().generateCSRError(alias, path, resource, failure))));
         });
         ModelNode model = new ModelNode();
         model.get(ALIAS).set(alias);
@@ -431,44 +435,35 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
             ResourceAddress address = template.resolve(statementContext, name);
             String alias = form.getModel().get(ALIAS).asString();
             List<Task<FlowContext>> tasks = new ArrayList<>();
-            tasks.add(flowContext -> {
+            tasks.add(context -> {
                 Operation operation = new Operation.Builder(address, GENERATE_KEY_PAIR)
                         .payload(form.getModel())
                         .build();
-
-                return dispatcher.execute(operation)
-                        .toCompletable();
+                return dispatcher.execute(operation).then(__ -> Promise.resolve(context));
             });
-            tasks.add(flowContext -> {
+            tasks.add(context -> {
                 Operation operation = new Operation.Builder(KEY_STORE_TEMPLATE.resolve(statementContext, name), STORE)
                         .build();
-
-                return dispatcher.execute(operation)
-                        .toCompletable();
+                return dispatcher.execute(operation).then(__ -> Promise.resolve(context));
             });
-            tasks.add(flowContext -> {
+            tasks.add(context -> {
                 Operation operation = new Operation.Builder(address, READ_ALIASES_OPERATION)
                         .build();
-
-                return dispatcher.execute(operation)
-                        .toCompletable();
+                return dispatcher.execute(operation).then(__ -> Promise.resolve(context));
             });
 
             series(new FlowContext(progress.get()), tasks)
-                    .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
-                        @Override
-                        public void onSuccess(FlowContext flowContext) {
-                            MessageEvent.fire(getEventBus(),
-                                    Message.success(resources.messages().generateKeyPairSuccess(alias, resource)));
-                        }
-
-                        @Override
-                        public void onError(FlowContext context, Throwable ex) {
-                            MessageEvent.fire(getEventBus(),
-                                    Message.error(
-                                            resources.messages()
-                                                    .generateKeyPairError(alias, resource, ex.getMessage())));
-                        }
+                    .then(__ -> {
+                        MessageEvent.fire(getEventBus(),
+                                Message.success(resources.messages().generateKeyPairSuccess(alias, resource)));
+                        return null;
+                    })
+                    .catch_(error -> {
+                        MessageEvent.fire(getEventBus(),
+                                Message.error(
+                                        resources.messages()
+                                                .generateKeyPairError(alias, resource, String.valueOf(error))));
+                        return null;
                     });
         });
 
@@ -500,51 +495,54 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
             ResourceAddress address = template.resolve(statementContext, name);
             String alias = payload.get(ALIAS).asString();
             List<Task<FlowContext>> tasks = new ArrayList<>();
-            tasks.add(flowContext -> {
+            tasks.add(context -> {
                 Operation operation = new Operation.Builder(address, IMPORT_CERTIFICATE)
                         .payload(payload)
                         .build();
-
                 return dispatcher.execute(operation)
-                        .doOnError(ex -> MessageEvent.fire(getEventBus(),
-                                Message.error(resources.messages()
-                                        .importCertificateError(alias, path, resource, ex.getMessage()))))
-                        .toCompletable();
+                        .then(__ -> Promise.resolve(context))
+                        .catch_(error -> {
+                            MessageEvent.fire(getEventBus(),
+                                    Message.error(resources.messages()
+                                            .importCertificateError(alias, path, resource, String.valueOf(error))));
+                            return Promise.reject(error);
+                        });
             });
-            tasks.add(flowContext -> {
+            tasks.add(context -> {
                 Operation operation = new Operation.Builder(KEY_STORE_TEMPLATE.resolve(statementContext, name), STORE)
                         .build();
-
                 return dispatcher.execute(operation)
-                        .doOnError(ex -> MessageEvent.fire(getEventBus(),
-                                Message.error(resources.messages().storeError(resource, ex.getMessage()))))
-                        .toCompletable();
+                        .then(__ -> Promise.resolve(context))
+                        .catch_(error -> {
+                            MessageEvent.fire(getEventBus(),
+                                    Message.error(resources.messages().storeError(resource, String.valueOf(error))));
+                            return Promise.reject(error);
+                        });
             });
-            tasks.add(flowContext -> {
+            tasks.add(context -> {
                 Operation operation = new Operation.Builder(address, READ_ALIASES_OPERATION)
                         .build();
-
                 return dispatcher.execute(operation)
-                        .doOnError(ex -> MessageEvent.fire(getEventBus(),
-                                Message.error(resources.messages().readAliasesError(resource, ex.getMessage()))))
-                        .toCompletable();
+                        .then(__ -> Promise.resolve(context))
+                        .catch_(error -> {
+                            MessageEvent.fire(getEventBus(),
+                                    Message.error(resources.messages().readAliasesError(resource, String.valueOf(error))));
+                            return Promise.reject(error);
+                        });
             });
 
             series(new FlowContext(progress.get()), tasks)
-                    .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
-                        @Override
-                        public void onSuccess(FlowContext flowContext) {
-                            MessageEvent.fire(getEventBus(),
-                                    Message.success(
-                                            resources.messages().importCertificateSuccess(alias, path, resource)));
-                        }
-
-                        @Override
-                        public void onError(FlowContext context, Throwable ex) {
-                            MessageEvent.fire(getEventBus(),
-                                    Message.error(
-                                            resources.messages().removeAliasError(alias, resource, ex.getMessage())));
-                        }
+                    .then(__ -> {
+                        MessageEvent.fire(getEventBus(),
+                                Message.success(
+                                        resources.messages().importCertificateSuccess(alias, path, resource)));
+                        return null;
+                    })
+                    .catch_(error -> {
+                        MessageEvent.fire(getEventBus(),
+                                Message.error(
+                                        resources.messages().removeAliasError(alias, resource, String.valueOf(error))));
+                        return null;
                     });
         });
 
@@ -576,9 +574,7 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
             dispatcher.execute(operation, result -> MessageEvent.fire(getEventBus(),
                     Message.success(resources.messages().obtainCertificateSuccess(alias, name))),
                     (operation1, failure) -> MessageEvent.fire(getEventBus(),
-                            Message.error(resources.messages().obtainCertificateError(alias, name, failure))),
-                    (operation1, ex) -> MessageEvent.fire(getEventBus(),
-                            Message.error(resources.messages().obtainCertificateError(alias, name, ex.getMessage()))));
+                            Message.error(resources.messages().obtainCertificateError(alias, name, failure))));
         });
         Dialog dialog = new Dialog.Builder(title)
                 .add(p().textContent(metadata.getDescription().getDescription()).element())
@@ -620,9 +616,7 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
             dispatcher.execute(operation, result -> MessageEvent.fire(getEventBus(),
                     Message.success(resources.messages().revokeCertificateSuccess(alias, name))),
                     (operation1, failure) -> MessageEvent.fire(getEventBus(),
-                            Message.error(resources.messages().revokeCertificateError(alias, name, failure))),
-                    (operation1, ex) -> MessageEvent.fire(getEventBus(),
-                            Message.error(resources.messages().revokeCertificateError(alias, name, ex.getMessage()))));
+                            Message.error(resources.messages().revokeCertificateError(alias, name, failure))));
         });
         Dialog dialog = new Dialog.Builder(title)
                 .add(p().textContent(metadata.getDescription().getDescription()).element())
@@ -685,11 +679,8 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
                         .build()
                         .show();
 
-            },
-                    (operation1, failure) -> MessageEvent.fire(getEventBus(),
-                            Message.error(resources.messages().verifyRenewError(alias, name, failure))),
-                    (operation1, ex) -> MessageEvent.fire(getEventBus(),
-                            Message.error(resources.messages().verifyRenewError(alias, name, ex.getMessage()))));
+            }, (operation1, failure) -> MessageEvent.fire(getEventBus(),
+                    Message.error(resources.messages().verifyRenewError(alias, name, failure))));
         });
         Dialog dialog = new Dialog.Builder(resources.constants().verifyRenewCertificate())
                 .add(p().textContent(metadata.getDescription().getDescription()).element())
@@ -721,12 +712,8 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
             } else {
                 viewCallback.accept(Collections.emptyList());
             }
-        },
-                (operation1, failure) -> MessageEvent.fire(getEventBus(),
-                        Message.error(resources.messages().readAliasesError(resourceName, failure))),
-                (operation1, exception) -> MessageEvent.fire(getEventBus(),
-                        Message.error(resources.messages()
-                                .readAliasesError(resourceName, exception.getMessage()))));
+        }, (operation1, failure) -> MessageEvent.fire(getEventBus(),
+                Message.error(resources.messages().readAliasesError(resourceName, failure))));
 
     }
 
@@ -739,47 +726,48 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
             ResourceAddress address = template.resolve(statementContext, name);
 
             List<Task<FlowContext>> tasks = new ArrayList<>();
-            tasks.add(flowContext -> {
+            tasks.add(context -> {
                 Operation operation = new Operation.Builder(address, REMOVE_ALIAS)
                         .param(ALIAS, alias)
                         .build();
-
                 return dispatcher.execute(operation)
-                        .doOnError(ex -> MessageEvent.fire(getEventBus(),
-                                Message.error(resources.messages().removeAliasError(alias, resource, ex.getMessage()))))
-                        .toCompletable();
+                        .then(__ -> Promise.resolve(context))
+                        .catch_(error -> {
+                            MessageEvent.fire(getEventBus(),
+                                    Message.error(
+                                            resources.messages().removeAliasError(alias, resource, String.valueOf(error))));
+                            return null;
+                        });
             });
-            tasks.add(flowContext -> {
+            tasks.add(context -> {
                 Operation operation = new Operation.Builder(address, READ_ALIASES_OPERATION)
                         .build();
-
                 return dispatcher.execute(operation)
-                        .doOnSuccess(flowContext::push)
-                        .doOnError(ex -> MessageEvent.fire(getEventBus(),
-                                Message.error(resources.messages().readAliasesError(resource, ex.getMessage()))))
-                        .toCompletable();
+                        .then(__ -> Promise.resolve(context))
+                        .catch_(error -> {
+                            MessageEvent.fire(getEventBus(),
+                                    Message.error(resources.messages().readAliasesError(resource, String.valueOf(error))));
+                            return null;
+                        });
             });
 
             series(new FlowContext(progress.get()), tasks)
-                    .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
-                        @Override
-                        public void onSuccess(FlowContext flowContext) {
-                            MessageEvent.fire(getEventBus(),
-                                    Message.success(resources.messages().removeAliasSuccess(alias, resource)));
-                            ModelNode aliases = flowContext.pop();
-                            if (aliases.isDefined()) {
-                                callback.accept(aliases.asList());
-                            } else {
-                                callback.accept(Collections.emptyList());
-                            }
+                    .then(context -> {
+                        MessageEvent.fire(getEventBus(),
+                                Message.success(resources.messages().removeAliasSuccess(alias, resource)));
+                        ModelNode aliases = context.pop();
+                        if (aliases.isDefined()) {
+                            callback.accept(aliases.asList());
+                        } else {
+                            callback.accept(Collections.emptyList());
                         }
-
-                        @Override
-                        public void onError(FlowContext context, Throwable ex) {
-                            MessageEvent.fire(getEventBus(),
-                                    Message.error(
-                                            resources.messages().removeAliasError(alias, resource, ex.getMessage())));
-                        }
+                        return null;
+                    })
+                    .catch_(error -> {
+                        MessageEvent.fire(getEventBus(),
+                                Message.error(
+                                        resources.messages().removeAliasError(alias, resource, String.valueOf(error))));
+                        return null;
                     });
         });
     }
@@ -794,9 +782,7 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
                 .build();
         dispatcher.execute(addOp, viewCallback,
                 (operation, failure) -> MessageEvent.fire(getEventBus(),
-                        Message.error(resources.messages().readAliasError(alias, resource, failure))),
-                (operation, ex) -> MessageEvent.fire(getEventBus(),
-                        Message.error(resources.messages().readAliasError(alias, resource, ex.getMessage()))));
+                        Message.error(resources.messages().readAliasError(alias, resource, failure))));
 
     }
 

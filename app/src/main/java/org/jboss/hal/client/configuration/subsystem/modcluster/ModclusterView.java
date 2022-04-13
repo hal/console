@@ -38,7 +38,7 @@ import org.jboss.hal.spi.MbuiView;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLElement;
 
-import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.elemento.Elements.*;
 import static org.jboss.hal.client.configuration.subsystem.modcluster.AddressTemplates.LOAD_PROVIDER_DYNAMIC_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.modcluster.AddressTemplates.LOAD_PROVIDER_SIMPLE_TEMPLATE;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;

@@ -36,7 +36,6 @@ import org.jboss.hal.client.shared.sslwizard.EnableSSLPresenter;
 import org.jboss.hal.client.shared.sslwizard.EnableSSLWizard;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.CrudOperations;
-import org.jboss.hal.core.SuccessfulOutcome;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -81,12 +80,44 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
 
 import static java.util.Collections.singletonList;
-import static org.jboss.gwt.elemento.core.Elements.div;
-import static org.jboss.gwt.elemento.core.Elements.p;
-import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.p;
+import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.ELYTRON_SUBSYSTEM_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.FILTER_REF_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.FILTER_SUGGESTIONS;
+import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.HANDLER_SUGGESTIONS;
+import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.HOST_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.LOCATION_FILTER_REF_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.LOCATION_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SELECTED_HOST_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SELECTED_SERVER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SERVER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SERVER_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT_WEB_MODULE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.FILTER_REF;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HANDLER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HTTPS_LISTENER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.KEY_MANAGER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.KEY_STORE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LOCATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURITY_REALM;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_SSL_CONTEXT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SSL_CONTEXT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TRUST_MANAGER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEFINE_ATTRIBUTE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDERTOW;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.encodeValue;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
@@ -105,8 +136,8 @@ public class ServerPresenter
     private final MetadataRegistry metadataRegistry;
     private final FinderPathFactory finderPathFactory;
     private final StatementContext statementContext;
-    private Provider<Progress> progress;
-    private Environment environment;
+    private final Provider<Progress> progress;
+    private final Environment environment;
     private final Resources resources;
     private String serverName;
     private String hostName;
@@ -559,20 +590,18 @@ public class ServerPresenter
         Task<FlowContext> loadTrustManagerTask = loadResourceTask(TRUST_MANAGER);
         tasks.add(loadTrustManagerTask);
 
-        series(new FlowContext(progress.get()), tasks).subscribe(
-                new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
-                    @Override
-                    public void onSuccess(FlowContext flowContext) {
-                        Map<String, List<String>> existingResources = new HashMap<>();
-                        flowContext.keys().forEach(key -> existingResources.put(key, flowContext.get(key)));
+        series(new FlowContext(progress.get()), tasks)
+                .then(flowContext -> {
+                    Map<String, List<String>> existingResources = new HashMap<>();
+                    flowContext.keys().forEach(key -> existingResources.put(key, flowContext.get(key)));
 
-                        EnableSSLWizard ww = new EnableSSLWizard.Builder(existingResources, resources, getEventBus(),
-                                statementContext, dispatcher, progress, ServerPresenter.this, environment)
-                                        .undertowServer(serverName)
-                                        .httpsListenerName(httpsName)
-                                        .build();
-                        ww.show();
-                    }
+                    EnableSSLWizard ww = new EnableSSLWizard.Builder(existingResources, resources, getEventBus(),
+                            statementContext, dispatcher, progress, ServerPresenter.this, environment)
+                                    .undertowServer(serverName)
+                                    .httpsListenerName(httpsName)
+                                    .build();
+                    ww.show();
+                    return null;
                 });
     }
 
@@ -616,15 +645,9 @@ public class ServerPresenter
                             MessageEvent.fire(getEventBus(),
                                     Message.success(resources.messages().disableSSLUndertowSuccess(httpsListener)));
                             reload();
-                        }, (operation, failure) -> {
-                            MessageEvent.fire(getEventBus(),
-                                    Message.error(
-                                            resources.messages().disableSSLUndertowError(httpsListener, failure)));
-                        }, (operation, exception) -> {
-                            SafeHtml message = resources.messages()
-                                    .disableSSLUndertowError(httpsListener, exception.getMessage());
-                            MessageEvent.fire(getEventBus(), Message.error(message));
-                        });
+                        }, (operation, failure) -> MessageEvent.fire(getEventBus(),
+                                Message.error(
+                                        resources.messages().disableSSLUndertowError(httpsListener, failure))));
                     }
                     return valid;
                 })
@@ -651,15 +674,15 @@ public class ServerPresenter
                     .param(CHILD_TYPE, resourceName)
                     .build();
             return dispatcher.execute(operation)
-                    .doOnSuccess(result -> {
+                    .then(result -> {
                         List<String> res = result.asList().stream()
                                 .map(ModelNode::asString)
                                 .collect(Collectors.toList());
                         if (!res.isEmpty()) {
                             context.set(resourceName, res);
                         }
-                    })
-                    .toCompletable();
+                        return Promise.resolve(context);
+                    });
         };
         return task;
     }

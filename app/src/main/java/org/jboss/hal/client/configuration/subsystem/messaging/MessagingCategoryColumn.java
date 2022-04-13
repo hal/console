@@ -30,6 +30,8 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 
+import elemental2.promise.Promise;
+
 import static java.util.Arrays.asList;
 import static org.jboss.hal.resources.Ids.JMS_BRIDGE_ITEM;
 
@@ -43,30 +45,29 @@ public class MessagingCategoryColumn extends StaticItemColumn {
             Places places,
             Resources resources) {
 
-        super(finder, Ids.MESSAGING_CATEGORY, resources.constants().category(),
-                (context, callback) -> callback.onSuccess(asList(
-                        new StaticItem.Builder(resources.constants().globalSettings())
-                                .id(Ids.MESSAGING_GLOBAL_SETTINGS)
-                                .action(itemActionFactory.view(places.selectedProfile(NameTokens.MESSAGING).build()))
-                                .onPreview(new MessagingSubsystemPreview(crud, resources))
-                                .build(),
-                        new StaticItem.Builder(resources.constants().remoteActiveMQServer())
-                                .id(Ids.MESSAGING_REMOTE_ACTIVEMQ)
-                                .action(itemActionFactory
-                                        .view(places.selectedProfile(NameTokens.MESSAGING_REMOTE_ACTIVEMQ).build()))
-                                .onPreview(new PreviewContent<>(Names.MESSAGING_REMOTE_ACTIVEMQ,
-                                        resources.previews().configurationMessagingRemoteActiveMQ()))
-                                .build(),
-                        new StaticItem.Builder(Names.SERVER)
-                                .nextColumn(Ids.MESSAGING_SERVER_CONFIGURATION)
-                                .onPreview(new PreviewContent<>(Names.SERVER,
-                                        resources.previews().configurationMessagingServer()))
-                                .build(),
-                        new StaticItem.Builder(Names.JMS_BRIDGE)
-                                .id(JMS_BRIDGE_ITEM)
-                                .nextColumn(Ids.JMS_BRIDGE)
-                                .onPreview(new PreviewContent<>(Names.JMS_BRIDGE,
-                                        resources.previews().configurationMessagingJmsBridge()))
-                                .build())));
+        super(finder, Ids.MESSAGING_CATEGORY, resources.constants().category(), context -> Promise.resolve(asList(
+                new StaticItem.Builder(resources.constants().globalSettings())
+                        .id(Ids.MESSAGING_GLOBAL_SETTINGS)
+                        .action(itemActionFactory.view(places.selectedProfile(NameTokens.MESSAGING).build()))
+                        .onPreview(new MessagingSubsystemPreview(crud, resources))
+                        .build(),
+                new StaticItem.Builder(resources.constants().remoteActiveMQServer())
+                        .id(Ids.MESSAGING_REMOTE_ACTIVEMQ)
+                        .action(itemActionFactory
+                                .view(places.selectedProfile(NameTokens.MESSAGING_REMOTE_ACTIVEMQ).build()))
+                        .onPreview(new PreviewContent<>(Names.MESSAGING_REMOTE_ACTIVEMQ,
+                                resources.previews().configurationMessagingRemoteActiveMQ()))
+                        .build(),
+                new StaticItem.Builder(Names.SERVER)
+                        .nextColumn(Ids.MESSAGING_SERVER_CONFIGURATION)
+                        .onPreview(new PreviewContent<>(Names.SERVER,
+                                resources.previews().configurationMessagingServer()))
+                        .build(),
+                new StaticItem.Builder(Names.JMS_BRIDGE)
+                        .id(JMS_BRIDGE_ITEM)
+                        .nextColumn(Ids.JMS_BRIDGE)
+                        .onPreview(new PreviewContent<>(Names.JMS_BRIDGE,
+                                resources.previews().configurationMessagingJmsBridge()))
+                        .build())));
     }
 }

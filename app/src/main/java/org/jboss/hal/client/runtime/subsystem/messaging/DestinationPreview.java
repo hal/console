@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.client.runtime.subsystem.messaging;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -39,10 +39,29 @@ import elemental2.dom.HTMLElement;
 
 import static elemental2.dom.DomGlobal.document;
 import static java.util.stream.Collectors.joining;
-import static org.jboss.gwt.elemento.core.Elements.a;
-import static org.jboss.gwt.elemento.core.Elements.collect;
-import static org.jboss.gwt.elemento.core.Elements.span;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.elemento.Elements.a;
+import static org.jboss.elemento.Elements.bag;
+import static org.jboss.elemento.Elements.span;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CONSUMER_COUNT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEAD_LETTER_ADDRESS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DELIVERING_COUNT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DURABLE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DURABLE_MESSAGE_COUNT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DURABLE_SUBSCRIPTION_COUNT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ENTRIES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.EXPIRY_ADDRESS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MESSAGES_ADDED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MESSAGE_COUNT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NON_DURABLE_MESSAGE_COUNT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NON_DURABLE_SUBSCRIPTION_COUNT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PAUSED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.QUEUE_ADDRESS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SCHEDULED_COUNT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBSCRIPTION_COUNT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TEMPORARY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TOPIC_ADDRESS;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeBoolean;
 import static org.jboss.hal.resources.CSS.marginRight5;
 import static org.jboss.hal.resources.Icons.flag;
@@ -92,7 +111,7 @@ class DestinationPreview extends PreviewContent<Destination> {
                     .append(PAUSED)
                     .append(model -> {
                         String label = labelBuilder.label(DURABLE) + ", " + labelBuilder.label(TEMPORARY);
-                        Iterable<HTMLElement> elements = collect()
+                        Iterable<HTMLElement> elements = bag()
                                 .add(span()
                                         .title(labelBuilder.label(DURABLE))
                                         .css(flag(failSafeBoolean(model, DURABLE)), marginRight5))

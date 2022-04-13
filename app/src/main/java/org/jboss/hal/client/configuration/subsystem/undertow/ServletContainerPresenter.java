@@ -54,7 +54,11 @@ import static java.util.Collections.emptyMap;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SELECTED_SERVLET_CONTAINER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SERVLET_CONTAINER_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SERVLET_CONTAINER_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MIME_MAPPING;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDERTOW;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.WELCOME_FILE;
 
 public class ServletContainerPresenter
         extends ApplicationFinderPresenter<ServletContainerPresenter.MyView, ServletContainerPresenter.MyProxy>

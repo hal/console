@@ -31,8 +31,16 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.AsyncColumn;
 
+import elemental2.promise.Promise;
+
 import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.MODCLUSTER_BALANCER_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.BALANCER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MODCLUSTER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NODE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDERTOW;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
 @AsyncColumn(Ids.UNDERTOW_RUNTIME_MODCLUSTER_BALANCER_NODE)
@@ -46,8 +54,7 @@ public class ModclusterBalancerNodeColumn extends FinderColumn<NamedNode> {
 
         super(new Builder<NamedNode>(finder, Ids.UNDERTOW_RUNTIME_MODCLUSTER_BALANCER_NODE, Names.NODE)
                 .columnAction(columnActionFactory.refresh(Ids.UNDERTOW_MODCLUSTER_BALANCER_NODE_REFRESH))
-                .itemsProvider((context, callback) -> {
-
+                .itemsProvider(context -> {
                     String modcluster = "";
                     String balancer = "";
 
@@ -67,8 +74,8 @@ public class ModclusterBalancerNodeColumn extends FinderColumn<NamedNode> {
                             .param(CHILD_TYPE, NODE)
                             .param(INCLUDE_RUNTIME, true)
                             .build();
-                    dispatcher.execute(operation, result -> callback.onSuccess(asNamedNodes(result.asPropertyList())));
-
+                    return dispatcher.execute(operation)
+                            .then(result -> Promise.resolve(asNamedNodes(result.asPropertyList())));
                 })
                 .itemRenderer(item -> new ItemDisplay<NamedNode>() {
                     @Override

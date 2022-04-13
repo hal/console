@@ -32,8 +32,8 @@ import org.jboss.hal.resources.Resources;
 
 import elemental2.dom.HTMLElement;
 
-import static org.jboss.gwt.elemento.core.Elements.*;
-import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.elemento.Elements.*;
+import static org.jboss.elemento.EventType.click;
 import static org.jboss.hal.resources.CSS.clickable;
 import static org.jboss.hal.resources.CSS.eapHomeRow;
 import static org.jboss.hal.resources.CSS.eapHomeTitle;

@@ -41,7 +41,11 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
 import static java.util.Arrays.asList;
-import static org.jboss.hal.client.configuration.subsystem.coremanagement.AddressTemplates.*;
+import static org.jboss.hal.client.configuration.subsystem.coremanagement.AddressTemplates.CONFIGURATION_CHANGES_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.coremanagement.AddressTemplates.CONFIGURATION_CHANGES_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.coremanagement.AddressTemplates.CORE_MANAGEMENT_SUBSYSTEM_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.coremanagement.AddressTemplates.PROCESS_STATE_LISTENER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.coremanagement.AddressTemplates.PROCESS_STATE_LISTENER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CORE_MANAGEMENT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVICE;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;

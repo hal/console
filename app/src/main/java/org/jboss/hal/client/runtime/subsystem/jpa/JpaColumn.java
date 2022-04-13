@@ -38,16 +38,20 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HIBERNATE_PERSISTENCE_UNIT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.JPA;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBDEPLOYMENT;
 
 @AsyncColumn(Ids.JPA_RUNTIME)
 public class JpaColumn extends FinderColumn<JpaStatistic> {
@@ -120,27 +124,15 @@ public class JpaColumn extends FinderColumn<JpaStatistic> {
                         item -> new JpaPreview(item, environment, dispatcher, finderPathFactory, placeManager, places,
                                 resources)));
 
-        ItemsProvider<JpaStatistic> itemsProvider = (context, callback) -> deploymentResources.readChildren(JPA,
-                HIBERNATE_PERSISTENCE_UNIT, JpaStatistic::new,
-                callback::onSuccess);
+        ItemsProvider<JpaStatistic> itemsProvider = context -> deploymentResources
+                .readChildren(JPA, HIBERNATE_PERSISTENCE_UNIT, JpaStatistic::new).then(Promise::resolve);
 
         setItemsProvider(itemsProvider);
 
         // reuse the items provider to filter breadcrumb items
-        setBreadcrumbItemsProvider((context, callback) -> itemsProvider.get(context, new AsyncCallback<List<JpaStatistic>>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                callback.onFailure(caught);
-            }
-
-            @Override
-            public void onSuccess(List<JpaStatistic> result) {
-                // only persistence units w/ enabled statistics will show up in the breadcrumb dropdown
-                List<JpaStatistic> puWithStatistics = result.stream()
+        setBreadcrumbItemsProvider(context -> itemsProvider.items(context)
+                .then(result -> Promise.resolve(result.stream()
                         .filter(JpaStatistic::isStatisticsEnabled)
-                        .collect(toList());
-                callback.onSuccess(puWithStatistics);
-            }
-        }));
+                        .collect(toList()))));
     }
 }

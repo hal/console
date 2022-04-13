@@ -36,7 +36,6 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
-import org.jboss.hal.flow.Outcome;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.token.NameTokens;
@@ -125,25 +124,22 @@ public class ServerGroupDeploymentPresenter extends
         tasks.add(new LoadDeploymentsFromRunningServer(environment, dispatcher));
 
         series(new FlowContext(progress.get()), tasks)
-                .subscribe(new Outcome<FlowContext>() {
-                    @Override
-                    public void onError(FlowContext context, Throwable error) {
+                .then(context -> {
+                    List<ServerGroupDeployment> serverGroupDeployments = context
+                            .get(DeploymentTasks.SERVER_GROUP_DEPLOYMENTS);
+                    if (!serverGroupDeployments.isEmpty()) {
+                        ServerGroupDeployment serverGroupDeployment = serverGroupDeployments.get(0);
+                        getView().update(serverGroup, serverGroupDeployment);
+                    } else {
                         MessageEvent.fire(getEventBus(),
                                 Message.error(resources.messages().deploymentReadError(deployment)));
                     }
-
-                    @Override
-                    public void onSuccess(FlowContext context) {
-                        List<ServerGroupDeployment> serverGroupDeployments = context
-                                .get(DeploymentTasks.SERVER_GROUP_DEPLOYMENTS);
-                        if (!serverGroupDeployments.isEmpty()) {
-                            ServerGroupDeployment serverGroupDeployment = serverGroupDeployments.get(0);
-                            getView().update(serverGroup, serverGroupDeployment);
-                        } else {
-                            MessageEvent.fire(getEventBus(),
-                                    Message.error(resources.messages().deploymentReadError(deployment)));
-                        }
-                    }
+                    return null;
+                })
+                .catch_(error -> {
+                    MessageEvent.fire(getEventBus(),
+                            Message.error(resources.messages().deploymentReadError(deployment)));
+                    return null;
                 });
     }
 

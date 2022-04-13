@@ -55,11 +55,28 @@ import org.jboss.hal.spi.Requires;
 import com.google.web.bindery.event.shared.EventBus;
 
 import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
 
 import static java.util.Arrays.asList;
 import static java.util.Comparator.comparing;
-import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.CACHE_CONTAINER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.CACHE_CONTAINER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.INFINISPAN_SUBSYSTEM_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.REMOTE_CACHE_CONTAINER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.REMOTE_CACHE_CONTAINER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.REMOTE_CLUSTER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.REMOTE_CLUSTER_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CACHE_CONTAINER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT_CACHE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT_REMOTE_CLUSTER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.OPERATIONS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOTE_CACHE_CONTAINER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUEST_PROPERTIES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDINGS;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
@@ -89,9 +106,9 @@ public class CacheContainerColumn extends FinderColumn<CacheContainer> {
 
         super(new Builder<CacheContainer>(finder, Ids.CACHE_CONTAINER, Names.CACHE_CONTAINER)
 
-                .itemsProvider((context, callback) -> crud.readChildren(INFINISPAN_SUBSYSTEM_TEMPLATE,
-                        asList(CACHE_CONTAINER, REMOTE_CACHE_CONTAINER),
-                        result -> {
+                .itemsProvider(context -> crud
+                        .readChildren(INFINISPAN_SUBSYSTEM_TEMPLATE, asList(CACHE_CONTAINER, REMOTE_CACHE_CONTAINER))
+                        .then(result -> {
                             List<CacheContainer> cc = new ArrayList<>();
                             for (Property property : result.step(0).get(RESULT).asPropertyList()) {
                                 cc.add(new CacheContainer(property.getName(), false, property.getValue()));
@@ -100,13 +117,14 @@ public class CacheContainerColumn extends FinderColumn<CacheContainer> {
                                 cc.add(new CacheContainer(property.getName(), true, property.getValue()));
                             }
                             cc.sort(comparing(NamedNode::getName));
-                            callback.onSuccess(cc);
+                            return Promise.resolve(cc);
                         }))
 
                 .onPreview(CacheContainerPreview::new)
                 .useFirstActionAsBreadcrumbHandler()
                 .withFilter()
                 .showCount());
+
         this.dispatcher = dispatcher;
         this.crud = crud;
         this.eventBus = eventBus;

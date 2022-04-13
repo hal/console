@@ -18,7 +18,7 @@ package org.jboss.hal.client.configuration.subsystem.microprofile;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
+import org.jboss.elemento.HtmlContentBuilder;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.RadioItem;
@@ -43,11 +43,21 @@ import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 
 import static java.util.Arrays.asList;
-import static org.jboss.gwt.elemento.core.Elements.div;
-import static org.jboss.gwt.elemento.core.Elements.p;
-import static org.jboss.gwt.elemento.core.Elements.setVisible;
+import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.p;
+import static org.jboss.elemento.Elements.setVisible;
 import static org.jboss.hal.client.configuration.subsystem.microprofile.AddressTemplates.CONFIG_SOURCE_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CLASS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DIR;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MODULE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ORDINAL;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PATH;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROPERTIES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RELATIVE_TO;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SOURCE;
 import static org.jboss.hal.resources.UIConstants.NAME;
 
 class AddConfigSourceWizard {
@@ -127,9 +137,7 @@ class AddConfigSourceWizard {
                     dispatcher.execute(operation,
                             modelNode -> success(context.name),
                             (op, failure) -> w.showError(resources.constants().operationFailed(),
-                                    resources.messages().addResourceError(context.name, failure)),
-                            (op, exception) -> w.showError(resources.constants().operationFailed(),
-                                    resources.messages().addResourceError(context.name, exception.getMessage())));
+                                    resources.messages().addResourceError(context.name, failure)));
                 })
                 .stayOpenAfterFinish()
                 .build();

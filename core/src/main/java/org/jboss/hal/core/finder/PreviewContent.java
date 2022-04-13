@@ -20,8 +20,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
-import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
+import org.jboss.elemento.ElementsBag;
+import org.jboss.elemento.HtmlContentBuilder;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.PatternFly;
 import org.jboss.hal.resources.CSS;
@@ -36,9 +36,20 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 
 import elemental2.dom.HTMLElement;
 
-import static org.jboss.gwt.elemento.core.Elements.*;
-import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.elemento.Elements.a;
+import static org.jboss.elemento.Elements.bag;
+import static org.jboss.elemento.Elements.h;
+import static org.jboss.elemento.Elements.p;
+import static org.jboss.elemento.Elements.section;
+import static org.jboss.elemento.Elements.span;
+import static org.jboss.elemento.EventType.click;
+import static org.jboss.hal.resources.CSS.clickable;
+import static org.jboss.hal.resources.CSS.finderPreview;
+import static org.jboss.hal.resources.CSS.fontAwesome;
+import static org.jboss.hal.resources.CSS.marginRight5;
+import static org.jboss.hal.resources.CSS.marginTop5;
+import static org.jboss.hal.resources.CSS.pullRight;
+import static org.jboss.hal.resources.CSS.smallLink;
 
 /** Wrapper for the preview content which consists of a header (mandatory) and one or more optional elements. */
 public class PreviewContent<T> implements Iterable<HTMLElement>, Attachable {
@@ -55,7 +66,7 @@ public class PreviewContent<T> implements Iterable<HTMLElement>, Attachable {
     private static final Constants CONSTANTS = GWT.create(Constants.class);
 
     private final List<Attachable> attachables;
-    private final ElementsBuilder builder;
+    private final ElementsBag builder;
     private HTMLElement headerContainer;
     private HTMLElement lead;
 
@@ -70,7 +81,7 @@ public class PreviewContent<T> implements Iterable<HTMLElement>, Attachable {
 
     public PreviewContent(String header, String lead) {
         attachables = new ArrayList<>();
-        builder = collect().add(header(header));
+        builder = bag().add(header(header));
         if (lead != null) {
             builder.add(lead(lead));
         }
@@ -82,7 +93,7 @@ public class PreviewContent<T> implements Iterable<HTMLElement>, Attachable {
 
     public PreviewContent(String header, String lead, SafeHtml html) {
         attachables = new ArrayList<>();
-        builder = collect().add(header(header));
+        builder = bag().add(header(header));
         if (lead != null) {
             builder.add(lead(lead));
         }
@@ -95,7 +106,7 @@ public class PreviewContent<T> implements Iterable<HTMLElement>, Attachable {
 
     public PreviewContent(String header, String lead, HTMLElement first, HTMLElement... rest) {
         attachables = new ArrayList<>();
-        builder = collect().add(header(header));
+        builder = bag().add(header(header));
         if (lead != null) {
             builder.add(lead(lead));
         }
@@ -115,7 +126,7 @@ public class PreviewContent<T> implements Iterable<HTMLElement>, Attachable {
 
     public PreviewContent(String header, String lead, Iterable<HTMLElement> elements) {
         attachables = new ArrayList<>();
-        builder = collect().add(header(header));
+        builder = bag().add(header(header));
         if (lead != null) {
             builder.add(lead(lead));
         }
@@ -130,7 +141,7 @@ public class PreviewContent<T> implements Iterable<HTMLElement>, Attachable {
     @SuppressWarnings("DuplicateStringLiteralInspection")
     public PreviewContent(String header, String lead, ExternalTextResource resource) {
         attachables = new ArrayList<>();
-        builder = collect().add(header(header));
+        builder = bag().add(header(header));
         if (lead != null) {
             builder.add(lead(lead));
         }
@@ -174,7 +185,7 @@ public class PreviewContent<T> implements Iterable<HTMLElement>, Attachable {
 
     // ------------------------------------------------------ other methods
 
-    protected ElementsBuilder previewBuilder() {
+    protected ElementsBag previewBuilder() {
         return builder;
     }
 

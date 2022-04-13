@@ -20,14 +20,21 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
+
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.web.bindery.event.shared.EventBus;
+
 /**
- * General purpose context to be used inside a flow. Provides a {@linkplain Progress progress indicator}, a stack and a map for
- * sharing data between tasks.
+ * General purpose context to be used inside a {@linkplain Flow flow} and {@linkplain Task tasks}. Provides a
+ * {@linkplain Progress progress indicator}, a stack and a map for sharing data between tasks.
  */
 public class FlowContext {
 
     private final Stack<Object> stack;
     private final Map<String, Object> data;
+    private SafeHtml failure;
     final Progress progress;
 
     public FlowContext() {
@@ -38,13 +45,15 @@ public class FlowContext {
         this.progress = progress;
         this.stack = new Stack<>();
         this.data = new HashMap<>();
+        this.failure = null;
     }
 
     /**
      * Pushes the value om top of the context stack.
      */
-    public <T> void push(T value) {
+    public <T> FlowContext push(T value) {
         stack.push(value);
+        return this;
     }
 
     /**
@@ -57,6 +66,11 @@ public class FlowContext {
         return (T) stack.pop();
     }
 
+    @SuppressWarnings("unchecked")
+    public <T> T pop(T defaultValue) {
+        return emptyStack() ? defaultValue : (T) stack.pop();
+    }
+
     /**
      * @return {@code true} if the context stack is empty, {@code false} otherwise.
      */
@@ -67,16 +81,24 @@ public class FlowContext {
     /**
      * Stores the value under the given key in the context map.
      */
-    public <T> void set(String key, T value) {
+    public <T> FlowContext set(String key, T value) {
         data.put(key, value);
+        return this;
+    }
+
+    /**
+     * @return the object for the given key from the context map or {@code null} if no such key was found.
+     */
+    public <T> T get(String key) {
+        return get(key, null);
     }
 
     /**
      * @return the object for the given key from the context map or {@code null} if no such key was found.
      */
     @SuppressWarnings("unchecked")
-    public <T> T get(String key) {
-        return (T) data.get(key);
+    public <T> T get(String key, T defaultValue) {
+        return (T) data.getOrDefault(key, defaultValue);
     }
 
     /**
@@ -84,6 +106,21 @@ public class FlowContext {
      */
     public Set<String> keys() {
         return data.keySet();
+    }
+
+    public FlowContext failure(SafeHtml failure) {
+        this.failure = failure;
+        return this;
+    }
+
+    public boolean hasFailure() {
+        return failure != null;
+    }
+
+    public void showFailure(EventBus eventBus) {
+        if (hasFailure()) {
+            MessageEvent.fire(eventBus, Message.error(failure));
+        }
     }
 
     @Override

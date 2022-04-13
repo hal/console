@@ -15,8 +15,8 @@
  */
 package org.jboss.hal.client.runtime.subsystem.messaging;
 
-import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.gwt.elemento.core.Key;
+import org.jboss.elemento.IsElement;
+import org.jboss.elemento.Key;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
@@ -26,13 +26,13 @@ import elemental2.dom.CSSProperties.WidthUnionType;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 
-import static org.jboss.gwt.elemento.core.Elements.button;
-import static org.jboss.gwt.elemento.core.Elements.div;
-import static org.jboss.gwt.elemento.core.Elements.input;
-import static org.jboss.gwt.elemento.core.Elements.label;
-import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.gwt.elemento.core.EventType.keyup;
-import static org.jboss.gwt.elemento.core.InputType.text;
+import static org.jboss.elemento.Elements.button;
+import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.input;
+import static org.jboss.elemento.Elements.label;
+import static org.jboss.elemento.EventType.click;
+import static org.jboss.elemento.EventType.keyup;
+import static org.jboss.elemento.InputType.text;
 import static org.jboss.hal.resources.CSS.*;
 
 class GetRolesElement implements IsElement<HTMLElement>, HasPresenter<ServerPresenter> {

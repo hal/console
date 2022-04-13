@@ -32,6 +32,8 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
 
+import elemental2.promise.Promise;
+
 import static java.util.Arrays.asList;
 
 @Column(Ids.CONFIGURATION)
@@ -43,7 +45,7 @@ public class ConfigurationColumn extends StaticItemColumn {
             Environment environment,
             Resources resources) {
 
-        super(finder, Ids.CONFIGURATION, Names.CONFIGURATION, (context, callback) -> {
+        super(finder, Ids.CONFIGURATION, Names.CONFIGURATION, (context) -> new Promise<>((resolve, reject) -> {
             List<StaticItem> items = new ArrayList<>();
             if (environment.isStandalone()) {
                 items.add(new StaticItem.Builder(Names.SUBSYSTEMS)
@@ -83,7 +85,7 @@ public class ConfigurationColumn extends StaticItemColumn {
                                     resources.previews().configurationSystemProperties()))
                             .build()));
 
-            callback.onSuccess(items);
-        });
+            resolve.onInvoke(items);
+        }));
     }
 }

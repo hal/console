@@ -50,10 +50,10 @@ public class ManagementInterfacePresenter
 
     private final CrudOperations crud;
     private final StatementContext statementContext;
-    private Resources resources;
-    private Environment environment;
-    private Dispatcher dispatcher;
-    private Provider<Progress> progress;
+    private final Resources resources;
+    private final Environment environment;
+    private final Dispatcher dispatcher;
+    private final Provider<Progress> progress;
 
     // @Inject
     public ManagementInterfacePresenter(EventBus eventBus, ManagementInterfacePresenter.MyView view,

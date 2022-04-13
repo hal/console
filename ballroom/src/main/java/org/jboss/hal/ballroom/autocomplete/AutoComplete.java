@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.ballroom.autocomplete;
 
-import org.jboss.gwt.elemento.core.Elements;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.form.AbstractFormItem;
 import org.jboss.hal.ballroom.form.FormItem;
@@ -34,8 +34,8 @@ import jsinterop.annotations.JsType;
 import static elemental2.dom.DomGlobal.document;
 import static elemental2.dom.DomGlobal.setTimeout;
 import static jsinterop.annotations.JsPackage.GLOBAL;
-import static org.jboss.gwt.elemento.core.Elements.asHtmlElement;
-import static org.jboss.gwt.elemento.core.Elements.htmlElements;
+import static org.jboss.elemento.Elements.asHtmlElement;
+import static org.jboss.elemento.Elements.htmlElements;
 import static org.jboss.hal.ballroom.form.Form.State.EDITING;
 import static org.jboss.hal.resources.CSS.autocompleteSuggestions;
 import static org.jboss.hal.resources.CSS.formControl;

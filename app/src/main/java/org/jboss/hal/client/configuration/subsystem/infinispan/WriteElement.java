@@ -15,8 +15,8 @@
  */
 package org.jboss.hal.client.configuration.subsystem.infinispan;
 
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.elemento.Elements;
+import org.jboss.elemento.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.form.Form;
@@ -33,9 +33,16 @@ import org.jboss.hal.resources.UIConstants;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 
-import static org.jboss.gwt.elemento.core.Elements.*;
-import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.gwt.elemento.core.InputType.radio;
+import static org.jboss.elemento.Elements.bag;
+import static org.jboss.elemento.Elements.button;
+import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.input;
+import static org.jboss.elemento.Elements.label;
+import static org.jboss.elemento.Elements.p;
+import static org.jboss.elemento.Elements.section;
+import static org.jboss.elemento.Elements.span;
+import static org.jboss.elemento.EventType.click;
+import static org.jboss.elemento.InputType.radio;
 import static org.jboss.hal.client.configuration.subsystem.infinispan.Write.BEHIND;
 import static org.jboss.hal.client.configuration.subsystem.infinispan.Write.THROUGH;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.STORE;
@@ -57,7 +64,7 @@ class WriteElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
     WriteElement(CacheType cacheType, Store store, MetadataRegistry metadataRegistry, Resources resources) {
         HTMLInputElement behindRadio;
         String radioName = Ids.build(cacheType.baseId, store.baseId, WRITE, "radio");
-        Iterable<HTMLElement> elements = collect()
+        Iterable<HTMLElement> elements = bag()
                 .add(div().css(CSS.radio)
                         .add(label()
                                 .add(behindRadio = input(radio)

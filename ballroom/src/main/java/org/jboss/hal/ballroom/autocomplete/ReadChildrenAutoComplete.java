@@ -77,41 +77,29 @@ public class ReadChildrenAutoComplete extends AutoComplete {
             itemRenderer = new ReadChildrenRenderer();
         }
 
-        Options options = new OptionsBuilder<JsonObject>(
-                (query, response) -> {
-                    List<Operation> operations = stream(templates.spliterator(), false)
-                            .map(template -> template.resolve(statementContext))
-                            .map(address -> operation(address, numberOfTemplates))
-                            .collect(toList());
-                    if (operations.size() == 1) {
-                        dispatcher.execute(operations.get(0),
-                                result -> response.response(resultProcessor.process(query, result)),
-                                (operation, failure) -> {
-                                    logger.error(ERROR_MESSAGE, templates, failure);
-                                    response.response(new JsonObject[0]);
+        Options options = new OptionsBuilder<JsonObject>((query, response) -> {
+            List<Operation> operations = stream(templates.spliterator(), false)
+                    .map(template -> template.resolve(statementContext))
+                    .map(address -> operation(address, numberOfTemplates))
+                    .collect(toList());
+            if (operations.size() == 1) {
+                dispatcher.execute(operations.get(0),
+                        result -> response.response(resultProcessor.process(query, result)),
+                        (operation, error) -> {
+                            logger.error(ERROR_MESSAGE, templates, error);
+                            response.response(new JsonObject[0]);
 
-                                },
-                                (operation, exception) -> {
-                                    logger.error(ERROR_MESSAGE, templates, exception.getMessage());
-                                    response.response(new JsonObject[0]);
-                                });
+                        });
+            } else {
+                dispatcher.execute(new Composite(operations),
+                        (CompositeResult result) -> response.response(resultProcessor.process(query, result)),
+                        (operation, error) -> {
+                            logger.error(ERROR_MESSAGE, templates, error);
+                            response.response(new JsonObject[0]);
 
-                    } else {
-                        dispatcher.execute(new Composite(operations),
-                                (CompositeResult result) -> response.response(resultProcessor.process(query, result)),
-                                (operation, failure) -> {
-                                    logger.error(ERROR_MESSAGE, templates, failure);
-                                    response.response(new JsonObject[0]);
-
-                                },
-                                (operation, exception) -> {
-                                    logger.error(ERROR_MESSAGE, templates, exception.getMessage());
-                                    response.response(new JsonObject[0]);
-                                });
-                    }
-                })
-                        .renderItem(itemRenderer)
-                        .build();
+                        });
+            }
+        }).renderItem(itemRenderer).build();
         init(options);
     }
 

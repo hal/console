@@ -44,7 +44,16 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import static org.jboss.hal.client.runtime.subsystem.batch.AddressTemplates.BATCH_DEPLOYMENT_JOB_ADDRESS;
 import static org.jboss.hal.client.runtime.subsystem.batch.AddressTemplates.BATCH_DEPLOYMENT_JOB_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.batch.AddressTemplates.BATCH_SUBDEPLOYMENT_JOB_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.BATCH_JBERET;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.EXECUTION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESTART_JOB;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STOP_JOB;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBDEPLOYMENT;
 import static org.jboss.hal.meta.token.NameTokens.JOB;
 
 public class JobPresenter extends ApplicationFinderPresenter<JobPresenter.MyView, JobPresenter.MyProxy> {

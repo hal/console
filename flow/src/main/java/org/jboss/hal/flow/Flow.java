@@ -15,29 +15,38 @@
  */
 package org.jboss.hal.flow;
 
-import java.util.Collection;
+import java.util.List;
+import java.util.function.Predicate;
 
-import rx.Observable;
-import rx.Single;
+import elemental2.promise.Promise;
 
-import static java.util.Arrays.asList;
+import static org.jboss.hal.flow.FlowExecutor.Mode.PARALLEL;
+import static org.jboss.hal.flow.FlowExecutor.Mode.SEQUENTIAL;
 
-/** Collection of static methods to execute (async) tasks in order. Uses RxGWT for orchestration. */
 public interface Flow {
 
-    /** Executes multiple tasks in order. */
-    @SafeVarargs
-    static <C extends FlowContext> Single<C> series(C context, Task<C>... task) {
-        return series(context, asList(task));
+    static <C extends FlowContext> Promise<C> parallel(C context, List<Task<C>> tasks) {
+        return parallel(context, tasks, true);
     }
 
-    /** Executes multiple tasks in order. */
-    static <C extends FlowContext> Single<C> series(C context, Collection<? extends Task<C>> tasks) {
-        return Observable.from(tasks)
-                .flatMapSingle(task -> task.call(context).toSingleDefault(context), false, 1)
-                .doOnSubscribe(() -> context.progress.reset(tasks.size()))
-                .doOnNext(c -> c.progress.tick())
-                .doOnTerminate(context.progress::finish)
-                .lastOrDefault(context).toSingle();
+    static <C extends FlowContext> Promise<C> parallel(C context, List<Task<C>> tasks, boolean failFast) {
+        return new FlowExecutor<>(PARALLEL, context, tasks, failFast).execute();
+    }
+
+    static <C extends FlowContext> Promise<C> series(C context, List<Task<C>> tasks) {
+        return series(context, tasks, true);
+    }
+
+    static <C extends FlowContext> Promise<C> series(C context, List<Task<C>> tasks, boolean failFast) {
+        return new FlowExecutor<>(SEQUENTIAL, context, tasks, failFast).execute();
+    }
+
+    static <C extends FlowContext> Promise<C> repeat(C context, Task<C> task, Predicate<C> until, int timeout) {
+        return new FlowLoop<>(context, task, until, timeout, false).execute();
+    }
+
+    static <C extends FlowContext> Promise<C> repeat(C context, Task<C> task, Predicate<C> until, int timeout,
+            boolean failFast) {
+        return new FlowLoop<>(context, task, until, timeout, failFast).execute();
     }
 }

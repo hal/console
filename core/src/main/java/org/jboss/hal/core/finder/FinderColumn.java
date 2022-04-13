@@ -25,11 +25,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.EventCallbackFn;
-import org.jboss.gwt.elemento.core.IsElement;
-import org.jboss.gwt.elemento.core.Key;
-import org.jboss.gwt.elemento.core.builder.HtmlContentBuilder;
+import org.jboss.elemento.Elements;
+import org.jboss.elemento.EventCallbackFn;
+import org.jboss.elemento.HtmlContentBuilder;
+import org.jboss.elemento.IsElement;
+import org.jboss.elemento.Key;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.Tooltip;
 import org.jboss.hal.ballroom.form.FormItemValidation;
@@ -50,7 +50,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Iterables;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.HandlerRegistration;
 
 import elemental2.dom.DragEvent;
@@ -60,20 +59,47 @@ import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 import elemental2.dom.KeyboardEvent;
 import elemental2.dom.NodeList;
+import elemental2.promise.Promise;
 
 import static java.util.stream.Collectors.toList;
-import static org.jboss.gwt.elemento.core.Elements.*;
-import static org.jboss.gwt.elemento.core.Elements.header;
-import static org.jboss.gwt.elemento.core.EventType.bind;
-import static org.jboss.gwt.elemento.core.EventType.click;
-import static org.jboss.gwt.elemento.core.EventType.keydown;
-import static org.jboss.gwt.elemento.core.EventType.keyup;
-import static org.jboss.gwt.elemento.core.InputType.text;
-import static org.jboss.gwt.elemento.core.Key.ArrowUp;
-import static org.jboss.gwt.elemento.core.Key.Escape;
+import static org.jboss.elemento.Elements.a;
+import static org.jboss.elemento.Elements.button;
+import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.h;
+import static org.jboss.elemento.Elements.header;
+import static org.jboss.elemento.Elements.input;
+import static org.jboss.elemento.Elements.li;
+import static org.jboss.elemento.Elements.span;
+import static org.jboss.elemento.Elements.ul;
+import static org.jboss.elemento.EventType.bind;
+import static org.jboss.elemento.EventType.click;
+import static org.jboss.elemento.EventType.keydown;
+import static org.jboss.elemento.EventType.keyup;
+import static org.jboss.elemento.InputType.text;
+import static org.jboss.elemento.Key.ArrowUp;
+import static org.jboss.elemento.Key.Escape;
 import static org.jboss.hal.core.finder.Finder.DATA_BREADCRUMB;
 import static org.jboss.hal.core.finder.Finder.DATA_FILTER;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.active;
+import static org.jboss.hal.resources.CSS.btn;
+import static org.jboss.hal.resources.CSS.btnFinder;
+import static org.jboss.hal.resources.CSS.btnGroup;
+import static org.jboss.hal.resources.CSS.caret;
+import static org.jboss.hal.resources.CSS.column;
+import static org.jboss.hal.resources.CSS.dropdown;
+import static org.jboss.hal.resources.CSS.dropdownMenu;
+import static org.jboss.hal.resources.CSS.dropdownToggle;
+import static org.jboss.hal.resources.CSS.empty;
+import static org.jboss.hal.resources.CSS.filter;
+import static org.jboss.hal.resources.CSS.finderColumn;
+import static org.jboss.hal.resources.CSS.fontAwesome;
+import static org.jboss.hal.resources.CSS.formControl;
+import static org.jboss.hal.resources.CSS.inputGroup;
+import static org.jboss.hal.resources.CSS.inputGroupAddon;
+import static org.jboss.hal.resources.CSS.itemText;
+import static org.jboss.hal.resources.CSS.last;
+import static org.jboss.hal.resources.CSS.pinned;
+import static org.jboss.hal.resources.CSS.unpinned;
 import static org.jboss.hal.resources.Names.NOT_AVAILABLE;
 import static org.jboss.hal.resources.UIConstants.GROUP;
 import static org.jboss.hal.resources.UIConstants.HASH;
@@ -86,10 +112,10 @@ import static org.jboss.hal.resources.UIConstants.TABINDEX;
  * parameter which is the type parameter of this column.
  * <p>
  * The idea is that columns are self-contained and don't need direct references to other columns. References are only provided
- * by id. The {@link ColumnRegistry} will then resolve the id against an existing column.
+ * by id. The column registry will then resolve the id against an existing column.
  * <p>
  * Please do not use constants from {@code ModelDescriptionConstants} for the column ids (it makes refactoring harder). Instead
- * add an id to {@link org.jboss.hal.resources.Ids}.
+ * add an id to {@link Ids}.
  * <p>
  * TODO This class is huge! Try to refactor and break into smaller pieces.
  *
@@ -403,7 +429,7 @@ public class FinderColumn<T> implements IsElement<HTMLDivElement>, Attachable {
                             Elements.setVisible(previousElement, true);
                             finder.reduceTo(previousColumn);
                             finder.selectColumn(previousColumn.getId());
-                            FinderRow selectedRow = previousColumn.selectedRow();
+                            FinderRow<?> selectedRow = previousColumn.selectedRow();
                             if (selectedRow != null) {
                                 selectedRow.updatePreview();
                                 selectedRow.element().scrollIntoView(false);
@@ -423,25 +449,22 @@ public class FinderColumn<T> implements IsElement<HTMLDivElement>, Attachable {
                         event.stopPropagation();
 
                         finder.reduceTo(this);
-                        finder.appendColumn(nextColumn,
-                                new AsyncCallback<FinderColumn>() {
-                                    @Override
-                                    public void onFailure(Throwable throwable) {
-                                        logger.error("Unable to append next column '{}' on keyboard right: {}",
-                                                nextColumn, throwable.getMessage());
+                        finder.appendColumn(nextColumn)
+                                .then(column -> {
+                                    if (column.activeElement() == null && column.hasVisibleElements()) {
+                                        HTMLElement firstElement = column.nextVisibleElement(null);
+                                        column.markSelected(firstElement.id);
+                                        column.row(firstElement).updatePreview();
                                     }
-
-                                    @Override
-                                    public void onSuccess(FinderColumn column) {
-                                        if (column.activeElement() == null && column.hasVisibleElements()) {
-                                            HTMLElement firstElement = column.nextVisibleElement(null);
-                                            column.markSelected(firstElement.id);
-                                            column.row(firstElement).updatePreview();
-                                        }
-                                        finder.updateContext();
-                                        finder.updateHistory();
-                                        finder.selectColumn(nextColumn);
-                                    }
+                                    finder.updateContext();
+                                    finder.updateHistory();
+                                    finder.selectColumn(nextColumn);
+                                    return null;
+                                })
+                                .catch_(error -> {
+                                    logger.error("Unable to append next column '{}' on keyboard right: {}",
+                                            nextColumn, error);
+                                    return null;
                                 });
                     }
                     break;
@@ -623,31 +646,26 @@ public class FinderColumn<T> implements IsElement<HTMLDivElement>, Attachable {
         }
     }
 
-    void setItems(AsyncCallback<FinderColumn> callback) {
-        if (!initialItems.isEmpty()) {
-            setItems(initialItems, callback);
-
-        } else if (itemsProvider != null) {
-            itemsProvider.get(finder.getContext(), new AsyncCallback<List<T>>() {
-                @Override
-                public void onFailure(Throwable throwable) {
-                    if (callback != null) {
-                        callback.onFailure(throwable);
-                    }
-                }
-
-                @Override
-                public void onSuccess(List<T> items) {
-                    setItems(items, callback);
-                }
-            });
-
-        } else {
-            setItems(Collections.emptyList(), callback);
-        }
+    Promise<FinderColumn<T>> setItems() {
+        return new Promise<>((resolve, reject) -> {
+            if (!initialItems.isEmpty()) {
+                setItems(initialItems);
+                resolve.onInvoke(this);
+            } else if (itemsProvider != null) {
+                itemsProvider.items(finder.getContext())
+                        .then((List<T> items) -> {
+                            setItems(items);
+                            resolve.onInvoke(this);
+                            return null;
+                        });
+            } else {
+                setItems(Collections.emptyList());
+                resolve.onInvoke(this);
+            }
+        });
     }
 
-    private void setItems(List<T> items, AsyncCallback<FinderColumn> callback) {
+    private void setItems(List<T> items) {
         rows.clear();
         currentItems = items;
         Elements.removeChildrenFrom(ulElement);
@@ -691,10 +709,6 @@ public class FinderColumn<T> implements IsElement<HTMLDivElement>, Attachable {
 
         if (items.isEmpty()) {
             ulElement.appendChild(noItems);
-        }
-
-        if (callback != null) {
-            callback.onSuccess(this);
         }
     }
 
@@ -896,19 +910,12 @@ public class FinderColumn<T> implements IsElement<HTMLDivElement>, Attachable {
     }
 
     public void refresh(Callback callback) {
-        setItems(new AsyncCallback<FinderColumn>() {
-            @Override
-            public void onFailure(Throwable throwable) {
-                logger.error("Unable to refresh column {}: {}", id, throwable.getMessage());
+        setItems().then(column -> {
+            finder.updateContext();
+            if (callback != null) {
+                callback.execute();
             }
-
-            @Override
-            public void onSuccess(FinderColumn column) {
-                finder.updateContext();
-                if (callback != null) {
-                    callback.execute();
-                }
-            }
+            return null;
         });
     }
 

@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.client.skeleton;
 
-import org.jboss.gwt.elemento.core.builder.ElementsBuilder;
+import org.jboss.elemento.ElementsBag;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.spi.Message;
@@ -23,8 +23,17 @@ import org.jboss.hal.spi.Message;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
-import static org.jboss.gwt.elemento.core.Elements.*;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.elemento.Elements.bag;
+import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.p;
+import static org.jboss.elemento.Elements.pre;
+import static org.jboss.elemento.Elements.span;
+import static org.jboss.hal.resources.CSS.alert;
+import static org.jboss.hal.resources.CSS.messageDetails;
+import static org.jboss.hal.resources.CSS.messageDetailsPre;
+import static org.jboss.hal.resources.CSS.pfIcon;
+import static org.jboss.hal.resources.CSS.pullRight;
+import static org.jboss.hal.resources.CSS.timestamp;
 
 class ToastNotificationDialog {
 
@@ -34,7 +43,7 @@ class ToastNotificationDialog {
 
     ToastNotificationDialog(Message message) {
         String[] cssIcon = ToastNotificationElement.cssIcon(message.getLevel());
-        ElementsBuilder builder = collect();
+        ElementsBag builder = bag();
 
         // header
         builder.add(div().css(alert, cssIcon[0])

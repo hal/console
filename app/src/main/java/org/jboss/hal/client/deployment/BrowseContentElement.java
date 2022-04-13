@@ -19,8 +19,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import org.jboss.gwt.elemento.core.Elements;
-import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.elemento.Elements;
+import org.jboss.elemento.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.Format;
@@ -70,16 +70,22 @@ import elemental2.dom.File.ConstructorContentsArrayUnionType;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLImageElement;
-import rx.Completable;
-import rx.Single;
+import elemental2.promise.Promise;
 
 import static com.google.common.base.Strings.nullToEmpty;
 import static elemental2.dom.DomGlobal.window;
 import static java.lang.Math.max;
 import static java.util.Collections.emptyList;
-import static org.jboss.gwt.elemento.core.Elements.*;
-import static org.jboss.gwt.elemento.core.Elements.i;
-import static org.jboss.gwt.elemento.core.EventType.click;
+import static org.jboss.elemento.Elements.a;
+import static org.jboss.elemento.Elements.button;
+import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.h;
+import static org.jboss.elemento.Elements.i;
+import static org.jboss.elemento.Elements.img;
+import static org.jboss.elemento.Elements.p;
+import static org.jboss.elemento.Elements.setVisible;
+import static org.jboss.elemento.Elements.span;
+import static org.jboss.elemento.EventType.click;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.ballroom.Skeleton.MARGIN_BIG;
@@ -87,13 +93,42 @@ import static org.jboss.hal.ballroom.Skeleton.MARGIN_SMALL;
 import static org.jboss.hal.ballroom.Skeleton.applicationHeight;
 import static org.jboss.hal.ballroom.Skeleton.applicationOffset;
 import static org.jboss.hal.client.deployment.ContentParser.NODE_ID;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD_CONTENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.BROWSE_CONTENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CONTENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.FILE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INPUT_STREAM_INDEX;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PATH;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PATHS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CONTENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE_CONTENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TARGET_PATH;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.URL;
+import static org.jboss.hal.resources.CSS.btn;
+import static org.jboss.hal.resources.CSS.btnDefault;
+import static org.jboss.hal.resources.CSS.btnGroup;
+import static org.jboss.hal.resources.CSS.btnToolbar;
+import static org.jboss.hal.resources.CSS.disabled;
+import static org.jboss.hal.resources.CSS.flexRow;
+import static org.jboss.hal.resources.CSS.fontAwesome;
+import static org.jboss.hal.resources.CSS.height;
+import static org.jboss.hal.resources.CSS.imgResponsive;
+import static org.jboss.hal.resources.CSS.imgThumbnail;
+import static org.jboss.hal.resources.CSS.marginBottomLarge;
+import static org.jboss.hal.resources.CSS.marginBottomSmall;
+import static org.jboss.hal.resources.CSS.marginLeftSmall;
+import static org.jboss.hal.resources.CSS.marginRightSmall;
+import static org.jboss.hal.resources.CSS.marginTopLarge;
+import static org.jboss.hal.resources.CSS.pfIcon;
+import static org.jboss.hal.resources.CSS.px;
+import static org.jboss.hal.resources.CSS.refresh;
+import static org.jboss.hal.resources.CSS.vh;
 
 /** UI element to browse and modify the content of an item from the content repository. */
 // TODO Use metadata to show/hide buttons according to the security context
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-class BrowseContentElement implements IsElement, Attachable {
+class BrowseContentElement implements IsElement<HTMLElement>, Attachable {
 
     @SuppressWarnings("HardCodedStringLiteral") private static final Set<String> EDITOR_FILE_TYPES = Sets.newHashSet(
             "bash",
@@ -180,7 +215,6 @@ class BrowseContentElement implements IsElement, Attachable {
 
     // ------------------------------------------------------ ui setup
 
-    @SuppressWarnings("ConstantConditions")
     BrowseContentElement(Dispatcher dispatcher, Environment environment, EventBus eventBus, Metadata metadata,
             Resources resources) {
         this.dispatcher = dispatcher;
@@ -356,9 +390,9 @@ class BrowseContentElement implements IsElement, Attachable {
     }
 
     private void adjustHeight() {
-        int treeOffset = (int) (applicationOffset() +
-                2 * MARGIN_BIG + treeSearch.element().offsetHeight + MARGIN_SMALL + surroundingHeight);
-        int previewHeaderHeight = (int) previewHeader.offsetHeight;
+        int treeOffset = applicationOffset() +
+                2 * MARGIN_BIG + treeSearch.element().offsetHeight + MARGIN_SMALL + surroundingHeight;
+        int previewHeaderHeight = previewHeader.offsetHeight;
         int previewOffset = applicationOffset() +
                 2 * MARGIN_BIG + MARGIN_SMALL + previewHeaderHeight + surroundingHeight;
 
@@ -367,8 +401,8 @@ class BrowseContentElement implements IsElement, Attachable {
     }
 
     private void adjustEditorHeight() {
-        int editorHeight = (int) (applicationHeight() -
-                2 * MARGIN_BIG - MARGIN_SMALL - editorControls.offsetHeight - surroundingHeight);
+        int editorHeight = applicationHeight() -
+                2 * MARGIN_BIG - MARGIN_SMALL - editorControls.offsetHeight - surroundingHeight;
 
         if (Elements.isVisible(editor.element())) {
             editor.element().style.height = height(px(max(editorHeight, MIN_HEIGHT)));
@@ -390,17 +424,17 @@ class BrowseContentElement implements IsElement, Attachable {
     private void refresh() {
         String selectedId = selectedId();
         browseContent()
-                .andThen(awaitTreeReady())
-                .subscribe(() -> {
+                .then(__ -> awaitTreeReady())
+                .then(__ -> {
                     if (selectedId != null) {
                         tree.selectNode(selectedId);
                     }
+                    return null;
                 });
     }
 
     // ------------------------------------------------------ CRUD content methods
 
-    @SuppressWarnings("ConstantConditions")
     void setContent(Content content) {
         this.content = content;
         setVisible(addContentButton.orElse(null), content.isExploded());
@@ -409,7 +443,10 @@ class BrowseContentElement implements IsElement, Attachable {
         setVisible(saveContentButton.orElse(null), content.isExploded());
         editor.getEditor().setReadOnly(!content.isExploded());
 
-        browseContent().subscribe(this::noSelection);
+        browseContent().then(__ -> {
+            noSelection();
+            return null;
+        });
     }
 
     private void addContent() {
@@ -429,13 +466,13 @@ class BrowseContentElement implements IsElement, Attachable {
                     .param(CONTENT, new ModelNode().add(contentNode))
                     .build();
             dispatcher.upload(file(filename(path), ""), operation)
-                    .toCompletable()
-                    .andThen(browseContent())
-                    .andThen(awaitTreeReady())
-                    .subscribe(() -> {
+                    .then(__ -> browseContent())
+                    .then(__ -> awaitTreeReady())
+                    .then(__ -> {
                         MessageEvent.fire(eventBus,
                                 Message.success(resources.messages().newContentSuccess(content.getName(), path)));
                         tree.selectNode(NODE_ID.apply(path));
+                        return null;
                     });
         });
         targetPathItem.setValue(selectedPath());
@@ -481,16 +518,17 @@ class BrowseContentElement implements IsElement, Attachable {
             Operation operation = new Operation.Builder(address, ADD_CONTENT)
                     .param(CONTENT, new ModelNode().add(contentNode))
                     .build();
-            Single<ModelNode> single = fileItem.isEmpty()
+
+            Promise<ModelNode> promise = fileItem.isEmpty()
                     ? dispatcher.execute(operation)
                     : dispatcher.upload(fileItem.getValue(), operation);
-            single.toCompletable()
-                    .andThen(browseContent())
-                    .andThen(awaitTreeReady())
-                    .subscribe(() -> {
+            promise.then(__ -> browseContent())
+                    .then(__ -> awaitTreeReady())
+                    .then(__ -> {
                         MessageEvent.fire(eventBus,
                                 Message.success(resources.messages().newContentSuccess(content.getName(), path)));
                         tree.selectNode(NODE_ID.apply(path));
+                        return null;
                     });
         });
 
@@ -507,11 +545,12 @@ class BrowseContentElement implements IsElement, Attachable {
         form.edit(new ModelNode());
     }
 
-    private Completable browseContent() {
+    @SuppressWarnings("unchecked")
+    private Promise<Void> browseContent() {
         ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content.getName());
         Operation operation = new Operation.Builder(address, BROWSE_CONTENT).build();
         return dispatcher.execute(operation)
-                .doOnSuccess(result -> {
+                .then(result -> {
                     String contentName = SafeHtmlUtils.htmlEscapeAllowEntities(content.getName());
                     Node<ContentEntry> root = new Node.Builder<>(Ids.CONTENT_TREE_ROOT, contentName,
                             new ContentEntry())
@@ -535,8 +574,8 @@ class BrowseContentElement implements IsElement, Attachable {
                             onNodeSelected(selectionContext);
                         }
                     });
-                })
-                .toCompletable();
+                    return Promise.resolve((Void) null);
+                });
     }
 
     private void loadContent(ContentEntry contentEntry, Consumer<String> successCallback) {
@@ -566,14 +605,17 @@ class BrowseContentElement implements IsElement, Attachable {
                     .build();
 
             dispatcher.upload(file(filename, editorContent), operation)
-                    .doOnSuccess(result -> saveContentButton.ifPresent(button -> button.disabled = true))
-                    .toCompletable()
-                    .andThen(browseContent())
-                    .andThen(awaitTreeReady())
-                    .subscribe(() -> {
+                    .then(__ -> {
+                        saveContentButton.ifPresent(button -> button.disabled = true);
+                        return Promise.resolve((Void) null);
+                    })
+                    .then(__ -> browseContent())
+                    .then(__ -> awaitTreeReady())
+                    .then(__ -> {
                         MessageEvent.fire(eventBus,
                                 Message.success(resources.messages().saveContentSuccess(content.getName(), filename)));
                         tree.selectNode(selection.id);
+                        return null;
                     });
         }
     }
@@ -590,13 +632,13 @@ class BrowseContentElement implements IsElement, Attachable {
                                 .param(PATHS, new ModelNode().add(path))
                                 .build();
                         dispatcher.execute(operation)
-                                .toCompletable()
-                                .andThen(browseContent())
-                                .andThen(awaitTreeReady())
-                                .subscribe(() -> {
+                                .then(__ -> browseContent())
+                                .then(__ -> awaitTreeReady())
+                                .then(__ -> {
                                     MessageEvent.fire(eventBus, Message.success(
                                             resources.messages().removeContentSuccess(content.getName(), path)));
                                     noSelection();
+                                    return null;
                                 });
                     }).show();
         }
@@ -800,7 +842,7 @@ class BrowseContentElement implements IsElement, Attachable {
         return new File(new ConstructorContentsArrayUnionType[] { contents }, name);
     }
 
-    private Completable awaitTreeReady() {
-        return Completable.fromEmitter(emitter -> tree.onReady((event, any) -> emitter.onCompleted()));
+    private Promise<Void> awaitTreeReady() {
+        return new Promise<>((resolve, reject) -> tree.onReady((event, __) -> resolve.onInvoke((Void) null)));
     }
 }

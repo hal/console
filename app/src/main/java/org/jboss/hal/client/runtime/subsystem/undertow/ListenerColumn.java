@@ -28,7 +28,6 @@ import org.jboss.hal.core.finder.FinderSegment;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.dmr.Composite;
-import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.Property;
@@ -47,13 +46,22 @@ import org.jboss.hal.spi.Requires;
 
 import com.google.web.bindery.event.shared.EventBus;
 
+import elemental2.promise.Promise;
+
 import static java.util.Collections.emptyList;
 import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.AJP_LISTENER_ADDRESS;
 import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.AJP_LISTENER_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_SERVER_ADDRESS;
 import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_SERVER_TEMPLATE;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.AJP_LISTENER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HTTPS_LISTENER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HTTP_LISTENER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESET_STATISTICS_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
 @AsyncColumn(Ids.UNDERTOW_RUNTIME_LISTENER)
@@ -63,10 +71,10 @@ public class ListenerColumn extends FinderColumn<NamedNode> {
     static final String HAL_LISTENER_TYPE = "hal-listener-type";
     static final String HAL_WEB_SERVER = "hal-web-server";
 
-    private Dispatcher dispatcher;
-    private Resources resources;
-    private EventBus eventBus;
-    private StatementContext statementContext;
+    private final Dispatcher dispatcher;
+    private final Resources resources;
+    private final EventBus eventBus;
+    private final StatementContext statementContext;
 
     @Inject
     public ListenerColumn(Finder finder,
@@ -78,10 +86,9 @@ public class ListenerColumn extends FinderColumn<NamedNode> {
 
         super(new Builder<NamedNode>(finder, Ids.UNDERTOW_RUNTIME_LISTENER, Names.LISTENER)
                 .columnAction(columnActionFactory.refresh(Ids.UNDERTOW_LISTENER_REFRESH))
-                .itemsProvider((context, callback) -> {
-
+                .itemsProvider(context -> {
                     // extract server name from the finder path
-                    FinderSegment segment = context.getPath().findColumn(Ids.UNDERTOW_RUNTIME_SERVER);
+                    FinderSegment<?> segment = context.getPath().findColumn(Ids.UNDERTOW_RUNTIME_SERVER);
                     if (segment != null) {
                         String server = Ids.extractUndertowServer(segment.getItemId());
                         ResourceAddress address = WEB_SERVER_TEMPLATE.resolve(statementContext, server);
@@ -99,7 +106,7 @@ public class ListenerColumn extends FinderColumn<NamedNode> {
                                 .param(INCLUDE_RUNTIME, true)
                                 .build();
 
-                        dispatcher.execute(new Composite(opAjp, opHttp, opHttps), (CompositeResult result) -> {
+                        return dispatcher.execute(new Composite(opAjp, opHttp, opHttps)).then(result -> {
 
                             List<Property> ajpProps = result.step(0).get(RESULT).asPropertyList();
                             List<Property> httpProps = result.step(1).get(RESULT).asPropertyList();
@@ -125,10 +132,10 @@ public class ListenerColumn extends FinderColumn<NamedNode> {
                             listeners.addAll(asNamedNodes(httpProps));
                             listeners.addAll(asNamedNodes(httpsProps));
 
-                            callback.onSuccess(listeners);
+                            return Promise.resolve(listeners);
                         });
                     } else {
-                        callback.onSuccess(emptyList());
+                        return Promise.resolve(emptyList());
                     }
                 })
                 .onPreview(server -> new ListenerPreview(dispatcher, statementContext, resources, server)));

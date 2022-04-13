@@ -52,7 +52,7 @@ public class ResourceDescriptionDatabase extends AbstractDatabase<ResourceDescri
 
     @Override
     public ResourceDescription asMetadata(Document document) {
-        return new ResourceDescription(ModelNode.fromBase64(document.getAny(PAYLOAD).asString()));
+        return new ResourceDescription(ModelNode.fromBase64(document.getAsAny(PAYLOAD).asString()));
     }
 
     @Override

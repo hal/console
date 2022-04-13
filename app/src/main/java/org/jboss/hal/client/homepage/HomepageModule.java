@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.client.homepage;
 
-import org.jboss.gwt.elemento.core.IsElement;
+import org.jboss.elemento.IsElement;
 import org.jboss.hal.core.mvp.Places;
 
 import com.google.gwt.resources.client.ImageResource;
@@ -24,7 +24,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 
-import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.elemento.Elements.*;
 import static org.jboss.hal.resources.CSS.*;
 
 class HomepageModule implements IsElement<HTMLDivElement> {

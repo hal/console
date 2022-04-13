@@ -23,7 +23,6 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import org.jboss.hal.core.CrudOperations;
-import org.jboss.hal.core.SuccessfulOutcome;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -36,12 +35,12 @@ import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Progress;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Names;
-import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Requires;
 
@@ -50,6 +49,7 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
+import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.jmx.AddressTemplates.AUDIT_LOG_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.jmx.AddressTemplates.JMX_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.jmx.AddressTemplates.JMX_TEMPLATE;
@@ -65,7 +65,6 @@ public class JmxPresenter extends ApplicationFinderPresenter<JmxPresenter.MyView
     private final FinderPathFactory finderPathFactory;
     private final MetadataRegistry metadataRegistry;
     private final StatementContext statementContext;
-    private final Resources resources;
 
     @Inject
     public JmxPresenter(EventBus eventBus,
@@ -77,7 +76,7 @@ public class JmxPresenter extends ApplicationFinderPresenter<JmxPresenter.MyView
             @Footer Provider<Progress> progress,
             FinderPathFactory finderPathFactory,
             MetadataRegistry metadataRegistry,
-            StatementContext statementContext, final Resources resources) {
+            StatementContext statementContext) {
         super(eventBus, view, myProxy, finder);
         this.crud = crud;
         this.dispatcher = dispatcher;
@@ -85,7 +84,6 @@ public class JmxPresenter extends ApplicationFinderPresenter<JmxPresenter.MyView
         this.finderPathFactory = finderPathFactory;
         this.metadataRegistry = metadataRegistry;
         this.statementContext = statementContext;
-        this.resources = resources;
     }
 
     @Override
@@ -115,16 +113,15 @@ public class JmxPresenter extends ApplicationFinderPresenter<JmxPresenter.MyView
         } else {
             changedValues.remove(HANDLER);
             Metadata metadata = metadataRegistry.lookup(AUDIT_LOG_TEMPLATE);
-            series(new FlowContext(progress.get()),
+            List<Task<FlowContext>> tasks = asList(
                     new HandlerTasks.SaveAuditLog(dispatcher, statementContext, changedValues, metadata),
                     new HandlerTasks.ReadHandlers(dispatcher, statementContext),
-                    new HandlerTasks.MergeHandler(dispatcher, statementContext, new HashSet<>(handler)))
-                            .subscribe(new SuccessfulOutcome<FlowContext>(getEventBus(), resources) {
-                                @Override
-                                public void onSuccess(FlowContext context) {
-                                    reload();
-                                }
-                            });
+                    new HandlerTasks.MergeHandler(dispatcher, statementContext, new HashSet<>(handler)));
+            series(new FlowContext(progress.get()), tasks)
+                    .then(__ -> {
+                        reload();
+                        return null;
+                    });
         }
     }
 

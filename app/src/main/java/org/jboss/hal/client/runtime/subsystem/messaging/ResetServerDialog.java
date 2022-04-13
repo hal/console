@@ -32,9 +32,9 @@ import org.jboss.hal.resources.Strings;
 import elemental2.dom.CSSProperties.WidthUnionType;
 
 import static java.util.Arrays.asList;
-import static org.jboss.gwt.elemento.core.Elements.asHtmlElement;
-import static org.jboss.gwt.elemento.core.Elements.htmlElements;
-import static org.jboss.gwt.elemento.core.Elements.stream;
+import static org.jboss.elemento.Elements.asHtmlElement;
+import static org.jboss.elemento.Elements.htmlElements;
+import static org.jboss.elemento.Elements.stream;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESET_ALL_MESSAGE_COUNTERS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESET_ALL_MESSAGE_COUNTER_HISTORIES;
