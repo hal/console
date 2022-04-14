@@ -112,7 +112,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CONTENT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNTIME_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
 import static org.jboss.hal.spi.MessageEvent.fire;
@@ -156,7 +156,7 @@ public class ContentColumn extends FinderColumn<Content> {
 
         super(new FinderColumn.Builder<Content>(finder, Ids.CONTENT, resources.constants().content())
                 .itemsProvider(
-                        finderContext -> series(new FlowContext(progress.get()), singletonList(new LoadContent(dispatcher)))
+                        finderContext -> sequential(new FlowContext(progress.get()), singletonList(new LoadContent(dispatcher)))
                                 .then(flowContext -> {
                                     List<Content> content = flowContext.pop();
                                     return Promise.resolve(content);
@@ -336,7 +336,7 @@ public class ContentColumn extends FinderColumn<Content> {
 
                             List<Task<FlowContext>> tasks = Arrays.asList(new CheckDeployment(dispatcher, name),
                                     new UploadOrReplace(environment, dispatcher, name, runtimeName, context.file, false));
-                            series(new FlowContext(progress.get()), tasks)
+                            sequential(new FlowContext(progress.get()), tasks)
                                     .then(__ -> {
                                         refresh(Ids.content(name));
                                         wzd.showSuccess(resources.constants().uploadSuccessful(),
@@ -359,7 +359,7 @@ public class ContentColumn extends FinderColumn<Content> {
     private void addUnmanaged() {
         Metadata metadata = metadataRegistry.lookup(CONTENT_TEMPLATE);
         AddUnmanagedDialog dialog = new AddUnmanagedDialog(metadata, resources,
-                (name, model) -> series(new FlowContext(progress.get()),
+                (name, model) -> sequential(new FlowContext(progress.get()),
                         singletonList(new AddUnmanagedDeployment(dispatcher, name, model)))
                                 .then(context -> {
                                     refresh(Ids.content(name));
@@ -401,7 +401,7 @@ public class ContentColumn extends FinderColumn<Content> {
                         List<Task<FlowContext>> tasks = Arrays.asList(new CheckDeployment(dispatcher, content.getName()),
                                 new UploadOrReplace(environment, dispatcher, content.getName(), content.getRuntimeName(),
                                         uploadElement.getFiles().item(0), false));
-                        series(new FlowContext(progress.get()), tasks)
+                        sequential(new FlowContext(progress.get()), tasks)
                                 .then(context -> {
                                     refresh(Ids.content(content.getName()));
                                     replaceDeploymentPanel.off();

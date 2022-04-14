@@ -63,7 +63,7 @@ final class LookupDatabaseTask implements Task<LookupContext> {
             return Promise.resolve(c);
         };
         if (context.recursive) {
-            return Flow.series(context, lookupRecursive(context)).then(then);
+            return Flow.sequential(context, lookupRecursive(context)).then(then);
         } else {
             return Flow.parallel(context, bulkLookup(context)).then(then);
         }

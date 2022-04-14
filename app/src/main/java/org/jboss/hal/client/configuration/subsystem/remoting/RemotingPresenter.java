@@ -88,7 +88,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROPERTY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOTING;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 
 public class RemotingPresenter
         extends MbuiPresenter<RemotingPresenter.MyView, RemotingPresenter.MyProxy>
@@ -469,7 +469,7 @@ public class RemotingPresenter
             return dispatcher.execute(operation).then(__ -> Promise.resolve(context));
         };
         List<Task<FlowContext>> tasks = asList(check, addSecurity, addPolicy);
-        series(new FlowContext(progress.get()), tasks)
+        sequential(new FlowContext(progress.get()), tasks)
                 .then(__ -> {
                     MessageEvent.fire(getEventBus(),
                             Message.success(resources.messages().addSingleResourceSuccess(type)));

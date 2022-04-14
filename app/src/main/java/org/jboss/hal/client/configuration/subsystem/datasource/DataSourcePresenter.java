@@ -74,7 +74,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.XA_DATASOURCE_PROPERTIES;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 
 /** Presenter which is used for both XA and normal data sources. */
 public class DataSourcePresenter
@@ -198,7 +198,7 @@ public class DataSourcePresenter
             Consumer<List<String>> callback) {
         List<Task<FlowContext>> tasks = jdbcDriverProperties(environment, dispatcher, statementContext, driverName,
                 resources);
-        series(new FlowContext(progress.get()), tasks)
+        sequential(new FlowContext(progress.get()), tasks)
                 .then(context -> new JdbcDriverOutcome(dsClassname, isXa, callback).onInvoke(context));
     }
 

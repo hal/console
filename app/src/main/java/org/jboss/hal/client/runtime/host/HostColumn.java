@@ -84,7 +84,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.PRUNE_EXPIRED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RELOAD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SHUTDOWN;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 import static org.jboss.hal.meta.AddressTemplate.OPTIONAL;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
@@ -150,7 +150,7 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                 .build());
         addColumnActions(Ids.HOST_PRUNE_ACTIONS, pfIcon("remove"), resources.constants().prune(), pruneActions);
 
-        ItemsProvider<Host> itemsProvider = finderContext -> series(new FlowContext(progress.get()),
+        ItemsProvider<Host> itemsProvider = finderContext -> sequential(new FlowContext(progress.get()),
                 hosts(environment, dispatcher)).then(flowContext -> {
                     List<Host> hosts = flowContext.get(TopologyTasks.HOSTS);
                     // Restore pending visualization

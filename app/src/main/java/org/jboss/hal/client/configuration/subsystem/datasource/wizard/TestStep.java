@@ -53,7 +53,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBSYSTEM;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TEST_CONNECTION_IN_POOL;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.XA_DATA_SOURCE;
 import static org.jboss.hal.dmr.ModelNodeHelper.properties;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 import static org.jboss.hal.resources.CSS.blankSlatePf;
 import static org.jboss.hal.resources.CSS.btn;
 import static org.jboss.hal.resources.CSS.btnLg;
@@ -154,7 +154,7 @@ class TestStep extends WizardStep<Context, State> {
                     });
         });
 
-        series(new FlowContext(progress.get()), tasks)
+        sequential(new FlowContext(progress.get()), tasks)
                 .then(flowContext -> {
                     if (flowContext.keys().containsAll(asList(WIZARD_TITLE, WIZARD_TEXT))) {
                         String title = flowContext.get(WIZARD_TITLE);

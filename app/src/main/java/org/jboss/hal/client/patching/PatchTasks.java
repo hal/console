@@ -37,7 +37,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PATCHING;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 
 final class PatchTasks {
 
@@ -85,7 +85,7 @@ final class PatchTasks {
                                     });
                         })
                         .collect(toList());
-                return series(new FlowContext(Progress.NOOP), tasks).then(Promise::resolve);
+                return sequential(new FlowContext(Progress.NOOP), tasks).then(Promise::resolve);
             } else {
                 return Promise.resolve(context);
             }

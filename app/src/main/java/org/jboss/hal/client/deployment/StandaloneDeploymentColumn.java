@@ -107,7 +107,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCE
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE_DEPTH;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEPLOY;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
@@ -313,7 +313,7 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
                             List<Task<FlowContext>> tasks = asList(new CheckDeployment(dispatcher, name),
                                     new UploadOrReplace(environment, dispatcher, name, runtimeName, context.file,
                                             context.enabled));
-                            series(new FlowContext(progress.get()), tasks)
+                            sequential(new FlowContext(progress.get()), tasks)
                                     .then(__ -> {
                                         refresh(Ids.deployment(name));
                                         wzd.showSuccess(resources.constants().uploadSuccessful(),
@@ -349,7 +349,7 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
                         List<Task<FlowContext>> tasks = asList(new CheckDeployment(dispatcher, deployment.getName()),
                                 new UploadOrReplace(environment, dispatcher, deployment.getName(),
                                         deployment.getRuntimeName(), uploadElement.getFiles().item(0), false));
-                        series(new FlowContext(progress.get()), tasks)
+                        sequential(new FlowContext(progress.get()), tasks)
                                 .then(__ -> {
                                     refresh(Ids.content(deployment.getName()));
                                     replaceDeploymentPanel.off();
@@ -375,7 +375,7 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
     private void addUnmanaged() {
         Metadata metadata = metadataRegistry.lookup(DEPLOYMENT_TEMPLATE);
         AddUnmanagedDialog dialog = new AddUnmanagedDialog(metadata, resources,
-                (name, model) -> series(new FlowContext(progress.get()),
+                (name, model) -> sequential(new FlowContext(progress.get()),
                         singletonList(new AddUnmanagedDeployment(dispatcher, name, model)))
                                 .then(__ -> {
                                     refresh(Ids.deployment(name));

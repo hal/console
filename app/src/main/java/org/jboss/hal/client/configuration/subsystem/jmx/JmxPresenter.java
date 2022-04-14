@@ -54,7 +54,7 @@ import static org.jboss.hal.client.configuration.subsystem.jmx.AddressTemplates.
 import static org.jboss.hal.client.configuration.subsystem.jmx.AddressTemplates.JMX_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.jmx.AddressTemplates.JMX_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HANDLER;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 
 public class JmxPresenter extends ApplicationFinderPresenter<JmxPresenter.MyView, JmxPresenter.MyProxy>
         implements SupportsExpertMode {
@@ -117,7 +117,7 @@ public class JmxPresenter extends ApplicationFinderPresenter<JmxPresenter.MyView
                     new HandlerTasks.SaveAuditLog(dispatcher, statementContext, changedValues, metadata),
                     new HandlerTasks.ReadHandlers(dispatcher, statementContext),
                     new HandlerTasks.MergeHandler(dispatcher, statementContext, new HashSet<>(handler)));
-            series(new FlowContext(progress.get()), tasks)
+            sequential(new FlowContext(progress.get()), tasks)
                     .then(__ -> {
                         reload();
                         return null;

@@ -15,21 +15,19 @@
  */
 package org.jboss.hal.flow;
 
-import elemental2.promise.Promise;
-
 /**
- * Interface for the execution of an asynchronous task.
+ * A callback for the failed execution a list of {@linkplain Task asynchronous tasks}.
  *
- * @param <C> the type of the {@linkplain FlowContext context} shared between tasks
+ * @param <C> the type of the {@linkplain FlowContext context} shared between the tasks
  */
 @FunctionalInterface
-public interface Task<C extends FlowContext> {
+public interface FailureCallback<C extends FlowContext> {
 
     /**
-     * Executes the task.
+     * Called when the execution of the {@linkplain Task asynchronous tasks} failed.
      *
-     * @param context the context shared between tasks
-     * @return a promise containing the shared context
+     * @param context the context shared between the tasks
+     * @param failure the reason why the execution failed
      */
-    Promise<C> apply(C context);
+    void failed(C context, String failure);
 }

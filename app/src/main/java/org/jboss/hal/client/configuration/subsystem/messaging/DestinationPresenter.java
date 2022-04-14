@@ -93,7 +93,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.ROLE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURITY_SETTING;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SELECTOR;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 
 public class DestinationPresenter
         extends ServerSettingsPresenter<DestinationPresenter.MyView, DestinationPresenter.MyProxy>
@@ -239,7 +239,7 @@ public class DestinationPresenter
                 }
             };
 
-            series(new FlowContext(progress.get()), asList(check, add))
+            sequential(new FlowContext(progress.get()), asList(check, add))
                     .then(__ -> {
                         MessageEvent.fire(getEventBus(), Message.success(resources.messages()
                                 .addResourceSuccess(Names.SECURITY_SETTING, pattern + "/" + name)));
@@ -327,7 +327,7 @@ public class DestinationPresenter
                             }
                         };
 
-                        series(new FlowContext(progress.get()), asList(removeRole, readRemainingRoles, removeSecuritySetting))
+                        sequential(new FlowContext(progress.get()), asList(removeRole, readRemainingRoles, removeSecuritySetting))
                                 .then(__ -> {
                                     MessageEvent.fire(getEventBus(), Message.success(resources.messages()
                                             .removeResourceSuccess(Names.SECURITY_SETTING, combinedName)));

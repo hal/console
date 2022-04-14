@@ -83,7 +83,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDERTOW;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.WEBSOCKET;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 
 public class DeploymentPresenter
         extends ApplicationFinderPresenter<DeploymentPresenter.MyView, DeploymentPresenter.MyProxy>
@@ -214,7 +214,7 @@ public class DeploymentPresenter
             }
         };
 
-        series(new FlowContext(progress.get()), Arrays.asList(task1, task2))
+        sequential(new FlowContext(progress.get()), Arrays.asList(task1, task2))
                 .then(context -> {
                     List<Session> sessions = context.get(SESSIONS);
                     List<NamedNode> servlets = context.get(SERVLETS);

@@ -37,6 +37,8 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
@@ -51,7 +53,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.KEYCLOAK_SERVER_URL;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REALM;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REALM_PUBLIC_KEY;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 
 public class AccessControlSsoPresenter
         extends TopLevelPresenter<AccessControlSsoPresenter.MyView, AccessControlSsoPresenter.MyProxy> {
@@ -62,6 +64,7 @@ public class AccessControlSsoPresenter
     private static final String KEYCLOAK_SECURE_SERVER_ADDRESS = "/subsystem=keycloak/secure-server=wildfly-console";
     private static final AddressTemplate KEYCLOAK_REALM_TEMPLATE = AddressTemplate.of(KEYCLOAK_REALM_ADDRESS);
     private static final AddressTemplate KEYCLOAK_SECURE_SERVER_TEMPLATE = AddressTemplate.of(KEYCLOAK_SECURE_SERVER_ADDRESS);
+    private static final String ERROR_KEY = "org.jboss.hal.client.accesscontrol.error";
 
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
@@ -99,7 +102,7 @@ public class AccessControlSsoPresenter
 
             return dispatcher.execute(op)
                     .then(response -> Promise.resolve(flowContext.set(REALM, response.get(REALM).asString())))
-                    .catch_(error -> Promise.resolve(flowContext.failure(
+                    .catch_(error -> Promise.resolve(flowContext.set(ERROR_KEY,
                             resources.messages().failedReadKeycloak(address.toString(), String.valueOf(error)))));
         });
 
@@ -115,22 +118,22 @@ public class AccessControlSsoPresenter
                         flowContext.set(REALM_PUBLIC_KEY, response.get(REALM_PUBLIC_KEY).asString());
                         return Promise.resolve(flowContext);
                     })
-                    .catch_(error -> Promise.resolve(flowContext.failure(
+                    .catch_(error -> Promise.resolve(flowContext.set(ERROR_KEY,
                             resources.messages().failedReadKeycloak(address.toString(), String.valueOf(error)))));
         });
 
-        series(new FlowContext(progress.get()), tasks).then(flowContext -> {
-            if (flowContext.hasFailure()) {
-                flowContext.showFailure(getEventBus());
-            } else {
-                ModelNode payload = new ModelNode();
-                payload.get(REALM).set(flowContext.<String> get(REALM));
-                payload.get(REALM_PUBLIC_KEY).set(flowContext.<String> get(REALM_PUBLIC_KEY));
-                payload.get(KEYCLOAK_SERVER_URL).set(flowContext.<String> get(KEYCLOAK_SERVER_URL));
-                getView().update(payload);
-            }
-            return null;
-        });
+        sequential(new FlowContext(progress.get()), tasks)
+                .subscribe(flowContext -> {
+                    if (flowContext.get(ERROR_KEY) != null) {
+                        MessageEvent.fire(getEventBus(), Message.error(flowContext.get(ERROR_KEY)));
+                    } else {
+                        ModelNode payload = new ModelNode();
+                        payload.get(REALM).set(flowContext.<String> get(REALM));
+                        payload.get(REALM_PUBLIC_KEY).set(flowContext.<String> get(REALM_PUBLIC_KEY));
+                        payload.get(KEYCLOAK_SERVER_URL).set(flowContext.<String> get(KEYCLOAK_SERVER_URL));
+                        getView().update(payload);
+                    }
+                });
     }
 
     public Environment getEnvironment() {

@@ -58,7 +58,7 @@ import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTI
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CORE_SERVICE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PATCHING;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SHUTDOWN;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 
 @Column(Ids.PATCHING_DOMAIN)
 @Requires(value = "/{domain.controller}/core-service=patching")
@@ -85,7 +85,7 @@ public class HostPatchesColumn extends FinderColumn<Host> implements HostActionE
 
         super(new FinderColumn.Builder<Host>(finder, Ids.PATCHING_DOMAIN, Names.HOSTS)
                 .columnAction(columnActionFactory.refresh(Ids.HOST_REFRESH))
-                .itemsProvider(finderContext -> series(new FlowContext(progress.get()), patches(environment, dispatcher))
+                .itemsProvider(finderContext -> sequential(new FlowContext(progress.get()), patches(environment, dispatcher))
                         .then(flowContext -> {
                             List<Host> hosts = flowContext.get(TopologyTasks.HOSTS);
                             List<Host> alive = hosts.stream()

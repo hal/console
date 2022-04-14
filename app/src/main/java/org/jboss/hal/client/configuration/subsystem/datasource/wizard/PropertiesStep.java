@@ -47,7 +47,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.XA_DATASOURCE_CLASS;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 
 class PropertiesStep extends WizardStep<Context, State> {
 
@@ -107,7 +107,7 @@ class PropertiesStep extends WizardStep<Context, State> {
         List<Task<FlowContext>> tasks = jdbcDriverProperties(environment, dispatcher, statementContext, driverName,
                 resources);
 
-        series(new FlowContext(progress.get()), tasks)
+        sequential(new FlowContext(progress.get()), tasks)
                 .then(context -> new JdbcDriverOutcome(dsClassname, isXa, callback).onInvoke(context));
     }
 

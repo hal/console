@@ -78,7 +78,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.CACHE_CONTAINER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
 @AsyncColumn(Ids.CACHE)
@@ -253,7 +253,7 @@ public class CacheColumn extends FinderColumn<Cache> {
                         };
 
                         List<Task<FlowContext>> tasks = asList(check, add);
-                        series(new FlowContext(progress.get()), tasks)
+                        sequential(new FlowContext(progress.get()), tasks)
                                 .then(context -> {
                                     if (context.get(JGROUPS_ADDITION_STATUS).equals(true)) {
                                         MessageEvent.fire(eventBus, Message.success(resources.messages()

@@ -74,7 +74,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE_DEPTH;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNTIME_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 
 /** Deployment related functions */
 class DeploymentTasks {
@@ -100,7 +100,7 @@ class DeploymentTasks {
             }
 
             logger.debug("About to upload / update {} file(s): {}", files.getLength(), builder);
-            series(new FlowContext(progress.get()), tasks)
+            sequential(new FlowContext(progress.get()), tasks)
                     .then(context -> {
                         UploadStatistics statistics = context.get(UPLOAD_STATISTICS);
                         if (statistics != null) {
@@ -138,7 +138,7 @@ class DeploymentTasks {
 
             logger.debug("About to upload and deploy {} file(s): {} to server group {}",
                     files.getLength(), builder, serverGroup);
-            series(new FlowContext(progress.get()), tasks)
+            sequential(new FlowContext(progress.get()), tasks)
                     .then(context -> {
                         UploadStatistics statistics = context.get(UPLOAD_STATISTICS);
                         if (statistics != null) {

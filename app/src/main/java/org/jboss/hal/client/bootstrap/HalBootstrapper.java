@@ -70,7 +70,7 @@ public class HalBootstrapper implements Bootstrapper {
 
         endpointManager.select(() -> {
             LoadingPanel.get().on();
-            Flow.series(new FlowContext(), bootstrapTasks.tasks())
+            Flow.sequential(new FlowContext(), bootstrapTasks.tasks())
                     .then(context -> {
                         logger.info("Bootstrap finished");
                         LoadingPanel.get().off();

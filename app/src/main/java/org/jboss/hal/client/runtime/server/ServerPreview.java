@@ -87,7 +87,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.STATUS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.STOP;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SUSPEND_STATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.WHERE;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 import static org.jboss.hal.resources.CSS.alert;
 import static org.jboss.hal.resources.CSS.alertInfo;
 import static org.jboss.hal.resources.CSS.alertLink;
@@ -353,7 +353,7 @@ class ServerPreview extends RuntimePreview<Server> {
                         });
             });
 
-            series(new FlowContext(progress.get()), tasks)
+            sequential(new FlowContext(progress.get()), tasks)
                     .then(flowContext -> {
                         ModelNode openPorts = flowContext.pop();
                         buildOpenPortsElement(openPorts);

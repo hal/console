@@ -94,7 +94,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.STRING;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE_TYPE;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_GROUP;
 import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_PROFILE;
 import static org.jboss.hal.resources.CSS.btn;
@@ -284,7 +284,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
             List<Task<FlowContext>> tasks = previousFilter.parents.stream()
                     .map(OpenNodeTask::new)
                     .collect(toList());
-            series(new FlowContext(progress.get()), tasks)
+            sequential(new FlowContext(progress.get()), tasks)
                     .then(__ -> {
                         tree.selectNode(previousFilter.node.id);
                         return null;

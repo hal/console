@@ -70,7 +70,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REALM;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 
 class PrincipalColumn extends FinderColumn<Principal> {
 
@@ -239,7 +239,7 @@ class PrincipalColumn extends FinderColumn<Principal> {
         collectTasks(tasks, type, name, true, model, INCLUDE);
         collectTasks(tasks, type, name, false, model, EXCLUDE);
         if (!tasks.isEmpty()) {
-            series(new FlowContext(progress.get()), tasks)
+            sequential(new FlowContext(progress.get()), tasks)
                     .then(__ -> {
                         String typeName = type == Principal.Type.USER
                                 ? resources.constants().user()

@@ -107,7 +107,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.TRUST_MANAGER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEFINE_ATTRIBUTE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 import static org.jboss.hal.resources.Ids.FORM;
 
 public class StandaloneServerPresenter
@@ -223,7 +223,7 @@ public class StandaloneServerPresenter
         Task<FlowContext> loadTrustManagerTask = loadResourceTask(TRUST_MANAGER);
         tasks.add(loadTrustManagerTask);
 
-        series(new FlowContext(progress.get()), tasks)
+        sequential(new FlowContext(progress.get()), tasks)
                 .then(flowContext -> {
                     Map<String, List<String>> existingResources = new HashMap<>();
                     flowContext.keys().forEach(key -> existingResources.put(key, flowContext.get(key)));
@@ -341,7 +341,7 @@ public class StandaloneServerPresenter
                     };
                     tasks.add(undefineSslContextTask);
 
-                    series(new FlowContext(progress.get()), tasks)
+                    sequential(new FlowContext(progress.get()), tasks)
                             .then(flowContext -> {
                                 if (reload.getValue() != null && reload.getValue()) {
                                     String port = flowContext.get(PORT).toString();

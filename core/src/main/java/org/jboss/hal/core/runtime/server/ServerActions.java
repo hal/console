@@ -138,7 +138,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 import static org.jboss.hal.dmr.ModelNodeHelper.getOrDefault;
 import static org.jboss.hal.dmr.dispatch.TimeoutHandler.repeatOperationUntil;
 import static org.jboss.hal.dmr.dispatch.TimeoutHandler.repeatUntilTimeout;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.marginLeft5;
 import static org.jboss.hal.resources.CSS.pfIcon;
@@ -636,7 +636,7 @@ public class ServerActions implements Timeouts {
             List<Task<FlowContext>> tasks = Arrays.asList(
                     new ReadSocketBindingGroup(standalone, serverGroup, dispatcher),
                     new ReadSocketBinding(standalone, host, server, dispatcher));
-            series(new FlowContext(), tasks)
+            sequential(new FlowContext(), tasks)
                     .then(context -> {
                         callback.onSuccess(context.get(URL_KEY));
                         return null;

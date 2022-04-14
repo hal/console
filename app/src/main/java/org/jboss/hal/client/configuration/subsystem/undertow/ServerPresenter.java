@@ -121,7 +121,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERAT
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.encodeValue;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 import static org.jboss.hal.meta.SelectionAwareStatementContext.SELECTION_KEY;
 
 public class ServerPresenter
@@ -590,7 +590,7 @@ public class ServerPresenter
         Task<FlowContext> loadTrustManagerTask = loadResourceTask(TRUST_MANAGER);
         tasks.add(loadTrustManagerTask);
 
-        series(new FlowContext(progress.get()), tasks)
+        sequential(new FlowContext(progress.get()), tasks)
                 .then(flowContext -> {
                     Map<String, List<String>> existingResources = new HashMap<>();
                     flowContext.keys().forEach(key -> existingResources.put(key, flowContext.get(key)));

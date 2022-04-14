@@ -15,21 +15,23 @@
  */
 package org.jboss.hal.flow;
 
-import elemental2.promise.Promise;
+import java.util.List;
 
 /**
- * Interface for the execution of an asynchronous task.
+ * An interface to control the {@linkplain Flow#parallel(FlowContext, List) parallel} and
+ * {@linkplain Flow#sequential(FlowContext, List) sequential} execution of {@linkplain Task asynchronous tasks}.
  *
  * @param <C> the type of the {@linkplain FlowContext context} shared between tasks
  */
-@FunctionalInterface
-public interface Task<C extends FlowContext> {
+public interface Sequence<C extends FlowContext> extends Promisable<C>, Subscription<C> {
 
     /**
-     * Executes the task.
-     *
-     * @param context the context shared between tasks
-     * @return a promise containing the shared context
+     * By default, the execution of {@linkplain Task tasks} fails fast.
      */
-    Promise<C> apply(C context);
+    boolean DEFAULT_FAIL_FAST = true;
+
+    /**
+     * Whether the execution of {@linkplain Task tasks} should fail fast or fail last.
+     */
+    Sequence<C> failFast(boolean failFast);
 }

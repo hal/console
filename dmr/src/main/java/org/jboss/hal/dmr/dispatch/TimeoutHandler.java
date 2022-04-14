@@ -48,10 +48,11 @@ public class TimeoutHandler {
         logger.debug("Repeat {} until it returns successfully with {} seconds timeout", operation.asCli(),
                 timeout);
         // repeat until the predicate returns true
-        return Flow.repeat(new FlowContext(Progress.NOOP),
+        return Flow.while_(new FlowContext(Progress.NOOP),
                 context -> dispatcher.execute(operation)
                         .then(node -> Promise.resolve(context.set(PREDICATE, until.test(node)))),
-                context -> context.get(PREDICATE, true), timeout)
+                context -> context.get(PREDICATE, true))
+                .timeout(timeout)
                 .then(__ -> Promise.resolve((Void) null));
     }
 
@@ -68,10 +69,11 @@ public class TimeoutHandler {
         logger.debug("Repeat {} until it returns successfully with {} seconds timeout", composite.asCli(),
                 timeout);
         // repeat until the predicate returns true
-        return Flow.repeat(new FlowContext(Progress.NOOP),
+        return Flow.while_(new FlowContext(Progress.NOOP),
                 context -> dispatcher.execute(composite)
                         .then(cr -> Promise.resolve(context.set(PREDICATE, until.test(cr)))),
-                context -> context.get(PREDICATE, true), timeout)
+                context -> context.get(PREDICATE, true))
+                .timeout(timeout)
                 .then(__ -> Promise.resolve((Void) null));
     }
 

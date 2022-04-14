@@ -125,7 +125,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.START;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.STOP;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SUSPEND;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UPDATE_AUTO_START_WITH_SERVER_STATUS;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 import static org.jboss.hal.resources.Ids.FORM;
 
 @Column(Ids.SERVER)
@@ -245,7 +245,7 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
             } else {
                 tasks = serversOfServerGroup(environment, dispatcher, statementContext.selectedServerGroup());
             }
-            return series(new FlowContext(progress.get()), tasks)
+            return sequential(new FlowContext(progress.get()), tasks)
                     .then(flowContext -> {
                         List<Server> servers = flowContext.get(TopologyTasks.SERVERS);
                         if (servers == null) {

@@ -398,8 +398,9 @@ public final class TopologyTasks {
                                     });
                         })
                         .collect(toList());
-                return Flow.series(new FlowContext(Progress.NOOP), tasks, false)
-                        .then(c -> Promise.resolve(context));
+                return Flow.sequential(new FlowContext(Progress.NOOP), tasks)
+                        .failFast(false)
+                        .promise();
             }
         }
     }
@@ -591,8 +592,9 @@ public final class TopologyTasks {
                                     });
                         })
                         .collect(toList());
-                return Flow.series(new FlowContext(Progress.NOOP), tasks, false)
-                        .then(c -> Promise.resolve(context));
+                return Flow.sequential(new FlowContext(Progress.NOOP), tasks)
+                        .failFast(false)
+                        .promise();
             }
         }
     }
@@ -659,8 +661,9 @@ public final class TopologyTasks {
                                     });
                         })
                         .collect(toList());
-                return Flow.series(new FlowContext(Progress.NOOP), tasks, false)
-                        .then(c -> Promise.resolve(context));
+                return Flow.sequential(new FlowContext(Progress.NOOP), tasks)
+                        .failFast(false)
+                        .promise();
             }
         }
     }

@@ -142,7 +142,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDING_GROUP;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDING_PORT_OFFSET;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.STATUS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SUSPEND_STATE;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 import static org.jboss.hal.resources.CSS.centerBlock;
 import static org.jboss.hal.resources.CSS.clickable;
 import static org.jboss.hal.resources.CSS.disconnected;
@@ -356,7 +356,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
 
         // show the loading indicator if the operations take too long
         double timeoutHandle = setTimeout((o) -> setVisible(loadingSection, true), MEDIUM_TIMEOUT);
-        series(new FlowContext(progress.get()), topology(environment, dispatcher))
+        sequential(new FlowContext(progress.get()), topology(environment, dispatcher))
                 .then(context -> {
                     clearTimeout(timeoutHandle);
                     setVisible(loadingSection, false);
@@ -401,7 +401,7 @@ class TopologyPreview extends PreviewContent<StaticItem> implements HostActionHa
     }
 
     private void updateServer(Server server) {
-        series(new FlowContext(progress.get()), topology(environment, dispatcher))
+        sequential(new FlowContext(progress.get()), topology(environment, dispatcher))
                 .then(context -> {
                     Host host = null;
                     List<Host> hosts = context.get(TopologyTasks.HOSTS);

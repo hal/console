@@ -105,7 +105,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNTIME_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEPLOY;
 import static org.jboss.hal.dmr.ModelNodeHelper.properties;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
 /** The deployments of a server group. */
@@ -180,7 +180,7 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
             tasks.addAll(runningServers(environment, dispatcher,
                     properties(SERVER_GROUP, statementContext.selectedServerGroup())));
             tasks.add(new LoadDeploymentsFromRunningServer(environment, dispatcher));
-            return series(new FlowContext(progress.get()), tasks)
+            return sequential(new FlowContext(progress.get()), tasks)
                     .then(flowContext -> {
                         List<ServerGroupDeployment> serverGroupDeployments = flowContext
                                 .get(DeploymentTasks.SERVER_GROUP_DEPLOYMENTS);
@@ -321,7 +321,7 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                                             false),
                                     new AddServerGroupDeployment(environment, dispatcher, name, runtimeName,
                                             statementContext.selectedServerGroup()));
-                            series(new FlowContext(progress.get()), tasks)
+                            sequential(new FlowContext(progress.get()), tasks)
                                     .then(__ -> {
                                         refresh(Ids.serverGroupDeployment(
                                                 statementContext.selectedServerGroup(), name));
@@ -344,7 +344,7 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
     }
 
     private void addDeploymentFromContentRepository() {
-        series(new FlowContext(progress.get()), singletonList(new LoadContent(dispatcher)))
+        sequential(new FlowContext(progress.get()), singletonList(new LoadContent(dispatcher)))
                 .then(context -> {
                     // extract content which is not deployed on statementContext.selectedServerGroup()
                     String serverGroup = statementContext.selectedServerGroup();
@@ -401,7 +401,7 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                         String runtimeName = model.get(RUNTIME_NAME).asString();
                         List<Task<FlowContext>> tasks = asList(new AddUnmanagedDeployment(dispatcher, name, model),
                                 new AddServerGroupDeployment(environment, dispatcher, name, runtimeName, serverGroup));
-                        series(new FlowContext(progress.get()), tasks)
+                        sequential(new FlowContext(progress.get()), tasks)
                                 .then(context -> {
                                     refresh(Ids.serverGroupDeployment(serverGroup, name));
                                     MessageEvent.fire(eventBus, Message.success(resources.messages()

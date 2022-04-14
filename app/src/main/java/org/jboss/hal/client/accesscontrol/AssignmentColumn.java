@@ -65,7 +65,7 @@ import static org.jboss.elemento.Elements.span;
 import static org.jboss.hal.client.accesscontrol.AddressTemplates.EXCLUDE_TEMPLATE;
 import static org.jboss.hal.client.accesscontrol.AddressTemplates.INCLUDE_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
 /**
@@ -242,7 +242,7 @@ public class AssignmentColumn extends FinderColumn<Assignment> {
                 List<Task<FlowContext>> tasks = asList(new CheckRoleMapping(dispatcher, role),
                         new AddRoleMapping(dispatcher, role, status -> status == 404),
                         new AddAssignment(dispatcher, role, principal, include));
-                series(new FlowContext(progress.get()), tasks)
+                sequential(new FlowContext(progress.get()), tasks)
                         .then(__ -> {
                             String type = resources.constants().role();
                             SafeHtml message = include

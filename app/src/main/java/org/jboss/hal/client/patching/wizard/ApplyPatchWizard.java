@@ -51,7 +51,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.OVERRIDE_ALL;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.OVERRIDE_MODULE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PATCH;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PRESERVE;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 
 public class ApplyPatchWizard extends PatchWizard {
 
@@ -114,7 +114,7 @@ public class ApplyPatchWizard extends PatchWizard {
 
                         List<Task<FlowContext>> tasks = singletonList(
                                 new UploadPatch(statementContext, dispatcher, serverActions, context));
-                        series(new FlowContext(progress.get()), tasks)
+                        sequential(new FlowContext(progress.get()), tasks)
                                 .then(__ -> {
                                     callback.execute();
                                     wzd.showSuccess(

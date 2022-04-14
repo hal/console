@@ -15,41 +15,48 @@
  */
 package org.jboss.hal.flow;
 
+import java.util.EmptyStackException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
-
-import org.jboss.hal.spi.Message;
-import org.jboss.hal.spi.MessageEvent;
-
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.web.bindery.event.shared.EventBus;
+import java.util.function.Predicate;
 
 /**
- * General purpose context to be used inside a {@linkplain Flow flow} and {@linkplain Task tasks}. Provides a
- * {@linkplain Progress progress indicator}, a stack and a map for sharing data between tasks.
+ * General purpose context to be used as a data structure when executing a list of {@linkplain Task asynchronous tasks} in
+ * {@linkplain Flow#parallel(FlowContext, List) parallel}, in {@linkplain Flow#sequential(FlowContext, List) sequence} or
+ * {@linkplain Flow#while_(FlowContext, Task, Predicate) while} a {@linkplain Predicate predicate} evaluates to {@code true}.
+ * <p>
+ * The context provides a {@linkplain Progress progress indicator} to signal the progress of the task execution and a stack and
+ * a map for sharing data between {@linkplain Task asynchronous tasks}.
  */
 public class FlowContext {
 
     private final Stack<Object> stack;
     private final Map<String, Object> data;
-    private SafeHtml failure;
     final Progress progress;
 
+    /**
+     * Creates a new instance with a {@linkplain Progress#NOOP noop progress implementation}.
+     */
     public FlowContext() {
         this(Progress.NOOP);
     }
 
+    /**
+     * Creates a new instance using the given progress indicator.
+     *
+     * @param progress the progress indicator to signal progress when executing the tasks
+     */
     public FlowContext(Progress progress) {
         this.progress = progress;
         this.stack = new Stack<>();
         this.data = new HashMap<>();
-        this.failure = null;
     }
 
     /**
-     * Pushes the value om top of the context stack.
+     * Pushes the value om top of the stack.
      */
     public <T> FlowContext push(T value) {
         stack.push(value);
@@ -57,29 +64,35 @@ public class FlowContext {
     }
 
     /**
-     * Removes the object at the top of the context stack and returns that object.
+     * Removes the object at the top of the stack and returns that object.
      *
-     * @return The object at the top of the context stack.
+     * @return The object at the top of the stack.
+     * @throws EmptyStackException if this stack is empty.
      */
     @SuppressWarnings("unchecked")
     public <T> T pop() {
         return (T) stack.pop();
     }
 
+    /**
+     * Removes the object at the top of the stack and returns that object or returns the default value, if the stack is empty.
+     *
+     * @return The object at the top of the stack or the default value if the stack is empty.
+     */
     @SuppressWarnings("unchecked")
     public <T> T pop(T defaultValue) {
         return emptyStack() ? defaultValue : (T) stack.pop();
     }
 
     /**
-     * @return {@code true} if the context stack is empty, {@code false} otherwise.
+     * @return {@code true} if the stack is empty, {@code false} otherwise.
      */
     public boolean emptyStack() {
         return stack.empty();
     }
 
     /**
-     * Stores the value under the given key in the context map.
+     * Stores the value under the given key in the map.
      */
     public <T> FlowContext set(String key, T value) {
         data.put(key, value);
@@ -87,14 +100,14 @@ public class FlowContext {
     }
 
     /**
-     * @return the object for the given key from the context map or {@code null} if no such key was found.
+     * @return the object for the given key from the map or {@code null} if no such key was found.
      */
     public <T> T get(String key) {
         return get(key, null);
     }
 
     /**
-     * @return the object for the given key from the context map or {@code null} if no such key was found.
+     * @return the object for the given key from the context map or {@code defaultValue} if no such key was found.
      */
     @SuppressWarnings("unchecked")
     public <T> T get(String key, T defaultValue) {
@@ -102,25 +115,10 @@ public class FlowContext {
     }
 
     /**
-     * @return the object for the given key from the context map or {@code null} if no such key was found.
+     * @return the set of keys stored in the map.
      */
     public Set<String> keys() {
         return data.keySet();
-    }
-
-    public FlowContext failure(SafeHtml failure) {
-        this.failure = failure;
-        return this;
-    }
-
-    public boolean hasFailure() {
-        return failure != null;
-    }
-
-    public void showFailure(EventBus eventBus) {
-        if (hasFailure()) {
-            MessageEvent.fire(eventBus, Message.error(failure));
-        }
     }
 
     @Override

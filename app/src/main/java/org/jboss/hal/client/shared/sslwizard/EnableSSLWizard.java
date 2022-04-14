@@ -85,7 +85,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.VALIDITY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.WANT_CLIENT_AUTH;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 
 public class EnableSSLWizard {
 
@@ -450,7 +450,7 @@ public class EnableSSLWizard {
 
                     tasks.add(flowContext -> dispatcher.execute(composite).then(__ -> Promise.resolve(flowContext)));
 
-                    series(new FlowContext(progress.get()), tasks)
+                    sequential(new FlowContext(progress.get()), tasks)
                             .then(__ -> {
                                 if (undertowHttps) {
                                     wizard.showSuccess(resources.constants().success(),

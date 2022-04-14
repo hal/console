@@ -18,35 +18,55 @@ package org.jboss.hal.flow;
 import java.util.List;
 import java.util.function.Predicate;
 
-import elemental2.promise.Promise;
+import static org.jboss.hal.flow.FlowSequence.Mode.PARALLEL;
+import static org.jboss.hal.flow.FlowSequence.Mode.SEQUENTIAL;
 
-import static org.jboss.hal.flow.FlowExecutor.Mode.PARALLEL;
-import static org.jboss.hal.flow.FlowExecutor.Mode.SEQUENTIAL;
+/**
+ * An interface to execute a list of {@linkplain Task asynchronous tasks} in {@linkplain #parallel(FlowContext, List) parallel},
+ * in {@linkplain #sequential(FlowContext, List) sequence} or {@linkplain #while_(FlowContext, Task, Predicate) while} a
+ * {@linkplain Predicate predicate} evaluates to {@code true}.
+ * <p>
+ * The {@linkplain Task tasks} share a {@linkplain FlowContext context} that can be used to store data in a map or on a stack.
+ *
+ * @param <C> the type of the {@linkplain FlowContext context} shared between tasks
+ */
+public interface Flow<C extends FlowContext> {
 
-public interface Flow {
-
-    static <C extends FlowContext> Promise<C> parallel(C context, List<Task<C>> tasks) {
-        return parallel(context, tasks, true);
+    /**
+     * Executes a list of {@linkplain Task asynchronous tasks} in parallel (all at once).
+     *
+     * @param context the context shared between tasks
+     * @param tasks the list of tasks to execute in parallel
+     * @param <C> the type of the shared context
+     * @return an interface to control whether the execution of the tasks should fail fast or fail last
+     */
+    static <C extends FlowContext> Sequence<C> parallel(C context, List<Task<C>> tasks) {
+        return new FlowSequence<>(PARALLEL, context, tasks);
     }
 
-    static <C extends FlowContext> Promise<C> parallel(C context, List<Task<C>> tasks, boolean failFast) {
-        return new FlowExecutor<>(PARALLEL, context, tasks, failFast).execute();
+    /**
+     * Executes a list of {@linkplain Task asynchronous tasks} in sequence (one after the other).
+     *
+     * @param context the context shared between tasks
+     * @param tasks the list of tasks to execute in order
+     * @param <C> the type of the shared context
+     * @return an interface to control whether the execution of the tasks should fail fast or fail last
+     */
+    static <C extends FlowContext> Sequence<C> sequential(C context, List<Task<C>> tasks) {
+        return new FlowSequence<>(SEQUENTIAL, context, tasks);
     }
 
-    static <C extends FlowContext> Promise<C> series(C context, List<Task<C>> tasks) {
-        return series(context, tasks, true);
-    }
-
-    static <C extends FlowContext> Promise<C> series(C context, List<Task<C>> tasks, boolean failFast) {
-        return new FlowExecutor<>(SEQUENTIAL, context, tasks, failFast).execute();
-    }
-
-    static <C extends FlowContext> Promise<C> repeat(C context, Task<C> task, Predicate<C> until, int timeout) {
-        return new FlowLoop<>(context, task, until, timeout, false).execute();
-    }
-
-    static <C extends FlowContext> Promise<C> repeat(C context, Task<C> task, Predicate<C> until, int timeout,
-            boolean failFast) {
-        return new FlowLoop<>(context, task, until, timeout, failFast).execute();
+    /**
+     * Executes the given {@linkplain Task task} as long as the given {@linkplain Predicate predicate} evaluates to
+     * {@code true}.
+     *
+     * @param context the context shared between the iterations
+     * @param task the task to execute while the predicate evaluates to {@code true}
+     * @param until the predicate used to decide whether to continue or break the loop
+     * @param <C> the type of the shared context
+     * @return an interface to control the interval, timeout and fail fast behaviour
+     */
+    static <C extends FlowContext> While<C> while_(C context, Task<C> task, Predicate<C> until) {
+        return new FlowWhile<>(context, task, until);
     }
 }

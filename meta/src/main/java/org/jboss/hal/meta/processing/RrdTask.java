@@ -102,7 +102,7 @@ final class RrdTask implements Task<LookupContext> {
                     logger.debug("Optional operations: {}", optionalOps);
                 }
             }
-            return Flow.series(context, tasks);
+            return Flow.sequential(context, tasks).promise();
         } else {
             logger.debug("No DMR operations necessary");
             return Promise.resolve(context);

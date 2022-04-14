@@ -156,7 +156,7 @@ public class MetadataProcessor {
 
             LookupContext context = new LookupContext(progress, templates, recursive);
             Stopwatch stopwatch = Stopwatch.createStarted();
-            return Flow.series(context, tasks).then(
+            return Flow.sequential(context, tasks).then(
                     c -> {
                         stopwatch.stop();
                         logger.info("Successfully processed metadata in {} ms", stopwatch.elapsed(MILLISECONDS));

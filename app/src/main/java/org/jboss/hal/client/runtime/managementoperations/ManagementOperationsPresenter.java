@@ -88,7 +88,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_STATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVICE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.WHERE;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 import static org.jboss.hal.meta.token.NameTokens.MANAGEMENT_OPERATIONS;
 
 public class ManagementOperationsPresenter extends
@@ -317,7 +317,7 @@ public class ManagementOperationsPresenter extends
                         });
             };
 
-            series(new FlowContext(progress.get()),
+            sequential(new FlowContext(progress.get()),
                     asList(hostsTask, serversTask, findNonProgressingTask))
                             .then(context -> {
                                 List<ManagementOperations> ops = context.get("active-operations");
@@ -429,7 +429,7 @@ public class ManagementOperationsPresenter extends
                     tasks.add(task);
                 }
 
-                series(new FlowContext(progress.get()), tasks)
+                sequential(new FlowContext(progress.get()), tasks)
                         .then(context -> {
                             if (context.emptyStack()) {
                                 // display the standard message if there is no cancelled operation

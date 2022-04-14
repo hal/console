@@ -46,7 +46,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import static elemental2.dom.DomGlobal.alert;
 import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 
 public class MacroEditorPresenter
         extends ApplicationPresenter<MacroEditorPresenter.MyView, MacroEditorPresenter.MyProxy>
@@ -114,7 +114,7 @@ public class MacroEditorPresenter
         List<Task<FlowContext>> tasks = macro.getOperations().stream()
                 .map(operation -> new MacroOperationTask(dispatcher, operation)).collect(toList());
         getView().disableMacro(macro);
-        series(new FlowContext(progress.get()), tasks)
+        sequential(new FlowContext(progress.get()), tasks)
                 .then(__ -> {
                     getView().enableMacro(macro);
                     MessageEvent.fire(getEventBus(),

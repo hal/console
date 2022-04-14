@@ -389,7 +389,7 @@ public class Finder implements IsElement<HTMLDivElement>, Attachable {
             List<Task<FlowContext>> tasks = stream(path.spliterator(), false)
                     .map(segment -> new RefreshTask(new FinderSegment<>(segment.getColumnId(), segment.getItemId())))
                     .collect(toList());
-            Flow.series(new FlowContext(progress.get()), tasks)
+            Flow.sequential(new FlowContext(progress.get()), tasks)
                     .then(c -> {
                         if (!c.emptyStack()) {
                             FinderColumn<?> column = c.pop();
@@ -450,7 +450,7 @@ public class Finder implements IsElement<HTMLDivElement>, Attachable {
             List<Task<FlowContext>> tasks = stream(path.spliterator(), false)
                     .map(segment -> new SelectTask(new FinderSegment<>(segment.getColumnId(), segment.getItemId())))
                     .collect(toList());
-            Flow.series(new FlowContext(progress.get()), tasks)
+            Flow.sequential(new FlowContext(progress.get()), tasks)
                     .then(c -> {
                         FinderColumn<?> column = c.pop();
                         column.element().focus();

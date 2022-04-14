@@ -72,7 +72,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.START_SERVERS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.STOP_SERVERS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SUSPEND_SERVERS;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 
 @Column(Ids.SERVER_GROUP)
 @Requires("/server-group=*")
@@ -96,7 +96,7 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
             Resources resources) {
 
         super(new Builder<ServerGroup>(finder, Ids.SERVER_GROUP, Names.SERVER_GROUP)
-                .itemsProvider(finderContext -> series(new FlowContext(progress.get()), serverGroups(environment, dispatcher))
+                .itemsProvider(finderContext -> sequential(new FlowContext(progress.get()), serverGroups(environment, dispatcher))
                         .then(flowContext -> {
                             List<ServerGroup> serverGroups = flowContext.get(TopologyTasks.SERVER_GROUPS);
                             return Promise.resolve(serverGroups);

@@ -71,7 +71,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURITY;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 import static org.jboss.hal.meta.token.NameTokens.SECURITY_DOMAIN;
 
 public class SecurityDomainPresenter
@@ -190,7 +190,7 @@ public class SecurityDomainPresenter
             }
         };
         List<Task<FlowContext>> tasks = asList(check, add);
-        series(new FlowContext(progress.get()), tasks)
+        sequential(new FlowContext(progress.get()), tasks)
                 .then(__ -> {
                     AddressTemplate metadataTemplate = SECURITY_DOMAIN_TEMPLATE
                             .append(module.singleton)

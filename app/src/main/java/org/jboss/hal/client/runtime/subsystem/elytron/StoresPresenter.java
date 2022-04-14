@@ -115,7 +115,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SHOULD_RENEW_CERTIFICA
 import static org.jboss.hal.dmr.ModelDescriptionConstants.STORE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALIDATE;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 import static org.jboss.hal.resources.Ids.FORM;
 
 public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.MyView, StoresPresenter.MyProxy>
@@ -321,7 +321,7 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
                 return dispatcher.execute(operation).then(result -> Promise.resolve(context.push(resource)));
             });
 
-            series(new FlowContext(progress.get()), tasks)
+            sequential(new FlowContext(progress.get()), tasks)
                     .then(context -> {
                         MessageEvent.fire(getEventBus(),
                                 Message.success(
@@ -452,7 +452,7 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
                 return dispatcher.execute(operation).then(__ -> Promise.resolve(context));
             });
 
-            series(new FlowContext(progress.get()), tasks)
+            sequential(new FlowContext(progress.get()), tasks)
                     .then(__ -> {
                         MessageEvent.fire(getEventBus(),
                                 Message.success(resources.messages().generateKeyPairSuccess(alias, resource)));
@@ -531,7 +531,7 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
                         });
             });
 
-            series(new FlowContext(progress.get()), tasks)
+            sequential(new FlowContext(progress.get()), tasks)
                     .then(__ -> {
                         MessageEvent.fire(getEventBus(),
                                 Message.success(
@@ -751,7 +751,7 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
                         });
             });
 
-            series(new FlowContext(progress.get()), tasks)
+            sequential(new FlowContext(progress.get()), tasks)
                     .then(context -> {
                         MessageEvent.fire(getEventBus(),
                                 Message.success(resources.messages().removeAliasSuccess(alias, resource)));

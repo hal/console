@@ -98,7 +98,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SEND_MESSAGES_TO_DEAD_
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SEND_MESSAGE_TO_DEAD_LETTER_ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBDEPLOYMENT;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeBoolean;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 
 public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresenter.MyView, JmsQueuePresenter.MyProxy> {
 
@@ -190,7 +190,7 @@ public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresen
                 }
             };
             List<Task<FlowContext>> tasks = asList(count, list);
-            series(new FlowContext(progress.get()), tasks)
+            sequential(new FlowContext(progress.get()), tasks)
                     .then(context -> {
                         long c = context.get(MESSAGES_COUNT);
                         List<JmsMessage> messages = context.get(MESSAGES);

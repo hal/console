@@ -57,7 +57,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OP
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 
 /**
  * Many resources store properties in form of a sub resource similar to:
@@ -239,7 +239,7 @@ public class PropertiesOperations {
                 : dispatcher.execute(operations).then(result -> Promise.resolve(context));
         List<Task<FlowContext>> tasks = Arrays.asList(task, new ReadProperties(dispatcher, address, psr),
                 new MergeProperties(dispatcher, address, psr, properties));
-        series(new FlowContext(progress.get()), tasks)
+        sequential(new FlowContext(progress.get()), tasks)
                 .then(c -> {
                     if (name == null) {
                         MessageEvent.fire(eventBus,

@@ -90,7 +90,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.XA_DATA_SOURCE;
 import static org.jboss.hal.dmr.ModelNodeHelper.properties;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
 /** Column which is used for both XA and normal data sources. */
@@ -262,7 +262,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                 properties(PROFILE_NAME, statementContext.selectedProfile())));
         tasks.add(new JdbcDriverTasks.ReadRuntime(environment, dispatcher));
         tasks.add(new JdbcDriverTasks.CombineDriverResults());
-        series(new FlowContext(progress.get()), tasks)
+        sequential(new FlowContext(progress.get()), tasks)
                 .then(context -> {
                     List<DataSource> dataSources = context.get(DATASOURCES);
                     List<JdbcDriver> drivers = context.get(JdbcDriverTasks.DRIVERS);

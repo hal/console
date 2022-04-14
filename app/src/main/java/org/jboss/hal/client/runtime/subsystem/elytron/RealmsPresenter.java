@@ -94,7 +94,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURITY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 import static org.jboss.hal.resources.Names.IDENTITY_ATTRIBUTE_MAPPING;
 
 public class RealmsPresenter extends ApplicationFinderPresenter<RealmsPresenter.MyView, RealmsPresenter.MyProxy>
@@ -232,7 +232,7 @@ public class RealmsPresenter extends ApplicationFinderPresenter<RealmsPresenter.
                 });
             }
 
-            series(new FlowContext(progress.get()), tasks)
+            sequential(new FlowContext(progress.get()), tasks)
                     .then(__ -> {
                         MessageEvent.fire(getEventBus(),
                                 Message.success(resources.messages()
@@ -326,7 +326,7 @@ public class RealmsPresenter extends ApplicationFinderPresenter<RealmsPresenter.
             MessageEvent.fire(getEventBus(), Message.warning(resources.messages().noChanges()));
         } else {
 
-            series(new FlowContext(progress.get()), tasks)
+            sequential(new FlowContext(progress.get()), tasks)
                     .then(__ -> {
                         viewCallback.accept(true);
                         MessageEvent.fire(getEventBus(),

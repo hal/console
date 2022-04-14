@@ -74,7 +74,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_XA_DATASOURCE_C
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MODULE_SLOT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE_NAME;
 import static org.jboss.hal.dmr.ModelNodeHelper.properties;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
 @AsyncColumn(Ids.JDBC_DRIVER)
@@ -103,7 +103,7 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
                             properties(PROFILE_NAME, statementContext.selectedProfile())));
                     tasks.add(new JdbcDriverTasks.ReadRuntime(environment, dispatcher));
                     tasks.add(new JdbcDriverTasks.CombineDriverResults());
-                    return series(new FlowContext(progress.get()), tasks)
+                    return sequential(new FlowContext(progress.get()), tasks)
                             .then(flowContext -> Promise.resolve(flowContext.<List<JdbcDriver>> get(JdbcDriverTasks.DRIVERS)));
                 })
                 .withFilter()

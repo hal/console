@@ -56,7 +56,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_STATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVICE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.WHERE;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 
 public final class FindNonProgressingTask implements Task<FlowContext> {
 
@@ -168,7 +168,7 @@ public final class FindNonProgressingTask implements Task<FlowContext> {
                         });
             };
 
-            return series(new FlowContext(progress.get()), asList(hostsTask, serversTask, findNonProgressingTask))
+            return sequential(new FlowContext(progress.get()), asList(hostsTask, serversTask, findNonProgressingTask))
                     .then(c -> {
                         boolean nonProgressingOp = c.get("nonProgressingOp");
                         eventBus.fireEvent(new NonProgressingOperationEvent(nonProgressingOp));

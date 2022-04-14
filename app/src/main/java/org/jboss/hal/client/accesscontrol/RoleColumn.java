@@ -89,7 +89,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.HOSTS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_ALL;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUPS;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 import static org.jboss.hal.resources.CSS.itemText;
 import static org.jboss.hal.resources.CSS.pfIcon;
 import static org.jboss.hal.resources.CSS.subtitle;
@@ -316,7 +316,7 @@ public class RoleColumn extends FinderColumn<Role> {
                     if (includeAll != null && includeAll) {
                         tasks.add(new ModifyIncludeAll(dispatcher, transientRole, includeAll));
                     }
-                    series(new FlowContext(progress.get()), tasks)
+                    sequential(new FlowContext(progress.get()), tasks)
                             .then(__ -> {
                                 MessageEvent.fire(eventBus,
                                         Message.success(resources.messages().addResourceSuccess(typeName, name)));
@@ -349,7 +349,7 @@ public class RoleColumn extends FinderColumn<Role> {
                     List<Task<FlowContext>> tasks = asList(new CheckRoleMapping(dispatcher, role),
                             new AddRoleMapping(dispatcher, role, status -> status == 404),
                             new ModifyIncludeAll(dispatcher, role, frm.getModel().get(INCLUDE_ALL).asBoolean()));
-                    series(new FlowContext(progress.get()), tasks)
+                    sequential(new FlowContext(progress.get()), tasks)
                             .then(__ -> {
                                 MessageEvent.fire(eventBus, Message.success(resources.messages()
                                         .modifyResourceSuccess(resources.constants().role(), role.getName())));
@@ -396,7 +396,7 @@ public class RoleColumn extends FinderColumn<Role> {
             if (includeAllChanged) {
                 tasks.add(new ModifyIncludeAll(dispatcher, role, includeAll));
             }
-            series(new FlowContext(progress.get()), tasks)
+            sequential(new FlowContext(progress.get()), tasks)
                     .then(__ -> {
                         MessageEvent.fire(eventBus,
                                 Message.success(resources.messages().modifyResourceSuccess(type, role.getName())));
@@ -421,7 +421,7 @@ public class RoleColumn extends FinderColumn<Role> {
         tasks.add(new RemoveRoleMapping(dispatcher, role, status -> status == 200));
         tasks.add(new RemoveScopedRole(dispatcher, role));
 
-        series(new FlowContext(progress.get()), tasks)
+        sequential(new FlowContext(progress.get()), tasks)
                 .then(__ -> {
                     MessageEvent.fire(eventBus,
                             Message.success(resources.messages().removeResourceSuccess(type, role.getName())));

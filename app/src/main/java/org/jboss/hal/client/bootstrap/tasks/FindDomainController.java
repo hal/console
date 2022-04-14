@@ -76,7 +76,7 @@ public final class FindDomainController implements Task<FlowContext> {
                             });
                         })
                         .collect(toList());
-                return Flow.series(context, hostTasks);
+                return Flow.sequential(context, hostTasks).promise();
             } else {
                 return Promise.resolve(context);
             }

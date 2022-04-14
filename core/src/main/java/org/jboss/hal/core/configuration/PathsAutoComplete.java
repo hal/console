@@ -42,7 +42,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
 import static org.jboss.hal.dmr.ModelNodeHelper.properties;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 
 /**
  * Special auto complete class for paths. In standalone mode or in case there's no selected profile the paths are read using
@@ -67,7 +67,7 @@ public class PathsAutoComplete extends AutoComplete {
         } else {
             List<Task<FlowContext>> tasks = runningServers(environment, dispatcher,
                     properties(PROFILE_NAME, statementContext.selectedProfile()));
-            series(new FlowContext(), tasks)
+            sequential(new FlowContext(), tasks)
                     .then(context -> {
                         List<Server> servers = context.get(TopologyTasks.SERVERS);
                         boolean readPathsFromServer = !servers.isEmpty() && (servers.get(0)

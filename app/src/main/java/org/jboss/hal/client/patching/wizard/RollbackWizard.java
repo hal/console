@@ -48,7 +48,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.PRESERVE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESET_CONFIGURATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ROLLBACK_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ROLLBACK_TO;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 
 public class RollbackWizard extends PatchWizard {
 
@@ -106,7 +106,7 @@ public class RollbackWizard extends PatchWizard {
                         String name = context.patchId;
                         wzd.showProgress(resources.constants().rollbackInProgress(), messages.rollbackInProgress(name));
 
-                        series(new FlowContext(progress.get()),
+                        sequential(new FlowContext(progress.get()),
                                 singletonList(new RollbackTask(statementContext, dispatcher, serverActions, context)))
                                         .then(__ -> {
                                             callback.execute();

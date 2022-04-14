@@ -61,7 +61,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 import static org.jboss.hal.dmr.ModelNodeHelper.properties;
-import static org.jboss.hal.flow.Flow.series;
+import static org.jboss.hal.flow.Flow.sequential;
 
 public class ServerGroupDeploymentPresenter extends
         ApplicationFinderPresenter<ServerGroupDeploymentPresenter.MyView, ServerGroupDeploymentPresenter.MyProxy> {
@@ -123,7 +123,7 @@ public class ServerGroupDeploymentPresenter extends
         tasks.addAll(runningServers(environment, dispatcher, properties(SERVER_GROUP, serverGroup)));
         tasks.add(new LoadDeploymentsFromRunningServer(environment, dispatcher));
 
-        series(new FlowContext(progress.get()), tasks)
+        sequential(new FlowContext(progress.get()), tasks)
                 .then(context -> {
                     List<ServerGroupDeployment> serverGroupDeployments = context
                             .get(DeploymentTasks.SERVER_GROUP_DEPLOYMENTS);

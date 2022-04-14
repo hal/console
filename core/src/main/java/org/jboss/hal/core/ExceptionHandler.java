@@ -91,7 +91,7 @@ public class ExceptionHandler {
         MessageEvent.fire(eventBus, Message.error(resources.messages().unknownError(), errorMessage));
     }
 
-    @SuppressWarnings({"RedundantCast", "unused"})
+    @SuppressWarnings({ "RedundantCast", "unused" })
     @JsType(isNative = true, namespace = JsPackage.GLOBAL)
     static class PromiseRejectionEvent extends Event {
 
