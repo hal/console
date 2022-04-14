@@ -106,8 +106,7 @@ public class StandaloneServerColumn extends FinderColumn<Server> implements Serv
                             .param(ATTRIBUTES_ONLY, true)
                             .build();
                     Operation bootErrors = new Operation.Builder(ResourceAddress.root().add(CORE_SERVICE, MANAGEMENT),
-                            READ_BOOT_ERRORS)
-                                    .build();
+                            READ_BOOT_ERRORS).build();
                     return dispatcher.execute(new Composite(attributes, bootErrors)).then(result -> {
                         Server.STANDALONE.addServerAttributes(result.step(0).get(RESULT));
                         Server.STANDALONE.setBootErrors(!result.step(1).get(RESULT).asList().isEmpty());

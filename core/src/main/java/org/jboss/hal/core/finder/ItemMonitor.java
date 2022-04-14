@@ -24,6 +24,7 @@ import com.google.web.bindery.event.shared.HandlerRegistration;
 import com.gwtplatform.mvp.client.proxy.NavigationEvent;
 
 import static elemental2.dom.DomGlobal.clearTimeout;
+import static elemental2.dom.DomGlobal.console;
 import static elemental2.dom.DomGlobal.document;
 import static elemental2.dom.DomGlobal.setTimeout;
 import static org.jboss.hal.resources.CSS.withProgress;
@@ -37,8 +38,9 @@ public class ItemMonitor {
 
     public static void startProgress(final String itemId) {
         elemental2.dom.Element element = document.getElementById(itemId);
-        if (element != null) {
+        if (element != null && !element.classList.contains(withProgress)) {
             element.classList.add(withProgress);
+            console.log("### Started progress for item %s", itemId);
         }
     }
 
@@ -46,6 +48,7 @@ public class ItemMonitor {
         elemental2.dom.Element element = document.getElementById(itemId);
         if (element != null) {
             element.classList.remove(withProgress);
+            console.log("### Stopped progress for item %s", itemId);
         }
     }
 

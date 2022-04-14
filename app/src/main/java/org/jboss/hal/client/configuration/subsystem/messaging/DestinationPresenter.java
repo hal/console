@@ -327,13 +327,14 @@ public class DestinationPresenter
                             }
                         };
 
-                        sequential(new FlowContext(progress.get()), asList(removeRole, readRemainingRoles, removeSecuritySetting))
-                                .then(__ -> {
-                                    MessageEvent.fire(getEventBus(), Message.success(resources.messages()
-                                            .removeResourceSuccess(Names.SECURITY_SETTING, combinedName)));
-                                    reload();
-                                    return null;
-                                });
+                        sequential(new FlowContext(progress.get()),
+                                asList(removeRole, readRemainingRoles, removeSecuritySetting))
+                                        .then(__ -> {
+                                            MessageEvent.fire(getEventBus(), Message.success(resources.messages()
+                                                    .removeResourceSuccess(Names.SECURITY_SETTING, combinedName)));
+                                            reload();
+                                            return null;
+                                        });
                     });
 
         } else {

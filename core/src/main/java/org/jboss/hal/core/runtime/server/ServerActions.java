@@ -326,8 +326,8 @@ public class ServerActions implements Timeouts {
         DialogFactory.showConfirmation(title, question, () -> {
             // execute the restart with a little delay ensuring the confirmation dialog is closed
             // before the next dialog is opened (only one modal can be open at a time!)
+            prepare(server, Action.RESTART);
             setTimeout(__ -> {
-                prepare(server, Action.RESTART);
                 BlockingDialog pendingDialog = DialogFactory.buildLongRunning(
                         title, resources.messages().restartStandalonePending(server.getName()));
                 pendingDialog.show();
@@ -765,7 +765,7 @@ public class ServerActions implements Timeouts {
     private Predicate<ModelNode> checkServerState(RunningState first, RunningState... rest) {
         return result -> {
             RunningState state = asEnumValue(result, RunningState::valueOf, RunningState.UNDEFINED);
-            return !EnumSet.of(first, rest).contains(state);
+            return EnumSet.of(first, rest).contains(state);
         };
     }
 

@@ -96,11 +96,12 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup>
             Resources resources) {
 
         super(new Builder<ServerGroup>(finder, Ids.SERVER_GROUP, Names.SERVER_GROUP)
-                .itemsProvider(finderContext -> sequential(new FlowContext(progress.get()), serverGroups(environment, dispatcher))
-                        .then(flowContext -> {
-                            List<ServerGroup> serverGroups = flowContext.get(TopologyTasks.SERVER_GROUPS);
-                            return Promise.resolve(serverGroups);
-                        }))
+                .itemsProvider(
+                        finderContext -> sequential(new FlowContext(progress.get()), serverGroups(environment, dispatcher))
+                                .then(flowContext -> {
+                                    List<ServerGroup> serverGroups = flowContext.get(TopologyTasks.SERVER_GROUPS);
+                                    return Promise.resolve(serverGroups);
+                                }))
                 .onItemSelect(serverGroup -> eventBus.fireEvent(new ServerGroupSelectionEvent(serverGroup.getName())))
                 .onPreview(item -> new ServerGroupPreview(item, places))
                 .pinnable()

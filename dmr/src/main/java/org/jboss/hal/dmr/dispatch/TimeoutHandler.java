@@ -39,20 +39,21 @@ public class TimeoutHandler {
     public static Promise<Void> repeatUntilTimeout(final Dispatcher dispatcher, final Operation operation,
             final int timeout) {
         // repeat until there are failures
-        return repeatOperationUntil(dispatcher, operation, ModelNode::isFailure, timeout);
+        return repeatOperationUntil(dispatcher, operation, modelNode -> !modelNode.isFailure(), timeout);
     }
 
     /** Executes the operation until the predicate no longer is true. */
     public static Promise<Void> repeatOperationUntil(final Dispatcher dispatcher, final Operation operation,
             final Predicate<ModelNode> until, final int timeout) {
-        logger.debug("Repeat {} until it returns successfully with {} seconds timeout", operation.asCli(),
+        logger.debug("Repeat {} while the predicate evaluates to true with {} seconds timeout", operation.asCli(),
                 timeout);
         // repeat until the predicate returns true
         return Flow.while_(new FlowContext(Progress.NOOP),
                 context -> dispatcher.execute(operation)
-                        .then(node -> Promise.resolve(context.set(PREDICATE, until.test(node)))),
+                        .then(node -> Promise.resolve(context.set(PREDICATE, !until.test(node)))), // until = !while
                 context -> context.get(PREDICATE, true))
-                .timeout(timeout)
+                .failFast(false)
+                .timeout(timeout * 1000L)
                 .then(__ -> Promise.resolve((Void) null));
     }
 
@@ -60,20 +61,21 @@ public class TimeoutHandler {
     public static Promise<Void> repeatCompositeUntil(final Dispatcher dispatcher, final Composite composite,
             final int timeout) {
         // repeat until there are failures
-        return repeatCompositeUntil(dispatcher, composite, CompositeResult::isFailure, timeout);
+        return repeatCompositeUntil(dispatcher, composite, modelNodes -> !modelNodes.isFailure(), timeout);
     }
 
     /** Executes the composite operation until the predicate no longer is true. */
     public static Promise<Void> repeatCompositeUntil(final Dispatcher dispatcher, final Composite composite,
             final Predicate<CompositeResult> until, final int timeout) {
-        logger.debug("Repeat {} until it returns successfully with {} seconds timeout", composite.asCli(),
+        logger.debug("Repeat {} while the predicate evaluates to true with {} seconds timeout", composite.asCli(),
                 timeout);
         // repeat until the predicate returns true
         return Flow.while_(new FlowContext(Progress.NOOP),
                 context -> dispatcher.execute(composite)
-                        .then(cr -> Promise.resolve(context.set(PREDICATE, until.test(cr)))),
+                        .then(cr -> Promise.resolve(context.set(PREDICATE, !until.test(cr)))), // until = !while
                 context -> context.get(PREDICATE, true))
-                .timeout(timeout)
+                .failFast(false)
+                .timeout(timeout * 1000L)
                 .then(__ -> Promise.resolve((Void) null));
     }
 
