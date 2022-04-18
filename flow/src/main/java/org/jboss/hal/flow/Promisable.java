@@ -24,9 +24,6 @@ import elemental2.promise.Promise.FinallyOnFinallyCallbackFn;
 /**
  * An interface to use the promise when executing a list of {@linkplain Task asynchronous tasks}.
  *
- * Most of the methods are taken from the JavaScript object
- * <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>.
- *
  * @param <C> the type of the {@linkplain FlowContext context} shared between tasks
  */
 public interface Promisable<C extends FlowContext> {

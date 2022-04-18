@@ -284,7 +284,7 @@ public class HostPresenter
                     .build();
 
             return dispatcher.execute(readDcOp)
-                    .then(value -> Promise.resolve(flowContext.push(new Host(value))));
+                    .then(value -> flowContext.resolve(new Host(value)));
         };
         tasks.add(loadDc);
 
@@ -385,7 +385,7 @@ public class HostPresenter
                                 .build();
 
                         return dispatcher.execute(readDcOp)
-                                .then(value -> Promise.resolve(flowContext.set(HOST, new Host(value))));
+                                .then(value -> flowContext.resolve(HOST, new Host(value)));
                     };
                     tasks.add(loadDc);
 

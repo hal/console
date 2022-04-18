@@ -81,10 +81,11 @@ class FlowSequence<C extends FlowContext> implements Sequence<C> {
         run().then(c -> {
             onSuccess.success(c);
             return null;
-        }).catch_(error -> {
-            onFailure.failed(context, String.valueOf(error));
-            return null;
-        });
+        })
+                .catch_(error -> {
+                    onFailure.failed(context, String.valueOf(error));
+                    return null;
+                });
     }
 
     private Promise<C> run() {

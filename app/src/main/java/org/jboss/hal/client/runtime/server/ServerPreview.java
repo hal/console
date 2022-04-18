@@ -325,7 +325,7 @@ class ServerPreview extends RuntimePreview<Server> {
                         .param(CHILD_TYPE, SOCKET_BINDING_GROUP)
                         .build();
                 return dispatcher.execute(operation)
-                        .then(result -> Promise.resolve(flowContext.push(result.get(0).asString())));
+                        .then(result -> flowContext.resolve(result.get(0).asString()));
             });
 
             tasks.add(flowContext -> {

@@ -105,7 +105,7 @@ public final class FindNonProgressingTask implements Task<FlowContext> {
                             List<String> hosts = result.asList().stream()
                                     .map(ModelNode::asString)
                                     .collect(toList());
-                            return Promise.resolve(c.set(HOSTS, hosts));
+                            return c.resolve(HOSTS, hosts);
                         });
             };
 
@@ -127,7 +127,7 @@ public final class FindNonProgressingTask implements Task<FlowContext> {
                                         .map(r -> hostServerAddress(r.get(RESULT)))
                                         .collect(Collectors.toList());
                             }
-                            return Promise.resolve(c.set("servers", servers));
+                            return c.resolve("servers", servers);
                         });
             };
 
@@ -164,7 +164,7 @@ public final class FindNonProgressingTask implements Task<FlowContext> {
                                     break;
                                 }
                             }
-                            return Promise.resolve(c.set("nonProgressingOp", nonProgressingOp));
+                            return c.resolve("nonProgressingOp", nonProgressingOp);
                         });
             };
 

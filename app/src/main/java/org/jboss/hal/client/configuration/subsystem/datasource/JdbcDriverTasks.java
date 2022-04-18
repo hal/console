@@ -39,8 +39,6 @@ import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Resources;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import elemental2.promise.IThenable;
 import elemental2.promise.IThenable.ThenOnFulfilledCallbackFn;
@@ -64,8 +62,6 @@ import static org.jboss.hal.dmr.ModelNodeHelper.properties;
 
 /** Set of tasks to read the installed JDBC drivers. */
 public class JdbcDriverTasks {
-
-    private static final Logger logger = LoggerFactory.getLogger(JdbcDriverTasks.class);
 
     private static final String CONFIGURATION_DRIVERS = "jdbcDriverFunctions.configurationDrivers";
     private static final String RUNTIME_DRIVERS = "jdbcDriverFunctions.runtimeDrivers";
@@ -124,7 +120,7 @@ public class JdbcDriverTasks {
                     .param(INCLUDE_RUNTIME, true)
                     .build();
             return dispatcher.execute(operation)
-                    .then(result -> Promise.resolve(context.set(RESULT, result)));
+                    .then(result -> context.resolve(RESULT, result));
         }
     }
 
@@ -147,7 +143,7 @@ public class JdbcDriverTasks {
                         List<JdbcDriver> drivers = children.stream()
                                 .map(JdbcDriver::new)
                                 .collect(toList());
-                        return Promise.resolve(context.set(CONFIGURATION_DRIVERS, drivers));
+                        return context.resolve(CONFIGURATION_DRIVERS, drivers);
                     });
         }
     }
@@ -178,7 +174,7 @@ public class JdbcDriverTasks {
                             List<JdbcDriver> drivers = result.asList().stream()
                                     .map(modelNode -> new JdbcDriver(modelNode.get(DRIVER_NAME).asString(), modelNode))
                                     .collect(toList());
-                            return Promise.resolve(context.set(RUNTIME_DRIVERS, drivers));
+                            return context.resolve(RUNTIME_DRIVERS, drivers);
                         });
 
             } else {
@@ -202,7 +198,7 @@ public class JdbcDriverTasks {
                                         }
                                     }
                                 }
-                                return Promise.resolve(context.set(RUNTIME_DRIVERS, drivers));
+                                return context.resolve(RUNTIME_DRIVERS, drivers);
                             });
                 } else {
                     return Promise.resolve(context);

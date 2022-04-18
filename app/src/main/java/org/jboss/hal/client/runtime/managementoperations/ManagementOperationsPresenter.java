@@ -59,8 +59,6 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
-import elemental2.promise.Promise;
-
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ACTIVE_OPERATION;
@@ -200,7 +198,7 @@ public class ManagementOperationsPresenter extends
                             List<String> hosts = result.asList().stream()
                                     .map(ModelNode::asString)
                                     .collect(toList());
-                            return Promise.resolve(context.set(HOSTS, hosts));
+                            return context.resolve(HOSTS, hosts);
                         });
             };
 
@@ -222,7 +220,7 @@ public class ManagementOperationsPresenter extends
                                         .map(r -> hostServerAddress(r.get(RESULT)))
                                         .collect(toList());
                             }
-                            return Promise.resolve(context.set("servers", servers));
+                            return context.resolve("servers", servers);
                         });
             };
 
@@ -313,7 +311,7 @@ public class ManagementOperationsPresenter extends
                                     }
                                 }
                             }
-                            return Promise.resolve(context.set("active-operations", ops));
+                            return context.resolve("active-operations", ops);
                         });
             };
 
@@ -401,9 +399,9 @@ public class ManagementOperationsPresenter extends
                         return dispatcher.execute(operation)
                                 .then(node -> {
                                     if (node.isDefined()) {
-                                        return Promise.resolve(context.push(node.asString()));
+                                        return context.resolve(node.asString());
                                     } else {
-                                        return Promise.resolve(context);
+                                        return context.resolve();
                                     }
                                 });
                     };
@@ -420,9 +418,9 @@ public class ManagementOperationsPresenter extends
                         return dispatcher.execute(operation)
                                 .then(node -> {
                                     if (node.isDefined()) {
-                                        return Promise.resolve(context.push(node.asString()));
+                                        return context.resolve(node.asString());
                                     } else {
-                                        return Promise.resolve(context);
+                                        return context.resolve();
                                     }
                                 });
                     };

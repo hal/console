@@ -311,7 +311,7 @@ public class DestinationPresenter
                                     .param(CHILD_TYPE, ROLE)
                                     .build();
                             return dispatcher.execute(operation)
-                                    .then(result -> Promise.resolve(context.push(result.asList())));
+                                    .then(result -> context.resolve(result.asList()));
                         };
 
                         Task<FlowContext> removeSecuritySetting = context -> {

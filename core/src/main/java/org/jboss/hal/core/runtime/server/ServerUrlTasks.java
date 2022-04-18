@@ -80,7 +80,7 @@ class ServerUrlTasks {
                                 return Promise.reject("ReadSocketBindingGroup: No socket binding groups defined");
                             } else {
                                 String sbg = result.asList().get(0).asString();
-                                return Promise.resolve(context.set(SOCKET_BINDING_GROUP_KEY, sbg));
+                                return context.resolve(SOCKET_BINDING_GROUP_KEY, sbg);
                             }
                         });
             } else {
@@ -89,7 +89,7 @@ class ServerUrlTasks {
                         .param(NAME, SOCKET_BINDING_GROUP)
                         .build();
                 return dispatcher.execute(operation)
-                        .then(result -> Promise.resolve(context.set(SOCKET_BINDING_GROUP_KEY, result.asString())));
+                        .then(result -> context.resolve(SOCKET_BINDING_GROUP_KEY, result.asString()));
             }
         }
     }
@@ -140,7 +140,7 @@ class ServerUrlTasks {
                             if (property.getValue().hasDefined(BOUND_PORT)) {
                                 url.append(":").append(property.getValue().get(BOUND_PORT).asInt());
                             }
-                            return Promise.resolve(context.set(URL_KEY, new ServerUrl(url.toString(), false)));
+                            return context.resolve(URL_KEY, new ServerUrl(url.toString(), false));
                         } else {
                             return Promise
                                     .reject("ReadSocketBinding: No address defined for " + sbg + " / " + property.getName());

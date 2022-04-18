@@ -271,10 +271,10 @@ public class PropertiesOperations {
                     .param(CHILD_TYPE, psr)
                     .build();
             return dispatcher.execute(operation)
-                    .then(result -> Promise.resolve(context.push(result.asList().stream()
+                    .then(result -> context.resolve(result.asList().stream()
                             .map(ModelNode::asString)
-                            .collect(Collectors.toSet()))))
-                    .catch_(error -> Promise.resolve(context.push(Collections.emptySet())));
+                            .collect(Collectors.toSet())))
+                    .catch_(error -> context.resolve(Collections.emptySet()));
         }
     }
 

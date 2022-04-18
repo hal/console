@@ -101,9 +101,9 @@ public class AccessControlSsoPresenter
             flowContext.set(ADDRESS, address.toString());
 
             return dispatcher.execute(op)
-                    .then(response -> Promise.resolve(flowContext.set(REALM, response.get(REALM).asString())))
-                    .catch_(error -> Promise.resolve(flowContext.set(ERROR_KEY,
-                            resources.messages().failedReadKeycloak(address.toString(), String.valueOf(error)))));
+                    .then(response -> flowContext.resolve(REALM, response.get(REALM).asString()))
+                    .catch_(error -> flowContext.resolve(ERROR_KEY,
+                            resources.messages().failedReadKeycloak(address.toString(), String.valueOf(error))));
         });
 
         tasks.add(flowContext -> {
@@ -118,8 +118,8 @@ public class AccessControlSsoPresenter
                         flowContext.set(REALM_PUBLIC_KEY, response.get(REALM_PUBLIC_KEY).asString());
                         return Promise.resolve(flowContext);
                     })
-                    .catch_(error -> Promise.resolve(flowContext.set(ERROR_KEY,
-                            resources.messages().failedReadKeycloak(address.toString(), String.valueOf(error)))));
+                    .catch_(error -> flowContext.resolve(ERROR_KEY,
+                            resources.messages().failedReadKeycloak(address.toString(), String.valueOf(error))));
         });
 
         sequential(new FlowContext(progress.get()), tasks)

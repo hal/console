@@ -26,7 +26,7 @@ public interface Subscription<C extends FlowContext> {
 
     /**
      * Subscribes to the successful termination of the {@linkplain Task tasks}. The failed termination is handled by a default
-     * implementation that log the context and the reason to the browser console.
+     * implementation that logs the context and the failure to the browser console.
      *
      * @param onSuccess the callback for successful termination
      */

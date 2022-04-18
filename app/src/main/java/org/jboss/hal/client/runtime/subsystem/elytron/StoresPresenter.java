@@ -318,7 +318,7 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
             tasks.add(context -> {
                 Operation operation = new Operation.Builder(address, READ_ALIASES_OPERATION)
                         .build();
-                return dispatcher.execute(operation).then(result -> Promise.resolve(context.push(resource)));
+                return dispatcher.execute(operation).then(result -> context.resolve(resource));
             });
 
             sequential(new FlowContext(progress.get()), tasks)

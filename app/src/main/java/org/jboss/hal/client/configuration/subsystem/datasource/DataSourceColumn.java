@@ -253,7 +253,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                 .then(children -> {
                     List<DataSource> dataSources = children.stream()
                             .map(property -> new DataSource(property, xa)).collect(toList());
-                    return Promise.resolve(context.set(DATASOURCES, dataSources));
+                    return context.resolve(DATASOURCES, dataSources);
                 });
 
         List<Task<FlowContext>> tasks = new ArrayList<>();

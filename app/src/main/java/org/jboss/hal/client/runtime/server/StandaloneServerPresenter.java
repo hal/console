@@ -317,7 +317,7 @@ public class StandaloneServerPresenter
                                             .build();
                                     return dispatcher.execute(readPort);
                                 })
-                                .then(result -> Promise.resolve(flowContext.set(PORT, result.asString())));
+                                .then(result -> flowContext.resolve(PORT, result.asString()));
                     };
                     tasks.add(readHttpPortTask);
 

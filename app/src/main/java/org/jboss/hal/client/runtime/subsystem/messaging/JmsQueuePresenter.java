@@ -175,7 +175,7 @@ public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresen
             Task<FlowContext> count = context -> {
                 Operation operation = new Operation.Builder(address, COUNT_MESSAGES).build();
                 return dispatcher.execute(operation)
-                        .then(result -> Promise.resolve(context.set(MESSAGES_COUNT, result.asLong())));
+                        .then(result -> context.resolve(MESSAGES_COUNT, result.asLong()));
             };
             Task<FlowContext> list = context -> {
                 long messages = context.get(MESSAGES_COUNT);
@@ -185,8 +185,8 @@ public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresen
                 } else {
                     Operation operation = new Operation.Builder(address, LIST_MESSAGES).build();
                     return dispatcher.execute(operation)
-                            .then(result -> Promise.resolve(context.set(MESSAGES,
-                                    result.asList().stream().map(JmsMessage::new).collect(toList()))));
+                            .then(result -> context.resolve(MESSAGES,
+                                    result.asList().stream().map(JmsMessage::new).collect(toList())));
                 }
             };
             List<Task<FlowContext>> tasks = asList(count, list);

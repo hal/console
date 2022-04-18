@@ -16,15 +16,13 @@
 package org.jboss.hal.flow;
 
 import java.util.List;
-import java.util.function.Predicate;
 
 import static org.jboss.hal.flow.FlowSequence.Mode.PARALLEL;
 import static org.jboss.hal.flow.FlowSequence.Mode.SEQUENTIAL;
 
 /**
- * An interface to execute a list of {@linkplain Task asynchronous tasks} in {@linkplain #parallel(FlowContext, List) parallel},
- * in {@linkplain #sequential(FlowContext, List) sequence} or {@linkplain #while_(FlowContext, Task, Predicate) while} a
- * {@linkplain Predicate predicate} evaluates to {@code true}.
+ * An interface to execute a list of {@linkplain Task asynchronous tasks} in parallel or sequentially, or to execute a single
+ * task {@linkplain #repeat(FlowContext, Task) repeatedly} as long as certain conditions are met.
  * <p>
  * The {@linkplain Task tasks} share a {@linkplain FlowContext context} that can be used to store data in a map or on a stack.
  *
@@ -57,16 +55,14 @@ public interface Flow<C extends FlowContext> {
     }
 
     /**
-     * Executes the given {@linkplain Task task} as long as the given {@linkplain Predicate predicate} evaluates to
-     * {@code true}.
+     * Executes the given {@linkplain Task task} repeatedly as long as the conditions defined by @{@link Repeat} are met.
      *
      * @param context the context shared between the iterations
      * @param task the task to execute while the predicate evaluates to {@code true}
-     * @param until the predicate used to decide whether to continue or break the loop
      * @param <C> the type of the shared context
      * @return an interface to control the interval, timeout and fail fast behaviour
      */
-    static <C extends FlowContext> While<C> while_(C context, Task<C> task, Predicate<C> until) {
-        return new FlowWhile<>(context, task, until);
+    static <C extends FlowContext> Repeat<C> repeat(C context, Task<C> task) {
+        return new FlowRepeat<>(context, task);
     }
 }

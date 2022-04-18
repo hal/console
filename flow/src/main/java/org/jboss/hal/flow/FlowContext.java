@@ -23,10 +23,13 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.function.Predicate;
 
+import elemental2.promise.Promise;
+
 /**
- * General purpose context to be used as a data structure when executing a list of {@linkplain Task asynchronous tasks} in
- * {@linkplain Flow#parallel(FlowContext, List) parallel}, in {@linkplain Flow#sequential(FlowContext, List) sequence} or
- * {@linkplain Flow#while_(FlowContext, Task, Predicate) while} a {@linkplain Predicate predicate} evaluates to {@code true}.
+ * General purpose context to be used as a common data structure when executing a list of {@linkplain Task asynchronous tasks}
+ * in {@linkplain Flow#parallel(FlowContext, List) parallel}, in {@linkplain Flow#sequential(FlowContext, List) sequence} or
+ * when executing a task {@linkplain Flow#repeat(FlowContext, Task) repeatedly} while a {@linkplain Predicate condition}
+ * evaluates to {@code true}.
  * <p>
  * The context provides a {@linkplain Progress progress indicator} to signal the progress of the task execution and a stack and
  * a map for sharing data between {@linkplain Task asynchronous tasks}.
@@ -56,11 +59,40 @@ public class FlowContext {
     }
 
     /**
+     * Resolves this context as a promise.
+     */
+    public Promise<FlowContext> resolve() {
+        return Promise.resolve(this);
+    }
+
+    /**
+     * Pushes the value on top of the stack and resolves this context as a promise.
+     */
+    public <T> Promise<FlowContext> resolve(T value) {
+        push(value);
+        return resolve();
+    }
+
+    /**
+     * Stores the value under the given key in the map and resolves this context as a promise.
+     */
+    public <T> Promise<FlowContext> resolve(String key, T value) {
+        set(key, value);
+        return resolve();
+    }
+
+    /**
+     * Rejects this context with an error.
+     */
+    public Promise<FlowContext> reject(String failure) {
+        return Promise.reject(failure);
+    }
+
+    /**
      * Pushes the value om top of the stack.
      */
-    public <T> FlowContext push(T value) {
+    public <T> void push(T value) {
         stack.push(value);
-        return this;
     }
 
     /**
@@ -94,9 +126,8 @@ public class FlowContext {
     /**
      * Stores the value under the given key in the map.
      */
-    public <T> FlowContext set(String key, T value) {
+    public <T> void set(String key, T value) {
         data.put(key, value);
-        return this;
     }
 
     /**

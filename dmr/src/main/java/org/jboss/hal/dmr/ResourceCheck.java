@@ -41,7 +41,7 @@ public final class ResourceCheck implements Task<FlowContext> {
     public Promise<FlowContext> apply(final FlowContext context) {
         Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION).build();
         return dispatcher.execute(operation)
-                .then(result -> Promise.resolve(context.push(200)))
-                .catch_(error -> Promise.resolve(context.push(404)));
+                .then(result -> context.resolve(200))
+                .catch_(error -> context.resolve(404));
     }
 }

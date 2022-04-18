@@ -210,7 +210,7 @@ class DeploymentTasks {
                         content.addDeployment(serverGroupDeployment);
                     }
                 }
-                return Promise.resolve(context.push(new ArrayList<>(contentByName.values())));
+                return context.resolve(new ArrayList<>(contentByName.values()));
             });
         }
     }
@@ -243,7 +243,7 @@ class DeploymentTasks {
         public Promise<FlowContext> apply(final FlowContext context) {
             if (environment.isStandalone()) {
                 List<ServerGroupDeployment> serverGroupDeployments = Collections.emptyList();
-                return Promise.resolve(context.set(SERVER_GROUP_DEPLOYMENTS, serverGroupDeployments));
+                return context.resolve(SERVER_GROUP_DEPLOYMENTS, serverGroupDeployments);
             } else {
                 if (deployment != null) {
                     // read a single deployment
@@ -255,7 +255,7 @@ class DeploymentTasks {
                     return dispatcher.execute(operation).then(result -> {
                         List<ServerGroupDeployment> serverGroupDeployments = Lists
                                 .newArrayList(new ServerGroupDeployment(serverGroup, result));
-                        return Promise.resolve(context.set(SERVER_GROUP_DEPLOYMENTS, serverGroupDeployments));
+                        return context.resolve(SERVER_GROUP_DEPLOYMENTS, serverGroupDeployments);
                     });
                 } else {
                     // read all deployments
@@ -268,7 +268,7 @@ class DeploymentTasks {
                         List<ServerGroupDeployment> serverGroupDeployments = result.asPropertyList().stream()
                                 .map(property -> new ServerGroupDeployment(serverGroup, property.getValue()))
                                 .collect(toList());
-                        return Promise.resolve(context.set(SERVER_GROUP_DEPLOYMENTS, serverGroupDeployments));
+                        return context.resolve(SERVER_GROUP_DEPLOYMENTS, serverGroupDeployments);
                     });
                 }
             }
@@ -382,9 +382,9 @@ class DeploymentTasks {
                     .then(result -> {
                         Set<String> names = result.asList().stream().map(ModelNode::asString).collect(toSet());
                         if (names.contains(name)) {
-                            return Promise.resolve(context.push(200));
+                            return context.resolve(200);
                         } else {
-                            return Promise.resolve(context.push(404));
+                            return context.resolve(404);
                         }
                     });
         }
