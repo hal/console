@@ -210,7 +210,7 @@ public class EnableSSLWizard {
                                             wizard.showError(constants.failed(),
                                                     resources.messages().addKeyStoreError(keyStoreName),
                                                     String.valueOf(error), false);
-                                            return Promise.reject(error);
+                                            return flowContext.reject(String.valueOf(error));
                                         });
                             });
 
@@ -259,7 +259,7 @@ public class EnableSSLWizard {
                                             wizard.showError(constants.failed(),
                                                     resources.messages().addKeyStoreError(keyStoreName),
                                                     String.valueOf(error), false);
-                                            return Promise.reject(error);
+                                            return flowContext.reject(String.valueOf(error));
                                         });
                             });
                         } else if (context.strategy.equals(EnableSSLContext.Strategy.KEYSTORE_OBTAIN_LETSENCRYPT)) {
@@ -281,7 +281,7 @@ public class EnableSSLWizard {
                                             wizard.showError(constants.failed(),
                                                     resources.messages().addKeyStoreError(keyStoreName),
                                                     String.valueOf(error), false);
-                                            return Promise.reject(error);
+                                            return flowContext.reject(String.valueOf(error));
                                         });
                             });
 
@@ -300,7 +300,7 @@ public class EnableSSLWizard {
                                                     resources.messages()
                                                             .addResourceError(caaName, String.valueOf(error)),
                                                     false);
-                                            return Promise.reject(error);
+                                            return flowContext.reject(String.valueOf(error));
                                         });
                             });
 
@@ -327,7 +327,7 @@ public class EnableSSLWizard {
                                                             .obtainCertificateError(obtainAlias, keyStoreName,
                                                                     String.valueOf(error)),
                                                     false);
-                                            return Promise.reject(error);
+                                            return flowContext.reject(String.valueOf(error));
                                         });
                             });
                         }

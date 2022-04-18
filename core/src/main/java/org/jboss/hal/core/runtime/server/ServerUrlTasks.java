@@ -77,7 +77,7 @@ class ServerUrlTasks {
                 return dispatcher.execute(operation)
                         .then(result -> {
                             if (result.asList().isEmpty()) {
-                                return Promise.reject("ReadSocketBindingGroup: No socket binding groups defined");
+                                return context.reject("ReadSocketBindingGroup: No socket binding groups defined");
                             } else {
                                 String sbg = result.asList().get(0).asString();
                                 return context.resolve(SOCKET_BINDING_GROUP_KEY, sbg);
@@ -142,15 +142,15 @@ class ServerUrlTasks {
                             }
                             return context.resolve(URL_KEY, new ServerUrl(url.toString(), false));
                         } else {
-                            return Promise
+                            return context
                                     .reject("ReadSocketBinding: No address defined for " + sbg + " / " + property.getName());
                         }
                     } else {
-                        return Promise.reject("ReadSocketBinding: No http(s) socket binding defined for " + sbg);
+                        return context.reject("ReadSocketBinding: No http(s) socket binding defined for " + sbg);
                     }
                 });
             } else {
-                return Promise.reject("ReadSocketBinding: No socket binding group in context");
+                return context.reject("ReadSocketBinding: No socket binding group in context");
             }
         }
     }

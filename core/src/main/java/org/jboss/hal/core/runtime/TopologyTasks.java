@@ -331,7 +331,7 @@ public final class TopologyTasks {
                         })
                         .catch_(error -> {
                             logger.error("TopologyTasks.HostNames failed: {}", error);
-                            return Promise.reject(error);
+                            return context.reject(String.valueOf(error));
                         });
             }
         }
@@ -394,7 +394,7 @@ public final class TopologyTasks {
                                                 ? Host.booting(host)
                                                 : Host.failed(host);
                                         hosts.add(h);
-                                        return Promise.reject(error);
+                                        return context.reject(String.valueOf(error));
                                     });
                         })
                         .collect(toList());
@@ -459,7 +459,7 @@ public final class TopologyTasks {
                         })
                         .catch_(error -> {
                             logger.error("TopologyTasks.DisconnectedHosts failed: {}", error);
-                            return Promise.reject(error);
+                            return context.reject(String.valueOf(error));
                         });
             }
         }
@@ -498,7 +498,7 @@ public final class TopologyTasks {
                         })
                         .catch_(error -> {
                             logger.error("TopologyTasks.ServerGroups failed: {}", error);
-                            return Promise.reject(error);
+                            return context.reject(String.valueOf(error));
                         });
             }
         }
@@ -538,7 +538,7 @@ public final class TopologyTasks {
                         })
                         .catch_(error -> {
                             logger.error("TopologyTasks.ServersOfHost failed: {}", error);
-                            return Promise.reject(error);
+                            return context.reject(String.valueOf(error));
                         });
             }
         }
@@ -725,7 +725,7 @@ public final class TopologyTasks {
                             })
                             .catch_(error -> {
                                 logger.error("TopologyTasks.StartedServers failed: {}", error);
-                                return Promise.reject(error);
+                                return context.reject(String.valueOf(error));
                             });
                 } else {
                     return Promise.resolve(context);

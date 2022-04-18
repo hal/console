@@ -505,7 +505,7 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
                             MessageEvent.fire(getEventBus(),
                                     Message.error(resources.messages()
                                             .importCertificateError(alias, path, resource, String.valueOf(error))));
-                            return Promise.reject(error);
+                            return context.reject(String.valueOf(error));
                         });
             });
             tasks.add(context -> {
@@ -516,7 +516,7 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
                         .catch_(error -> {
                             MessageEvent.fire(getEventBus(),
                                     Message.error(resources.messages().storeError(resource, String.valueOf(error))));
-                            return Promise.reject(error);
+                            return context.reject(String.valueOf(error));
                         });
             });
             tasks.add(context -> {
@@ -527,7 +527,7 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
                         .catch_(error -> {
                             MessageEvent.fire(getEventBus(),
                                     Message.error(resources.messages().readAliasesError(resource, String.valueOf(error))));
-                            return Promise.reject(error);
+                            return context.reject(String.valueOf(error));
                         });
             });
 

@@ -112,7 +112,7 @@ public class JdbcDriverTasks {
                 } else {
                     String message = resources.messages()
                             .readDatasourcePropertiesErrorDomain(statementContext.selectedProfile());
-                    return Promise.reject(message);
+                    return context.reject(message);
                 }
             }
             address.add(SUBSYSTEM, DATASOURCES).add(JDBC_DRIVER, driverName);
