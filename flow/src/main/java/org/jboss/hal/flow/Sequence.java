@@ -26,12 +26,12 @@ import java.util.List;
 public interface Sequence<C extends FlowContext> extends Promisable<C>, Subscription<C> {
 
     /**
-     * By default, the execution of {@linkplain Task tasks} fails fast.
+     * By default, the execution of {@linkplain Task tasks} fail fast.
      */
     boolean DEFAULT_FAIL_FAST = true;
 
     /**
-     * Whether the execution of {@linkplain Task tasks} should fail fast or fail last.
+     * Whether the execution of {@linkplain Task tasks} should fail fast or fail last. Defaults to {@value DEFAULT_FAIL_FAST}.
      */
     Sequence<C> failFast(boolean failFast);
 }

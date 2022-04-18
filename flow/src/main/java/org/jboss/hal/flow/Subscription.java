@@ -31,8 +31,9 @@ public interface Subscription<C extends FlowContext> {
      * @param onSuccess the callback for successful termination
      */
     default void subscribe(SuccessCallback<C> onSuccess) {
-        subscribe(onSuccess, ((context, failure) -> console.error("Default failure callback for flow subscription. " +
-                "Context: '" + context + "', failure: '" + failure + "'")));
+        subscribe(onSuccess, ((context, failure) -> console.error(
+                "Default failure callback for flow subscription. " +
+                        "Context: '" + context + "', failure: '" + failure + "'")));
     }
 
     /**

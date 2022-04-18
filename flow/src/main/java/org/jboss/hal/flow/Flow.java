@@ -55,7 +55,7 @@ public interface Flow<C extends FlowContext> {
     }
 
     /**
-     * Executes the given {@linkplain Task task} repeatedly as long as the conditions defined by @{@link Repeat} are met.
+     * Executes the given {@linkplain Task task} repeatedly as long as the conditions defined by {@link Repeat} are met.
      *
      * @param context the context shared between the iterations
      * @param task the task to execute while the predicate evaluates to {@code true}

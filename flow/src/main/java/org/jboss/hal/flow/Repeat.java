@@ -20,16 +20,13 @@ import java.util.function.Predicate;
 /**
  * An interface to control the {@linkplain Flow#repeat(FlowContext, Task) repeated} execution of an {@linkplain Task
  * asynchronous task}.
- * <p>
- * You can customize the conditions how often and how long the task is executed using the methods in this interface, before
- * calling any of the methods from {@link Promisable} or {@link Subscription}.
  *
  * @param <C> the type of the {@linkplain FlowContext context} shared between tasks
  */
 public interface Repeat<C extends FlowContext> extends Promisable<C>, Subscription<C> {
 
     /**
-     * By default, the execution of {@linkplain Task tasks} fails fast.
+     * By default, the execution of {@linkplain Task tasks} fail fast.
      */
     boolean DEFAULT_FAIL_FAST = true;
 
@@ -39,12 +36,12 @@ public interface Repeat<C extends FlowContext> extends Promisable<C>, Subscripti
     long DEFAULT_INTERVAL = 1_000;
 
     /**
-     * By default, the timeout for the while loop is 10 seconds.
+     * By default, the timeout for the loop is 10 seconds.
      */
     long DEFAULT_TIMEOUT = 10_000;
 
     /**
-     * By default, the iterations are infinite.
+     * By default, the number of iterations are infinite.
      */
     int DEFAULT_ITERATIONS = -1;
 
@@ -60,7 +57,7 @@ public interface Repeat<C extends FlowContext> extends Promisable<C>, Subscripti
     Repeat<C> while_(Predicate<C> predicate);
 
     /**
-     * Whether the execution of {@linkplain Task tasks} should fail fast or fail last. Defaults to
+     * Whether the execution of the {@linkplain Task task} should fail fast or fail last. Defaults to
      * {@value Repeat#DEFAULT_FAIL_FAST}.
      */
     Repeat<C> failFast(boolean failFast);
@@ -76,7 +73,7 @@ public interface Repeat<C extends FlowContext> extends Promisable<C>, Subscripti
     Repeat<C> timeout(long timeout);
 
     /**
-     * The maximal iterations of the loop. Defaults to an infinite loop ({@value Repeat#DEFAULT_ITERATIONS}).
+     * The maximal number of iterations of the loop. Defaults to an infinite loop ({@value Repeat#DEFAULT_ITERATIONS}).
      */
     Repeat<C> iterations(int iterations);
 }
