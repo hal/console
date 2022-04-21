@@ -105,7 +105,7 @@
         <version.jboss.dmr>1.6.1.Final</version.jboss.dmr>
         <version.jdom>2.0.2</version.jdom>
         <version.junit>4.13.2</version.junit>
-        <version.mockito>4.4.0</version.mockito>
+        <version.mockito>4.5.1</version.mockito>
         <version.node>v16.14.0</version.node>
         <version.quarkus>2.8.0.Final</version.quarkus>
         <version.slf4j>1.7.36</version.slf4j>
