@@ -119,7 +119,7 @@
         <version.enforcer.plugin>3.0.0-M3</version.enforcer.plugin>
         <version.formatter.plugin>2.18.0</version.formatter.plugin>
         <version.frontend.plugin>1.12.1</version.frontend.plugin>
-        <version.gwt.plugin>1.0.0</version.gwt.plugin>
+        <version.gwt.plugin>1.0.1</version.gwt.plugin>
         <version.impsort.plugin>1.6.2</version.impsort.plugin>
         <version.keepachangelog>2.1.1</version.keepachangelog>
         <version.license.plugin>4.1</version.license.plugin>
