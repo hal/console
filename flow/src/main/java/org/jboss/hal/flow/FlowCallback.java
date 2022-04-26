@@ -16,21 +16,25 @@
 package org.jboss.hal.flow;
 
 /**
- * An interface to subscribe to the outcome of the execution of {@linkplain Task asynchronous tasks}.
+ * A callback for the outcome of the execution of {@linkplain Task asynchronous tasks}.
  * <p>
- * <b>Error Handling</b><br/>
- * When using the methods in this interface, errors in tasks are caught and are stored in the {@linkplain FlowContext context}.
  * The context provides methods to check if the execution was {@linkplain FlowContext#successful() successful}, ran into a
  * {@linkplain FlowContext#timeout() timeout} or {@linkplain FlowContext#failure() failed} with an
- * {@linkplain FlowContext#failureReason() error}. This is different from the methods in {@link Promisable} that propagate
- * errors to the closest catch handler.
+ * {@linkplain FlowContext#failureReason() error}.
  *
- * @param <C> the type of the {@linkplain FlowContext context} shared between tasks
+ * @param <C> the type of the {@linkplain FlowContext context} shared between the tasks
  */
-public interface Subscription<C extends FlowContext> {
+@FunctionalInterface
+public interface FlowCallback<C extends FlowContext> {
 
     /**
-     * Subscribes to the outcome of the execution of {@linkplain Task asynchronous tasks}.
+     * Called when the execution of the {@linkplain Task asynchronous tasks} has been completed.
+     * <p>
+     * The context provides methods to check if the execution was {@linkplain FlowContext#successful() successful}, ran into a
+     * {@linkplain FlowContext#timeout() timeout} or {@linkplain FlowContext#failure() failed} with an
+     * {@linkplain FlowContext#failureReason() error}.
+     *
+     * @param context the context shared between the tasks
      */
-    void subscribe(FlowCallback<C> callback);
+    void finish(C context);
 }

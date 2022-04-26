@@ -31,7 +31,20 @@ public interface Sequence<C extends FlowContext> extends Promisable<C>, Subscrip
     boolean DEFAULT_FAIL_FAST = true;
 
     /**
+     * By default, no timeout is used.
+     */
+    long DEFAULT_TIMEOUT = -1;
+
+    /**
      * Whether the execution of {@linkplain Task tasks} should fail fast or fail last. Defaults to {@value DEFAULT_FAIL_FAST}.
      */
     Sequence<C> failFast(boolean failFast);
+
+    /**
+     * The timeout in milliseconds for the sequence. Defaults to no timeout ({@value #DEFAULT_TIMEOUT}).
+     * <p>
+     * Please note that this only applies to sequential flows. The timeout has no effect for parallel flows. The promise API
+     * does not provide a method to cancel running promises.
+     */
+    Sequence<C> timeout(long timeout);
 }

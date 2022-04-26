@@ -116,7 +116,7 @@ public class MetadataProcessor {
     public Promise<Metadata> lookup(AddressTemplate template, Progress progress) {
         logger.debug("Lookup metadata for {}", template);
         return processInternal(singleton(template), false, progress)
-                .then(c -> Promise.resolve(metadataRegistry.lookup(template)));
+                .then(__ -> Promise.resolve(metadataRegistry.lookup(template)));
     }
 
     public Promise<Void> process(String id, Progress progress) {
@@ -124,7 +124,7 @@ public class MetadataProcessor {
         boolean recursive = requiredResources.isRecursive(id);
         logger.debug("Process required resources {} for id '{}' (recursive={})", resources, id, recursive);
         if (resources.isEmpty()) {
-            logger.debug("No required resources found -> callback.onSuccess(null)");
+            logger.debug("No required resources found -> done");
             return Promise.resolve((Void) null);
 
         } else {
@@ -138,7 +138,7 @@ public class MetadataProcessor {
         LookupRegistryTask lookupRegistries = new LookupRegistryTask(resourceDescriptionRegistry,
                 securityContextRegistry);
         if (lookupRegistries.allPresent(templates, recursive)) {
-            logger.debug("All metadata have been already processed -> callback.onSuccess(null)");
+            logger.debug("All metadata have been already processed -> done");
             return Promise.resolve((Void) null);
 
         } else {

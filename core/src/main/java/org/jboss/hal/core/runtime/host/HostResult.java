@@ -17,8 +17,8 @@ package org.jboss.hal.core.runtime.host;
 
 import java.util.List;
 
-import org.jboss.hal.core.runtime.Result;
 import org.jboss.hal.core.runtime.server.Server;
+import org.jboss.hal.flow.FlowStatus;
 
 import com.gwtplatform.dispatch.annotation.GenEvent;
 import com.gwtplatform.dispatch.annotation.Order;
@@ -28,5 +28,5 @@ public class HostResult {
 
     @Order(1) Host host;
     @Order(2) List<Server> servers;
-    @Order(3) Result result;
+    @Order(3) FlowStatus status;
 }

@@ -17,18 +17,16 @@ package org.jboss.hal.flow;
 
 import java.util.List;
 
-import static org.jboss.hal.flow.FlowSequence.Mode.PARALLEL;
-import static org.jboss.hal.flow.FlowSequence.Mode.SEQUENTIAL;
+import static org.jboss.hal.flow.SequenceImpl.Mode.PARALLEL;
+import static org.jboss.hal.flow.SequenceImpl.Mode.SEQUENTIAL;
 
 /**
  * An interface to execute a list of {@linkplain Task asynchronous tasks} in parallel or sequentially, or to execute a single
- * task {@linkplain #repeat(FlowContext, Task) repeatedly} as long as certain conditions are met.
+ * {@linkplain Task task} {@linkplain #repeat(FlowContext, Task) repeatedly} as long as certain conditions are met.
  * <p>
  * The {@linkplain Task tasks} share a {@linkplain FlowContext context} that can be used to store data in a map or on a stack.
- *
- * @param <C> the type of the {@linkplain FlowContext context} shared between tasks
  */
-public interface Flow<C extends FlowContext> {
+public interface Flow {
 
     /**
      * Executes a list of {@linkplain Task asynchronous tasks} in parallel (all at once).
@@ -39,7 +37,7 @@ public interface Flow<C extends FlowContext> {
      * @return an interface to control whether the execution of the tasks should fail fast or fail last
      */
     static <C extends FlowContext> Sequence<C> parallel(C context, List<Task<C>> tasks) {
-        return new FlowSequence<>(PARALLEL, context, tasks);
+        return new SequenceImpl<>(PARALLEL, context, tasks);
     }
 
     /**
@@ -51,7 +49,7 @@ public interface Flow<C extends FlowContext> {
      * @return an interface to control whether the execution of the tasks should fail fast or fail last
      */
     static <C extends FlowContext> Sequence<C> sequential(C context, List<Task<C>> tasks) {
-        return new FlowSequence<>(SEQUENTIAL, context, tasks);
+        return new SequenceImpl<>(SEQUENTIAL, context, tasks);
     }
 
     /**
@@ -63,6 +61,6 @@ public interface Flow<C extends FlowContext> {
      * @return an interface to control the interval, timeout and fail fast behaviour
      */
     static <C extends FlowContext> Repeat<C> repeat(C context, Task<C> task) {
-        return new FlowRepeat<>(context, task);
+        return new RepeatImpl<>(context, task);
     }
 }

@@ -29,7 +29,6 @@ import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.Core;
 import org.jboss.hal.core.mbui.form.OperationFormBuilder;
 import org.jboss.hal.core.runtime.Action;
-import org.jboss.hal.core.runtime.Result;
 import org.jboss.hal.core.runtime.Timeouts;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.core.runtime.server.ServerActions;
@@ -38,6 +37,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.FlowStatus;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.processing.MetadataProcessor;
@@ -57,6 +57,7 @@ import elemental2.promise.Promise;
 import static elemental2.dom.DomGlobal.setTimeout;
 import static java.util.Collections.emptyList;
 import static org.jboss.hal.ballroom.dialog.Dialog.Size.MEDIUM;
+import static org.jboss.hal.core.runtime.TimeoutHandler.repeatUntilTimeout;
 import static org.jboss.hal.core.runtime.Timeouts.hostTimeout;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
@@ -66,7 +67,8 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.RESTART;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESTART_SERVERS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SHUTDOWN;
-import static org.jboss.hal.dmr.dispatch.TimeoutHandler.repeatUntilTimeout;
+import static org.jboss.hal.flow.FlowStatus.FAILURE;
+import static org.jboss.hal.flow.FlowStatus.SUCCESS;
 import static org.jboss.hal.resources.UIConstants.SHORT_TIMEOUT;
 
 public class HostActions implements Timeouts {
@@ -136,14 +138,14 @@ public class HostActions implements Timeouts {
                                         message,
                                         resources.messages().reloadDomainControllerPending(host.getName()),
                                         resources.messages().reloadHostSuccess(host.getName()),
-                                        resources.messages().reloadHostError(host.getName()),
-                                        resources.messages().domainControllerTimeout(host.getName()));
+                                        resources.messages().domainControllerTimeout(host.getName()),
+                                        resources.messages().reloadHostError(host.getName()));
                             } else {
                                 hostControllerOperation(host, operation, hostTimeout(host, Action.RELOAD),
                                         restartServers ? host.getServers(Server::isStarted) : emptyList(),
                                         resources.messages().reloadHostSuccess(host.getName()),
-                                        resources.messages().reloadHostError(host.getName()),
-                                        resources.messages().hostControllerTimeout(host.getName()));
+                                        resources.messages().hostControllerTimeout(host.getName()),
+                                        resources.messages().reloadHostError(host.getName()));
                             }
                         }, SHORT_TIMEOUT);
                     });
@@ -180,14 +182,14 @@ public class HostActions implements Timeouts {
                             resources.messages().restart(host.getName()),
                             resources.messages().restartDomainControllerPending(host.getName()),
                             resources.messages().restartHostSuccess(host.getName()),
-                            resources.messages().restartHostError(host.getName()),
-                            resources.messages().domainControllerTimeout(host.getName()));
+                            resources.messages().domainControllerTimeout(host.getName()),
+                            resources.messages().restartHostError(host.getName()));
 
                 } else {
                     hostControllerOperation(host, operation, hostTimeout(host, Action.RESTART), host.getServers(),
                             resources.messages().restartHostSuccess(host.getName()),
-                            resources.messages().restartHostError(host.getName()),
-                            resources.messages().hostControllerTimeout(host.getName()));
+                            resources.messages().hostControllerTimeout(host.getName()),
+                            resources.messages().restartHostError(host.getName()));
                 }
             }, SHORT_TIMEOUT);
         });
@@ -195,43 +197,66 @@ public class HostActions implements Timeouts {
 
     // ------------------------------------------------------ helper methods
 
-    private void domainControllerOperation(Host host, Operation operation, int timeout, List<Server> servers,
-            String title, SafeHtml pendingMessage, SafeHtml successMessage, SafeHtml errorMessage,
-            SafeHtml timeoutMessage) {
-        BlockingDialog pendingDialog = DialogFactory.buildLongRunning(title, pendingMessage);
-        pendingDialog.show();
-
-        dispatcher.execute(operation)
-                .then(result -> repeatUntilTimeout(dispatcher, ping(host), timeout))
-                .then(__ -> {
-                    pendingDialog.close();
-                    return finish(host, servers, Result.SUCCESS, Message.success(successMessage));
-                })
-                .catch_(error -> {
-                    pendingDialog.close();
-                    DialogFactory.buildBlocking(title, timeoutMessage).show();
-                    return finish(host, servers, Result.ERROR, Message.error(errorMessage, String.valueOf(error)));
-                });
-    }
-
-    private void hostControllerOperation(Host host, Operation operation, int timeout, List<Server> servers,
-            SafeHtml successMessage, SafeHtml errorMessage, SafeHtml timeoutMessage) {
-        dispatcher.execute(operation)
-                .then(__ -> repeatUntilTimeout(dispatcher, ping(host), timeout))
-                .then(__ -> finish(host, servers, Result.SUCCESS, Message.success(successMessage)))
-                .catch_(error -> finish(host, servers, Result.ERROR, Message.error(errorMessage, String.valueOf(error))));
-    }
-
     private void prepare(Host host, List<Server> servers, Action action) {
         markAsPending(host); // mark as pending *before* firing the event!
         servers.forEach(serverActions::markAsPending);
         eventBus.fireEvent(new HostActionEvent(host, servers, action));
     }
 
-    private Promise<Void> finish(Host host, List<Server> servers, Result result, Message message) {
+    private void domainControllerOperation(Host host, Operation operation, int timeout, List<Server> servers,
+            String title, SafeHtml pendingMessage, SafeHtml successMessage, SafeHtml timeoutMessage,
+            SafeHtml errorMessage) {
+        BlockingDialog pendingDialog = DialogFactory.buildLongRunning(title, pendingMessage);
+        pendingDialog.show();
+
+        dispatcher.execute(operation)
+                .then(result -> repeatUntilTimeout(dispatcher, ping(host), timeout))
+                .then(status -> {
+                    pendingDialog.close();
+                    switch (status) {
+                        case SUCCESS:
+                            return finish(host, servers, SUCCESS, Message.success(successMessage));
+                        case FAILURE:
+                            return finish(host, servers, FAILURE, Message.error(errorMessage));
+                        case TIMEOUT:
+                            DialogFactory.buildBlocking(title, timeoutMessage).show();
+                            return finish(host, servers, FlowStatus.TIMEOUT, null);
+                        default:
+                            throw new IllegalStateException("Invalid flow status: " + status);
+                    }
+                })
+                .catch_(error -> {
+                    pendingDialog.close();
+                    return finish(host, servers, FAILURE, Message.error(errorMessage, String.valueOf(error)));
+                });
+    }
+
+    private void hostControllerOperation(Host host, Operation operation, int timeout, List<Server> servers,
+            SafeHtml successMessage, SafeHtml timeoutMessage, SafeHtml errorMessage) {
+        dispatcher.execute(operation)
+                .then(__ -> repeatUntilTimeout(dispatcher, ping(host), timeout))
+                .then(status -> finish(host, servers, status, successMessage, timeoutMessage, errorMessage))
+                .catch_(error -> finish(host, servers, FAILURE, Message.error(errorMessage, String.valueOf(error))));
+    }
+
+    private Promise<Void> finish(Host host, List<Server> servers, FlowStatus status,
+            SafeHtml successMessage, SafeHtml timeoutMessage, SafeHtml errorMessage) {
+        switch (status) {
+            case SUCCESS:
+                return finish(host, servers, SUCCESS, Message.success(successMessage));
+            case TIMEOUT:
+                return finish(host, servers, FlowStatus.TIMEOUT, Message.error(timeoutMessage));
+            case FAILURE:
+                return finish(host, servers, FAILURE, Message.error(errorMessage));
+            default:
+                throw new IllegalStateException("Invalid flow status" + status);
+        }
+    }
+
+    private Promise<Void> finish(Host host, List<Server> servers, FlowStatus status, Message message) {
         clearPending(host); // clear pending state *before* firing the event!
         servers.forEach(serverActions::clearPending);
-        eventBus.fireEvent(new HostResultEvent(host, servers, result));
+        eventBus.fireEvent(new HostResultEvent(host, servers, status));
         if (message != null) {
             MessageEvent.fire(eventBus, message);
         }

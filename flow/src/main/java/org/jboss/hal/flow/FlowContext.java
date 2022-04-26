@@ -33,12 +33,23 @@ import elemental2.promise.Promise;
  * <p>
  * The context provides a {@linkplain Progress progress indicator} to signal the progress of the task execution and a stack and
  * a map for sharing data between {@linkplain Task asynchronous tasks}.
+ * <p>
+ * Finally, the context provides methods to resolve the context as promise.
  */
 public class FlowContext {
+
+    /**
+     * Method to check if the error in a {@linkplain Promise.CatchOnRejectedCallbackFn catch} callback is due to a timeout.
+     */
+    public static boolean timeout(Object error) {
+        return error.equals(FlowRunner.TIMEOUT_ERROR);
+    }
 
     private final Stack<Object> stack;
     private final Map<String, Object> data;
     final Progress progress;
+    FlowStatus status;
+    String failure;
 
     /**
      * Creates a new instance with a {@linkplain Progress#NOOP noop progress implementation}.
@@ -56,37 +67,51 @@ public class FlowContext {
         this.progress = progress;
         this.stack = new Stack<>();
         this.data = new HashMap<>();
+        this.status = FlowStatus.NOT_STARTED;
+    }
+
+    // ------------------------------------------------------ control
+
+    /**
+     * Resolves this context successfully as a promise.
+     */
+    public <C extends FlowContext> Promise<C> resolve() {
+        return resolveInternal();
     }
 
     /**
-     * Resolves this context as a promise.
+     * Pushes the value on top of the stack and resolves this context successfully as a promise.
      */
-    public Promise<FlowContext> resolve() {
-        return Promise.resolve(this);
-    }
-
-    /**
-     * Pushes the value on top of the stack and resolves this context as a promise.
-     */
-    public <T> Promise<FlowContext> resolve(T value) {
+    public <C extends FlowContext, T> Promise<C> resolve(T value) {
         push(value);
-        return resolve();
+        return resolveInternal();
     }
 
     /**
-     * Stores the value under the given key in the map and resolves this context as a promise.
+     * Stores the value under the given key in the map and resolves this context successfully as a promise.
      */
-    public <T> Promise<FlowContext> resolve(String key, T value) {
+    public <C extends FlowContext, T> Promise<C> resolve(String key, T value) {
         set(key, value);
-        return resolve();
+        return resolveInternal();
     }
 
     /**
      * Rejects this context with an error.
      */
-    public Promise<FlowContext> reject(String failure) {
-        return Promise.reject(failure);
+    public <C extends FlowContext> Promise<C> reject(Object error) {
+        return rejectInternal(error);
     }
+
+    @SuppressWarnings("unchecked")
+    private <C extends FlowContext> Promise<C> resolveInternal() {
+        return (Promise<C>) Promise.resolve(this);
+    }
+
+    private <C extends FlowContext> Promise<C> rejectInternal(Object error) {
+        return Promise.reject(error);
+    }
+
+    // ------------------------------------------------------ data
 
     /**
      * Pushes the value om top of the stack.
@@ -152,8 +177,52 @@ public class FlowContext {
         return data.keySet();
     }
 
+    // ------------------------------------------------------ info
+
+    /**
+     * @return the execution status of this context
+     */
+    public FlowStatus status() {
+        return status;
+    }
+
+    /**
+     * @return whether the execution was successful
+     */
+    public boolean successful() {
+        return status == FlowStatus.SUCCESS;
+    }
+
+    /**
+     * @return whether the execution ran into a timeout
+     */
+    public boolean timeout() {
+        return status == FlowStatus.TIMEOUT;
+    }
+
+    /**
+     * @return whether the execution failed
+     */
+    public boolean failure() {
+        return status == FlowStatus.FAILURE;
+    }
+
+    /**
+     * @return the failure or {@code null} if the execution was successful or ran into a timeout
+     */
+    public String failureReason() {
+        return failure;
+    }
+
     @Override
     public String toString() {
-        return "FlowContext {stack: " + stack + ", map: " + data + "}";
+        StringBuilder builder = new StringBuilder().append("FlowContext {");
+        builder.append("stack: ").append(stack)
+                .append(", map: ").append(data)
+                .append(", status: ").append(status);
+        if (status == FlowStatus.FAILURE && failure != null) {
+            builder.append('(').append(failure).append(')');
+        }
+        return builder.append('}').toString();
     }
 }

@@ -19,6 +19,12 @@ import elemental2.promise.Promise;
 
 /**
  * Interface for the execution of an asynchronous task.
+ * <p>
+ * Task implementations can use {@link FlowContext#resolve()}, {@link FlowContext#resolve(Object)} and
+ * {@link FlowContext#resolve(String, Object)} as a shortcut to push or put a value on the stack or the map and return a
+ * resolved promise.
+ * <p>
+ * In case of an error task implementations can use {@link FlowContext#reject(Object)} to return a rejected promise.
  *
  * @param <C> the type of the {@linkplain FlowContext context} shared between tasks
  */

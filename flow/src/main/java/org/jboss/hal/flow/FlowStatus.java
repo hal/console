@@ -16,17 +16,36 @@
 package org.jboss.hal.flow;
 
 /**
- * A callback for the successful execution of a list of {@linkplain Task asynchronous tasks}.
- *
- * @param <C> the type of the {@linkplain FlowContext context} shared between the tasks
+ * Enum for the execution status of a flow method.
  */
-@FunctionalInterface
-public interface SuccessCallback<C extends FlowContext> {
+public enum FlowStatus {
 
     /**
-     * Called when the execution of the {@linkplain Task asynchronous tasks} has been successful.
-     *
-     * @param context the context shared between the tasks
+     * The execution has not yet started.
      */
-    void success(C context);
+    NOT_STARTED,
+
+    /**
+     * The execution is in progress.
+     */
+    IN_PROGRESS,
+
+    /**
+     * The execution was successful.
+     */
+    SUCCESS,
+
+    /**
+     * The execution ran into a timeout.
+     */
+    TIMEOUT,
+
+    /**
+     * The execution failed.
+     */
+    FAILURE;
+
+    public static FlowStatus fromError(Object error) {
+        return FlowContext.timeout(error) ? TIMEOUT : FAILURE;
+    }
 }

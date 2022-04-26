@@ -26,7 +26,6 @@ import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.core.runtime.Action;
-import org.jboss.hal.core.runtime.Result;
 import org.jboss.hal.core.runtime.group.ServerGroupResultEvent;
 import org.jboss.hal.core.runtime.group.ServerGroupResultEvent.ServerGroupResultHandler;
 import org.jboss.hal.core.runtime.host.HostResultEvent;
@@ -58,6 +57,7 @@ import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTI
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RELOAD_REQUIRED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESTART_REQUIRED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_STATE;
+import static org.jboss.hal.flow.FlowStatus.SUCCESS;
 
 /**
  * Handles {@link org.jboss.hal.dmr.dispatch.ProcessState} events and emits {@linkplain org.jboss.hal.spi.Message messages} if
@@ -163,14 +163,14 @@ public class ProcessStateHandler implements ApplicationReadyHandler, ProcessStat
 
     @Override
     public void onHostResult(final HostResultEvent event) {
-        if (event.getResult() == Result.SUCCESS) {
+        if (event.getStatus() == SUCCESS) {
             resetTimeout();
         }
     }
 
     @Override
     public void onServerGroupResult(final ServerGroupResultEvent event) {
-        if (event.getResult() == Result.SUCCESS) {
+        if (event.getStatus() == SUCCESS) {
             resetTimeout();
         }
     }
@@ -187,7 +187,7 @@ public class ProcessStateHandler implements ApplicationReadyHandler, ProcessStat
     @Override
     public void onServerResult(final ServerResultEvent event) {
         progress.get().finish(); // finish in any case
-        if (event.getResult() == Result.SUCCESS) {
+        if (event.getStatus() == SUCCESS) {
             resetTimeout();
         }
         if (environment.isStandalone() && NameTokens.RUNTIME

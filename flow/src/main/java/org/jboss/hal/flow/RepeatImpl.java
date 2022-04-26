@@ -26,34 +26,69 @@ import static elemental2.dom.DomGlobal.clearTimeout;
 import static elemental2.dom.DomGlobal.setInterval;
 import static elemental2.dom.DomGlobal.setTimeout;
 
-class FlowLoop<C extends FlowContext> {
+class RepeatImpl<C extends FlowContext> extends FlowRunner<C> implements Repeat<C> {
 
-    private static final String TIMEOUT_ERROR = "timeout";
-    private static final int INTERVAL = 500;
-
-    private final int timeout;
-    private final C context;
     private final Task<C> task;
-    private final Predicate<C> predicate;
-    private final boolean failFast;
+    private Predicate<C> predicate;
+    private boolean failFast;
+    private long interval;
+    private long timeout;
+    private int iterations;
+    private int index;
     private String lastFailure;
     private double timeoutHandle;
     private double intervalHandle;
 
-    FlowLoop(final C context, final Task<C> task, final Predicate<C> predicate, final int timeout,
-            final boolean failFast) {
-        this.timeout = timeout;
-        this.context = context;
-        this.context.progress.reset();
+    RepeatImpl(final C context, final Task<C> task) {
+        super(context, 1);
         this.task = task;
-        this.predicate = predicate;
-        this.failFast = failFast;
+        this.predicate = __ -> true;
+        this.failFast = DEFAULT_FAIL_FAST;
+        this.interval = DEFAULT_INTERVAL;
+        this.timeout = DEFAULT_TIMEOUT;
+        this.iterations = DEFAULT_ITERATIONS;
+        this.index = 0;
         this.lastFailure = null;
         this.timeoutHandle = 0;
         this.intervalHandle = 0;
     }
 
-    Promise<C> execute() {
+    // ------------------------------------------------------ repeat API
+
+    @Override
+    public Repeat<C> while_(final Predicate<C> predicate) {
+        this.predicate = predicate;
+        return this;
+    }
+
+    @Override
+    public Repeat<C> failFast(final boolean failFast) {
+        this.failFast = failFast;
+        return this;
+    }
+
+    @Override
+    public Repeat<C> interval(final long interval) {
+        this.interval = interval;
+        return this;
+    }
+
+    @Override
+    public Repeat<C> timeout(final long timeout) {
+        this.timeout = timeout;
+        return this;
+    }
+
+    @Override
+    public Repeat<C> iterations(final int iterations) {
+        this.iterations = iterations;
+        return this;
+    }
+
+    // ------------------------------------------------------ run
+
+    @Override
+    Promise<C> run() {
         return new Promise<>((resolve, reject) -> {
             timeoutHandle = setTimeout(__ -> cancel(reject, TIMEOUT_ERROR), timeout);
             if (!predicate.test(context)) {
@@ -70,8 +105,9 @@ class FlowLoop<C extends FlowContext> {
             } else {
                 task.apply(context)
                         .then(c -> {
-                            context.progress.tick();
-                            if (!predicate.test(c)) {
+                            index++;
+                            c.progress.tick();
+                            if (areWeDone(c)) {
                                 finish(resolve, c);
                             }
                             return null;
@@ -84,7 +120,17 @@ class FlowLoop<C extends FlowContext> {
                             return null;
                         });
             }
-        }, INTERVAL);
+        }, interval);
+    }
+
+    // ------------------------------------------------------ helper methods
+
+    private boolean areWeDone(C context) {
+        if (iterations > 0) {
+            return index == iterations || !predicate.test(context);
+        } else {
+            return !predicate.test(context);
+        }
     }
 
     private void finish(ResolveCallbackFn<C> resolve, C context) {

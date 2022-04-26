@@ -22,7 +22,11 @@ import elemental2.promise.Promise.CatchOnRejectedCallbackFn;
 import elemental2.promise.Promise.FinallyOnFinallyCallbackFn;
 
 /**
- * An interface to use the promise when executing a list of {@linkplain Task asynchronous tasks}.
+ * An interface to use the promise when executing {@linkplain Task asynchronous tasks}.
+ * <p>
+ * <b>Error Handling</b><br/>
+ * When using the methods in this interface, errors in tasks are propagated to the closest catch handler. This is different from
+ * the methods in {@link Subscription} that catch errors in tasks and stores them in the {@linkplain FlowContext context}.
  *
  * @param <C> the type of the {@linkplain FlowContext context} shared between tasks
  */

@@ -26,7 +26,7 @@ import java.util.function.Predicate;
 public interface Repeat<C extends FlowContext> extends Promisable<C>, Subscription<C> {
 
     /**
-     * By default, the execution of {@linkplain Task tasks} fail fast.
+     * By default, the execution of {@linkplain Task task} fails fast.
      */
     boolean DEFAULT_FAIL_FAST = true;
 
@@ -44,11 +44,6 @@ public interface Repeat<C extends FlowContext> extends Promisable<C>, Subscripti
      * By default, the number of iterations are infinite.
      */
     int DEFAULT_ITERATIONS = -1;
-
-    /**
-     * The error message in case of a timeout.
-     */
-    String TIMEOUT_ERROR = "org.jboss.hal.flow.timeout";
 
     /**
      * The task is executed as long as the given predicate evaluates to {@code true}. Defaults to a precondition which always

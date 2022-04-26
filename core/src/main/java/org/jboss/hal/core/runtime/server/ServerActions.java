@@ -41,7 +41,6 @@ import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.form.OperationFormBuilder;
 import org.jboss.hal.core.runtime.Action;
-import org.jboss.hal.core.runtime.Result;
 import org.jboss.hal.core.runtime.RunningState;
 import org.jboss.hal.core.runtime.SuspendState;
 import org.jboss.hal.core.runtime.Timeouts;
@@ -55,6 +54,7 @@ import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.FlowStatus;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.AddressTemplate;
@@ -82,11 +82,14 @@ import elemental2.dom.HTMLElement;
 import elemental2.promise.Promise;
 
 import static elemental2.dom.DomGlobal.setTimeout;
+import static java.util.Collections.emptyList;
 import static org.jboss.elemento.Elements.a;
 import static org.jboss.elemento.Elements.p;
 import static org.jboss.elemento.Elements.span;
 import static org.jboss.hal.core.runtime.RunningState.RUNNING;
 import static org.jboss.hal.core.runtime.SuspendState.SUSPENDED;
+import static org.jboss.hal.core.runtime.TimeoutHandler.repeatOperationUntil;
+import static org.jboss.hal.core.runtime.TimeoutHandler.repeatUntilTimeout;
 import static org.jboss.hal.core.runtime.server.ServerConfigStatus.DISABLED;
 import static org.jboss.hal.core.runtime.server.ServerConfigStatus.STARTED;
 import static org.jboss.hal.core.runtime.server.ServerConfigStatus.STOPPED;
@@ -136,9 +139,9 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.UPDATE_AUTO_START_WITH
 import static org.jboss.hal.dmr.ModelDescriptionConstants.URL;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 import static org.jboss.hal.dmr.ModelNodeHelper.getOrDefault;
-import static org.jboss.hal.dmr.dispatch.TimeoutHandler.repeatOperationUntil;
-import static org.jboss.hal.dmr.dispatch.TimeoutHandler.repeatUntilTimeout;
 import static org.jboss.hal.flow.Flow.sequential;
+import static org.jboss.hal.flow.FlowStatus.FAILURE;
+import static org.jboss.hal.flow.FlowStatus.SUCCESS;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.marginLeft5;
 import static org.jboss.hal.resources.CSS.pfIcon;
@@ -291,32 +294,6 @@ public class ServerActions implements Timeouts {
 
     // ------------------------------------------------------ lifecycle operations
 
-    public void reload(Server server) {
-        Operation operation = new Operation.Builder(server.getServerConfigAddress(), RELOAD)
-                .param(BLOCKING, false)
-                .build();
-        reloadRestart(server, operation, Action.RELOAD, SERVER_RELOAD_TIMEOUT,
-                resources.messages().reload(server.getName()),
-                resources.messages().reloadServerQuestion(server.getName()),
-                resources.messages().reloadServerSuccess(server.getName()),
-                resources.messages().reloadServerError(server.getName()));
-    }
-
-    public void restart(Server server) {
-        if (server.isStandalone()) {
-            restartStandalone(server);
-        } else {
-            Operation operation = new Operation.Builder(server.getServerConfigAddress(), RESTART)
-                    .param(BLOCKING, false)
-                    .build();
-            reloadRestart(server, operation, Action.RESTART, SERVER_RESTART_TIMEOUT,
-                    resources.messages().restart(server.getName()),
-                    resources.messages().restartServerQuestion(server.getName()),
-                    resources.messages().restartServerSuccess(server.getName()),
-                    resources.messages().restartServerError(server.getName()));
-        }
-    }
-
     private void restartStandalone(Server server) {
         restartStandalone(server, resources.messages().restartStandaloneQuestion(server.getName()));
     }
@@ -337,23 +314,62 @@ public class ServerActions implements Timeouts {
                 Operation ping = new Operation.Builder(ResourceAddress.root(), READ_RESOURCE_OPERATION).build();
                 dispatcher.execute(operation)
                         .then(___ -> repeatUntilTimeout(dispatcher, ping, SERVER_RESTART_TIMEOUT))
-                        .then(___ -> {
+                        .then(status -> {
                             pendingDialog.close();
-                            return finish(Server.STANDALONE, Result.SUCCESS, Message.success(
-                                    resources.messages().restartServerSuccess(server.getName())));
+                            switch (status) {
+                                case SUCCESS:
+                                    return finish(Server.STANDALONE, SUCCESS, Message.success(
+                                            resources.messages().restartServerSuccess(server.getName())));
+                                case FAILURE:
+                                    return finish(Server.STANDALONE, FAILURE, Message.error(
+                                            resources.messages().restartServerError(server.getName())));
+                                case TIMEOUT:
+                                    DialogFactory.buildBlocking(title,
+                                            resources.messages().restartStandaloneTimeout(server.getName())).show();
+                                    return finish(Server.STANDALONE, FlowStatus.TIMEOUT, null);
+                                default:
+                                    throw new IllegalStateException("Invalid flow status: " + status);
+                            }
                         })
-                        .catch_(___ -> {
+                        .catch_(error -> {
                             pendingDialog.close();
-                            DialogFactory.buildBlocking(
-                                    title, resources.messages().restartStandaloneTimeout(server.getName())).show();
-                            return finish(Server.STANDALONE, Result.TIMEOUT, null);
+                            return finish(Server.STANDALONE, FAILURE, Message.error(
+                                    resources.messages().restartServerError(server.getName()), String.valueOf(error)));
                         });
             }, SHORT_TIMEOUT);
         });
     }
 
+    public void reload(Server server) {
+        Operation operation = new Operation.Builder(server.getServerConfigAddress(), RELOAD)
+                .param(BLOCKING, false)
+                .build();
+        reloadRestart(server, operation, Action.RELOAD, SERVER_RELOAD_TIMEOUT,
+                resources.messages().reload(server.getName()),
+                resources.messages().reloadServerQuestion(server.getName()),
+                resources.messages().reloadServerSuccess(server.getName()),
+                resources.messages().serverTimeout(server.getName()),
+                resources.messages().serverBootErrors(server.getName()));
+    }
+
+    public void restart(Server server) {
+        if (server.isStandalone()) {
+            restartStandalone(server);
+        } else {
+            Operation operation = new Operation.Builder(server.getServerConfigAddress(), RESTART)
+                    .param(BLOCKING, false)
+                    .build();
+            reloadRestart(server, operation, Action.RESTART, SERVER_RESTART_TIMEOUT,
+                    resources.messages().restart(server.getName()),
+                    resources.messages().restartServerQuestion(server.getName()),
+                    resources.messages().restartServerSuccess(server.getName()),
+                    resources.messages().restartStandaloneTimeout(server.getName()),
+                    resources.messages().restartServerError(server.getName()));
+        }
+    }
+
     private void reloadRestart(Server server, Operation operation, Action action, int timeout,
-            String title, SafeHtml question, SafeHtml successMessage, SafeHtml errorMessage) {
+            String title, SafeHtml question, SafeHtml successMessage, SafeHtml timeoutMessage, SafeHtml errorMessage) {
         DialogFactory.showConfirmation(title, question, () -> {
             prepare(server, action);
             dispatcher.execute(operation)
@@ -361,16 +377,8 @@ public class ServerActions implements Timeouts {
                             server.isStandalone() ? readServerState(server) : readServerConfigStatus(server),
                             server.isStandalone() ? checkServerState(RUNNING) : checkServerConfigStatus(STARTED),
                             timeout))
-                    .then(__ -> readBootErrors(server))
-                    .then(result -> {
-                        if (!result.asList().isEmpty()) {
-                            return finish(server, Result.ERROR, Message.error(
-                                    resources.messages().serverBootErrors(server.getName())));
-                        } else {
-                            return finish(server, Result.SUCCESS, Message.success(successMessage));
-                        }
-                    })
-                    .catch_(__ -> finish(server, Result.ERROR, Message.error(errorMessage)));
+                    .then(status -> finish(server, action, status, successMessage, timeoutMessage, errorMessage))
+                    .catch_(error -> finish(server, FAILURE, Message.error(errorMessage, String.valueOf(error))));
         });
     }
 
@@ -381,44 +389,46 @@ public class ServerActions implements Timeouts {
             return;
         }
 
-        metadataProcessor.lookup(serverConfigTemplate(server), progress.get())
-                .then(metadata -> {
-                    String id = Ids.build(SUSPEND, server.getName(), Ids.FORM);
-                    Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, SUSPEND).build();
+        metadataProcessor.lookup(serverConfigTemplate(server), progress.get()).then(metadata -> {
+            String id = Ids.build(SUSPEND, server.getName(), Ids.FORM);
+            Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, SUSPEND).build();
 
-                    Dialog dialog = DialogFactory.buildConfirmation(
-                            resources.messages().suspend(server.getName()),
-                            resources.messages().suspendServerQuestion(server.getName()),
-                            form.element(),
-                            Dialog.Size.MEDIUM,
-                            () -> {
-                                form.save();
-                                int timeout = getOrDefault(form.getModel(), TIMEOUT,
-                                        () -> form.getModel().get(TIMEOUT).asInt(), 0);
-                                int uiTimeout = timeout + SERVER_SUSPEND_TIMEOUT;
+            Dialog dialog = DialogFactory.buildConfirmation(
+                    resources.messages().suspend(server.getName()),
+                    resources.messages().suspendServerQuestion(server.getName()),
+                    form.element(),
+                    Dialog.Size.MEDIUM,
+                    () -> {
+                        form.save();
+                        int timeout = getOrDefault(form.getModel(), TIMEOUT,
+                                () -> form.getModel().get(TIMEOUT).asInt(), 0);
+                        int uiTimeout = timeout + SERVER_SUSPEND_TIMEOUT;
 
-                                prepare(server, Action.SUSPEND);
-                                ResourceAddress address = server.getServerConfigAddress();
-                                Operation operation = new Operation.Builder(address, SUSPEND)
-                                        .param(TIMEOUT, timeout)
-                                        .build();
-                                dispatcher.execute(operation)
-                                        .then(__ -> repeatOperationUntil(dispatcher,
-                                                readSuspendState(server), checkSuspendState(SUSPENDED), uiTimeout))
-                                        .then(__ -> finish(server, Result.SUCCESS, Message.success(
-                                                resources.messages().suspendServerSuccess(server.getName()))))
-                                        .catch_(__ -> finish(server, Result.ERROR, Message.error(
-                                                resources.messages().suspendServerError(server.getName()))));
-                            });
+                        prepare(server, Action.SUSPEND);
+                        ResourceAddress address = server.getServerConfigAddress();
+                        Operation operation = new Operation.Builder(address, SUSPEND)
+                                .param(TIMEOUT, timeout)
+                                .build();
+                        dispatcher.execute(operation)
+                                .then(__ -> repeatOperationUntil(dispatcher,
+                                        readSuspendState(server), checkSuspendState(SUSPENDED), uiTimeout))
+                                .then(status -> finish(server, Action.SUSPEND, status,
+                                        resources.messages().suspendServerSuccess(server.getName()),
+                                        resources.messages().serverTimeout(server.getName()),
+                                        resources.messages().suspendServerError(server.getName())))
+                                .catch_(error -> finish(server, FAILURE, Message.error(
+                                        resources.messages().suspendServerError(server.getName()),
+                                        String.valueOf(error))));
+                    });
 
-                    dialog.registerAttachable(form);
-                    dialog.show();
+            dialog.registerAttachable(form);
+            dialog.show();
 
-                    ModelNode model = new ModelNode();
-                    model.get(TIMEOUT).set(0);
-                    form.edit(model);
-                    return null;
-                });
+            ModelNode model = new ModelNode();
+            model.get(TIMEOUT).set(0);
+            form.edit(model);
+            return null;
+        });
     }
 
     public void resume(Server server) {
@@ -436,19 +446,13 @@ public class ServerActions implements Timeouts {
                         server.isStandalone() ? readServerState(server) : readServerConfigStatus(server),
                         server.isStandalone() ? checkServerState(RUNNING) : checkServerConfigStatus(STARTED),
                         SERVER_START_TIMEOUT))
-                .then(__ -> readBootErrors(server))
-                .then(result -> {
-                    if (!result.asList().isEmpty()) {
-                        return finish(server, Result.ERROR,
-                                Message.error(resources.messages().serverBootErrors(server.getName())));
-                    } else {
-                        return finish(server, Result.SUCCESS,
-                                Message.success(resources.messages().resumeServerSuccess(server.getName())));
-                    }
-
-                })
-                .catch_(__ -> finish(server, Result.ERROR,
-                        Message.error(resources.messages().resumeServerError(server.getName()))));
+                .then(status -> finish(server, Action.RESUME, status,
+                        resources.messages().resumeServerSuccess(server.getName()),
+                        resources.messages().serverTimeout(server.getName()),
+                        resources.messages().resumeServerError(server.getName())))
+                .catch_(error -> finish(server, FAILURE, Message.error(
+                        resources.messages().resumeServerError(server.getName()),
+                        String.valueOf(error))));
     }
 
     public void stop(Server server) {
@@ -479,10 +483,11 @@ public class ServerActions implements Timeouts {
                                                 readServerConfigStatus(server),
                                                 checkServerConfigStatus(STOPPED, DISABLED),
                                                 uiTimeout))
-                                        .then(__ -> updateServer(server))
-                                        .then(stoppedServer -> finish(stoppedServer, Result.SUCCESS, Message.success(
-                                                resources.messages().stopServerSuccess(server.getName()))))
-                                        .catch_(error -> finish(server, Result.ERROR, Message.error(
+                                        .then(status -> finish(server, Action.STOP, status,
+                                                resources.messages().stopServerSuccess(server.getName()),
+                                                resources.messages().serverTimeout(server.getName()),
+                                                resources.messages().stopServerError(server.getName())))
+                                        .catch_(error -> finish(server, FAILURE, Message.error(
                                                 resources.messages().stopServerError(server.getName()),
                                                 String.valueOf(error))));
                             });
@@ -509,10 +514,11 @@ public class ServerActions implements Timeouts {
         dispatcher.execute(operation)
                 .then(__ -> repeatOperationUntil(dispatcher, readServerConfigStatus(server),
                         checkServerConfigStatus(STOPPED, DISABLED), SERVER_STOP_TIMEOUT))
-                .then(__ -> updateServer(server))
-                .then(stoppedServer -> finish(stoppedServer, Result.SUCCESS, Message.success(
-                        resources.messages().stopServerSuccess(server.getName()))))
-                .catch_(error -> finish(server, Result.ERROR, Message.error(
+                .then(status -> finish(server, Action.STOP, status,
+                        resources.messages().stopServerSuccess(server.getName()),
+                        resources.messages().serverTimeout(server.getName()),
+                        resources.messages().stopServerError(server.getName())))
+                .catch_(error -> finish(server, FAILURE, Message.error(
                         resources.messages().stopServerError(server.getName()),
                         String.valueOf(error))));
     }
@@ -525,10 +531,11 @@ public class ServerActions implements Timeouts {
             dispatcher.execute(operation)
                     .then(__ -> repeatOperationUntil(dispatcher, readServerConfigStatus(server),
                             checkServerConfigStatus(STOPPED, DISABLED), SERVER_DESTROY_TIMEOUT))
-                    .then(__ -> updateServer(server))
-                    .then(stoppedServer -> finish(stoppedServer, Result.SUCCESS, Message.success(
-                            resources.messages().destroyServerSuccess(server.getName()))))
-                    .catch_(error -> finish(server, Result.ERROR, Message.error(
+                    .then(status -> finish(server, Action.DESTROY, status,
+                            resources.messages().destroyServerSuccess(server.getName()),
+                            resources.messages().serverTimeout(server.getName()),
+                            resources.messages().destroyServerError(server.getName())))
+                    .catch_(error -> finish(server, FAILURE, Message.error(
                             resources.messages().destroyServerError(server.getName()), String.valueOf(error))));
         });
     }
@@ -541,10 +548,11 @@ public class ServerActions implements Timeouts {
             dispatcher.execute(operation)
                     .then(__ -> repeatOperationUntil(dispatcher, readServerConfigStatus(server),
                             checkServerConfigStatus(STOPPED, DISABLED), SERVER_KILL_TIMEOUT))
-                    .then(__ -> updateServer(server))
-                    .then(stoppedServer -> finish(stoppedServer, Result.SUCCESS, Message.success(
-                            resources.messages().killServerSuccess(server.getName()))))
-                    .catch_(error -> finish(server, Result.ERROR, Message.error(
+                    .then(status -> finish(server, Action.KILL, status,
+                            resources.messages().killServerSuccess(server.getName()),
+                            resources.messages().serverTimeout(server.getName()),
+                            resources.messages().killServerError(server.getName())))
+                    .catch_(error -> finish(server, FAILURE, Message.error(
                             resources.messages().killServerError(server.getName()), String.valueOf(error))));
         });
     }
@@ -557,17 +565,11 @@ public class ServerActions implements Timeouts {
         dispatcher.execute(operation)
                 .then(__ -> repeatOperationUntil(dispatcher, readServerConfigStatus(server),
                         checkServerConfigStatus(STARTED), SERVER_START_TIMEOUT))
-                .then(__ -> readBootErrors(server))
-                .then(result -> {
-                    if (!result.asList().isEmpty()) {
-                        return finish(server, Result.ERROR, Message.error(
-                                resources.messages().serverBootErrors(server.getName())));
-                    } else {
-                        return finish(server, Result.SUCCESS, Message.success(
-                                resources.messages().startServerSuccess(server.getName())));
-                    }
-                })
-                .catch_(error -> finish(server, Result.ERROR, Message.error(
+                .then(status -> finish(server, Action.START, status,
+                        resources.messages().startServerSuccess(server.getName()),
+                        resources.messages().serverTimeout(server.getName()),
+                        resources.messages().startServerError(server.getName())))
+                .catch_(error -> finish(server, FAILURE, Message.error(
                         resources.messages().startServerError(server.getName()), String.valueOf(error))));
     }
 
@@ -580,17 +582,11 @@ public class ServerActions implements Timeouts {
         dispatcher.execute(operation)
                 .then(__ -> repeatOperationUntil(dispatcher, readServerConfigStatus(server),
                         checkServerConfigStatus(STARTED), SERVER_START_TIMEOUT))
-                .then(__ -> readBootErrors(server))
-                .then(result -> {
-                    if (!result.asList().isEmpty()) {
-                        return finish(server, Result.ERROR, Message.error(
-                                resources.messages().serverBootErrors(server.getName())));
-                    } else {
-                        return finish(server, Result.SUCCESS, Message.success(
-                                resources.messages().startServerSuccess(server.getName())));
-                    }
-                })
-                .catch_(error -> finish(server, Result.ERROR, Message.error(
+                .then(status -> finish(server, Action.START, status,
+                        resources.messages().startServerSuccess(server.getName()),
+                        resources.messages().serverTimeout(server.getName()),
+                        resources.messages().startServerError(server.getName())))
+                .catch_(error -> finish(server, FAILURE, Message.error(
                         resources.messages().startServerError(server.getName()), String.valueOf(error))));
     }
 
@@ -720,9 +716,46 @@ public class ServerActions implements Timeouts {
         eventBus.fireEvent(new ServerActionEvent(server, action));
     }
 
-    private Promise<Void> finish(Server server, Result result, Message message) {
+    private Promise<Void> finish(Server server, Action action, FlowStatus status,
+            SafeHtml successMessage, SafeHtml timeoutMessage, SafeHtml errorMessage) {
+        switch (status) {
+            case SUCCESS:
+                if (Action.isStart(action)) {
+                    ResourceAddress address = server.getServerAddress().add(CORE_SERVICE, MANAGEMENT);
+                    Operation operation = new Operation.Builder(address, READ_BOOT_ERRORS).build();
+                    return dispatcher.execute(operation).then(result -> {
+                        if (result.asList().isEmpty()) {
+                            return finish(server, SUCCESS, Message.success(successMessage));
+                        } else {
+                            return finish(server, FAILURE, Message.error(
+                                    resources.messages().serverBootErrors(server.getName())));
+                        }
+                    });
+                } else if (Action.isStop(action)) {
+                    ResourceAddress address = server.getServerConfigAddress();
+                    Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
+                            .param(ATTRIBUTES_ONLY, true)
+                            .param(INCLUDE_RUNTIME, true)
+                            .build();
+                    return dispatcher.execute(operation).then(result -> {
+                        Server stoppedServer = new Server(server.getHost(), result);
+                        return finish(stoppedServer, SUCCESS, Message.success(successMessage));
+                    });
+                } else {
+                    return finish(server, SUCCESS, Message.success(successMessage));
+                }
+            case FAILURE:
+                return finish(server, FAILURE, Message.error(errorMessage));
+            case TIMEOUT:
+                return finish(server, FlowStatus.TIMEOUT, Message.error(timeoutMessage));
+            default:
+                throw new IllegalStateException("Invalid flow status: " + status);
+        }
+    }
+
+    private Promise<Void> finish(Server server, FlowStatus status, Message message) {
         clearPending(server); // clear pending state *before* firing the event!
-        eventBus.fireEvent(new ServerResultEvent(server, result));
+        eventBus.fireEvent(new ServerResultEvent(server, status));
         MessageEvent.fire(eventBus, message);
         return Promise.resolve((Void) null);
     }
@@ -779,19 +812,13 @@ public class ServerActions implements Timeouts {
         return result -> statusToReach != asEnumValue(result, SuspendState::valueOf, SuspendState.UNDEFINED);
     }
 
-    private Promise<ModelNode> readBootErrors(Server server) {
-        ResourceAddress address = server.getServerAddress().add(CORE_SERVICE, MANAGEMENT);
-        Operation operation = new Operation.Builder(address, READ_BOOT_ERRORS).build();
-        return dispatcher.execute(operation);
-    }
-
-    private Promise<Server> updateServer(Server server) {
-        ResourceAddress address = server.getServerConfigAddress();
-        Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
-                .param(ATTRIBUTES_ONLY, true)
-                .param(INCLUDE_RUNTIME, true)
-                .build();
-        return dispatcher.execute(operation)
-                .then(result -> Promise.resolve(new Server(server.getHost(), result)));
+    private Promise<List<ModelNode>> readBootErrors(FlowStatus status, Server server) {
+        if (status == SUCCESS) {
+            ResourceAddress address = server.getServerAddress().add(CORE_SERVICE, MANAGEMENT);
+            Operation operation = new Operation.Builder(address, READ_BOOT_ERRORS).build();
+            return dispatcher.execute(operation).then(result -> Promise.resolve(result.asList()));
+        } else {
+            return Promise.resolve(emptyList());
+        }
     }
 }

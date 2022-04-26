@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.core.runtime.server;
 
-import org.jboss.hal.core.runtime.Result;
+import org.jboss.hal.flow.FlowStatus;
 
 import com.gwtplatform.dispatch.annotation.GenEvent;
 import com.gwtplatform.dispatch.annotation.Order;
@@ -24,5 +24,5 @@ import com.gwtplatform.dispatch.annotation.Order;
 public class ServerResult {
 
     @Order(1) Server server;
-    @Order(2) Result result;
+    @Order(2) FlowStatus status;
 }
