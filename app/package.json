@@ -23,7 +23,7 @@
     "@parcel/reporter-cli": "^2.4.0",
     "@parcel/transformer-less": "^2.4.1",
     "copyfiles": "^2.4.1",
-    "parcel": "^2.4.1",
+    "parcel": "^2.5.0",
     "parcel-resolver-ignore": "^2.0.0",
     "parcel-resolver-theme": "file:local_modules/parcel-resolver-theme"
   },
