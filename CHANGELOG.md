@@ -19,10 +19,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Bump Elemental2 from 1.0.0-RC1 to 1.1.0
 - Bump Elemento from 0.9.6 to 1.0.10
 - Bump Guava from 25.0 to 31.1
-- Bump moment.js from 2.29.1 to 2.29.2
-- Bump Parcel from 2.3.2 to 2.4.1
+- Bump moment.js from 2.29.1 to 2.29.3
+- Bump Mockito from 4.4.0 to 4.5.0
+- Bump Parcel from 2.3.2 to 2.5.0
 - Bump PouchDB from 7.2.2 to 7.3.0
-- Bump Quarkus from 2.7.5.Final to 2.8.0.Final
+- Bump Quarkus from 2.7.5.Final to 2.8.1.Final
 
 ## [3.5.12] - 2022-03-18
 
