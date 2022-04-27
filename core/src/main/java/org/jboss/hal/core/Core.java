@@ -30,11 +30,6 @@ public class Core {
 
     @Inject public static Core INSTANCE;
 
-    public static void setPendingLifecycleAction(boolean value) {
-        // Dispatcher.setPendingLifecycleAction(value);
-        // ExceptionHandler.setPendingLifecycleAction(value);
-    }
-
     private final Dispatcher dispatcher;
     private final Environment environment;
     private final EventBus eventBus;

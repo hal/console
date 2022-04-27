@@ -29,7 +29,6 @@ import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItemValidation;
-import org.jboss.hal.core.Core;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
@@ -530,13 +529,11 @@ public class ServerGroupActions {
     }
 
     private void markAsPending(ServerGroup serverGroup) {
-        Core.setPendingLifecycleAction(true);
         pendingServerGroups.put(serverGroup.getName(), serverGroup);
         logger.debug("Mark server group {} as pending", serverGroup.getName());
     }
 
     private void clearPending(ServerGroup serverGroup) {
-        Core.setPendingLifecycleAction(false);
         pendingServerGroups.remove(serverGroup.getName());
         logger.debug("Clear pending state for server group {}", serverGroup.getName());
     }

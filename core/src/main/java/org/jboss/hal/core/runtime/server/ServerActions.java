@@ -35,7 +35,6 @@ import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
-import org.jboss.hal.core.Core;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
@@ -761,13 +760,11 @@ public class ServerActions implements Timeouts {
     }
 
     public void markAsPending(Server server) {
-        Core.setPendingLifecycleAction(true);
         pendingServers.put(Ids.hostServer(server.getHost(), server.getName()), server);
         logger.debug("Mark server {} as pending", server.getName());
     }
 
     public void clearPending(Server server) {
-        Core.setPendingLifecycleAction(false);
         pendingServers.remove(Ids.hostServer(server.getHost(), server.getName()));
         logger.debug("Clear pending state for server {}", server.getName());
     }

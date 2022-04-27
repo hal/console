@@ -44,9 +44,6 @@ import org.jboss.hal.dmr.macro.MacroOptions;
 import org.jboss.hal.dmr.macro.Macros;
 import org.jboss.hal.dmr.macro.RecordingEvent;
 import org.jboss.hal.dmr.macro.RecordingEvent.RecordingHandler;
-import org.jboss.hal.resources.Resources;
-import org.jboss.hal.spi.Message;
-import org.jboss.hal.spi.MessageEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,12 +100,6 @@ public class Dispatcher implements RecordingHandler {
             || READ_ONLY_OPERATIONS.contains(operation.getName());
 
     private static final Logger logger = LoggerFactory.getLogger(Dispatcher.class);
-    private static boolean pendingLifecycleAction = false;
-
-    public static void setPendingLifecycleAction(boolean value) {
-        // pendingLifecycleAction = value;
-        // logger.debug("Dispatcher.pendingLifecycleAction = {}", pendingLifecycleAction);
-    }
 
     private final Environment environment;
     private final Endpoints endpoints;
@@ -121,7 +112,7 @@ public class Dispatcher implements RecordingHandler {
     @Inject
     public Dispatcher(Environment environment, Endpoints endpoints, Settings settings,
             EventBus eventBus, ResponseHeadersProcessors responseHeadersProcessors,
-            Macros macros, Resources resources) {
+            Macros macros) {
         this.environment = environment;
         this.endpoints = endpoints;
         this.settings = settings;
@@ -130,13 +121,8 @@ public class Dispatcher implements RecordingHandler {
         this.macros = macros;
 
         this.eventBus.addHandler(RecordingEvent.getType(), this);
-        this.errorCallback = (operation, error) -> {
-            logger.error("Dispatcher error: {}, operation {}", error, operation.asCli());
-            if (!pendingLifecycleAction) {
-                eventBus.fireEvent(
-                        new MessageEvent(Message.error(resources.messages().lastOperationException(), error)));
-            }
-        };
+        this.errorCallback = (operation, error) ->
+                logger.error("Dispatcher error: {}, operation {}", error, operation.asCli());
     }
 
     // ------------------------------------------------------ execute composite

@@ -26,7 +26,6 @@ import org.jboss.hal.ballroom.dialog.BlockingDialog;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.core.Core;
 import org.jboss.hal.core.mbui.form.OperationFormBuilder;
 import org.jboss.hal.core.runtime.Action;
 import org.jboss.hal.core.runtime.Timeouts;
@@ -268,13 +267,11 @@ public class HostActions implements Timeouts {
     }
 
     private void markAsPending(Host host) {
-        Core.setPendingLifecycleAction(true);
         pendingHosts.put(host.getName(), host);
         logger.debug("Mark host {} as pending", host.getName());
     }
 
     private void clearPending(Host host) {
-        Core.setPendingLifecycleAction(false);
         pendingHosts.remove(host.getName());
         logger.debug("Clear pending state for host {}", host.getName());
     }
