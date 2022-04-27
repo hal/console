@@ -655,7 +655,7 @@ public final class TopologyTasks {
                                                 .forEach(servers::add);
                                         return Promise.resolve(c);
                                     })
-                                    .then(error -> {
+                                    .catch_(error -> {
                                         logger.error("TopologyTasks.RunningServers failed: {}", error);
                                         return Promise.resolve(c);
                                     });
