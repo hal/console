@@ -95,6 +95,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
 
     private final boolean addOnly;
     private final boolean singleton;
+    private final boolean omitNoAttributesWarning;
     private final Supplier<org.jboss.hal.dmr.Operation> ping;
     private final Map<String, ModelNode> attributeDescriptions;
     private final ResourceDescription resourceDescription;
@@ -108,6 +109,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
 
         this.addOnly = builder.addOnly;
         this.singleton = builder.singleton;
+        this.omitNoAttributesWarning = builder.omitNoAttributesWarning;
         this.ping = builder.ping;
         this.saveCallback = builder.saveCallback;
         this.cancelCallback = builder.cancelCallback;
@@ -272,7 +274,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
     public void attach() {
         super.attach();
 
-        if (Iterables.isEmpty(getFormItems())) {
+        if (!omitNoAttributesWarning && Iterables.isEmpty(getFormItems())) {
             Alert alert = new Alert(Icons.INFO, MESSAGES.emptyModelNodeForm());
             Elements.removeChildrenFrom(element());
             element().appendChild(alert.element());
@@ -401,6 +403,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         boolean hideDeprecated;
         boolean singleton;
         boolean verifyExcludes;
+        boolean omitNoAttributesWarning;
         Supplier<org.jboss.hal.dmr.Operation> ping;
         EmptyState emptyState;
         String attributePath;
@@ -427,6 +430,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
             this.includeRuntime = false;
             this.hideDeprecated = true;
             this.verifyExcludes = true;
+            this.omitNoAttributesWarning = false;
             this.attributePath = ATTRIBUTES;
         }
 
@@ -519,6 +523,11 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
 
         public Builder<T> dontVerifyExcludes() {
             this.verifyExcludes = false;
+            return this;
+        }
+
+        public Builder<T> omitNoAttributesWarning(boolean omitNoAttributesWarning) {
+            this.omitNoAttributesWarning = omitNoAttributesWarning;
             return this;
         }
 

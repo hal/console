@@ -69,6 +69,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SHUTDOWN;
 import static org.jboss.hal.flow.FlowStatus.FAILURE;
 import static org.jboss.hal.flow.FlowStatus.SUCCESS;
+import static org.jboss.hal.resources.UIConstants.LONG_TIMEOUT;
 import static org.jboss.hal.resources.UIConstants.SHORT_TIMEOUT;
 
 public class HostActions implements Timeouts {
@@ -215,7 +216,10 @@ public class HostActions implements Timeouts {
                     pendingDialog.close();
                     switch (status) {
                         case SUCCESS:
-                            return finish(host, servers, SUCCESS, Message.success(successMessage));
+                            // wait a bit before event handlers try to use the reloaded / restarted domain controller
+                            return new Promise<>((resolve, reject) -> setTimeout(
+                                    __ -> resolve.onInvoke(finish(host, servers, SUCCESS, Message.success(successMessage))),
+                                    LONG_TIMEOUT));
                         case FAILURE:
                             return finish(host, servers, FAILURE, Message.error(errorMessage));
                         case TIMEOUT:

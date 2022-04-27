@@ -948,6 +948,7 @@ public interface ModelDescriptionConstants {
     String SUSPEND = "suspend";
     String SUSPEND_SERVERS = "suspend-servers";
     String SUSPEND_STATE = "suspend-state";
+    String SUSPEND_TIMEOUT = "suspend-timeout";
     String SYSLOG_AUDIT_LOG = "syslog-audit-log";
     String SYSLOG_HANDLER = "syslog-handler";
     String SYSTEM_PROPERTIES = "system-properties";
@@ -968,7 +969,6 @@ public interface ModelDescriptionConstants {
     String THREAD_POOL_MAX_SIZE = "thread-pool-max-size";
     String THROUGH = "through";
     String TIME_REMAINING = "time-remaining";
-    String TIMEOUT = "timeout";
     String TIMER = "timer";
     String TIMERS = "timers";
     String TIMESTAMP = "timestamp";

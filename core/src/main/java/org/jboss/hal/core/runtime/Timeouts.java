@@ -29,7 +29,7 @@ public interface Timeouts {
 
     // ------------------------------------------------------ server
 
-    int SERVER_SUSPEND_TIMEOUT = 1;
+    int SERVER_SUSPEND_TIMEOUT = 2;
     int SERVER_RESUME_TIMEOUT = 3;
     int SERVER_START_TIMEOUT = 15;
     int SERVER_STOP_TIMEOUT = 5;

@@ -13,6 +13,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - [HAL-1779](https://issues.redhat.com/browse/HAL-1779): Replace `discovery-group` and `broadcast-group` resources
 - Adjust license URLs
 
+### Fixed
+
+- Fix item monitor
+
+### Removed
+
+- [HAL-1785](https://issues.redhat.com/browse/HAL-1785): Remove management column
+
 ### Upgrades
 
 - Bump d3 from 5.9.7 to 5.16.0
@@ -23,7 +31,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Bump Mockito from 4.4.0 to 4.5.0
 - Bump Parcel from 2.3.2 to 2.5.0
 - Bump PouchDB from 7.2.2 to 7.3.0
-- Bump Quarkus from 2.7.5.Final to 2.8.1.Final
+- Bump Quarkus from 2.7.5.Final to 2.8.2.Final
 
 ## [3.5.12] - 2022-03-18
 

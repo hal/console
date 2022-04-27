@@ -97,7 +97,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.STOP_SERVERS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SUSPEND;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SUSPEND_SERVERS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SUSPEND_STATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.TIMEOUT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SUSPEND_TIMEOUT;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 import static org.jboss.hal.dmr.ModelNodeHelper.getOrDefault;
 import static org.jboss.hal.flow.FlowStatus.FAILURE;
@@ -196,13 +196,13 @@ public class ServerGroupActions {
                             form.element(),
                             () -> {
                                 form.save();
-                                int timeout = getOrDefault(form.getModel(), TIMEOUT,
-                                        () -> form.getModel().get(TIMEOUT).asInt(), 0);
+                                int timeout = getOrDefault(form.getModel(), SUSPEND_TIMEOUT,
+                                        () -> form.getModel().get(SUSPEND_TIMEOUT).asInt(), 0);
                                 int uiTimeout = timeout + serverGroupTimeout(serverGroup, Action.SUSPEND);
 
                                 prepare(serverGroup, startedServers, Action.SUSPEND);
                                 Operation operation = new Operation.Builder(serverGroup.getAddress(), SUSPEND_SERVERS)
-                                        .param(TIMEOUT, timeout)
+                                        .param(SUSPEND_TIMEOUT, timeout)
                                         .build();
                                 dispatcher.execute(operation)
                                         .then(__ -> repeatCompositeUntil(dispatcher, readSuspendState(startedServers),
@@ -219,7 +219,7 @@ public class ServerGroupActions {
                     dialog.show();
 
                     ModelNode model = new ModelNode();
-                    model.get(TIMEOUT).set(0);
+                    model.get(SUSPEND_TIMEOUT).set(0);
                     form.edit(model);
                 }
 
@@ -267,7 +267,7 @@ public class ServerGroupActions {
                 public void onMetadata(Metadata metadata) {
                     String id = Ids.build(STOP_SERVERS, serverGroup.getName(), Ids.FORM);
                     Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, STOP_SERVERS)
-                            .include(TIMEOUT).build();
+                            .include(SUSPEND_TIMEOUT).build();
 
                     Dialog dialog = DialogFactory.buildConfirmation(
                             resources.messages().stop(serverGroup.getName()),
@@ -275,13 +275,13 @@ public class ServerGroupActions {
                             form.element(),
                             () -> {
                                 form.save();
-                                int timeout = getOrDefault(form.getModel(), TIMEOUT,
-                                        () -> form.getModel().get(TIMEOUT).asInt(), 0);
+                                int timeout = getOrDefault(form.getModel(), SUSPEND_TIMEOUT,
+                                        () -> form.getModel().get(SUSPEND_TIMEOUT).asInt(), 0);
                                 int uiTimeout = timeout + serverGroupTimeout(serverGroup, Action.STOP);
 
                                 prepare(serverGroup, startedServers, Action.STOP);
                                 Operation operation = new Operation.Builder(serverGroup.getAddress(), STOP_SERVERS)
-                                        .param(TIMEOUT, timeout)
+                                        .param(SUSPEND_TIMEOUT, timeout)
                                         .param(BLOCKING, false)
                                         .build();
                                 dispatcher.execute(operation)
@@ -301,7 +301,7 @@ public class ServerGroupActions {
                     dialog.show();
 
                     ModelNode model = new ModelNode();
-                    model.get(TIMEOUT).set(0);
+                    model.get(SUSPEND_TIMEOUT).set(0);
                     form.edit(model);
                 }
 
@@ -474,7 +474,6 @@ public class ServerGroupActions {
         dialog.show();
 
         ModelNode model = new ModelNode();
-        model.get(TIMEOUT).set(0);
         form.edit(model);
     }
 
@@ -559,7 +558,7 @@ public class ServerGroupActions {
         return compositeResult -> {
             long statusCount = compositeResult.stream()
                     .map(step -> asEnumValue(step, RESULT, ServerConfigStatus::valueOf, ServerConfigStatus.UNDEFINED))
-                    .filter(status -> !EnumSet.of(first, rest).contains(status))
+                    .filter(status -> EnumSet.of(first, rest).contains(status))
                     .count();
             return statusCount == servers;
         };
@@ -577,7 +576,7 @@ public class ServerGroupActions {
         return compositeResult -> {
             long statusCount = compositeResult.stream()
                     .map(step -> asEnumValue(step, RESULT, SuspendState::valueOf, SuspendState.UNDEFINED))
-                    .filter(status -> status != statusToReach)
+                    .filter(status -> status == statusToReach)
                     .count();
             return statusCount == servers;
         };

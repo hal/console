@@ -35,6 +35,7 @@ public class OperationFormBuilder<T extends ModelNode> {
     private final String operation;
     private final LinkedHashSet<String> includes;
     private final Set<String> excludes;
+    private boolean omitNoAttributesWarning;
 
     public OperationFormBuilder(String id, Metadata metadata, String operation) {
         this.id = id;
@@ -42,6 +43,7 @@ public class OperationFormBuilder<T extends ModelNode> {
         this.operation = operation;
         this.includes = new LinkedHashSet<>();
         this.excludes = new HashSet<>();
+        this.omitNoAttributesWarning = false;
     }
 
     public OperationFormBuilder<T> include(String[] attributes) {
@@ -75,11 +77,17 @@ public class OperationFormBuilder<T extends ModelNode> {
         return this;
     }
 
+    public OperationFormBuilder<T> omitNoAttributesWarning(boolean omitNoAttributesWarning) {
+        this.omitNoAttributesWarning = omitNoAttributesWarning;
+        return this;
+    }
+
     public ModelNodeForm<T> build() {
         return new ModelNodeForm.Builder<T>(id, metadata.forOperation(operation))
                 .include(includes)
                 .exclude(excludes)
                 .addOnly()
+                .omitNoAttributesWarning(omitNoAttributesWarning)
                 .build();
     }
 }

@@ -87,7 +87,6 @@ import static org.jboss.elemento.Elements.a;
 import static org.jboss.elemento.Elements.p;
 import static org.jboss.elemento.Elements.span;
 import static org.jboss.hal.core.runtime.RunningState.RUNNING;
-import static org.jboss.hal.core.runtime.SuspendState.SUSPENDED;
 import static org.jboss.hal.core.runtime.TimeoutHandler.repeatOperationUntil;
 import static org.jboss.hal.core.runtime.TimeoutHandler.repeatUntilTimeout;
 import static org.jboss.hal.core.runtime.server.ServerConfigStatus.DISABLED;
@@ -133,8 +132,8 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.STATUS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.STOP;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SUSPEND;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SUSPEND_STATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SUSPEND_TIMEOUT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SYSTEM_PROPERTY;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.TIMEOUT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UPDATE_AUTO_START_WITH_SERVER_STATUS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.URL;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
@@ -375,7 +374,7 @@ public class ServerActions implements Timeouts {
             dispatcher.execute(operation)
                     .then(__ -> repeatOperationUntil(dispatcher,
                             server.isStandalone() ? readServerState(server) : readServerConfigStatus(server),
-                            server.isStandalone() ? checkServerState(RUNNING) : checkServerConfigStatus(STARTED),
+                            server.isStandalone() ? checkRunningState() : checkServerConfigStatus(STARTED),
                             timeout))
                     .then(status -> finish(server, action, status, successMessage, timeoutMessage, errorMessage))
                     .catch_(error -> finish(server, FAILURE, Message.error(errorMessage, String.valueOf(error))));
@@ -400,18 +399,18 @@ public class ServerActions implements Timeouts {
                     Dialog.Size.MEDIUM,
                     () -> {
                         form.save();
-                        int timeout = getOrDefault(form.getModel(), TIMEOUT,
-                                () -> form.getModel().get(TIMEOUT).asInt(), 0);
+                        int timeout = getOrDefault(form.getModel(), SUSPEND_TIMEOUT,
+                                () -> form.getModel().get(SUSPEND_TIMEOUT).asInt(), 0);
                         int uiTimeout = timeout + SERVER_SUSPEND_TIMEOUT;
 
                         prepare(server, Action.SUSPEND);
                         ResourceAddress address = server.getServerConfigAddress();
                         Operation operation = new Operation.Builder(address, SUSPEND)
-                                .param(TIMEOUT, timeout)
+                                .param(SUSPEND_TIMEOUT, timeout)
                                 .build();
                         dispatcher.execute(operation)
                                 .then(__ -> repeatOperationUntil(dispatcher,
-                                        readSuspendState(server), checkSuspendState(SUSPENDED), uiTimeout))
+                                        readSuspendState(server), checkSuspendState(), uiTimeout))
                                 .then(status -> finish(server, Action.SUSPEND, status,
                                         resources.messages().suspendServerSuccess(server.getName()),
                                         resources.messages().serverTimeout(server.getName()),
@@ -425,7 +424,7 @@ public class ServerActions implements Timeouts {
             dialog.show();
 
             ModelNode model = new ModelNode();
-            model.get(TIMEOUT).set(0);
+            model.get(SUSPEND_TIMEOUT).set(0);
             form.edit(model);
             return null;
         });
@@ -444,7 +443,7 @@ public class ServerActions implements Timeouts {
         dispatcher.execute(operation)
                 .then(__ -> repeatOperationUntil(dispatcher,
                         server.isStandalone() ? readServerState(server) : readServerConfigStatus(server),
-                        server.isStandalone() ? checkServerState(RUNNING) : checkServerConfigStatus(STARTED),
+                        server.isStandalone() ? checkRunningState() : checkServerConfigStatus(STARTED),
                         SERVER_START_TIMEOUT))
                 .then(status -> finish(server, Action.RESUME, status,
                         resources.messages().resumeServerSuccess(server.getName()),
@@ -460,7 +459,8 @@ public class ServerActions implements Timeouts {
                 .then(metadata -> {
                     String id = Ids.build(STOP, server.getName(), Ids.FORM);
                     Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, STOP)
-                            .include(TIMEOUT).build();
+                            .include(SUSPEND_TIMEOUT)
+                            .build();
 
                     Dialog dialog = DialogFactory.buildConfirmation(
                             resources.messages().stop(server.getName()),
@@ -469,13 +469,13 @@ public class ServerActions implements Timeouts {
                             Dialog.Size.MEDIUM,
                             () -> {
                                 form.save();
-                                int timeout = getOrDefault(form.getModel(), TIMEOUT,
-                                        () -> form.getModel().get(TIMEOUT).asInt(), 0);
+                                int timeout = getOrDefault(form.getModel(), SUSPEND_TIMEOUT,
+                                        () -> form.getModel().get(SUSPEND_TIMEOUT).asInt(), 0);
                                 int uiTimeout = timeout + SERVER_STOP_TIMEOUT;
 
                                 prepare(server, Action.STOP);
                                 Operation operation = new Operation.Builder(server.getServerConfigAddress(), STOP)
-                                        .param(TIMEOUT, timeout)
+                                        .param(SUSPEND_TIMEOUT, timeout)
                                         .param(BLOCKING, false)
                                         .build();
                                 dispatcher.execute(operation)
@@ -496,7 +496,7 @@ public class ServerActions implements Timeouts {
                     dialog.show();
 
                     ModelNode model = new ModelNode();
-                    model.get(TIMEOUT).set(0);
+                    model.get(SUSPEND_TIMEOUT).set(0);
                     form.edit(model);
                     return null;
                 });
@@ -791,15 +791,12 @@ public class ServerActions implements Timeouts {
     private Predicate<ModelNode> checkServerConfigStatus(ServerConfigStatus first, ServerConfigStatus... rest) {
         return result -> {
             ServerConfigStatus status = asEnumValue(result, ServerConfigStatus::valueOf, ServerConfigStatus.UNDEFINED);
-            return !EnumSet.of(first, rest).contains(status);
+            return EnumSet.of(first, rest).contains(status);
         };
     }
 
-    private Predicate<ModelNode> checkServerState(RunningState first, RunningState... rest) {
-        return result -> {
-            RunningState state = asEnumValue(result, RunningState::valueOf, RunningState.UNDEFINED);
-            return EnumSet.of(first, rest).contains(state);
-        };
+    private Predicate<ModelNode> checkRunningState() {
+        return result -> RUNNING == asEnumValue(result, RunningState::valueOf, RunningState.UNDEFINED);
     }
 
     private Operation readSuspendState(Server server) {
@@ -808,8 +805,8 @@ public class ServerActions implements Timeouts {
                 .build();
     }
 
-    private Predicate<ModelNode> checkSuspendState(SuspendState statusToReach) {
-        return result -> statusToReach != asEnumValue(result, SuspendState::valueOf, SuspendState.UNDEFINED);
+    private Predicate<ModelNode> checkSuspendState() {
+        return result -> SuspendState.SUSPENDED == asEnumValue(result, SuspendState::valueOf, SuspendState.UNDEFINED);
     }
 
     private Promise<List<ModelNode>> readBootErrors(FlowStatus status, Server server) {

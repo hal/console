@@ -106,8 +106,8 @@ public class Dispatcher implements RecordingHandler {
     private static boolean pendingLifecycleAction = false;
 
     public static void setPendingLifecycleAction(boolean value) {
-        pendingLifecycleAction = value;
-        logger.debug("Dispatcher.pendingLifecycleAction = {}", pendingLifecycleAction);
+        // pendingLifecycleAction = value;
+        // logger.debug("Dispatcher.pendingLifecycleAction = {}", pendingLifecycleAction);
     }
 
     private final Environment environment;
@@ -443,7 +443,10 @@ public class Dispatcher implements RecordingHandler {
     // ------------------------------------------------------ error handling
 
     CatchOnRejectedCallbackFn<ModelNode> rejectWithError() {
-        return error -> Promise.reject("Unexpected error: " + error);
+        return error -> {
+            logger.error("Dispatcher error: {}", error);
+            return Promise.reject("Dispatcher error: " + error);
+        };
     }
 
     private String statusError(int status) {
