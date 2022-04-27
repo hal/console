@@ -20,27 +20,22 @@ import javax.inject.Inject;
 import org.jboss.hal.spi.Callback;
 
 import com.google.web.bindery.event.shared.EventBus;
-import com.google.web.bindery.event.shared.HandlerRegistration;
 import com.gwtplatform.mvp.client.proxy.NavigationEvent;
+import com.gwtplatform.mvp.client.proxy.NavigationHandler;
 
-import static elemental2.dom.DomGlobal.clearTimeout;
-import static elemental2.dom.DomGlobal.console;
 import static elemental2.dom.DomGlobal.document;
-import static elemental2.dom.DomGlobal.setTimeout;
 import static org.jboss.hal.resources.CSS.withProgress;
-import static org.jboss.hal.resources.UIConstants.MEDIUM_TIMEOUT;
 
 /**
  * Class to monitor item actions and show a progress indicator if they take longer than a given timeout. Relies on an unique
  * item id implemented by {@link ItemDisplay#getId()} and specified in the column setup.
  */
-public class ItemMonitor {
+public class ItemMonitor implements NavigationHandler {
 
     public static void startProgress(final String itemId) {
         elemental2.dom.Element element = document.getElementById(itemId);
         if (element != null && !element.classList.contains(withProgress)) {
             element.classList.add(withProgress);
-            console.log("### Started progress for item %s", itemId);
         }
     }
 
@@ -48,17 +43,22 @@ public class ItemMonitor {
         elemental2.dom.Element element = document.getElementById(itemId);
         if (element != null) {
             element.classList.remove(withProgress);
-            console.log("### Stopped progress for item %s", itemId);
         }
     }
 
-    private final EventBus eventBus;
-    private double timeoutHandle = -1;
-    private HandlerRegistration handlerRegistration;
+    private String itemId;
+    private String nameToken;
 
     @Inject
     public ItemMonitor(final EventBus eventBus) {
-        this.eventBus = eventBus;
+        eventBus.addHandler(NavigationEvent.getType(), this);
+    }
+
+    @Override
+    public void onNavigation(final NavigationEvent navigationEvent) {
+        if (activeMonitor() && nameToken.equals(navigationEvent.getRequest().getNameToken())) {
+            stopCurrentMonitor();
+        }
     }
 
     /**
@@ -68,15 +68,29 @@ public class ItemMonitor {
             final Callback callback) {
         return itm -> {
             callback.execute();
-            startProgress(itemId);
-            timeoutHandle = setTimeout(whatever -> handlerRegistration = eventBus.addHandler(NavigationEvent.getType(),
-                    navigationEvent -> {
-                        if (nameToken.equals(navigationEvent.getRequest().getNameToken())) {
-                            handlerRegistration.removeHandler();
-                            clearTimeout(timeoutHandle);
-                            stopProgress(itemId);
-                        }
-                    }), MEDIUM_TIMEOUT);
+            startMonitor(itemId, nameToken);
         };
+    }
+
+    private void startMonitor(final String itemId, final String nameToken) {
+        // first make sure to cancel a running monitor
+        stopCurrentMonitor();
+
+        // register new monitor and start progress indicator
+        this.itemId = itemId;
+        this.nameToken = nameToken;
+        startProgress(itemId);
+    }
+
+    private void stopCurrentMonitor() {
+        if (itemId != null) {
+            stopProgress(itemId);
+        }
+        this.itemId = null;
+        this.nameToken = null;
+    }
+
+    private boolean activeMonitor() {
+        return itemId != null && nameToken != null;
     }
 }
