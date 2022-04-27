@@ -137,8 +137,6 @@ import org.jboss.hal.client.deployment.StandaloneDeploymentPresenter;
 import org.jboss.hal.client.deployment.StandaloneDeploymentView;
 import org.jboss.hal.client.homepage.HomepagePresenter;
 import org.jboss.hal.client.homepage.HomepageView;
-import org.jboss.hal.client.management.ManagementPresenter;
-import org.jboss.hal.client.management.ManagementView;
 import org.jboss.hal.client.patching.PatchingFinderPresenter;
 import org.jboss.hal.client.patching.PatchingFinderView;
 import org.jboss.hal.client.rhcp.RhcpPresenter;
@@ -498,11 +496,6 @@ public class ConsoleModule extends AbstractPresenterModule {
                 MacroEditorPresenter.MyView.class,
                 MacroEditorView.class,
                 MacroEditorPresenter.MyProxy.class);
-
-        bindPresenter(ManagementPresenter.class,
-                ManagementPresenter.MyView.class,
-                ManagementView.class,
-                ManagementPresenter.MyProxy.class);
 
         bindPresenter(ManagementOperationsPresenter.class,
                 ManagementOperationsPresenter.MyView.class,
