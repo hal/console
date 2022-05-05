@@ -67,7 +67,7 @@ jobs:
           cache: maven
       - name: Login to Quay.io
         id: login-to-quay-io
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           registry: quay.io
           username: ${{ secrets.QUAY_USERNAME }}
