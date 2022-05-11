@@ -113,6 +113,7 @@ public interface AddressTemplates {
             + "/regex-validating-principal-transformer=*";
 
     String SASL_AUTHENTICATION_FACTORY_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/sasl-authentication-factory=*";
+    String SECRET_KEY_CREDENTIAL_STORE_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/secret-key-credential-store=*";
     String SECURITY_DOMAIN_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/security-domain=*";
     String SERVER_SSL_CONTEXT_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/server-ssl-context=*";
     String SERVER_SSL_SNI_CONTEXT_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/server-ssl-sni-context=*";
@@ -220,6 +221,7 @@ public interface AddressTemplates {
             REGEX_VALIDATING_PRINCIPAL_TRANSFORMER_ADDRESS);
 
     AddressTemplate SASL_AUTHENTICATION_FACTORY_TEMPLATE = AddressTemplate.of(SASL_AUTHENTICATION_FACTORY_ADDRESS);
+    AddressTemplate SECRET_KEY_CREDENTIAL_STORE_TEMPLATE = AddressTemplate.of(SECRET_KEY_CREDENTIAL_STORE_ADDRESS);
     AddressTemplate SECURITY_DOMAIN_TEMPLATE = AddressTemplate.of(SECURITY_DOMAIN_ADDRESS);
     AddressTemplate SERVER_SSL_CONTEXT_TEMPLATE = AddressTemplate.of(SERVER_SSL_CONTEXT_ADDRESS);
     AddressTemplate SERVER_SSL_SNI_CONTEXT_TEMPLATE = AddressTemplate.of(SERVER_SSL_SNI_CONTEXT_ADDRESS);

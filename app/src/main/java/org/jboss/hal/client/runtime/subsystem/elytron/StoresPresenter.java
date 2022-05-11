@@ -86,6 +86,8 @@ import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.KE
 import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.KEY_STORE_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.LDAP_KEY_STORE_ADDRESS;
 import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.LDAP_KEY_STORE_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.SECRET_KEY_CREDENTIAL_STORE_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.SECRET_KEY_CREDENTIAL_STORE_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD_ALIAS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ALIAS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
@@ -174,12 +176,14 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
         composite.add(operation(FILTERING_KEY_STORE_TEMPLATE));
         composite.add(operation(KEY_STORE_TEMPLATE));
         composite.add(operation(LDAP_KEY_STORE_TEMPLATE));
+        composite.add(operation(SECRET_KEY_CREDENTIAL_STORE_TEMPLATE));
         dispatcher.execute(composite, (CompositeResult result) -> {
             int i = 0;
             getView().updateCredentialStore(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
             getView().updateFilteringKeystore(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
             getView().updateKeystore(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
             getView().updateLdapKeystore(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+            getView().updateSecretKeyCredentialStore(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
         });
     }
 
@@ -789,7 +793,8 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(NameTokens.ELYTRON_RUNTIME_STORES)
-    @Requires({ CREDENTIAL_STORE_ADDRESS, FILTERING_KEY_STORE_ADDRESS, KEY_STORE_ADDRESS, LDAP_KEY_STORE_ADDRESS })
+    @Requires({ CREDENTIAL_STORE_ADDRESS, FILTERING_KEY_STORE_ADDRESS, KEY_STORE_ADDRESS, LDAP_KEY_STORE_ADDRESS,
+            SECRET_KEY_CREDENTIAL_STORE_ADDRESS })
     public interface MyProxy extends ProxyPlace<StoresPresenter> {
     }
 
@@ -801,6 +806,8 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
         void updateKeystore(List<NamedNode> items);
 
         void updateLdapKeystore(List<NamedNode> items);
+
+        void updateSecretKeyCredentialStore(List<NamedNode> items);
 
     }
     // @formatter:on

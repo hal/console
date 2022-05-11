@@ -674,6 +674,7 @@ public interface ModelDescriptionConstants {
     String POOL_NAME = "pool-name";
     String POOLED_CONNECTION_FACTORY = "pooled-connection-factory";
     String POP3 = "pop3";
+    String POPULATE = "populate";
     String PORT = "port";
     String PORT_OFFSET = "port-offset";
     String POSSIBLE_CAUSES = "possible-causes";
@@ -836,6 +837,7 @@ public interface ModelDescriptionConstants {
     String SCRIPT = "script";
     String SEARCH_BASE_DN = "search-base-dn";
     String SEARCH_PATH = "search-path";
+    String SECRET_KEY_CREDENTIAL_STORE = "secret-key-credential-store";
     String SECURE_INTERFACE = "secure-interface";
     String SECURE_PORT = "secure-port";
     String SECURE_SOCKET_BINDING = "secure-socket-binding";

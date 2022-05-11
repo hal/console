@@ -38,6 +38,7 @@ import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.CR
 import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.FILTERING_KEY_STORE_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.KEY_STORE_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.LDAP_KEY_STORE_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.SECRET_KEY_CREDENTIAL_STORE_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.pfIcon;
 import static org.jboss.hal.resources.Ids.ELYTRON_LDAP_KEY_STORE;
@@ -48,6 +49,7 @@ public class StoresView extends HalViewImpl implements StoresPresenter.MyView {
     private final StoreElement filteringStoreElement;
     private final KeyStoreElement keystoreElement;
     private final StoreElement ldapKeystoreElement;
+    private final StoreElement secretKeyCredentialStoreElement;
     private StoresPresenter presenter;
 
     @Inject
@@ -119,8 +121,28 @@ public class StoresView extends HalViewImpl implements StoresPresenter.MyView {
 
         navigation.addPrimary(ELYTRON_LDAP_KEY_STORE, Names.LDAP_KEY_STORE, pfIcon("service"), ldapKeystoreElement);
 
-        registerAttachables(asList(navigation, credentialStoreElement, filteringStoreElement, keystoreElement,
-                ldapKeystoreElement));
+        // -------------- secret key credential store
+        Metadata secretKeyCredentialStoreMetadata = metadataRegistry.lookup(SECRET_KEY_CREDENTIAL_STORE_TEMPLATE);
+        secretKeyCredentialStoreElement = new StoreElement.Builder(SECRET_KEY_CREDENTIAL_STORE,
+                Names.SECRET_KEY_CREDENTIAL_STORE, resources,
+                secretKeyCredentialStoreMetadata)
+                        .addButtonHandler(new Button<>(resources.constants().reload(), null,
+                                table -> presenter.reloadCredentialStore(table.selectedRow().getName()),
+                                Scope.SELECTED_SINGLE,
+                                Constraint.executable(SECRET_KEY_CREDENTIAL_STORE_TEMPLATE, RELOAD)))
+                        .addAliasButtonHandler(new Button<>(resources.constants().removeAlias(), null,
+                                table -> removeSecretKeyCredentialStoreAlias(secretKeyCredentialStoreMetadata,
+                                        table.selectedRow().asString()),
+                                Scope.SELECTED_SINGLE,
+                                Constraint.executable(SECRET_KEY_CREDENTIAL_STORE_TEMPLATE, REMOVE_ALIAS)))
+                        .build();
+
+        navigation.addPrimary(Ids.ELYTRON_SECRET_KEY_CREDENTIAL_STORE, Names.SECRET_KEY_CREDENTIAL_STORE, pfIcon("key"),
+                secretKeyCredentialStoreElement);
+
+        registerAttachables(
+                asList(navigation, credentialStoreElement, filteringStoreElement, keystoreElement, ldapKeystoreElement,
+                        secretKeyCredentialStoreElement));
 
         initElement(row()
                 .add(column()
@@ -167,6 +189,11 @@ public class StoresView extends HalViewImpl implements StoresPresenter.MyView {
         presenter.setSecret(metadata, credentialStoreElement.getSelectedResource(), alias);
     }
 
+    private void removeSecretKeyCredentialStoreAlias(Metadata metadata, String alias) {
+        presenter.removeAlias(metadata, secretKeyCredentialStoreElement.getSelectedResource(),
+                alias, secretKeyCredentialStoreElement::updateAliases);
+    }
+
     @Override
     public void updateCredentialStore(List<NamedNode> items) {
         credentialStoreElement.update(items);
@@ -188,11 +215,17 @@ public class StoresView extends HalViewImpl implements StoresPresenter.MyView {
     }
 
     @Override
+    public void updateSecretKeyCredentialStore(List<NamedNode> items) {
+        secretKeyCredentialStoreElement.update(items);
+    }
+
+    @Override
     public void setPresenter(StoresPresenter presenter) {
         this.presenter = presenter;
         credentialStoreElement.setPresenter(presenter);
         filteringStoreElement.setPresenter(presenter);
         keystoreElement.setPresenter(presenter);
         ldapKeystoreElement.setPresenter(presenter);
+        secretKeyCredentialStoreElement.setPresenter(presenter);
     }
 }

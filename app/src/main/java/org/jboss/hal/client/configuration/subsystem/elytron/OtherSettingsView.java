@@ -59,6 +59,7 @@ import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResour
 import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.KEY_STORE;
 import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.PERIODIC_ROTATING_FILE_AUDIT_LOG;
 import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.PROVIDER_LOADER;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.SECRET_KEY_CREDENTIAL_STORE;
 import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.SECURITY_DOMAIN;
 import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.SERVER_SSL_CONTEXT;
 import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.SERVER_SSL_SNI_CONTEXT;
@@ -131,6 +132,16 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
         registerAttachable(ldapKeyStoreElement);
         navigation.addSecondary(Ids.ELYTRON_STORE_ITEM, Ids.ELYTRON_LDAP_KEY_STORE, Names.LDAP_KEY_STORE,
                 ldapKeyStoreElement.element());
+
+        ResourceElement secretKeyCredentialStoreElement = SECRET_KEY_CREDENTIAL_STORE.resourceElementBuilder(mbuiContext,
+                () -> presenter.reload(SECRET_KEY_CREDENTIAL_STORE.resource,
+                        nodes -> updateResourceElement(SECRET_KEY_CREDENTIAL_STORE.resource, nodes)))
+                .onAdd(() -> presenter.addSecretKeyCredentialStore())
+                .build();
+        secretKeyCredentialStoreElement.getForm().getFormItem(RELATIVE_TO).registerSuggestHandler(new PathsAutoComplete());
+        addResourceElement(SECRET_KEY_CREDENTIAL_STORE, secretKeyCredentialStoreElement, Ids.ELYTRON_STORE_ITEM,
+                Ids.build(SECRET_KEY_CREDENTIAL_STORE.baseId, Ids.ITEM),
+                labelBuilder.label(SECRET_KEY_CREDENTIAL_STORE.resource));
 
         // ==== SSL elements
 
