@@ -326,6 +326,7 @@ public interface ModelDescriptionConstants {
     String EXPIRE_MESSAGES = "expire-messages";
     String EXPIRED_SESSIONS = "expired-sessions";
     String EXPIRY_ADDRESS = "expiry-address";
+    String EXPORT_SECRET_KEY = "export-secret-key";
     String EXPLODE = "explode";
     String EXPLODED = "exploded";
     String EXPORT_CERTIFICATE = "export-certificate";
@@ -365,6 +366,7 @@ public interface ModelDescriptionConstants {
     String FULL_REPLACE_DEPLOYMENT = "full-replace-deployment";
     String GENERATE_CERTIFICATE_SIGNING_REQUEST = "generate-certificate-signing-request";
     String GENERATE_KEY_PAIR = "generate-key-pair";
+    String GENERATE_SECRET_KEY = "generate-secret-key";
     String GET_CONNECTORS_AS_JSON = "get-connectors-as-json";
     String GET_METADATA = "get-metadata";
     String GET_ROLES = "get-roles";
@@ -417,6 +419,7 @@ public interface ModelDescriptionConstants {
     String IMAP = "imap";
     String IMPLEMENTATION = "implementation";
     String IMPORT_CERTIFICATE = "import-certificate";
+    String IMPORT_SECRET_KEY = "import-secret-key";
     String IN_VM_ACCEPTOR = "in-vm-acceptor";
     String IN_VM_CONNECTOR = "in-vm-connector";
     String INCLUDE = "include";
@@ -482,6 +485,7 @@ public interface ModelDescriptionConstants {
     String KEY_ALIAS = "key-alias";
     String KEY_MANAGER = "key-manager";
     String KEY_OVERRIDES = "key-overrides";
+    String KEY_SIZE = "key-size";
     String KEY_SIZE_ESTIMATE = "key-size-estimate";
     String KEY_STORE = "key-store";
     String KEY_STORE_REALM = "key-store-realm";
