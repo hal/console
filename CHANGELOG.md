@@ -25,6 +25,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - Bump Ace editor from 1.4.14 to 1.5.0
 - Bump D3 from 5.9.7 to 5.16.0
+- Bump Datatables.net from 1.11.5 to 1.12.0
 - Bump Datatables.net keytable from 2.6.4 to 2.7.0
 - Bump Datatables.net select from 1.3.4 to 1.4.0
 - Bump Elemental2 from 1.0.0-RC1 to 1.1.0
