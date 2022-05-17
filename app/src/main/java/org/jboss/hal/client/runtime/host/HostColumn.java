@@ -195,7 +195,7 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                             actions.add(ItemAction.separator());
                         }
                         // TODO Add additional operations like :reload(admin-mode=true), :clean-obsolete-content or
-                        //  :take-snapshot
+                        // :take-snapshot
                         actions.add(new ItemAction.Builder<Host>()
                                 .title(resources.constants().reload())
                                 .handler(hostActions::reload)

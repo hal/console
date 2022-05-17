@@ -121,8 +121,7 @@ public class Dispatcher implements RecordingHandler {
         this.macros = macros;
 
         this.eventBus.addHandler(RecordingEvent.getType(), this);
-        this.errorCallback = (operation, error) ->
-                logger.error("Dispatcher error: {}, operation {}", error, operation.asCli());
+        this.errorCallback = (operation, error) -> logger.error("Dispatcher error: {}, operation {}", error, operation.asCli());
     }
 
     // ------------------------------------------------------ execute composite
