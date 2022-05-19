@@ -305,6 +305,7 @@ public interface ModelDescriptionConstants {
     String EMPTY = "empty";
     String ENABLED = "enabled";
     String ENABLED_TIME = "enabled-time";
+    String ENCRYPTION = "encryption";
     String END_TIME = "end-time";
     String ENDPOINT = "endpoint";
     String ENDPOINT_CONFIG = "endpoint-config";
@@ -793,6 +794,7 @@ public interface ModelDescriptionConstants {
     String RESOLVE_EXPRESSION = "resolve-expression";
     String RESOLVE_EXPRESSION_ON_DOMAIN = "resolve-expression-on-domain";
     String RESOLVE_EXPRESSIONS = "resolve-expressions";
+    String RESOLVERS = "resolvers";
     String RESOURCE_ADAPTER = "resource-adapter";
     String RESOURCE_ADAPTERS = "resource-adapters";
     String RESOURCE_METHODS = "resource-methods";

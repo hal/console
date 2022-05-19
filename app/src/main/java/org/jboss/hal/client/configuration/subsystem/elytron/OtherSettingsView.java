@@ -71,6 +71,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
 
     private final Map<String, ResourceElement> elements;
     private LdapKeyStoreElement ldapKeyStoreElement;
+    private ExpressionEncryptionElement expressionEncryptionElement;
     private ResourceElement securityDomainElement;
     private PolicyElement policyElement;
     private VerticalNavigation navigation;
@@ -331,6 +332,12 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 Ids.build(DIR_CONTEXT.baseId, Ids.ITEM),
                 labelBuilder.label(DIR_CONTEXT.resource));
 
+        Metadata expressionMetadata = mbuiContext.metadataRegistry().lookup(AddressTemplates.EXPRESSION_TEMPLATE);
+        expressionEncryptionElement = new ExpressionEncryptionElement(expressionMetadata, mbuiContext.resources());
+        registerAttachable(expressionEncryptionElement);
+        navigation.addSecondary(Ids.ELYTRON_OTHER_ITEM, Ids.ELYTRON_EXPRESSION, Names.EXPRESSION,
+                expressionEncryptionElement.element());
+
         addResourceElement(ElytronResource.JASPI_CONFIGURATION,
                 ElytronResource.JASPI_CONFIGURATION.resourceElementBuilder(mbuiContext,
                         () -> presenter.reload(ElytronResource.JASPI_CONFIGURATION.resource,
@@ -412,12 +419,18 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
         });
 
         ldapKeyStoreElement.attach();
+        expressionEncryptionElement.attach();
         policyElement.attach();
     }
 
     @Override
     public void updateLdapKeyStore(List<NamedNode> model) {
         ldapKeyStoreElement.update(model);
+    }
+
+    @Override
+    public void updateExpressionEncryption(ModelNode model) {
+        expressionEncryptionElement.update(model);
     }
 
     @Override
@@ -430,6 +443,7 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
         this.presenter = presenter;
 
         ldapKeyStoreElement.setPresenter(presenter);
+        expressionEncryptionElement.setPresenter(presenter);
         policyElement.setPresenter(presenter);
     }
 }

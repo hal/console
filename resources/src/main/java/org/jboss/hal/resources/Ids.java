@@ -240,6 +240,7 @@ public interface Ids {
     String ELYTRON_CUSTOM_ROLE_MAPPER = "elytron-custom-role-mapper";
     String ELYTRON_CUSTOM_SECURITY_EVENT_LISTENER = "elytron-custom-security-event-listener";
     String ELYTRON_DIR_CONTEXT = "elytron-dir-context";
+    String ELYTRON_EXPRESSION = "elytron-expression";
     String ELYTRON_FACTORIES_TRANSFORMERS = "elytron-factories-transformers";
     String ELYTRON_FILE_AUDIT_LOG = "elytron-file-audit-log";
     String ELYTRON_FILESYSTEM_REALM = "elytron-filesystem-realm";
@@ -674,6 +675,7 @@ public interface Ids {
     String REPLICATED_CACHE = "replicated-cache";
     String RESET_MESSAGE_COUNTERS = "reset-message-counters";
     String RESOLVE_EXPRESSION_FORM = "resolve-expression-form";
+    String RESOLVERS = "resolvers";
     String RESOURCE_ADAPTER = "resource-adapter";
     String RESOURCE_ADAPTER_ADD = "resource-adapter-add";
     String RESOURCE_ADAPTER_ADMIN_OBJECT_ADD = "resource-adapter-admin-object-add";
