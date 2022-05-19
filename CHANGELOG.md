@@ -35,7 +35,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Bump Mockito from 4.4.0 to 4.5.0
 - Bump Parcel from 2.3.2 to 2.5.0
 - Bump PouchDB from 7.2.2 to 7.3.0
-- Bump Quarkus from 2.7.5.Final to 2.9.0.Final
+- Bump Quarkus from 2.7.5.Final to 2.9.1.Final
 
 ## [3.5.12] - 2022-03-18
 
