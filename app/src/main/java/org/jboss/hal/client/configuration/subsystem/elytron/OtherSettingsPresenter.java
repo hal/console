@@ -56,6 +56,8 @@ import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -78,6 +80,8 @@ import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTempla
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.CUSTOM_SECURITY_EVENT_LISTENER_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.DIR_CONTEXT_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.ELYTRON_SUBSYSTEM_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.EXPRESSION_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.EXPRESSION_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.FILE_AUDIT_LOG_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.FILTERING_KEY_STORE_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.JASPI_CONFIGURATION_ADDRESS;
@@ -110,10 +114,14 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.CREDENTIAL_REFERENCE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CREDENTIAL_STORE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT_REALM;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.EXPRESSION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.FLAG;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INDEX;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.JASPI_CONFIGURATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.KEY_MANAGER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.KEY_STORE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LIST_ADD_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LIST_REMOVE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MODULE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NEW_ITEM_ATTRIBUTES;
@@ -126,6 +134,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_ATTRIBUTE_OPERATI
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REALM;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REALMS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RELATIVE_TO;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESOLVERS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SECRET_KEY_CREDENTIAL_STORE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURITY_DOMAIN;
@@ -133,7 +142,9 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_AUTH_MODULES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_SSL_SNI_CONTEXT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.STORE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.move;
 
@@ -207,6 +218,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                 ElytronResource.AGGREGATE_PROVIDERS.resource,
                 ElytronResource.SECURITY_DOMAIN.resource,
                 ElytronResource.DIR_CONTEXT.resource,
+                ElytronResource.EXPRESSION.resource,
                 ElytronResource.AUTHENTICATION_CONTEXT.resource,
                 ElytronResource.AUTHENTICATION_CONFIGURATION.resource,
                 ElytronResource.FILE_AUDIT_LOG.resource,
@@ -248,6 +260,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                             asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateResourceElement(ElytronResource.DIR_CONTEXT.resource,
                             asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateExpressionEncryption(result.step(i++).get(RESULT));
                     getView().updateResourceElement(ElytronResource.AUTHENTICATION_CONTEXT.resource,
                             asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateResourceElement(ElytronResource.AUTHENTICATION_CONFIGURATION.resource,
@@ -529,6 +542,61 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                 });
     }
 
+    // -------------------------------------------- Expression encryption
+
+    void reloadExpressionEncryption() {
+        crud.readChildren(ELYTRON_SUBSYSTEM_TEMPLATE, EXPRESSION,
+                children -> {
+                    ModelNode expression = new ModelNode();
+                    expression.get(children.get(0).getName()).set(children.get(0).getValue());
+                    getView().updateExpressionEncryption(expression);
+                });
+    }
+
+    void addExpressionEncryption(ModelNode model) {
+        crud.addSingleton(EXPRESSION, EXPRESSION_TEMPLATE, model, a -> reloadExpressionEncryption());
+    }
+
+    void saveExpressionEncryption(Map<String, Object> changedValues) {
+        crud.saveSingleton(Names.EXPRESSION, EXPRESSION_TEMPLATE, changedValues, this::reloadExpressionEncryption);
+    }
+
+    void addResolver(ModelNode payload, SafeHtml successMessage) {
+        ResourceAddress address = EXPRESSION_TEMPLATE.resolve(statementContext);
+        Operation operation = new Operation.Builder(address, LIST_ADD_OPERATION)
+                .param(NAME, RESOLVERS)
+                .param(VALUE, payload)
+                .build();
+        dispatcher.execute(operation, result -> {
+            reloadExpressionEncryption();
+            MessageEvent.fire(getEventBus(), Message.success(successMessage));
+        });
+    }
+
+    void saveResolver(int index, ModelNode payload, SafeHtml successMessage) {
+        ResourceAddress address = EXPRESSION_TEMPLATE.resolve(statementContext);
+        Operation operation = new Operation.Builder(address, WRITE_ATTRIBUTE_OPERATION)
+                .param(NAME, RESOLVERS + "[" + index + "]")
+                .param(VALUE, payload)
+                .build();
+        dispatcher.execute(operation, result -> {
+            reload();
+            MessageEvent.fire(getEventBus(), Message.success(successMessage));
+        });
+    }
+
+    void removeResolver(int index, SafeHtml successMessage) {
+        ResourceAddress address = EXPRESSION_TEMPLATE.resolve(statementContext);
+        Operation operation = new Operation.Builder(address, LIST_REMOVE_OPERATION)
+                .param(NAME, RESOLVERS)
+                .param(INDEX, index)
+                .build();
+        dispatcher.execute(operation, result -> {
+            reloadExpressionEncryption();
+            MessageEvent.fire(getEventBus(), Message.success(successMessage));
+        });
+    }
+
     // -------------------------------------------- JASPI Configuration
 
     void addJaspiConfiguration() {
@@ -644,6 +712,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
             CLIENT_SSL_CONTEXT_ADDRESS,
             CREDENTIAL_STORE_ADDRESS,
             DIR_CONTEXT_ADDRESS,
+            EXPRESSION_ADDRESS,
             FILE_AUDIT_LOG_ADDRESS,
             FILTERING_KEY_STORE_ADDRESS,
             JASPI_CONFIGURATION_ADDRESS,
@@ -670,6 +739,8 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
         void updateResourceElement(String resource, List<NamedNode> nodes);
 
         void updateLdapKeyStore(List<NamedNode> model);
+
+        void updateExpressionEncryption(ModelNode model);
 
         void updatePolicy(NamedNode policy);
     }

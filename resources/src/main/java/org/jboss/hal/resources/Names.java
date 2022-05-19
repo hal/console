@@ -117,6 +117,7 @@ public interface Names {
     String EXECUTION_ID = "Execution ID";
     String EXECUTIONS = "Executions";
     String EXPIRATION = "Expiration";
+    String EXPRESSION = "Expression";
     String EXTENSION = "Extension";
     String EXTENSIONS = "Extensions";
     String EXTERNAL_JMS_QUEUE = "External JMS Queue";
@@ -311,6 +312,7 @@ public interface Names {
     String REPLICATION_MASTER = "Replication Master";
     String REPLICATION_SLAVE = "Replication Slave";
     String REQUESTS = "Requests";
+    String RESOLVERS = "Resolvers";
     String RESOURCE = "Resource";
     String RESOURCE_ADAPTER = "Resource Adapter";
     String RESOURCE_PATHS = "Resource Paths";
