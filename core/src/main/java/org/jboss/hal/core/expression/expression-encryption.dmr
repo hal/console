@@ -1,0 +1,25 @@
+{
+    "comment" => "This file is not used! It's just here to generate the base64 encoded version using https://github.com/hal/dmr.cmd",
+    "operation-name" => "create-expression",
+    "description" => "Simplified from /subsystem=elytron/expression=encryption:read-operation-description(name=create-expression)",
+    "attributes" => {
+        "resolver" => {
+            "type" => STRING,
+            "description" => "The resolver configuration to use to encrypt the clear text. If omitted the default-resolver will be used instead.",
+            "expressions-allowed" => false,
+            "required" => false,
+            "nillable" => true,
+            "min-length" => 1L,
+            "max-length" => 2147483647L
+        },
+        "clear-text" => {
+            "type" => STRING,
+            "description" => "The clear text value to encrypt.",
+            "expressions-allowed" => false,
+            "required" => true,
+            "nillable" => false,
+            "min-length" => 1L,
+            "max-length" => 2147483647L
+        }
+    }
+}

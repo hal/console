@@ -16,6 +16,7 @@
 package org.jboss.hal.ballroom.form;
 
 import org.jboss.hal.ballroom.Attachable;
+import org.jboss.hal.ballroom.form.EncryptExpressionEvent.EncryptExpressionHandler;
 import org.jboss.hal.ballroom.form.ResolveExpressionEvent.ResolveExpressionHandler;
 import org.jboss.hal.dmr.Deprecation;
 
@@ -64,6 +65,8 @@ public interface FormItem<T> extends Attachable, HasEnabled, Focusable, HasName,
     boolean supportsExpressions();
 
     void addResolveExpressionHandler(ResolveExpressionHandler handler);
+
+    void addEncryptExpressionHandler(EncryptExpressionHandler handler);
 
     String getLabel();
 

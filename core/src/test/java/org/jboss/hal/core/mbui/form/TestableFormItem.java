@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.core.mbui.form;
 
+import org.jboss.hal.ballroom.form.EncryptExpressionEvent.EncryptExpressionHandler;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.FormItemValidation;
@@ -113,6 +114,11 @@ public class TestableFormItem implements FormItem<String> {
 
     @Override
     public void addResolveExpressionHandler(ResolveExpressionHandler handler) {
+
+    }
+
+    @Override
+    public void addEncryptExpressionHandler(EncryptExpressionHandler handler) {
 
     }
 
