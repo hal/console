@@ -318,6 +318,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String enableStatistics();
 
+    String encryptExpression();
+
     String endpointAddDescription();
 
     String endpointAddTitle();

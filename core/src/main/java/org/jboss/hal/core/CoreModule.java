@@ -18,6 +18,7 @@ package org.jboss.hal.core;
 import org.jboss.hal.core.accesscontrol.AccessControl;
 import org.jboss.hal.core.deployment.DeploymentResources;
 import org.jboss.hal.core.elytron.CredentialReference;
+import org.jboss.hal.core.expression.ExpressionEncryptor;
 import org.jboss.hal.core.expression.ExpressionResolver;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.ColumnRegistry;
@@ -57,6 +58,7 @@ public class CoreModule extends AbstractGinModule {
         bind(CrudOperations.class).in(Singleton.class);
         bind(DeploymentResources.class).in(Singleton.class);
         bind(ExpressionResolver.class).asEagerSingleton(); // to register the event handler
+        bind(ExpressionEncryptor.class).asEagerSingleton();
         bind(Finder.class).in(Singleton.class);
         bind(FinderPathFactory.class).in(Singleton.class);
         bind(HostActions.class).in(Singleton.class);

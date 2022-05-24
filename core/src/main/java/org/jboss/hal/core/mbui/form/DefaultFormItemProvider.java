@@ -237,6 +237,10 @@ class DefaultFormItemProvider implements FormItemProvider {
                         // resend as application event
                         Core.INSTANCE.eventBus().fireEvent(event);
                     });
+                    formItem.addEncryptExpressionHandler(event -> {
+                        // resend as application event
+                        Core.INSTANCE.eventBus().fireEvent(event);
+                    });
                 }
                 if (readOnly) {
                     formItem.setEnabled(false);

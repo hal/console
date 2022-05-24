@@ -76,6 +76,7 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
     final HTMLElement helpBlock;
     HTMLElement expressionContainer;
     HTMLElement expressionButton;
+    HTMLElement encryptionButton;
     HTMLElement suggestContainer;
     HTMLElement suggestButton;
     HTMLElement restrictedMarker;
@@ -86,6 +87,7 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
     boolean masked;
     boolean attached;
     HandlerRegistration expressionHandler;
+    HandlerRegistration expressionEncryptionHandler;
 
     protected EditingAppearance(Set<Decoration> supportedDecorations, HTMLInputElement inputElement) {
         super(supportedDecorations);
@@ -206,6 +208,8 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
             expressionContainer = span().css(inputGroupBtn)
                     .add(expressionButton = button().css(btn, btnDefault).title(CONSTANTS.resolveExpression())
                             .add(i().css(fontAwesome("link"))).element())
+                    .add(encryptionButton = button().css(btn, btnDefault).title(CONSTANTS.encryptExpression())
+                            .add(i().css(fontAwesome("key"))).element())
                     .element();
         }
 
@@ -223,6 +227,9 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
         }
         expressionHandler = bind(expressionButton, click,
                 event -> expressionContext.callback.resolveExpression(inputElement.value));
+
+        expressionEncryptionHandler = bind(encryptionButton, click,
+                event -> expressionContext.encryptionCallback.encryptExpression());
     }
 
     void applyHint(String hint) {

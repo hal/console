@@ -13,16 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.jboss.hal.core.expression;
+package org.jboss.hal.ballroom.form;
 
-import com.google.gwt.resources.client.ClientBundle;
-import com.google.gwt.resources.client.TextResource;
+import com.gwtplatform.dispatch.annotation.GenEvent;
+import com.gwtplatform.dispatch.annotation.Order;
 
-public interface ExpressionResources extends ClientBundle {
+@GenEvent
+public class EncryptExpression {
 
-    @Source("expression.base64")
-    TextResource expression();
-
-    @Source("expression-encryption.base64")
-    TextResource expressionEncryption();
+    @Order(1) AbstractFormItem formItem;
 }
