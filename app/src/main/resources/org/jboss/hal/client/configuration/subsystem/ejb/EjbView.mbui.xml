@@ -187,13 +187,6 @@
                     <p>${metadata.getDescription().getDescription()}</p>
                     <form id="ejb3-service-remote-form" title="Remote" auto-save="true" reset="true">
                         <attributes>
-                            <attribute name="cluster">
-                                <suggest-handler>
-                                    <templates>
-                                        <template address="/{selected.profile}/subsystem=infinispan/cache-container=*"/>
-                                    </templates>
-                                </suggest-handler>
-                            </attribute>
                             <attribute name="connectors">
                                 <suggest-handler>
                                     <templates>
