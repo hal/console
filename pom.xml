@@ -107,7 +107,7 @@
         <version.junit>4.13.2</version.junit>
         <version.mockito>4.5.1</version.mockito>
         <version.node>v16.14.0</version.node>
-        <version.quarkus>2.9.1.Final</version.quarkus>
+        <version.quarkus>2.9.2.Final</version.quarkus>
         <version.slf4j>1.7.36</version.slf4j>
         <version.slf4j.gwt>1.7.7.1</version.slf4j.gwt>
         <version.validation>1.0.0.GA</version.validation>
