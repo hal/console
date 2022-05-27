@@ -40,6 +40,7 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.safehtml.shared.SafeHtml;
 
 import elemental2.dom.HTMLElement;
@@ -78,6 +79,7 @@ class ExpressionEncryptionElement implements IsElement<HTMLElement>, Attachable,
     private final Resources resources;
 
     private final StaticAutoComplete defaultResolverAutoComplete;
+    private final StaticAutoComplete secretAutoComplete;
 
     private LabelBuilder labelBuilder = new LabelBuilder();
     private final String RESOLVER_TYPE = labelBuilder.label("resolver");
@@ -121,6 +123,10 @@ class ExpressionEncryptionElement implements IsElement<HTMLElement>, Attachable,
                 .onSave(((form, changedValues) -> saveResolver(form)))
                 .build();
 
+        secretAutoComplete = new StaticAutoComplete(Collections.emptyList());
+        resolversAttributes.getFormItem("secret-key").registerSuggestHandler(secretAutoComplete);
+        resolversAttributes.getFormItem(CREDENTIAL_STORE).addValueChangeHandler(getStoreValueChangeHandler(secretAutoComplete));
+
         root = section()
                 .add(header = h(1).textContent(Names.EXPRESSION).element())
                 .add(description = p().textContent(metadata.getDescription().getDescription()).element())
@@ -146,6 +152,13 @@ class ExpressionEncryptionElement implements IsElement<HTMLElement>, Attachable,
         attributes.attach();
         resolversAttributes.attach();
         resolversTable.bindForm(resolversAttributes);
+
+        resolversTable.onSelectionChange(table -> {
+            if (table.hasSelection()) {
+                presenter.readSecretKeysFromStore(table.selectedRow().get(CREDENTIAL_STORE).asString(),
+                        keys -> updateKeyNames(keys, secretAutoComplete));
+            }
+        });
     }
 
     @Override
@@ -191,6 +204,11 @@ class ExpressionEncryptionElement implements IsElement<HTMLElement>, Attachable,
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(Ids.RESOLVERS, Ids.ADD), metadata)
                 .addOnly()
                 .build();
+
+        StaticAutoComplete autoComplete = new StaticAutoComplete(Collections.emptyList());
+        form.getFormItem("secret-key").registerSuggestHandler(autoComplete);
+        form.getFormItem(CREDENTIAL_STORE).addValueChangeHandler(getStoreValueChangeHandler(autoComplete));
+
         AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(RESOLVER_TYPE), form,
                 (name, model) -> {
                     if (model != null) {
@@ -216,5 +234,15 @@ class ExpressionEncryptionElement implements IsElement<HTMLElement>, Attachable,
 
         DialogFactory.showConfirmation(resources.messages().removeConfirmationTitle(RESOLVER_TYPE), question,
                 () -> presenter.removeResolver(index, success));
+    }
+
+    private void updateKeyNames(List<ModelNode> keys, StaticAutoComplete autoComplete) {
+        List<String> keyNames = keys.stream().map(ModelNode::asString).collect(Collectors.toList());
+        autoComplete.update(keyNames);
+    }
+
+    private ValueChangeHandler<Object> getStoreValueChangeHandler(StaticAutoComplete autoComplete) {
+        return valueChangeEvent -> presenter.readSecretKeysFromStore(valueChangeEvent.getValue().toString(),
+                keys -> updateKeyNames(keys, autoComplete));
     }
 }
