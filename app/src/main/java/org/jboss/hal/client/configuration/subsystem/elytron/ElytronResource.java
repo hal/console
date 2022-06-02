@@ -182,6 +182,10 @@ enum ElytronResource {
             ModelDescriptionConstants.DIR_CONTEXT,
             AddressTemplates.DIR_CONTEXT_TEMPLATE, false),
 
+    EXPRESSION(Ids.ELYTRON_EXPRESSION,
+            ModelDescriptionConstants.EXPRESSION,
+            AddressTemplates.EXPRESSION_TEMPLATE, false),
+
     FILE_AUDIT_LOG(Ids.ELYTRON_FILE_AUDIT_LOG,
             ModelDescriptionConstants.FILE_AUDIT_LOG,
             AddressTemplates.FILE_AUDIT_LOG_TEMPLATE, false),

@@ -294,6 +294,10 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     SafeHtml exportCertificateSuccess(String alias, String path, String resource);
 
+    SafeHtml expressionEncryptionError(String error);
+
+    SafeHtml expressionEncryptionUnavailable();
+
     SafeHtml exportSecretKeyError(String alias, String resource, String error);
 
     SafeHtml expressionError(String expression);

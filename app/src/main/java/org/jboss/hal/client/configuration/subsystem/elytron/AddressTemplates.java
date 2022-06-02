@@ -72,6 +72,8 @@ public interface AddressTemplates {
 
     String DIR_CONTEXT_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/dir-context=*";
 
+    String EXPRESSION_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/expression=encryption";
+
     String FILE_AUDIT_LOG_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/file-audit-log=*";
     String FILESYSTEM_REALM_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/filesystem-realm=*";
     String FILTERING_KEY_STORE_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/filtering-key-store=*";
@@ -180,6 +182,8 @@ public interface AddressTemplates {
     AddressTemplate CUSTOM_SECURITY_EVENT_LISTENER_TEMPLATE = AddressTemplate.of(CUSTOM_SECURITY_EVENT_LISTENER_ADDRESS);
 
     AddressTemplate DIR_CONTEXT_TEMPLATE = AddressTemplate.of(DIR_CONTEXT_ADDRESS);
+
+    AddressTemplate EXPRESSION_TEMPLATE = AddressTemplate.of(EXPRESSION_ADDRESS);
 
     AddressTemplate FILE_AUDIT_LOG_TEMPLATE = AddressTemplate.of(FILE_AUDIT_LOG_ADDRESS);
     AddressTemplate FILESYSTEM_REALM_TEMPLATE = AddressTemplate.of(FILESYSTEM_REALM_ADDRESS);

@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.dialog.Dialog;
+import org.jboss.hal.ballroom.form.EncryptExpressionEvent.EncryptExpressionHandler;
 import org.jboss.hal.ballroom.form.Form.State;
 import org.jboss.hal.ballroom.form.ResolveExpressionEvent.ResolveExpressionHandler;
 import org.jboss.hal.ballroom.wizard.Wizard;
@@ -80,6 +81,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
     private final Map<State, Appearance<T>> appearances;
     private final List<FormItemValidation<T>> validationHandlers;
     private final List<ResolveExpressionHandler> resolveExpressionHandlers;
+    private final List<EncryptExpressionHandler> encryptExpressionHandlers;
     private final List<com.google.web.bindery.event.shared.HandlerRegistration> handlers;
 
     AbstractFormItem(String name, String label, String hint) {
@@ -104,6 +106,7 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         this.validationHandlers = new LinkedList<>();
         this.validationHandlers.addAll(defaultValidationHandlers());
         this.resolveExpressionHandlers = new LinkedList<>();
+        this.encryptExpressionHandlers = new LinkedList<>();
         this.handlers = new ArrayList<>();
     }
 
@@ -454,6 +457,11 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         resolveExpressionHandlers.add(handler);
     }
 
+    @Override
+    public void addEncryptExpressionHandler(EncryptExpressionHandler handler) {
+        encryptExpressionHandlers.add(handler);
+    }
+
     void toggleExpressionSupport(String expressionValue) {
         // TODO Find a way how to use the expression resolver in modals
         if (!isModal()) {
@@ -470,6 +478,10 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
                 expression -> {
                     ResolveExpressionEvent ree = new ResolveExpressionEvent(expression);
                     resolveExpressionHandlers.forEach(handler -> handler.onResolveExpression(ree));
+                },
+                () -> {
+                    EncryptExpressionEvent eee = new EncryptExpressionEvent(this);
+                    encryptExpressionHandlers.forEach(handler -> handler.onEncryptExpression(eee));
                 });
         apply(EXPRESSION, expressionContext);
     }
@@ -638,14 +650,22 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
         void resolveExpression(String expression);
     }
 
+    @FunctionalInterface
+    interface ExpressionEncryptionCallback {
+
+        void encryptExpression();
+    }
+
     static class ExpressionContext {
 
         final String expression;
         final ExpressionCallback callback;
+        final ExpressionEncryptionCallback encryptionCallback;
 
-        ExpressionContext(String expression, ExpressionCallback callback) {
+        ExpressionContext(String expression, ExpressionCallback callback, ExpressionEncryptionCallback encryptionCallback) {
             this.expression = expression;
             this.callback = callback;
+            this.encryptionCallback = encryptionCallback;
         }
     }
 }
