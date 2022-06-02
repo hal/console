@@ -298,6 +298,10 @@ enum ElytronResource {
             ModelDescriptionConstants.SASL_AUTHENTICATION_FACTORY,
             AddressTemplates.SASL_AUTHENTICATION_FACTORY_TEMPLATE, true),
 
+    SECRET_KEY_CREDENTIAL_STORE(Ids.ELYTRON_SECRET_KEY_CREDENTIAL_STORE,
+            ModelDescriptionConstants.SECRET_KEY_CREDENTIAL_STORE,
+            AddressTemplates.SECRET_KEY_CREDENTIAL_STORE_TEMPLATE, false),
+
     SECURITY_DOMAIN(Ids.ELYTRON_SECURITY_DOMAIN,
             ModelDescriptionConstants.SECURITY_DOMAIN,
             AddressTemplates.SECURITY_DOMAIN_TEMPLATE, false),

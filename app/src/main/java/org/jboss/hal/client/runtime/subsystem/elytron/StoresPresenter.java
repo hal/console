@@ -25,8 +25,10 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import org.jboss.hal.ballroom.Alert;
+import org.jboss.hal.ballroom.Clipboard;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.ballroom.Tooltip;
 import org.jboss.hal.ballroom.autocomplete.SuggestCapabilitiesAutoComplete;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
@@ -72,10 +74,16 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
 import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLInputElement;
 import elemental2.promise.Promise;
 
+import static elemental2.dom.DomGlobal.setTimeout;
+import static org.jboss.elemento.Elements.button;
 import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.i;
+import static org.jboss.elemento.Elements.input;
 import static org.jboss.elemento.Elements.p;
+import static org.jboss.elemento.Elements.span;
 import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.CREDENTIAL_STORE_ADDRESS;
 import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.CREDENTIAL_STORE_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.ELYTRON_PROFILE_TEMPLATE;
@@ -86,6 +94,8 @@ import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.KE
 import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.KEY_STORE_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.LDAP_KEY_STORE_ADDRESS;
 import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.LDAP_KEY_STORE_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.SECRET_KEY_CREDENTIAL_STORE_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.SECRET_KEY_CREDENTIAL_STORE_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD_ALIAS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ALIAS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
@@ -94,10 +104,14 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.CERTIFICATE_AUTHORITY_
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHANGE_ALIAS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.EXPORT_CERTIFICATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.EXPORT_SECRET_KEY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.GENERATE_CERTIFICATE_SIGNING_REQUEST;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.GENERATE_KEY_PAIR;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.GENERATE_SECRET_KEY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.IMPORT_CERTIFICATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.IMPORT_SECRET_KEY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.KEY_SIZE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.KEY_STORE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.LOAD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.OBTAIN_CERTIFICATE;
@@ -116,7 +130,19 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.STORE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALIDATE;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.flow.Flow.sequential;
+import static org.jboss.hal.resources.CSS.btn;
+import static org.jboss.hal.resources.CSS.btnDefault;
+import static org.jboss.hal.resources.CSS.fontAwesome;
+import static org.jboss.hal.resources.CSS.formControl;
+import static org.jboss.hal.resources.CSS.inputGroup;
+import static org.jboss.hal.resources.CSS.inputGroupBtn;
 import static org.jboss.hal.resources.Ids.FORM;
+import static org.jboss.hal.resources.UIConstants.BODY;
+import static org.jboss.hal.resources.UIConstants.CONTAINER;
+import static org.jboss.hal.resources.UIConstants.PLACEMENT;
+import static org.jboss.hal.resources.UIConstants.TOGGLE;
+import static org.jboss.hal.resources.UIConstants.TOOLTIP;
+import static org.jboss.hal.resources.UIConstants.TOP;
 
 public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.MyView, StoresPresenter.MyProxy>
         implements SupportsExpertMode {
@@ -174,12 +200,14 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
         composite.add(operation(FILTERING_KEY_STORE_TEMPLATE));
         composite.add(operation(KEY_STORE_TEMPLATE));
         composite.add(operation(LDAP_KEY_STORE_TEMPLATE));
+        composite.add(operation(SECRET_KEY_CREDENTIAL_STORE_TEMPLATE));
         dispatcher.execute(composite, (CompositeResult result) -> {
             int i = 0;
             getView().updateCredentialStore(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
             getView().updateFilteringKeystore(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
             getView().updateKeystore(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
             getView().updateLdapKeystore(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+            getView().updateSecretKeyCredentialStore(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
         });
     }
 
@@ -222,6 +250,136 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
             composite.add(operation);
             String alias = model.get(ALIAS).asString();
             String resource = Names.CREDENTIAL_STORE + SPACE + name;
+            dispatcher.execute(composite, (CompositeResult result) -> {
+                MessageEvent.fire(getEventBus(),
+                        Message.success(resources.messages().addSuccess(ALIAS, alias, resource)));
+                ModelNode aliases = result.step(1).get(RESULT);
+                if (aliases.isDefined()) {
+                    callback.accept(aliases.asList());
+                } else {
+                    callback.accept(Collections.emptyList());
+                }
+            }, (op, failure) -> MessageEvent.fire(getEventBus(),
+                    Message.error(resources.messages().addError(ALIAS, alias, resource, failure))));
+
+        });
+        dialog.show();
+    }
+
+    void generateSecretKey(Metadata metadata, String storeType, String name, Consumer<List<ModelNode>> callback) {
+        AddressTemplate template = metadata.getTemplate();
+        Metadata opMetadata = metadata.forOperation(GENERATE_SECRET_KEY);
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(template.lastName(), GENERATE_SECRET_KEY), opMetadata)
+                .addOnly()
+                .build();
+        form.attach();
+        AddResourceDialog dialog = new AddResourceDialog(resources.constants().generateSecretKey(), form, (name1, model) -> {
+            ResourceAddress address = template.resolve(statementContext, name);
+            Composite composite = new Composite();
+
+            if (!model.hasDefined(KEY_SIZE)) {
+                model.remove(KEY_SIZE);
+            }
+
+            Operation addOp = new Operation.Builder(address, GENERATE_SECRET_KEY)
+                    .payload(model)
+                    .build();
+            composite.add(addOp);
+            Operation operation = new Operation.Builder(address, READ_ALIASES_OPERATION)
+                    .build();
+            composite.add(operation);
+            String alias = model.get(ALIAS).asString();
+            String resource = storeType + SPACE + name;
+            dispatcher.execute(composite, (CompositeResult result) -> {
+                MessageEvent.fire(getEventBus(),
+                        Message.success(resources.messages().addSuccess(ALIAS, alias, resource)));
+                ModelNode aliases = result.step(1).get(RESULT);
+                if (aliases.isDefined()) {
+                    callback.accept(aliases.asList());
+                } else {
+                    callback.accept(Collections.emptyList());
+                }
+            }, (op, failure) -> MessageEvent.fire(getEventBus(),
+                    Message.error(resources.messages().addError(ALIAS, alias, resource, failure))));
+
+        });
+        dialog.show();
+    }
+
+    void exportSecretKey(Metadata metadata, String storeType, String name, String alias) {
+        AddressTemplate template = metadata.getTemplate();
+        String resource = storeType + SPACE + name;
+
+        ResourceAddress address = template.resolve(statementContext, name);
+        ModelNode payload = new ModelNode();
+        payload.get(ALIAS).set(alias);
+        Operation operation = new Operation.Builder(address, EXPORT_SECRET_KEY)
+                .payload(payload)
+                .build();
+        dispatcher.execute(operation, result -> {
+            HTMLElement copyToClipboard;
+            HTMLInputElement input;
+            Dialog dialog = new Dialog.Builder(resources.constants().exportSecretKey())
+                    .add(div().css(inputGroup)
+                            .add(input = input("text").css(formControl)
+                                    .readOnly(true)
+                                    .element())
+                            .add(span().css(inputGroupBtn)
+                                    .add(copyToClipboard = button().css(btn, btnDefault)
+                                            .data(TOGGLE, TOOLTIP)
+                                            .data(CONTAINER, BODY)
+                                            .data(PLACEMENT, TOP)
+                                            .title(resources.constants().copyToClipboard())
+                                            .add(i().css(fontAwesome("clipboard")))
+                                            .element())
+                                    .element())
+                            .element())
+                    .size(Dialog.Size.MEDIUM)
+                    .closeOnEsc(true)
+                    .cancel()
+                    .build();
+
+            input.value = result.get("key").asString();
+
+            Clipboard.Options options = new Clipboard.Options();
+            options.text = element -> input.value;
+            options.container = dialog.element();
+
+            Clipboard clipboard = new Clipboard(copyToClipboard, options);
+            clipboard.on("success", event -> {
+                Tooltip tooltip = Tooltip.element(copyToClipboard);
+                tooltip.hide()
+                        .setTitle(resources.constants().copied())
+                        .show()
+                        .onHide(() -> tooltip.setTitle(resources.constants().copyToClipboard()));
+                setTimeout((o) -> tooltip.hide(), 3000);
+            });
+
+            dialog.show();
+        },
+                (op, failure) -> MessageEvent.fire(getEventBus(),
+                        Message.error(resources.messages().exportSecretKeyError(alias, resource, failure))));
+    }
+
+    void importSecretKey(Metadata metadata, String storeType, String name, Consumer<List<ModelNode>> callback) {
+        AddressTemplate template = metadata.getTemplate();
+        Metadata opMetadata = metadata.forOperation(IMPORT_SECRET_KEY);
+        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(template.lastName(), IMPORT_SECRET_KEY), opMetadata)
+                .addOnly()
+                .build();
+        form.attach();
+        AddResourceDialog dialog = new AddResourceDialog(resources.constants().importSecretKey(), form, (name1, model) -> {
+            ResourceAddress address = template.resolve(statementContext, name);
+            Composite composite = new Composite();
+            Operation addOp = new Operation.Builder(address, IMPORT_SECRET_KEY)
+                    .payload(model)
+                    .build();
+            composite.add(addOp);
+            Operation operation = new Operation.Builder(address, READ_ALIASES_OPERATION)
+                    .build();
+            composite.add(operation);
+            String alias = model.get(ALIAS).asString();
+            String resource = storeType + SPACE + name;
             dispatcher.execute(composite, (CompositeResult result) -> {
                 MessageEvent.fire(getEventBus(),
                         Message.success(resources.messages().addSuccess(ALIAS, alias, resource)));
@@ -318,7 +476,7 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
             tasks.add(context -> {
                 Operation operation = new Operation.Builder(address, READ_ALIASES_OPERATION)
                         .build();
-                return dispatcher.execute(operation).then(result -> context.resolve(resource));
+                return dispatcher.execute(operation).then(aliases -> context.resolve(aliases));
             });
 
             sequential(new FlowContext(progress.get()), tasks)
@@ -743,7 +901,7 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
                 Operation operation = new Operation.Builder(address, READ_ALIASES_OPERATION)
                         .build();
                 return dispatcher.execute(operation)
-                        .then(__ -> Promise.resolve(context))
+                        .then(aliases -> context.resolve(aliases))
                         .catch_(error -> {
                             MessageEvent.fire(getEventBus(),
                                     Message.error(resources.messages().readAliasesError(resource, String.valueOf(error))));
@@ -789,7 +947,8 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(NameTokens.ELYTRON_RUNTIME_STORES)
-    @Requires({ CREDENTIAL_STORE_ADDRESS, FILTERING_KEY_STORE_ADDRESS, KEY_STORE_ADDRESS, LDAP_KEY_STORE_ADDRESS })
+    @Requires({ CREDENTIAL_STORE_ADDRESS, FILTERING_KEY_STORE_ADDRESS, KEY_STORE_ADDRESS, LDAP_KEY_STORE_ADDRESS,
+            SECRET_KEY_CREDENTIAL_STORE_ADDRESS })
     public interface MyProxy extends ProxyPlace<StoresPresenter> {
     }
 
@@ -801,6 +960,8 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
         void updateKeystore(List<NamedNode> items);
 
         void updateLdapKeystore(List<NamedNode> items);
+
+        void updateSecretKeyCredentialStore(List<NamedNode> items);
 
     }
     // @formatter:on

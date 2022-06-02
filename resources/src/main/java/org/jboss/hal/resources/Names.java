@@ -324,6 +324,7 @@ public interface Names {
 
     String SASL_AUTHENTICATION_FACTORY = "SASL Authentication Factory";
     String SCATTERED_CACHE = "Scattered Cache";
+    String SECRET_KEY_CREDENTIAL_STORE = "Secret Key Credential Store";
     String SECOND_LEVEL_CACHE = "Second Level Cache";
     String SECURE_MANAGEMENT = "Secure Management";
     String SECURITY = "Security";

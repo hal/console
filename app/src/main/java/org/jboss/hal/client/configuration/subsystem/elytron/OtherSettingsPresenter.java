@@ -95,6 +95,8 @@ import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTempla
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.POLICY_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.POLICY_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.PROVIDER_LOADER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.SECRET_KEY_CREDENTIAL_STORE_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.SECRET_KEY_CREDENTIAL_STORE_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.SECURITY_DOMAIN_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.SECURITY_DOMAIN_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.SERVER_SSL_CONTEXT_ADDRESS;
@@ -127,12 +129,14 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NEW_ITEM_PATH;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NEW_ITEM_RDN;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NEW_ITEM_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PATH;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.POPULATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_ATTRIBUTE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REALM;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REALMS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RELATIVE_TO;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESOLVERS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SECRET_KEY_CREDENTIAL_STORE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURITY_DOMAIN;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_AUTH_MODULES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_SSL_SNI_CONTEXT;
@@ -209,6 +213,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                 ElytronResource.CREDENTIAL_STORE.resource,
                 ElytronResource.FILTERING_KEY_STORE.resource,
                 ElytronResource.LDAP_KEY_STORE.resource,
+                ElytronResource.SECRET_KEY_CREDENTIAL_STORE.resource,
                 ElytronResource.PROVIDER_LOADER.resource,
                 ElytronResource.AGGREGATE_PROVIDERS.resource,
                 ElytronResource.SECURITY_DOMAIN.resource,
@@ -245,6 +250,8 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                     getView().updateResourceElement(ElytronResource.FILTERING_KEY_STORE.resource,
                             asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateLdapKeyStore(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
+                    getView().updateResourceElement(ElytronResource.SECRET_KEY_CREDENTIAL_STORE.resource,
+                            asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateResourceElement(ElytronResource.PROVIDER_LOADER.resource,
                             asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateResourceElement(ElytronResource.AGGREGATE_PROVIDERS.resource,
@@ -338,6 +345,29 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
             ResourceAddress address = CREDENTIAL_STORE_TEMPLATE.resolve(statementContext, nameItem.getValue());
             crud.add(Names.CREDENTIAL_STORE, name, address, model,
                     (n, a) -> reload(CREDENTIAL_STORE, nodes -> getView().updateResourceElement(CREDENTIAL_STORE, nodes)));
+        }).show();
+    }
+
+    // -------------------------------------------- Secret Key Credential Store
+
+    void addSecretKeyCredentialStore() {
+        Metadata metadata = metadataRegistry.lookup(SECRET_KEY_CREDENTIAL_STORE_TEMPLATE);
+
+        String id = Ids.build(Ids.ELYTRON_SECRET_KEY_CREDENTIAL_STORE, Ids.ADD);
+        NameItem nameItem = new NameItem();
+        ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
+                .addOnly()
+                .unboundFormItem(nameItem, 0)
+                .include(CREATE, PATH, RELATIVE_TO, POPULATE)
+                .unsorted()
+                .build();
+        form.getFormItem(RELATIVE_TO).registerSuggestHandler(new PathsAutoComplete());
+
+        new AddResourceDialog(resources.messages().addResourceTitle(Names.SECRET_KEY_CREDENTIAL_STORE), form, (name, model) -> {
+            ResourceAddress address = SECRET_KEY_CREDENTIAL_STORE_TEMPLATE.resolve(statementContext, nameItem.getValue());
+            crud.add(Names.SECRET_KEY_CREDENTIAL_STORE, name, address, model,
+                    (n, a) -> reload(SECRET_KEY_CREDENTIAL_STORE,
+                            nodes -> getView().updateResourceElement(SECRET_KEY_CREDENTIAL_STORE, nodes)));
         }).show();
     }
 
@@ -692,6 +722,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
             PERIODIC_FILE_AUDIT_LOG_ADDRESS,
             POLICY_ADDRESS,
             PROVIDER_LOADER_ADDRESS,
+            SECRET_KEY_CREDENTIAL_STORE_ADDRESS,
             SECURITY_DOMAIN_ADDRESS,
             SERVER_SSL_CONTEXT_ADDRESS,
             SERVER_SSL_SNI_CONTEXT_ADDRESS,

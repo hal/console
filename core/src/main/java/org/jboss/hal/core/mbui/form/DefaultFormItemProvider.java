@@ -29,6 +29,7 @@ import org.jboss.hal.ballroom.form.ListItem;
 import org.jboss.hal.ballroom.form.MultiSelectBoxItem;
 import org.jboss.hal.ballroom.form.NumberDoubleItem;
 import org.jboss.hal.ballroom.form.NumberItem;
+import org.jboss.hal.ballroom.form.NumberSelectItem;
 import org.jboss.hal.ballroom.form.PropertiesItem;
 import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
 import org.jboss.hal.ballroom.form.SuggestHandler;
@@ -108,20 +109,29 @@ class DefaultFormItemProvider implements FormItemProvider {
                 case BIG_INTEGER:
                 case INT:
                 case LONG: {
-                    long min, max;
-                    if (type == ModelType.INT) {
-                        min = attributeDescription.get(MIN).asLong(Integer.MIN_VALUE);
-                        max = attributeDescription.get(MAX).asLong(Integer.MAX_VALUE);
+                    long[] allowedValues = longValues(attributeDescription, ALLOWED);
+                    if (allowedValues.length == 0) {
+                        long min, max;
+                        if (type == ModelType.INT) {
+                            min = attributeDescription.get(MIN).asLong(Integer.MIN_VALUE);
+                            max = attributeDescription.get(MAX).asLong(Integer.MAX_VALUE);
+                        } else {
+                            min = attributeDescription.get(MIN).asLong(MIN_SAFE_LONG);
+                            max = attributeDescription.get(MAX).asLong(MAX_SAFE_LONG);
+                        }
+                        NumberItem numberItem = new NumberItem(name, label, unit, min, max);
+                        if (attributeDescription.hasDefined(DEFAULT)) {
+                            long defaultValue = attributeDescription.get(DEFAULT).asLong();
+                            numberItem.assignDefaultValue(defaultValue);
+                        }
+                        formItem = numberItem;
                     } else {
-                        min = attributeDescription.get(MIN).asLong(MIN_SAFE_LONG);
-                        max = attributeDescription.get(MAX).asLong(MAX_SAFE_LONG);
+                        NumberSelectItem numberSelectItem = new NumberSelectItem(name, allowedValues);
+                        if (attributeDescription.hasDefined(DEFAULT)) {
+                            numberSelectItem.assignDefaultValue(attributeDescription.get(DEFAULT).asLong());
+                        }
+                        formItem = numberSelectItem;
                     }
-                    NumberItem numberItem = new NumberItem(name, label, unit, min, max);
-                    if (attributeDescription.hasDefined(DEFAULT)) {
-                        long defaultValue = attributeDescription.get(DEFAULT).asLong();
-                        numberItem.assignDefaultValue(defaultValue);
-                    }
-                    formItem = numberItem;
                     break;
                 }
                 case DOUBLE: {
@@ -283,6 +293,20 @@ class DefaultFormItemProvider implements FormItemProvider {
             return nodes.stream().map(ModelNode::asString).collect(toList());
         }
         return emptyList();
+    }
+
+    private long[] longValues(ModelNode modelNode, String property) {
+        if (modelNode.hasDefined(property)) {
+            List<ModelNode> nodes = ModelNodeHelper.getOrDefault(modelNode, property,
+                    () -> modelNode.get(property).asList(), emptyList());
+
+            long[] values = new long[nodes.size()];
+            for (int i = 0; i < nodes.size(); i++) {
+                values[i] = nodes.get(i).asLong();
+            }
+            return values;
+        }
+        return new long[0];
     }
 
     private boolean isSimpleTuple(ModelNode attributeDescription) {

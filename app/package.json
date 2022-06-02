@@ -28,7 +28,7 @@
     "parcel-resolver-theme": "file:local_modules/parcel-resolver-theme"
   },
   "dependencies": {
-    "ace-builds": "^1.5.1",
+    "ace-builds": "^1.5.3",
     "bootstrap": "~3.4.1",
     "bootstrap-select": "^1.13.18",
     "bootstrap-switch": "~3.3.5",

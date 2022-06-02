@@ -364,6 +364,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String exportCertificate();
 
+    String exportSecretKey();
+
     String expression();
 
     String expressionResolver();
@@ -413,6 +415,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String generateCSR();
 
     String generateKeyPair();
+
+    String generateSecretKey();
 
     String getMetadata();
 
@@ -601,6 +605,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String identity();
 
     String importCertificate();
+
+    String importSecretKey();
 
     String importt();
 
