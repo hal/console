@@ -95,7 +95,7 @@ class AddExpressionWizard {
 
     // ------------------------------------------------------ steps
 
-    static abstract class AbstractStep extends WizardStep<Context, State> {
+    abstract static class AbstractStep extends WizardStep<Context, State> {
         protected final HTMLElement root;
         protected final Form<ModelNode> form;
 
