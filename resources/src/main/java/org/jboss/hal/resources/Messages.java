@@ -300,10 +300,6 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     SafeHtml exportSecretKeyError(String alias, String resource, String error);
 
-    SafeHtml expressionEncryptionError(String error);
-
-    SafeHtml expressionEncryptionUnavailable();
-
     SafeHtml expressionError(String expression);
 
     SafeHtml expressionWarning(String expression);
