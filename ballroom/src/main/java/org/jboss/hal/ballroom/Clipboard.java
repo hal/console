@@ -58,6 +58,9 @@ public class Clipboard {
     public static class Options {
 
         public TextProvider text;
+
+        // required when the widget is in a modal panel
+        public HTMLElement container;
     }
 
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)

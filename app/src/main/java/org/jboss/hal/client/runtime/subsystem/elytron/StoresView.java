@@ -38,6 +38,7 @@ import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.CR
 import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.FILTERING_KEY_STORE_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.KEY_STORE_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.LDAP_KEY_STORE_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.SECRET_KEY_CREDENTIAL_STORE_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.pfIcon;
 import static org.jboss.hal.resources.Ids.ELYTRON_LDAP_KEY_STORE;
@@ -48,6 +49,7 @@ public class StoresView extends HalViewImpl implements StoresPresenter.MyView {
     private final StoreElement filteringStoreElement;
     private final KeyStoreElement keystoreElement;
     private final StoreElement ldapKeystoreElement;
+    private final StoreElement secretKeyCredentialStoreElement;
     private StoresPresenter presenter;
 
     @Inject
@@ -75,6 +77,19 @@ public class StoresView extends HalViewImpl implements StoresPresenter.MyView {
                                 table -> setCredentialStoreSecretAlias(credentialStoreMetadata, table.selectedRow().asString()),
                                 Scope.SELECTED_SINGLE,
                                 Constraint.executable(CREDENTIAL_STORE_TEMPLATE, SET_SECRET)))
+                        .addAliasButtonHandler(new Button<>(resources.constants().importSecretKey(), null,
+                                table -> importCredentialStoreSecretKey(credentialStoreMetadata),
+                                null,
+                                Constraint.executable(CREDENTIAL_STORE_TEMPLATE, IMPORT_SECRET_KEY)))
+                        .addAliasButtonHandler(new Button<>(resources.constants().exportSecretKey(), null,
+                                table -> exportCredentialStoreSecretKey(credentialStoreMetadata,
+                                        table.selectedRow().asString()),
+                                Scope.SELECTED_SINGLE,
+                                Constraint.executable(CREDENTIAL_STORE_TEMPLATE, EXPORT_SECRET_KEY)))
+                        .addAliasButtonHandler(new Button<>(resources.constants().generateSecretKey(), null,
+                                table -> generateCredentialStoreSecretKey(credentialStoreMetadata),
+                                null,
+                                Constraint.executable(CREDENTIAL_STORE_TEMPLATE, GENERATE_SECRET_KEY)))
                         .build();
         // enable the add-alias button, even if there are no items
 
@@ -119,8 +134,41 @@ public class StoresView extends HalViewImpl implements StoresPresenter.MyView {
 
         navigation.addPrimary(ELYTRON_LDAP_KEY_STORE, Names.LDAP_KEY_STORE, pfIcon("service"), ldapKeystoreElement);
 
-        registerAttachables(asList(navigation, credentialStoreElement, filteringStoreElement, keystoreElement,
-                ldapKeystoreElement));
+        // -------------- secret key credential store
+        Metadata secretKeyCredentialStoreMetadata = metadataRegistry.lookup(SECRET_KEY_CREDENTIAL_STORE_TEMPLATE);
+        secretKeyCredentialStoreElement = new StoreElement.Builder(SECRET_KEY_CREDENTIAL_STORE,
+                Names.SECRET_KEY_CREDENTIAL_STORE, resources,
+                secretKeyCredentialStoreMetadata)
+                        .addButtonHandler(new Button<>(resources.constants().reload(), null,
+                                table -> presenter.reloadCredentialStore(table.selectedRow().getName()),
+                                Scope.SELECTED_SINGLE,
+                                Constraint.executable(SECRET_KEY_CREDENTIAL_STORE_TEMPLATE, RELOAD)))
+                        .addAliasButtonHandler(new Button<>(resources.constants().removeAlias(), null,
+                                table -> removeSecretKeyCredentialStoreAlias(secretKeyCredentialStoreMetadata,
+                                        table.selectedRow().asString()),
+                                Scope.SELECTED_SINGLE,
+                                Constraint.executable(SECRET_KEY_CREDENTIAL_STORE_TEMPLATE, REMOVE_ALIAS)))
+                        .addAliasButtonHandler(new Button<>(resources.constants().importSecretKey(), null,
+                                table -> importSecretKeyCredentialStoreSecretKey(secretKeyCredentialStoreMetadata),
+                                null,
+                                Constraint.executable(SECRET_KEY_CREDENTIAL_STORE_TEMPLATE, IMPORT_SECRET_KEY)))
+                        .addAliasButtonHandler(new Button<>(resources.constants().exportSecretKey(), null,
+                                table -> exportSecretKeyCredentialStoreSecretKey(secretKeyCredentialStoreMetadata,
+                                        table.selectedRow().asString()),
+                                Scope.SELECTED_SINGLE,
+                                Constraint.executable(SECRET_KEY_CREDENTIAL_STORE_TEMPLATE, EXPORT_SECRET_KEY)))
+                        .addAliasButtonHandler(new Button<>(resources.constants().generateSecretKey(), null,
+                                table -> generateSecretKeyCredentialStoreSecretKey(secretKeyCredentialStoreMetadata),
+                                null,
+                                Constraint.executable(SECRET_KEY_CREDENTIAL_STORE_TEMPLATE, GENERATE_SECRET_KEY)))
+                        .build();
+
+        navigation.addPrimary(Ids.ELYTRON_SECRET_KEY_CREDENTIAL_STORE, Names.SECRET_KEY_CREDENTIAL_STORE, pfIcon("key"),
+                secretKeyCredentialStoreElement);
+
+        registerAttachables(
+                asList(navigation, credentialStoreElement, filteringStoreElement, keystoreElement, ldapKeystoreElement,
+                        secretKeyCredentialStoreElement));
 
         initElement(row()
                 .add(column()
@@ -136,6 +184,21 @@ public class StoresView extends HalViewImpl implements StoresPresenter.MyView {
     private void addCredentialStoreAlias(Metadata metadata) {
         presenter.addAlias(metadata, credentialStoreElement.getSelectedResource(),
                 credentialStoreElement::updateAliases);
+    }
+
+    private void generateCredentialStoreSecretKey(Metadata metadata) {
+        presenter.generateSecretKey(metadata, Names.CREDENTIAL_STORE,
+                credentialStoreElement.getSelectedResource(), credentialStoreElement::updateAliases);
+    }
+
+    private void exportCredentialStoreSecretKey(Metadata metadata, String alias) {
+        presenter.exportSecretKey(metadata, Names.CREDENTIAL_STORE,
+                credentialStoreElement.getSelectedResource(), alias);
+    }
+
+    private void importCredentialStoreSecretKey(Metadata metadata) {
+        presenter.importSecretKey(metadata, Names.CREDENTIAL_STORE,
+                credentialStoreElement.getSelectedResource(), credentialStoreElement::updateAliases);
     }
 
     private void removeCredentialStoreAlias(Metadata metadata, String alias) {
@@ -167,6 +230,26 @@ public class StoresView extends HalViewImpl implements StoresPresenter.MyView {
         presenter.setSecret(metadata, credentialStoreElement.getSelectedResource(), alias);
     }
 
+    private void removeSecretKeyCredentialStoreAlias(Metadata metadata, String alias) {
+        presenter.removeAlias(metadata, secretKeyCredentialStoreElement.getSelectedResource(),
+                alias, secretKeyCredentialStoreElement::updateAliases);
+    }
+
+    private void generateSecretKeyCredentialStoreSecretKey(Metadata metadata) {
+        presenter.generateSecretKey(metadata, Names.SECRET_KEY_CREDENTIAL_STORE,
+                secretKeyCredentialStoreElement.getSelectedResource(), secretKeyCredentialStoreElement::updateAliases);
+    }
+
+    private void exportSecretKeyCredentialStoreSecretKey(Metadata metadata, String alias) {
+        presenter.exportSecretKey(metadata, Names.SECRET_KEY_CREDENTIAL_STORE,
+                secretKeyCredentialStoreElement.getSelectedResource(), alias);
+    }
+
+    private void importSecretKeyCredentialStoreSecretKey(Metadata metadata) {
+        presenter.importSecretKey(metadata, Names.SECRET_KEY_CREDENTIAL_STORE,
+                secretKeyCredentialStoreElement.getSelectedResource(), secretKeyCredentialStoreElement::updateAliases);
+    }
+
     @Override
     public void updateCredentialStore(List<NamedNode> items) {
         credentialStoreElement.update(items);
@@ -188,11 +271,17 @@ public class StoresView extends HalViewImpl implements StoresPresenter.MyView {
     }
 
     @Override
+    public void updateSecretKeyCredentialStore(List<NamedNode> items) {
+        secretKeyCredentialStoreElement.update(items);
+    }
+
+    @Override
     public void setPresenter(StoresPresenter presenter) {
         this.presenter = presenter;
         credentialStoreElement.setPresenter(presenter);
         filteringStoreElement.setPresenter(presenter);
         keystoreElement.setPresenter(presenter);
         ldapKeystoreElement.setPresenter(presenter);
+        secretKeyCredentialStoreElement.setPresenter(presenter);
     }
 }

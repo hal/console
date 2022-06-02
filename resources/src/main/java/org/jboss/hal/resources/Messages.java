@@ -294,6 +294,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     SafeHtml exportCertificateSuccess(String alias, String path, String resource);
 
+    SafeHtml exportSecretKeyError(String alias, String resource, String error);
+
     SafeHtml expressionError(String expression);
 
     SafeHtml expressionWarning(String expression);

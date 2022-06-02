@@ -37,6 +37,7 @@ interface AddressTemplates {
     String LDAP_KEY_STORE_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/ldap-key-store=*";
     String LDAP_REALM_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/ldap-realm=*";
     String PROPERTIES_REALM_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/properties-realm=*";
+    String SECRET_KEY_CREDENTIAL_STORE_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/secret-key-credential-store=*";
     String SECURITY_DOMAIN_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/security-domain=*";
     String TRUST_MANAGER_ADDRESS = ELYTRON_SUBSYSTEM_ADDRESS + "/trust-manager=*";
 
@@ -53,6 +54,7 @@ interface AddressTemplates {
     AddressTemplate LDAP_KEY_STORE_TEMPLATE = AddressTemplate.of(LDAP_KEY_STORE_ADDRESS);
     AddressTemplate LDAP_REALM_TEMPLATE = AddressTemplate.of(LDAP_REALM_ADDRESS);
     AddressTemplate PROPERTIES_REALM_TEMPLATE = AddressTemplate.of(PROPERTIES_REALM_ADDRESS);
+    AddressTemplate SECRET_KEY_CREDENTIAL_STORE_TEMPLATE = AddressTemplate.of(SECRET_KEY_CREDENTIAL_STORE_ADDRESS);
     AddressTemplate SECURITY_DOMAIN_TEMPLATE = AddressTemplate.of(SECURITY_DOMAIN_ADDRESS);
     AddressTemplate TRUST_MANAGER_TEMPLATE = AddressTemplate.of(TRUST_MANAGER_ADDRESS);
     // @formatter:on

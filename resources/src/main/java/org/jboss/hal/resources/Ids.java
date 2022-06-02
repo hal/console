@@ -282,6 +282,7 @@ public interface Ids {
     String ELYTRON_REGEX_VALIDATING_PRINCIPAL_TRANSFORMER = "elytron-regex-validating-principal-transformer";
     String ELYTRON_RUNTIME = "elytron-runtime";
     String ELYTRON_SASL_AUTHENTICATION_FACTORY = "elytron-sasl-authentication-factory";
+    String ELYTRON_SECRET_KEY_CREDENTIAL_STORE = "elytron-secret-key-credential-store";
     String ELYTRON_SECURITY_DOMAIN = "elytron-security-domain";
     String ELYTRON_SECURITY_REALMS = "elytron-security-realms";
     String ELYTRON_SERVER_SSL_CONTEXT = "elytron-server-ssl-context";
