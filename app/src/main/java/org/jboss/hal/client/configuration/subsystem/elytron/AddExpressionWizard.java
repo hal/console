@@ -15,6 +15,11 @@
  */
 package org.jboss.hal.client.configuration.subsystem.elytron;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.jboss.hal.ballroom.autocomplete.StaticAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.wizard.Wizard;
 import org.jboss.hal.ballroom.wizard.WizardStep;
@@ -30,6 +35,7 @@ import elemental2.dom.HTMLElement;
 
 import static org.jboss.elemento.Elements.div;
 import static org.jboss.elemento.Elements.p;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CREDENTIAL_STORE;
 import static org.jboss.hal.resources.Ids.ADD;
 import static org.jboss.hal.resources.Ids.ELYTRON_EXPRESSION;
 import static org.jboss.hal.resources.Ids.FORM;
@@ -47,8 +53,8 @@ class AddExpressionWizard {
         this.wizard = new Wizard.Builder<Context, State>(title, new Context())
 
                 .addStep(State.EXPRESSION, ExpressionStep.build(metadata))
-                .addStep(State.RESOLVERS, ResolverStep.build(metadata.forComplexAttribute(ModelDescriptionConstants.RESOLVERS)))
-
+                .addStep(State.RESOLVERS, ResolverStep.build(metadata.forComplexAttribute(ModelDescriptionConstants.RESOLVERS),
+                        presenter))
                 .onBack((context, state) -> {
                     State previous = null;
                     if (state == State.RESOLVERS) {
@@ -155,10 +161,19 @@ class AddExpressionWizard {
             super(title, form, metadata);
         }
 
-        public static ResolverStep build(Metadata resolversMetadata) {
+        public static ResolverStep build(Metadata resolversMetadata, OtherSettingsPresenter presenter) {
             Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(ELYTRON_EXPRESSION, RESOLVERS, ADD, FORM),
                     resolversMetadata)
                             .build();
+
+            StaticAutoComplete autoComplete = new StaticAutoComplete(Collections.emptyList());
+            form.getFormItem("secret-key").registerSuggestHandler(autoComplete);
+            form.getFormItem(CREDENTIAL_STORE).addValueChangeHandler(
+                    valueChangeEvent -> presenter.readSecretKeysFromStore(valueChangeEvent.getValue().toString(),
+                            keys -> {
+                                List<String> keyNames = keys.stream().map(ModelNode::asString).collect(Collectors.toList());
+                                autoComplete.update(keyNames);
+                            }));
 
             return new ResolverStep(Names.RESOLVERS, form, resolversMetadata);
         }

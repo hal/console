@@ -15,12 +15,14 @@
  */
 package org.jboss.hal.client.configuration.subsystem.elytron;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.autocomplete.SuggestCapabilitiesAutoComplete;
@@ -49,6 +51,9 @@ import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.FlowContext;
+import org.jboss.hal.flow.Progress;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
@@ -56,6 +61,7 @@ import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
@@ -107,6 +113,7 @@ import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTempla
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ALIAS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CAPABILITY_REFERENCE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CLASS_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CLEAR_TEXT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CREATE;
@@ -130,7 +137,9 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NEW_ITEM_RDN;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NEW_ITEM_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PATH;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.POPULATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_ALIASES_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_ATTRIBUTE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REALM;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REALMS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RELATIVE_TO;
@@ -147,6 +156,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.move;
+import static org.jboss.hal.flow.Flow.sequential;
 
 public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter.MyView, OtherSettingsPresenter.MyProxy>
         implements SupportsExpertMode {
@@ -159,6 +169,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
     private final MetadataRegistry metadataRegistry;
     private final Resources resources;
     private final Dispatcher dispatcher;
+    private final Provider<Progress> progress;
 
     @Inject
     public OtherSettingsPresenter(EventBus eventBus,
@@ -171,7 +182,8 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
             FinderPathFactory finderPathFactory,
             StatementContext statementContext,
             MetadataRegistry metadataRegistry,
-            Resources resources) {
+            Resources resources,
+            @Footer Provider<Progress> progress) {
         super(eventBus, view, proxy, finder);
         this.dispatcher = dispatcher;
         this.crud = crud;
@@ -180,6 +192,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
         this.statementContext = statementContext;
         this.metadataRegistry = metadataRegistry;
         this.resources = resources;
+        this.progress = progress;
     }
 
     @Override
@@ -595,6 +608,39 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
             reloadExpressionEncryption();
             MessageEvent.fire(getEventBus(), Message.success(successMessage));
         });
+    }
+
+    void readSecretKeysFromStore(String storeName, Consumer<List<ModelNode>> callback) {
+
+        List<Task<FlowContext>> tasks = new ArrayList<>();
+        tasks.add(context -> {
+            // SecretKeyCredentials are either in a "credential-store" or a "secret-key-credential-store"
+            Operation operation = new Operation.Builder(ELYTRON_SUBSYSTEM_TEMPLATE.resolve(statementContext),
+                    READ_CHILDREN_NAMES_OPERATION)
+                            .param(CHILD_TYPE, CREDENTIAL_STORE)
+                            .build();
+
+            return dispatcher.execute(operation).then(result -> {
+                ModelNode store = new ModelNode().set(storeName);
+                ResourceAddress storeAddress = ((result.asList().contains(store))
+                        ? CREDENTIAL_STORE_TEMPLATE
+                        : SECRET_KEY_CREDENTIAL_STORE_TEMPLATE).resolve(statementContext, storeName);
+                return context.resolve(storeAddress);
+            });
+        });
+        tasks.add(context -> {
+            ResourceAddress address = context.pop();
+            Operation operation = new Operation.Builder(address, READ_ALIASES_OPERATION)
+                    .build();
+            return dispatcher.execute(operation).then(aliases -> context.resolve(aliases.asList()));
+        });
+
+        sequential(new FlowContext(progress.get()), tasks)
+                .then(context -> {
+                    List<ModelNode> aliases = context.pop();
+                    callback.accept(aliases);
+                    return null;
+                });
     }
 
     // -------------------------------------------- JASPI Configuration
