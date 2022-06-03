@@ -51,11 +51,11 @@ public class UndertowPreview extends PreviewContent<SubsystemMetadata> {
 
         noStatistics = new EmptyState.Builder(Ids.UNDERTOW_STATISTICS_DISABLED,
                 resources.constants().statisticsDisabledHeader())
-                        .description(resources.messages().statisticsDisabled(Names.UNDERTOW))
-                        .icon(fontAwesome("line-chart"))
-                        .primaryAction(resources.constants().enableStatistics(), this::enableStatistics,
-                                Constraint.writable(WEB_SUBSYSTEM_TEMPLATE, STATISTICS_ENABLED))
-                        .build();
+                .description(resources.messages().statisticsDisabled(Names.UNDERTOW))
+                .icon(fontAwesome("line-chart"))
+                .primaryAction(resources.constants().enableStatistics(), this::enableStatistics,
+                        Constraint.writable(WEB_SUBSYSTEM_TEMPLATE, STATISTICS_ENABLED))
+                .build();
         Elements.setVisible(noStatistics.element(), false);
 
         descriptionPreview = section().element();

@@ -113,11 +113,11 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
         Metadata metadata = mbuiContext.metadataRegistry().lookup(CONSTANT_PERMISSION_MAPPER_TEMPLATE);
         constantPermissionMapperElement = new ResourceElement.Builder(Ids.ELYTRON_CONSTANT_PERMISSION_MAPPER,
                 CONSTANT_PERMISSION_MAPPER, metadata, mbuiContext)
-                        .column(NAME, (cell, type, row, meta) -> row.getName())
-                        .setComplexListAttribute(PERMISSIONS, asList(CLASS_NAME, MODULE), asList(CLASS_NAME, MODULE),
-                                modelNode -> build(modelNode.get(CLASS_NAME).asString(), modelNode.get(MODULE).asString()))
-                        .onCrud(() -> presenter.reload(CONSTANT_PERMISSION_MAPPER, this::updateConstantPermissionMapper))
-                        .build();
+                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .setComplexListAttribute(PERMISSIONS, asList(CLASS_NAME, MODULE), asList(CLASS_NAME, MODULE),
+                        modelNode -> build(modelNode.get(CLASS_NAME).asString(), modelNode.get(MODULE).asString()))
+                .onCrud(() -> presenter.reload(CONSTANT_PERMISSION_MAPPER, this::updateConstantPermissionMapper))
+                .build();
 
         navigation.insertSecondary("mappers-decoders-permission-mapper-item",
                 build(Ids.ELYTRON_CONSTANT_PERMISSION_MAPPER, ITEM),

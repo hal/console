@@ -116,104 +116,104 @@ public class DataSourceWizard {
         Wizard.Builder<Context, State> builder = new Wizard.Builder<Context, State>(
                 resources.messages().addResourceTitle(xa ? Names.XA_DATASOURCE : Names.DATASOURCE), new Context(xa))
 
-                        .onBack((context, currentState) -> {
-                            State previous = null;
-                            switch (currentState) {
-                                case CHOOSE_TEMPLATE:
-                                    break;
-                                case NAMES:
-                                    previous = CHOOSE_TEMPLATE;
-                                    break;
-                                case DRIVER:
-                                    previous = NAMES;
-                                    break;
-                                case XA_PROPERTIES:
-                                    previous = DRIVER;
-                                    break;
-                                case CONNECTION:
-                                    previous = context.isXa() ? XA_PROPERTIES : DRIVER;
-                                    break;
-                                case TEST:
-                                    previous = CONNECTION;
-                                    break;
-                                case REVIEW:
-                                    previous = TEST;
-                                    break;
-                                default:
-                                    break;
-                            }
-                            return previous;
-                        })
+                .onBack((context, currentState) -> {
+                    State previous = null;
+                    switch (currentState) {
+                        case CHOOSE_TEMPLATE:
+                            break;
+                        case NAMES:
+                            previous = CHOOSE_TEMPLATE;
+                            break;
+                        case DRIVER:
+                            previous = NAMES;
+                            break;
+                        case XA_PROPERTIES:
+                            previous = DRIVER;
+                            break;
+                        case CONNECTION:
+                            previous = context.isXa() ? XA_PROPERTIES : DRIVER;
+                            break;
+                        case TEST:
+                            previous = CONNECTION;
+                            break;
+                        case REVIEW:
+                            previous = TEST;
+                            break;
+                        default:
+                            break;
+                    }
+                    return previous;
+                })
 
-                        .onNext((context, currentState) -> {
-                            State next = null;
-                            switch (currentState) {
-                                case CHOOSE_TEMPLATE:
-                                    next = NAMES;
-                                    break;
-                                case NAMES:
-                                    next = DRIVER;
-                                    break;
-                                case DRIVER:
-                                    next = context.isXa() ? XA_PROPERTIES : CONNECTION;
-                                    break;
-                                case XA_PROPERTIES:
-                                    next = CONNECTION;
-                                    break;
-                                case CONNECTION:
-                                    next = TEST;
-                                    break;
-                                case TEST:
-                                    next = REVIEW;
-                                    break;
-                                case REVIEW:
-                                    break;
-                                default:
-                                    break;
-                            }
-                            return next;
-                        })
+                .onNext((context, currentState) -> {
+                    State next = null;
+                    switch (currentState) {
+                        case CHOOSE_TEMPLATE:
+                            next = NAMES;
+                            break;
+                        case NAMES:
+                            next = DRIVER;
+                            break;
+                        case DRIVER:
+                            next = context.isXa() ? XA_PROPERTIES : CONNECTION;
+                            break;
+                        case XA_PROPERTIES:
+                            next = CONNECTION;
+                            break;
+                        case CONNECTION:
+                            next = TEST;
+                            break;
+                        case TEST:
+                            next = REVIEW;
+                            break;
+                        case REVIEW:
+                            break;
+                        default:
+                            break;
+                    }
+                    return next;
+                })
 
-                        .stayOpenAfterFinish()
+                .stayOpenAfterFinish()
 
-                        .onCancel(context -> {
-                            if (context.isCreated()) {
-                                // cleanup
-                                ResourceAddress address = context.dataSource.isXa()
-                                        ? XA_DATA_SOURCE_TEMPLATE.resolve(statementContext, context.dataSource.getName())
-                                        : DATA_SOURCE_TEMPLATE.resolve(statementContext, context.dataSource.getName());
-                                Operation operation = new Operation.Builder(address, REMOVE).build();
-                                dispatcher.execute(operation,
-                                        result -> column.refresh(RESTORE_SELECTION),
-                                        (op, failure) -> MessageEvent.fire(eventBus, Message.error(resources.messages()
-                                                .testConnectionCancelError(context.dataSource.getName()), failure)));
-                            }
-                        })
+                .onCancel(context -> {
+                    if (context.isCreated()) {
+                        // cleanup
+                        ResourceAddress address = context.dataSource.isXa()
+                                ? XA_DATA_SOURCE_TEMPLATE.resolve(statementContext, context.dataSource.getName())
+                                : DATA_SOURCE_TEMPLATE.resolve(statementContext, context.dataSource.getName());
+                        Operation operation = new Operation.Builder(address, REMOVE).build();
+                        dispatcher.execute(operation,
+                                result -> column.refresh(RESTORE_SELECTION),
+                                (op, failure) -> MessageEvent.fire(eventBus, Message.error(resources.messages()
+                                        .testConnectionCancelError(context.dataSource.getName()), failure)));
+                    }
+                })
 
-                        .onFinish((wizard, context) -> {
-                            if (!context.isCreated()) {
-                                dispatcher.execute(addOperation(context, statementContext),
-                                        (CompositeResult result) -> success(context.dataSource),
-                                        (op, failure) -> wizard.showError(resources.constants().operationFailed(),
-                                                resources.messages().dataSourceAddError(), failure));
-                            } else {
-                                AddressTemplate template = context.dataSource.isXa()
-                                        ? XA_DATA_SOURCE_TEMPLATE
-                                        : DATA_SOURCE_TEMPLATE;
-                                ResourceAddress address = template.resolve(statementContext, context.dataSource.getName());
-                                Metadata metadata = metadataRegistry.lookup(template);
-                                if (context.hasChanges()) {
-                                    Composite operations = new OperationFactory().fromChangeSet(address, context.changes(),
-                                            metadata);
-                                    dispatcher.execute(operations,
-                                            (CompositeResult result) -> success(context.dataSource),
-                                            (op, failure) -> wizard.showError(resources.constants().operationFailed(),
-                                                    resources.messages().dataSourceAddError(), failure));
-                                } else {
-                                    success(context.dataSource);
-                                }
-                            }
-                        });
+                .onFinish((wizard, context) -> {
+                    if (!context.isCreated()) {
+                        dispatcher.execute(addOperation(context, statementContext),
+                                (CompositeResult result) -> success(context.dataSource),
+                                (op, failure) -> wizard.showError(resources.constants().operationFailed(),
+                                        resources.messages().dataSourceAddError(), failure));
+                    } else {
+                        AddressTemplate template = context.dataSource.isXa()
+                                ? XA_DATA_SOURCE_TEMPLATE
+                                : DATA_SOURCE_TEMPLATE;
+                        ResourceAddress address = template.resolve(statementContext, context.dataSource.getName());
+                        Metadata metadata = metadataRegistry.lookup(template);
+                        if (context.hasChanges()) {
+                            Composite operations = new OperationFactory().fromChangeSet(address, context.changes(),
+                                    metadata);
+                            dispatcher.execute(operations,
+                                    (CompositeResult result) -> success(context.dataSource),
+                                    (op, failure) -> wizard.showError(resources.constants().operationFailed(),
+                                            resources.messages().dataSourceAddError(), failure));
+                        } else {
+                            success(context.dataSource);
+                        }
+                    }
+                });
 
         AddressTemplate dataSourceTemplate = xa ? XA_DATA_SOURCE_TEMPLATE : DATA_SOURCE_TEMPLATE;
         Metadata dataSourceMetadata = metadataRegistry.lookup(dataSourceTemplate);

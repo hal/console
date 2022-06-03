@@ -187,19 +187,19 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
         Metadata locationFilterRefMetadata = metadataRegistry.lookup(LOCATION_FILTER_REF_TEMPLATE);
         locationFilterRefTable = new ModelNodeTable.Builder<NamedNode>(Ids.UNDERTOW_HOST_LOCATION_FILTER_REF_TABLE,
                 locationFilterRefMetadata)
-                        .button(tableButtonFactory.add(LOCATION_FILTER_REF_TEMPLATE,
-                                table -> presenter.addLocationFilterRef()))
-                        .button(tableButtonFactory.remove(LOCATION_FILTER_REF_TEMPLATE,
-                                table -> presenter.removeLocationFilterRef(table.selectedRow().getName())))
-                        .column(FILTER_REF, resources.constants().filter(), (cell, type, row, meta) -> row.getName())
-                        .column(PRIORITY)
-                        .build();
+                .button(tableButtonFactory.add(LOCATION_FILTER_REF_TEMPLATE,
+                        table -> presenter.addLocationFilterRef()))
+                .button(tableButtonFactory.remove(LOCATION_FILTER_REF_TEMPLATE,
+                        table -> presenter.removeLocationFilterRef(table.selectedRow().getName())))
+                .column(FILTER_REF, resources.constants().filter(), (cell, type, row, meta) -> row.getName())
+                .column(PRIORITY)
+                .build();
 
         locationFilterRefForm = new ModelNodeForm.Builder<NamedNode>(Ids.UNDERTOW_HOST_LOCATION_FILTER_REF_FORM,
                 locationFilterRefMetadata)
-                        .onSave((form, changedValues) -> presenter.saveLocationFilterRef(form, changedValues))
-                        .prepareReset(form -> presenter.resetLocationFilterRef(form))
-                        .build();
+                .onSave((form, changedValues) -> presenter.saveLocationFilterRef(form, changedValues))
+                .prepareReset(form -> presenter.resetLocationFilterRef(form))
+                .build();
 
         HTMLElement locationFilterRefSection = section()
                 .add(h(1).textContent(Names.FILTERS))

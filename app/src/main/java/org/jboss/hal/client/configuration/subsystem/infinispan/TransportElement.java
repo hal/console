@@ -60,9 +60,9 @@ class TransportElement implements IsElement<HTMLElement>, Attachable, HasPresent
         Metadata metadata = metadataRegistry.lookup(AddressTemplates.TRANSPORT_JGROUPS_TEMPLATE);
         form = new ModelNodeForm.Builder<>(Ids.CACHE_CONTAINER_TRANSPORT_FORM,
                 metadata)
-                        .onSave((f, changedValues) -> presenter.saveJgroups(changedValues))
-                        .prepareReset(f -> presenter.resetJgroups(f))
-                        .build();
+                .onSave((f, changedValues) -> presenter.saveJgroups(changedValues))
+                .prepareReset(f -> presenter.resetJgroups(f))
+                .build();
 
         root = div()
                 .add(h(1).textContent(Names.JGROUPS))

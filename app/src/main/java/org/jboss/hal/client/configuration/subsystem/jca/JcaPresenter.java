@@ -312,12 +312,12 @@ public class JcaPresenter
     private Composite threadPoolsOperation(AddressTemplate template, String name) {
         Operation lrtOp = new Operation.Builder(template.resolve(statementContext, name),
                 READ_CHILDREN_RESOURCES_OPERATION)
-                        .param(CHILD_TYPE, WORKMANAGER_LRT_TEMPLATE.lastName())
-                        .build();
+                .param(CHILD_TYPE, WORKMANAGER_LRT_TEMPLATE.lastName())
+                .build();
         Operation srtOp = new Operation.Builder(template.resolve(statementContext, name),
                 READ_CHILDREN_RESOURCES_OPERATION)
-                        .param(CHILD_TYPE, WORKMANAGER_SRT_TEMPLATE.lastName())
-                        .build();
+                .param(CHILD_TYPE, WORKMANAGER_SRT_TEMPLATE.lastName())
+                .build();
         return new Composite(lrtOp, srtOp);
     }
 

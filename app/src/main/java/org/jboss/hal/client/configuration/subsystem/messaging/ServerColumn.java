@@ -137,14 +137,14 @@ public class ServerColumn extends FinderColumn<NamedNode> {
 
                                 Form<ModelNode> form = new ModelNodeForm.Builder<>(
                                         build(MESSAGING_SERVER_ADD, FORM), metadata)
-                                                .requiredOnly()
-                                                .unboundFormItem(new NameItem())
-                                                .unboundFormItem(elytronDomain)
-                                                .unboundFormItem(pathBindingDir)
-                                                .unboundFormItem(pathJournalDir)
-                                                .unboundFormItem(pathLargeMessagesDir)
-                                                .unboundFormItem(pathPagingDir)
-                                                .build();
+                                        .requiredOnly()
+                                        .unboundFormItem(new NameItem())
+                                        .unboundFormItem(elytronDomain)
+                                        .unboundFormItem(pathBindingDir)
+                                        .unboundFormItem(pathJournalDir)
+                                        .unboundFormItem(pathLargeMessagesDir)
+                                        .unboundFormItem(pathPagingDir)
+                                        .build();
 
                                 AddResourceDialog dialog = new AddResourceDialog(
                                         resources.messages().addResourceTitle(Names.SERVER), form,
@@ -163,8 +163,8 @@ public class ServerColumn extends FinderColumn<NamedNode> {
                                                             statementContext, name);
                                                     Operation pathBindDirOp = new Operation.Builder(bindDirAddress,
                                                             ADD)
-                                                                    .param(PATH, pathBindingDir.getValue())
-                                                                    .build();
+                                                            .param(PATH, pathBindingDir.getValue())
+                                                            .build();
                                                     composite.add(pathBindDirOp);
                                                 }
 
@@ -174,8 +174,8 @@ public class ServerColumn extends FinderColumn<NamedNode> {
                                                                     statementContext, name);
                                                     Operation pathJournalDirOp = new Operation.Builder(
                                                             journalDirAddress, ADD)
-                                                                    .param(PATH, pathJournalDir.getValue())
-                                                                    .build();
+                                                            .param(PATH, pathJournalDir.getValue())
+                                                            .build();
                                                     composite.add(pathJournalDirOp);
                                                 }
 
@@ -184,8 +184,8 @@ public class ServerColumn extends FinderColumn<NamedNode> {
                                                             .resolve(statementContext, name);
                                                     Operation pathLargMsgDirOp = new Operation.Builder(
                                                             largMsgDirAddress, ADD)
-                                                                    .param(PATH, pathLargeMessagesDir.getValue())
-                                                                    .build();
+                                                            .param(PATH, pathLargeMessagesDir.getValue())
+                                                            .build();
                                                     composite.add(pathLargMsgDirOp);
                                                 }
 
@@ -194,8 +194,8 @@ public class ServerColumn extends FinderColumn<NamedNode> {
                                                             statementContext, name);
                                                     Operation pathPagingDirOp = new Operation.Builder(
                                                             pagingDirAddress, ADD)
-                                                                    .param(PATH, pathPagingDir.getValue())
-                                                                    .build();
+                                                            .param(PATH, pathPagingDir.getValue())
+                                                            .build();
                                                     composite.add(pathPagingDirOp);
                                                 }
 

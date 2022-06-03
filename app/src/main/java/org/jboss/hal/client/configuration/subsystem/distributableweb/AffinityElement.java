@@ -85,9 +85,9 @@ class AffinityElement implements IsElement<HTMLElement>, Attachable, HasPresente
                     sessionManagement.template.append(AddressTemplates.AFFINITY_TEMPLATE.replaceWildcards(affinity.resource)));
             Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(affinity.baseId, Ids.FORM),
                     metadata)
-                            .onSave((f, changedValues) -> presenter.saveAffinity(affinity, changedValues))
-                            .prepareReset(f -> presenter.resetAffinity(affinity, f))
-                            .build();
+                    .onSave((f, changedValues) -> presenter.saveAffinity(affinity, changedValues))
+                    .prepareReset(f -> presenter.resetAffinity(affinity, f))
+                    .build();
             Elements.setVisible(form.element(), false);
             affinityForms.put(affinity, form);
         }

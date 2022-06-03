@@ -73,9 +73,9 @@ class ListenerPreview extends PreviewContent<NamedNode> {
 
         noStatistics = new EmptyState.Builder(Ids.UNDERTOW_LISTENER_PROCESSING_DISABLED,
                 resources.constants().statisticsDisabledHeader())
-                        .icon(fontAwesome("line-chart"))
-                        .primaryAction(resources.constants().enable(), () -> recordProcessingTime(server))
-                        .build();
+                .icon(fontAwesome("line-chart"))
+                .primaryAction(resources.constants().enable(), () -> recordProcessingTime(server))
+                .build();
 
         // the order of rows is determined at update time.
         processingTime = new GroupedBar.Builder(resources.constants().milliseconds())

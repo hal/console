@@ -174,12 +174,12 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
 
         ModelNodeForm<ModelNode> defaultBindingsForm = new ModelNodeForm.Builder<>(EE_DEFAULT_BINDINGS_FORM,
                 defaultBindingsMetadata)
-                        .onSave((form, changedValues) -> presenter.save(AddressTemplates.SERVICE_DEFAULT_BINDINGS_TEMPLATE,
-                                changedValues, defaultBindingsMetadata,
-                                resources.messages().modifyResourceSuccess(Names.EE, DEFAULT_BINDINGS_NAME)))
-                        .prepareReset(f -> presenter.resetSingleton(DEFAULT_BINDINGS_NAME,
-                                AddressTemplates.SERVICE_DEFAULT_BINDINGS_TEMPLATE, f, defaultBindingsMetadata))
-                        .build();
+                .onSave((form, changedValues) -> presenter.save(AddressTemplates.SERVICE_DEFAULT_BINDINGS_TEMPLATE,
+                        changedValues, defaultBindingsMetadata,
+                        resources.messages().modifyResourceSuccess(Names.EE, DEFAULT_BINDINGS_NAME)))
+                .prepareReset(f -> presenter.resetSingleton(DEFAULT_BINDINGS_NAME,
+                        AddressTemplates.SERVICE_DEFAULT_BINDINGS_TEMPLATE, f, defaultBindingsMetadata))
+                .build();
         forms.put(EE_DEFAULT_BINDINGS_FORM, defaultBindingsForm);
         registerAttachable(defaultBindingsForm);
 
@@ -290,30 +290,30 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
 
         Table<NamedNode> table = new ModelNodeTable.Builder<NamedNode>(Ids.build(baseId, Ids.TABLE),
                 metadata)
-                        .column(NAME, (cell, t, row, meta) -> row.getName())
-                        .button(tableButtonFactory.add(Ids.build(baseId, Ids.ADD), type, template,
-                                (name, address) -> presenter.reload()))
-                        .button(tableButtonFactory.remove(type, template, (api) -> api.selectedRow().getName(),
-                                () -> presenter.reload()))
+                .column(NAME, (cell, t, row, meta) -> row.getName())
+                .button(tableButtonFactory.add(Ids.build(baseId, Ids.ADD), type, template,
+                        (name, address) -> presenter.reload()))
+                .button(tableButtonFactory.remove(type, template, (api) -> api.selectedRow().getName(),
+                        () -> presenter.reload()))
 
-                        .build();
+                .build();
         registerAttachable(table);
         tables.put(template.lastName(), table);
 
         ModelNodeForm<NamedNode> form = new ModelNodeForm.Builder<NamedNode>(Ids.build(baseId, Ids.FORM),
                 metadata)
-                        .onSave((f, changedValues) -> {
-                            AddressTemplate fullyQualified = template.replaceWildcards(table.selectedRow().getName());
-                            presenter.save(fullyQualified, changedValues, metadata,
-                                    resources.messages().modifyResourceSuccess(Names.EE, template.lastName()));
-                        })
-                        .prepareReset(f -> {
-                            String name = table.selectedRow().getName();
-                            AddressTemplate fullyQualified = template.replaceWildcards(name);
-                            presenter.reset(type, name, fullyQualified, f, metadata,
-                                    resources.messages().modifyResourceSuccess(Names.EE, template.lastName()));
-                        })
-                        .build();
+                .onSave((f, changedValues) -> {
+                    AddressTemplate fullyQualified = template.replaceWildcards(table.selectedRow().getName());
+                    presenter.save(fullyQualified, changedValues, metadata,
+                            resources.messages().modifyResourceSuccess(Names.EE, template.lastName()));
+                })
+                .prepareReset(f -> {
+                    String name = table.selectedRow().getName();
+                    AddressTemplate fullyQualified = template.replaceWildcards(name);
+                    presenter.reset(type, name, fullyQualified, f, metadata,
+                            resources.messages().modifyResourceSuccess(Names.EE, template.lastName()));
+                })
+                .build();
 
         forms.put(template.lastName(), form);
         registerAttachable(form);
@@ -351,37 +351,37 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
         nameItem.setEnabled(false);
         ModelNodeForm.Builder<NamedNode> formBuilder = new ModelNodeForm.Builder<NamedNode>(
                 Ids.build(baseId, name, Ids.FORM), metadata)
-                        .unboundFormItem(nameItem, 0)
-                        .include(PATH, RELATIVE_TO)
-                        .unsorted()
-                        .singleton(
-                                () -> {
-                                    Operation operation = null;
-                                    if (metadata.getSecurityContext().isReadable()) {
-                                        // read-* operations don't return undefined for a missing child
-                                        operation = new Operation.Builder(presenter.resourceAddress(), QUERY)
-                                                .param(SELECT, new String[] { GLOBAL_DIRECTORY }).build();
-                                    }
-                                    return operation;
-                                },
-                                noGlobalDirectory)
-                        .onSave((f, changedValues) -> {
-                            AddressTemplate fullyQualified = template
-                                    .replaceWildcards(f.getFormItem(NAME).getValue().toString());
-                            presenter.save(fullyQualified, changedValues, metadata,
-                                    resources.messages().modifyResourceSuccess(Names.EE, template.lastName()));
-                        })
-                        .prepareReset(f -> {
-                            AddressTemplate fullyQualified = template
-                                    .replaceWildcards(f.getFormItem(NAME).getValue().toString());
-                            presenter.reset(Names.GLOBAL_DIRECTORY, name, fullyQualified, f, metadata,
-                                    resources.messages().modifyResourceSuccess(Names.EE, template.lastName()));
-                        })
-                        .prepareRemove(f -> {
-                            AddressTemplate fullyQualified = template
-                                    .replaceWildcards(f.getFormItem(NAME).getValue().toString());
-                            presenter.removeGlobalDirectory(fullyQualified);
-                        });
+                .unboundFormItem(nameItem, 0)
+                .include(PATH, RELATIVE_TO)
+                .unsorted()
+                .singleton(
+                        () -> {
+                            Operation operation = null;
+                            if (metadata.getSecurityContext().isReadable()) {
+                                // read-* operations don't return undefined for a missing child
+                                operation = new Operation.Builder(presenter.resourceAddress(), QUERY)
+                                        .param(SELECT, new String[] { GLOBAL_DIRECTORY }).build();
+                            }
+                            return operation;
+                        },
+                        noGlobalDirectory)
+                .onSave((f, changedValues) -> {
+                    AddressTemplate fullyQualified = template
+                            .replaceWildcards(f.getFormItem(NAME).getValue().toString());
+                    presenter.save(fullyQualified, changedValues, metadata,
+                            resources.messages().modifyResourceSuccess(Names.EE, template.lastName()));
+                })
+                .prepareReset(f -> {
+                    AddressTemplate fullyQualified = template
+                            .replaceWildcards(f.getFormItem(NAME).getValue().toString());
+                    presenter.reset(Names.GLOBAL_DIRECTORY, name, fullyQualified, f, metadata,
+                            resources.messages().modifyResourceSuccess(Names.EE, template.lastName()));
+                })
+                .prepareRemove(f -> {
+                    AddressTemplate fullyQualified = template
+                            .replaceWildcards(f.getFormItem(NAME).getValue().toString());
+                    presenter.removeGlobalDirectory(fullyQualified);
+                });
 
         ModelNodeForm<NamedNode> form = formBuilder.build();
         form.getFormItem(RELATIVE_TO).registerSuggestHandler(new PathsAutoComplete());

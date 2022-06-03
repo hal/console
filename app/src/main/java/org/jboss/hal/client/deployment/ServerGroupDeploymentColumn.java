@@ -303,43 +303,43 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
         Wizard<DeploymentContext, DeploymentState> wizard = new Wizard.Builder<DeploymentContext, DeploymentState>(
                 resources.messages().addResourceTitle(resources.constants().content()), new DeploymentContext())
 
-                        .addStep(UPLOAD, new UploadDeploymentStep(resources))
-                        .addStep(NAMES, new NamesStep(environment, metadata, resources))
+                .addStep(UPLOAD, new UploadDeploymentStep(resources))
+                .addStep(NAMES, new NamesStep(environment, metadata, resources))
 
-                        .onBack((context, currentState) -> currentState == NAMES ? UPLOAD : null)
-                        .onNext((context, currentState) -> currentState == UPLOAD ? NAMES : null)
+                .onBack((context, currentState) -> currentState == NAMES ? UPLOAD : null)
+                .onNext((context, currentState) -> currentState == UPLOAD ? NAMES : null)
 
-                        .stayOpenAfterFinish()
-                        .onFinish((wzd, context) -> {
-                            String name = context.name;
-                            String runtimeName = context.runtimeName;
-                            wzd.showProgress(resources.constants().deploymentInProgress(),
-                                    resources.messages().deploymentInProgress(name));
+                .stayOpenAfterFinish()
+                .onFinish((wzd, context) -> {
+                    String name = context.name;
+                    String runtimeName = context.runtimeName;
+                    wzd.showProgress(resources.constants().deploymentInProgress(),
+                            resources.messages().deploymentInProgress(name));
 
-                            List<Task<FlowContext>> tasks = asList(new CheckDeployment(dispatcher, name),
-                                    new UploadOrReplace(environment, dispatcher, name, runtimeName, context.file,
-                                            false),
-                                    new AddServerGroupDeployment(environment, dispatcher, name, runtimeName,
-                                            statementContext.selectedServerGroup()));
-                            sequential(new FlowContext(progress.get()), tasks)
-                                    .then(__ -> {
-                                        refresh(Ids.serverGroupDeployment(
-                                                statementContext.selectedServerGroup(), name));
-                                        wzd.showSuccess(resources.constants().deploymentSuccessful(),
-                                                resources.messages().deploymentSuccessful(name),
-                                                resources.messages().view(Names.DEPLOYMENT),
-                                                cxt -> {
-                                                    /* nothing to do, content is already selected */ });
-                                        return null;
-                                    })
-                                    .catch_(error -> {
-                                        wzd.showError(resources.constants().deploymentError(),
-                                                resources.messages().deploymentError(name),
-                                                String.valueOf(error));
-                                        return null;
-                                    });
-                        })
-                        .build();
+                    List<Task<FlowContext>> tasks = asList(new CheckDeployment(dispatcher, name),
+                            new UploadOrReplace(environment, dispatcher, name, runtimeName, context.file,
+                                    false),
+                            new AddServerGroupDeployment(environment, dispatcher, name, runtimeName,
+                                    statementContext.selectedServerGroup()));
+                    sequential(new FlowContext(progress.get()), tasks)
+                            .then(__ -> {
+                                refresh(Ids.serverGroupDeployment(
+                                        statementContext.selectedServerGroup(), name));
+                                wzd.showSuccess(resources.constants().deploymentSuccessful(),
+                                        resources.messages().deploymentSuccessful(name),
+                                        resources.messages().view(Names.DEPLOYMENT),
+                                        cxt -> {
+                                            /* nothing to do, content is already selected */ });
+                                return null;
+                            })
+                            .catch_(error -> {
+                                wzd.showError(resources.constants().deploymentError(),
+                                        resources.messages().deploymentError(name),
+                                        String.valueOf(error));
+                                return null;
+                            });
+                })
+                .build();
         wizard.show();
     }
 

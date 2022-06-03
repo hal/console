@@ -123,15 +123,15 @@ public class ServerView extends HalViewImpl implements MyView {
 
         connectionConsumerTable = new ModelNodeTable.Builder<>(Ids.MESSAGING_SERVER_CONNECTION_CONSUMER_TABLE,
                 CONSUMER_METADATA)
-                        .columns(asList(SESSION_ID, DESTINATION_NAME))
-                        .build();
+                .columns(asList(SESSION_ID, DESTINATION_NAME))
+                .build();
         connectionConsumerForm = new ModelNodeForm.Builder<>(Ids.MESSAGING_SERVER_CONNECTION_CONSUMER_FORM,
                 CONSUMER_METADATA)
-                        .include(asList(CONSUMER_ID, CONNECTION_ID, SESSION_ID, QUEUE_NAME, DESTINATION_NAME, DESTINATION_TYPE,
-                                CREATION_TIME, DELIVERING_COUNT, DURABLE, BROWSE_ONLY))
-                        .unsorted()
-                        .readOnly()
-                        .build();
+                .include(asList(CONSUMER_ID, CONNECTION_ID, SESSION_ID, QUEUE_NAME, DESTINATION_NAME, DESTINATION_TYPE,
+                        CREATION_TIME, DELIVERING_COUNT, DURABLE, BROWSE_ONLY))
+                .unsorted()
+                .readOnly()
+                .build();
         HTMLElement connectionConsumerSection = section()
                 .add(h(1).textContent(Names.CONSUMERS))
                 .add(connectionConsumerTable)

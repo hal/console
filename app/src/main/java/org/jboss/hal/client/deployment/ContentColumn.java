@@ -321,38 +321,38 @@ public class ContentColumn extends FinderColumn<Content> {
         Wizard<DeploymentContext, DeploymentState> wizard = new Wizard.Builder<DeploymentContext, DeploymentState>(
                 resources.messages().addResourceTitle(resources.constants().content()), new DeploymentContext())
 
-                        .addStep(UPLOAD, new UploadContentStep(resources))
-                        .addStep(NAMES, new NamesStep(environment, metadata, resources))
+                .addStep(UPLOAD, new UploadContentStep(resources))
+                .addStep(NAMES, new NamesStep(environment, metadata, resources))
 
-                        .onBack((context, currentState) -> currentState == NAMES ? UPLOAD : null)
-                        .onNext((context, currentState) -> currentState == UPLOAD ? NAMES : null)
+                .onBack((context, currentState) -> currentState == NAMES ? UPLOAD : null)
+                .onNext((context, currentState) -> currentState == UPLOAD ? NAMES : null)
 
-                        .stayOpenAfterFinish()
-                        .onFinish((wzd, context) -> {
-                            String name = context.name;
-                            String runtimeName = context.runtimeName;
-                            wzd.showProgress(resources.constants().uploadInProgress(),
-                                    resources.messages().uploadInProgress(name));
+                .stayOpenAfterFinish()
+                .onFinish((wzd, context) -> {
+                    String name = context.name;
+                    String runtimeName = context.runtimeName;
+                    wzd.showProgress(resources.constants().uploadInProgress(),
+                            resources.messages().uploadInProgress(name));
 
-                            List<Task<FlowContext>> tasks = Arrays.asList(new CheckDeployment(dispatcher, name),
-                                    new UploadOrReplace(environment, dispatcher, name, runtimeName, context.file, false));
-                            sequential(new FlowContext(progress.get()), tasks)
-                                    .then(__ -> {
-                                        refresh(Ids.content(name));
-                                        wzd.showSuccess(resources.constants().uploadSuccessful(),
-                                                resources.messages().uploadSuccessful(name),
-                                                resources.messages().view(resources.constants().content()),
-                                                cxt -> {
-                                                    /* nothing to do, content is already selected */ });
-                                        return null;
-                                    })
-                                    .catch_(error -> {
-                                        wzd.showError(resources.constants().uploadError(),
-                                                resources.messages().uploadError(name), String.valueOf(error));
-                                        return null;
-                                    });
-                        })
-                        .build();
+                    List<Task<FlowContext>> tasks = Arrays.asList(new CheckDeployment(dispatcher, name),
+                            new UploadOrReplace(environment, dispatcher, name, runtimeName, context.file, false));
+                    sequential(new FlowContext(progress.get()), tasks)
+                            .then(__ -> {
+                                refresh(Ids.content(name));
+                                wzd.showSuccess(resources.constants().uploadSuccessful(),
+                                        resources.messages().uploadSuccessful(name),
+                                        resources.messages().view(resources.constants().content()),
+                                        cxt -> {
+                                            /* nothing to do, content is already selected */ });
+                                return null;
+                            })
+                            .catch_(error -> {
+                                wzd.showError(resources.constants().uploadError(),
+                                        resources.messages().uploadError(name), String.valueOf(error));
+                                return null;
+                            });
+                })
+                .build();
         wizard.show();
     }
 
@@ -361,12 +361,12 @@ public class ContentColumn extends FinderColumn<Content> {
         AddUnmanagedDialog dialog = new AddUnmanagedDialog(metadata, resources,
                 (name, model) -> sequential(new FlowContext(progress.get()),
                         singletonList(new AddUnmanagedDeployment(dispatcher, name, model)))
-                                .then(context -> {
-                                    refresh(Ids.content(name));
-                                    MessageEvent.fire(eventBus, Message.success(
-                                            resources.messages().addResourceSuccess(Names.UNMANAGED_DEPLOYMENT, name)));
-                                    return null;
-                                }));
+                        .then(context -> {
+                            refresh(Ids.content(name));
+                            MessageEvent.fire(eventBus, Message.success(
+                                    resources.messages().addResourceSuccess(Names.UNMANAGED_DEPLOYMENT, name)));
+                            return null;
+                        }));
         dialog.getForm().<String> getFormItem(NAME).addValidationHandler(createUniqueValidation());
         dialog.show();
     }

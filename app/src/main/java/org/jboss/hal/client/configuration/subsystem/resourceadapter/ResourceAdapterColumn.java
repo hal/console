@@ -96,10 +96,10 @@ public class ResourceAdapterColumn extends FinderColumn<ResourceAdapter> {
                     Metadata metadata = metadataRegistry.lookup(RESOURCE_ADAPTER_TEMPLATE);
                     ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(
                             Ids.RESOURCE_ADAPTER_FORM, metadata)
-                                    .fromRequestProperties()
-                                    .unboundFormItem(new NameItem())
-                                    .include(ARCHIVE, MODULE)
-                                    .build();
+                            .fromRequestProperties()
+                            .unboundFormItem(new NameItem())
+                            .include(ARCHIVE, MODULE)
+                            .build();
                     form.addFormValidation(f -> {
                         FormItem<String> archiveItem = f.getFormItem(ARCHIVE);
                         FormItem<String> moduleItem = f.getFormItem(MODULE);

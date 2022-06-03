@@ -128,16 +128,16 @@ class DataSourcePreview extends PreviewContent<DataSource> {
 
         fromDeployment = new EmptyState.Builder(Ids.DATA_SOURCE_RUNTIME_STATISTICS_NOT_AVAILABLE,
                 resources.constants().statisticsNotAvailableHeader())
-                        .description(resources.messages().dataSourceStatisticsFromDeployment())
-                        .icon(fontAwesome("line-chart"))
-                        .build();
+                .description(resources.messages().dataSourceStatisticsFromDeployment())
+                .icon(fontAwesome("line-chart"))
+                .build();
         noStatistics = new EmptyState.Builder(Ids.DATA_SOURCE_RUNTIME_STATISTICS_NOT_ENABLED,
                 resources.constants().statisticsDisabledHeader())
-                        .description(resources.messages().dataSourceStatisticsDisabled(dataSource.getName()))
-                        .icon(fontAwesome("line-chart"))
-                        .primaryAction(resources.constants().enableStatistics(), () -> column.enableStatistics(dataSource),
-                                Constraint.writable(column.dataSourceConfigurationTemplate(dataSource), ENABLED))
-                        .build();
+                .description(resources.messages().dataSourceStatisticsDisabled(dataSource.getName()))
+                .icon(fontAwesome("line-chart"))
+                .primaryAction(resources.constants().enableStatistics(), () -> column.enableStatistics(dataSource),
+                        Constraint.writable(column.dataSourceConfigurationTemplate(dataSource), ENABLED))
+                .build();
 
         Constraint reloadConstraint = environment.isStandalone()
                 ? Constraint.executable(AddressTemplate.of("/"), RELOAD)

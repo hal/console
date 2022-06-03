@@ -136,14 +136,14 @@ public class BootErrorsElement implements IsElement<HTMLElement>, Attachable {
                 // Depends on WFCORE-2530 to be fixed
                 List<String> missingTransitiveDependencies = failSafeList(row,
                         MISSING_TRANSITIVE_DEPENDENCY_PROBLEMS + "/" + SERVICES_MISSING_TRANSITIVE_DEPENDENCIES)
-                                .stream().map(ModelNode::asString).collect(toList());
+                        .stream().map(ModelNode::asString).collect(toList());
                 form.<List<String>> getFormItem(SERVICES_MISSING_TRANSITIVE_DEPENDENCIES).setValue(
                         missingTransitiveDependencies);
 
                 // Depends on WFCORE-2530 to be fixed
                 List<String> possibleCauses = failSafeList(row,
                         MISSING_TRANSITIVE_DEPENDENCY_PROBLEMS + "/" + POSSIBLE_CAUSES)
-                                .stream().map(ModelNode::asString).collect(toList());
+                        .stream().map(ModelNode::asString).collect(toList());
                 form.<List<String>> getFormItem(POSSIBLE_CAUSES).setValue(possibleCauses);
             } else {
                 form.clear();

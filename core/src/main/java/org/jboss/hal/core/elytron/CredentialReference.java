@@ -139,33 +139,33 @@ public class CredentialReference {
 
         ModelNodeForm.Builder<ModelNode> formBuilder = new ModelNodeForm.Builder<>(
                 Ids.build(baseId, credentialReferenceName, Ids.FORM), crMetadata)
-                        .include(STORE, ALIAS, CLEAR_TEXT, TYPE)
-                        .unsorted()
-                        .singleton(
-                                () -> {
-                                    ResourceAddress fqAddress = address.get();
-                                    Operation operation = null;
-                                    if (fqAddress != null && crMetadata.getSecurityContext().isReadable()) {
-                                        operation = new Operation.Builder(address.get(), READ_ATTRIBUTE_OPERATION)
-                                                .param(NAME, credentialReferenceName).build();
-                                    }
-                                    return operation;
-                                },
-                                noCredentialReference)
-                        .onSave(((f, changedValues) -> {
-                            ResourceAddress fqa = address.get();
-                            if (fqa != null) {
-                                if (changedValues.isEmpty()) {
-                                    MessageEvent.fire(eventBus, Message.warning(resources.messages().noChanges()));
-                                    callback.execute();
-                                } else {
-                                    ca.save(credentialReferenceName, Names.CREDENTIAL_REFERENCE, fqa, f.getModel(), callback);
-                                }
-                            } else {
-                                MessageEvent.fire(eventBus,
-                                        Message.error(resources.messages().credentialReferenceAddressError()));
+                .include(STORE, ALIAS, CLEAR_TEXT, TYPE)
+                .unsorted()
+                .singleton(
+                        () -> {
+                            ResourceAddress fqAddress = address.get();
+                            Operation operation = null;
+                            if (fqAddress != null && crMetadata.getSecurityContext().isReadable()) {
+                                operation = new Operation.Builder(address.get(), READ_ATTRIBUTE_OPERATION)
+                                        .param(NAME, credentialReferenceName).build();
                             }
-                        }));
+                            return operation;
+                        },
+                        noCredentialReference)
+                .onSave(((f, changedValues) -> {
+                    ResourceAddress fqa = address.get();
+                    if (fqa != null) {
+                        if (changedValues.isEmpty()) {
+                            MessageEvent.fire(eventBus, Message.warning(resources.messages().noChanges()));
+                            callback.execute();
+                        } else {
+                            ca.save(credentialReferenceName, Names.CREDENTIAL_REFERENCE, fqa, f.getModel(), callback);
+                        }
+                    } else {
+                        MessageEvent.fire(eventBus,
+                                Message.error(resources.messages().credentialReferenceAddressError()));
+                    }
+                }));
 
         // some credential-reference attributes are nillable=false, so only nillable=true may be removed
         if (crMetadata.getDescription().get(NILLABLE).asBoolean()) {

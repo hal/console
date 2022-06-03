@@ -77,9 +77,9 @@ class MemoryElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
             appendChild(memory);
             Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(cacheType.baseId, memory.baseId, Ids.FORM),
                     metadata)
-                            .onSave((f, changedValues) -> presenter.saveMemory(memory, changedValues))
-                            .prepareReset(f -> presenter.resetMemory(memory, f))
-                            .build();
+                    .onSave((f, changedValues) -> presenter.saveMemory(memory, changedValues))
+                    .prepareReset(f -> presenter.resetMemory(memory, f))
+                    .build();
             Elements.setVisible(form.element(), false);
             memoryForms.put(memory, form);
         }

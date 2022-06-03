@@ -120,9 +120,9 @@ public class UnderTheBridgeView extends HalViewImpl implements UnderTheBridgePre
         for (Map.Entry<String, String[]> entry : ATTRIBUTES.entrySet()) {
             ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(entry.getKey(), Ids.FORM),
                     Metadata.staticDescription(description))
-                            .include(entry.getValue())
-                            .onSave(saveCallback)
-                            .build();
+                    .include(entry.getValue())
+                    .onSave(saveCallback)
+                    .build();
             forms.add(form);
             tabs.add(Ids.build(entry.getKey(), Ids.TAB), new LabelBuilder().label(entry.getKey()),
                     form.element());

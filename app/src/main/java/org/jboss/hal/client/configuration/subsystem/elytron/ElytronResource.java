@@ -377,8 +377,8 @@ enum ElytronResource {
     ResourceElement.Builder resourceElementBuilder(MbuiContext mbuiContext, Callback onCrud) {
         return new ResourceElement.Builder(baseId, resource,
                 mbuiContext.metadataRegistry().lookup(template), mbuiContext)
-                        .column(NAME, (cell, type, row, meta) -> row.getName())
-                        .onCrud(onCrud);
+                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .onCrud(onCrud);
 
     }
 

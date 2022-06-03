@@ -196,8 +196,8 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
         nonXaInfo = p().textContent(nonXaMeta.getDescription().getDescription()).element();
         GroupedForm.Builder<DataSource> nonXaFormBuilder = new GroupedForm.Builder<DataSource>(Ids.DATA_SOURCE_FORM,
                 nonXaMeta)
-                        .onSave(saveCallback)
-                        .prepareReset(prepareReset);
+                .onSave(saveCallback)
+                .prepareReset(prepareReset);
 
         Metadata xaMeta = metadataRegistry.lookup(XA_DATA_SOURCE_TEMPLATE);
         xaInfo = p().textContent(xaMeta.getDescription().getDescription()).element();

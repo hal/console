@@ -82,14 +82,14 @@ public abstract class SocketBindingGroupView extends MbuiViewImpl<SocketBindingG
 
         inboundTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(INBOUND.baseId, Ids.TABLE),
                 inboundMetadata)
-                        .button(mbuiContext.tableButtonFactory().add(inboundTemplate,
-                                table -> presenter.addSocketBinding(INBOUND)))
-                        .button(mbuiContext.tableButtonFactory().remove(inboundTemplate,
-                                table -> presenter.removeSocketBinding(INBOUND, table.selectedRow().getName())))
-                        .column(NAME, (cell, type, row, meta) -> row.getName())
-                        .column(PORT, (cell, type, row, meta) -> row.get(PORT).asString())
-                        .column(new InlineAction<>(Names.CLIENT_MAPPINGS, row -> presenter.showClientMappings(row)))
-                        .build();
+                .button(mbuiContext.tableButtonFactory().add(inboundTemplate,
+                        table -> presenter.addSocketBinding(INBOUND)))
+                .button(mbuiContext.tableButtonFactory().remove(inboundTemplate,
+                        table -> presenter.removeSocketBinding(INBOUND, table.selectedRow().getName())))
+                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .column(PORT, (cell, type, row, meta) -> row.get(PORT).asString())
+                .column(new InlineAction<>(Names.CLIENT_MAPPINGS, row -> presenter.showClientMappings(row)))
+                .build();
 
         inboundForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(INBOUND.baseId, Ids.FORM), inboundMetadata)
                 .include(INTERFACE, PORT, FIXED_PORT, MULTICAST_ADDRESS, MULTICAST_PORT)
@@ -108,27 +108,27 @@ public abstract class SocketBindingGroupView extends MbuiViewImpl<SocketBindingG
 
         clientMappingTable = new ModelNodeTable.Builder<NamedNode>(
                 Ids.SOCKET_BINDING_GROUP_INBOUND_CLIENT_MAPPING_TABLE, clientMappingsMetadata)
-                        .button(mbuiContext.tableButtonFactory().add(inboundTemplate,
-                                table -> presenter.addClientMapping(clientMappingsMetadata)))
-                        .button(mbuiContext.tableButtonFactory().remove(inboundTemplate,
-                                table -> presenter.removeClientMapping(table.selectedRow().get(INDEX).asInt(-1))))
-                        .column(SOURCE_NETWORK)
-                        .column(Names.DESTINATION, (cell, type, row, meta) -> {
-                            String address = row.get(DESTINATION_ADDRESS).asString();
-                            if (row.hasDefined(DESTINATION_PORT)) {
-                                address += ":" + row.get(DESTINATION_PORT).asInt();
-                            }
-                            return address;
-                        })
-                        .build();
+                .button(mbuiContext.tableButtonFactory().add(inboundTemplate,
+                        table -> presenter.addClientMapping(clientMappingsMetadata)))
+                .button(mbuiContext.tableButtonFactory().remove(inboundTemplate,
+                        table -> presenter.removeClientMapping(table.selectedRow().get(INDEX).asInt(-1))))
+                .column(SOURCE_NETWORK)
+                .column(Names.DESTINATION, (cell, type, row, meta) -> {
+                    String address = row.get(DESTINATION_ADDRESS).asString();
+                    if (row.hasDefined(DESTINATION_PORT)) {
+                        address += ":" + row.get(DESTINATION_PORT).asInt();
+                    }
+                    return address;
+                })
+                .build();
 
         clientMappingForm = new ModelNodeForm.Builder<NamedNode>(Ids.SOCKET_BINDING_GROUP_INBOUND_CLIENT_MAPPING_FORM,
                 clientMappingsMetadata)
-                        .include(SOURCE_NETWORK, DESTINATION_ADDRESS, DESTINATION_PORT)
-                        .unsorted()
-                        .onSave((form, changedValues) -> presenter.saveClientMapping(clientMappingsMetadata, form.getModel(),
-                                changedValues))
-                        .build();
+                .include(SOURCE_NETWORK, DESTINATION_ADDRESS, DESTINATION_PORT)
+                .unsorted()
+                .onSave((form, changedValues) -> presenter.saveClientMapping(clientMappingsMetadata, form.getModel(),
+                        changedValues))
+                .build();
 
         HTMLElement clientMappingSection = section()
                 .add(h(1).textContent(Names.CLIENT_MAPPINGS))

@@ -108,20 +108,20 @@ public class RollbackWizard extends PatchWizard {
 
                         sequential(new FlowContext(progress.get()),
                                 singletonList(new RollbackTask(statementContext, dispatcher, serverActions, context)))
-                                        .then(__ -> {
-                                            callback.execute();
-                                            wzd.showSuccess(
-                                                    resources.constants().rollbackSuccessful(),
-                                                    messages.rollbackSucessful(name));
-                                            return null;
-                                        })
-                                        .catch_(error -> {
-                                            String message = String.valueOf(error);
-                                            wzd.showError(resources.constants().rollbackError(),
-                                                    messages.rollbackError(message),
-                                                    message);
-                                            return null;
-                                        });
+                                .then(__ -> {
+                                    callback.execute();
+                                    wzd.showSuccess(
+                                            resources.constants().rollbackSuccessful(),
+                                            messages.rollbackSucessful(name));
+                                    return null;
+                                })
+                                .catch_(error -> {
+                                    String message = String.valueOf(error);
+                                    wzd.showError(resources.constants().rollbackError(),
+                                            messages.rollbackError(message),
+                                            message);
+                                    return null;
+                                });
                     });
             Wizard<PatchContext, PatchState> wizard = wb.build();
             wizard.show();

@@ -317,16 +317,16 @@ public class ManagementOperationsPresenter extends
 
             sequential(new FlowContext(progress.get()),
                     asList(hostsTask, serversTask, findNonProgressingTask))
-                            .then(context -> {
-                                List<ManagementOperations> ops = context.get("active-operations");
-                                getView().update(ops);
-                                return null;
-                            })
-                            .catch_(error -> {
-                                MessageEvent.fire(getEventBus(), Message.error(SafeHtmlUtils.fromString(
-                                        "Error loading management operations: " + error)));
-                                return null;
-                            });
+                    .then(context -> {
+                        List<ManagementOperations> ops = context.get("active-operations");
+                        getView().update(ops);
+                        return null;
+                    })
+                    .catch_(error -> {
+                        MessageEvent.fire(getEventBus(), Message.error(SafeHtmlUtils.fromString(
+                                "Error loading management operations: " + error)));
+                        return null;
+                    });
         }
     }
 

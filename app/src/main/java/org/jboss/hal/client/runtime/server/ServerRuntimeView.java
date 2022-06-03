@@ -108,10 +108,10 @@ public class ServerRuntimeView extends HalViewImpl implements ServerRuntimePrese
                 .column(NAME, resources.constants().name(), (cell, t, row, meta) -> row.getName())
                 .column(new ColumnBuilder<Property>(VALUE, Names.VALUE,
                         (cell, t, row, meta) -> row.getValue().asString())
-                                .width("66%")
-                                .searchable(false)
-                                .orderable(false)
-                                .build())
+                        .width("66%")
+                        .searchable(false)
+                        .orderable(false)
+                        .build())
                 .options();
         systemProperties = new DataTable<>(Ids.SERVER_RUNTIME_PROPERTIES_TABLE, options);
 

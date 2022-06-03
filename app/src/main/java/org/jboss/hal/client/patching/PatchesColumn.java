@@ -163,9 +163,9 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
                 .build();
         ColumnAction<ModelNode> ageoutAction = new ColumnAction.Builder<ModelNode>(
                 Ids.build(HOSTS, PATCHES_AGEOUT, Ids.ADD))
-                        .element(columnActionFactory.addButton(resources.messages().cleanPatchHistory(), "fa fa-eraser"))
-                        .handler(column -> ageoutHistory())
-                        .build();
+                .element(columnActionFactory.addButton(resources.messages().cleanPatchHistory(), "fa fa-eraser"))
+                .handler(column -> ageoutHistory())
+                .build();
         addColumnAction(applyPatchAction);
         addColumnAction(ageoutAction);
 
@@ -182,7 +182,7 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
                         Metadata metadataRollback = metadata.forOperation(ROLLBACK_OPERATION);
                         new RollbackWizard(patchId, resources, environment, metadataRollback, statementContext,
                                 dispatcher, progress, serverActions, () -> refresh(RESTORE_SELECTION))
-                                        .show();
+                                .show();
                     }
                 }));
     }
@@ -222,7 +222,7 @@ public class PatchesColumn extends FinderColumn<ModelNode> {
                         Metadata metadataOp = metadata.forOperation(PATCH);
                         new ApplyPatchWizard(resources, environment, metadataOp, statementContext,
                                 dispatcher, progress, serverActions, () -> refresh(RESTORE_SELECTION))
-                                        .show();
+                                .show();
                     }
                 })
 

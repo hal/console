@@ -244,8 +244,8 @@ public class ServerActions implements Timeouts {
 
                                 Operation opAddServer = new Operation.Builder(
                                         new ResourceAddress(newServerModelAddress), ADD)
-                                                .payload(newServerModel)
-                                                .build();
+                                        .payload(newServerModel)
+                                        .build();
                                 Composite comp = new Composite();
                                 comp.add(opAddServer);
 
@@ -277,8 +277,8 @@ public class ServerActions implements Timeouts {
                                         _address.get(resource).set(propname);
                                         Operation operation = new Operation.Builder(
                                                 new ResourceAddress(_address), ADD)
-                                                        .payload(p.getValue())
-                                                        .build();
+                                                .payload(p.getValue())
+                                                .build();
                                         composite.add(operation);
                                     });
                                 }

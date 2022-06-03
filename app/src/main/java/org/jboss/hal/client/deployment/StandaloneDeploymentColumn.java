@@ -146,10 +146,10 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
                 .itemsProvider(context -> {
                     Operation operation = new Operation.Builder(ResourceAddress.root(),
                             READ_CHILDREN_RESOURCES_OPERATION)
-                                    .param(CHILD_TYPE, DEPLOYMENT)
-                                    .param(INCLUDE_RUNTIME, true)
-                                    .param(RECURSIVE_DEPTH, 2)
-                                    .build();
+                            .param(CHILD_TYPE, DEPLOYMENT)
+                            .param(INCLUDE_RUNTIME, true)
+                            .param(RECURSIVE_DEPTH, 2)
+                            .build();
                     return dispatcher.execute(operation)
                             .then(result -> Promise.resolve(result.asPropertyList().stream()
                                     .map(property -> new Deployment(Server.STANDALONE, property.getValue()))
@@ -297,41 +297,41 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
         Wizard<DeploymentContext, DeploymentState> wizard = new Wizard.Builder<DeploymentContext, DeploymentState>(
                 resources.messages().addResourceTitle(Names.DEPLOYMENT), new DeploymentContext())
 
-                        .addStep(UPLOAD, new UploadDeploymentStep(resources))
-                        .addStep(NAMES, new NamesStep(environment, metadata, resources))
+                .addStep(UPLOAD, new UploadDeploymentStep(resources))
+                .addStep(NAMES, new NamesStep(environment, metadata, resources))
 
-                        .onBack((context, currentState) -> currentState == NAMES ? UPLOAD : null)
-                        .onNext((context, currentState) -> currentState == UPLOAD ? NAMES : null)
+                .onBack((context, currentState) -> currentState == NAMES ? UPLOAD : null)
+                .onNext((context, currentState) -> currentState == UPLOAD ? NAMES : null)
 
-                        .stayOpenAfterFinish()
-                        .onFinish((wzd, context) -> {
-                            String name = context.name;
-                            String runtimeName = context.runtimeName;
-                            wzd.showProgress(resources.constants().deploymentInProgress(),
-                                    resources.messages().deploymentInProgress(name));
+                .stayOpenAfterFinish()
+                .onFinish((wzd, context) -> {
+                    String name = context.name;
+                    String runtimeName = context.runtimeName;
+                    wzd.showProgress(resources.constants().deploymentInProgress(),
+                            resources.messages().deploymentInProgress(name));
 
-                            List<Task<FlowContext>> tasks = asList(new CheckDeployment(dispatcher, name),
-                                    new UploadOrReplace(environment, dispatcher, name, runtimeName, context.file,
-                                            context.enabled));
-                            sequential(new FlowContext(progress.get()), tasks)
-                                    .then(__ -> {
-                                        refresh(Ids.deployment(name));
-                                        wzd.showSuccess(resources.constants().uploadSuccessful(),
-                                                resources.messages().uploadSuccessful(name),
-                                                resources.messages().view(Names.DEPLOYMENT),
-                                                cxt -> {
-                                                    /* nothing to do, deployment is already selected */
-                                                });
-                                        return null;
-                                    })
-                                    .catch_(error -> {
-                                        wzd.showError(resources.constants().deploymentError(),
-                                                resources.messages().deploymentError(name),
-                                                String.valueOf(error));
-                                        return null;
-                                    });
-                        })
-                        .build();
+                    List<Task<FlowContext>> tasks = asList(new CheckDeployment(dispatcher, name),
+                            new UploadOrReplace(environment, dispatcher, name, runtimeName, context.file,
+                                    context.enabled));
+                    sequential(new FlowContext(progress.get()), tasks)
+                            .then(__ -> {
+                                refresh(Ids.deployment(name));
+                                wzd.showSuccess(resources.constants().uploadSuccessful(),
+                                        resources.messages().uploadSuccessful(name),
+                                        resources.messages().view(Names.DEPLOYMENT),
+                                        cxt -> {
+                                            /* nothing to do, deployment is already selected */
+                                        });
+                                return null;
+                            })
+                            .catch_(error -> {
+                                wzd.showError(resources.constants().deploymentError(),
+                                        resources.messages().deploymentError(name),
+                                        String.valueOf(error));
+                                return null;
+                            });
+                })
+                .build();
         wizard.show();
     }
 
@@ -377,13 +377,13 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
         AddUnmanagedDialog dialog = new AddUnmanagedDialog(metadata, resources,
                 (name, model) -> sequential(new FlowContext(progress.get()),
                         singletonList(new AddUnmanagedDeployment(dispatcher, name, model)))
-                                .then(__ -> {
-                                    refresh(Ids.deployment(name));
-                                    MessageEvent.fire(eventBus, Message.success(
-                                            resources.messages()
-                                                    .addResourceSuccess(Names.UNMANAGED_DEPLOYMENT, name)));
-                                    return null;
-                                }));
+                        .then(__ -> {
+                            refresh(Ids.deployment(name));
+                            MessageEvent.fire(eventBus, Message.success(
+                                    resources.messages()
+                                            .addResourceSuccess(Names.UNMANAGED_DEPLOYMENT, name)));
+                            return null;
+                        }));
         dialog.getForm().<String> getFormItem(NAME).addValidationHandler(createUniqueValidation());
         dialog.show();
     }

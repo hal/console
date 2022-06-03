@@ -233,7 +233,7 @@ public class JmsQueuePresenter extends ApplicationFinderPresenter<JmsQueuePresen
             Metadata metadata = metadataRegistry.lookup(MESSAGING_CORE_QUEUE_TEMPLATE);
             Form<ModelNode> form = new OperationFormBuilder<>(Ids.JMS_MESSAGE_CHANGE_PRIORITY_FORM, metadata,
                     CHANGE_MESSAGE_PRIORITY)
-                            .build();
+                    .build();
 
             Dialog dialog = new Dialog.Builder(resources.constants().changePriority())
                     .add(form.element())

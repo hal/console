@@ -114,8 +114,8 @@ public class ServerGroupColumn extends FinderColumn<ServerGroup> {
                     .build();
             Operation deploymentsOp = new Operation.Builder(
                     new ResourceAddress().add(SERVER_GROUP, "*").add(DEPLOYMENT, "*"), READ_RESOURCE_OPERATION)
-                            .param(INCLUDE_RUNTIME, true)
-                            .build();
+                    .param(INCLUDE_RUNTIME, true)
+                    .build();
             return dispatcher.execute(new Composite(serverGroupsOp, deploymentsOp)).then(result -> {
                 List<ServerGroup> serverGroups = result.step(0).get(RESULT).asPropertyList().stream()
                         .map(ServerGroup::new)

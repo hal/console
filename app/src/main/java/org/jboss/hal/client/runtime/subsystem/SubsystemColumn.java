@@ -142,9 +142,9 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                     // HAL-1564: For domain we already have the management operations in the "Browse By" column
                     items.add(new SubsystemMetadata.Builder(Ids.MANAGEMENT_OPERATIONS,
                             Names.MANAGEMENT_OPERATIONS)
-                                    .token(NameTokens.MANAGEMENT_OPERATIONS)
-                                    .preview(resources.previews().runtimeManagementOperations())
-                                    .build());
+                            .token(NameTokens.MANAGEMENT_OPERATIONS)
+                            .preview(resources.previews().runtimeManagementOperations())
+                            .build());
                 }
                 items.addAll(existingSubsystems.values().stream()
                         .sorted(comparing(SubsystemMetadata::getTitle))

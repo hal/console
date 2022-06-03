@@ -434,16 +434,16 @@ public class EnableSSLWizard {
                         if (environment.isStandalone()) {
                             Operation writeSecureSocketBinding = new Operation.Builder(httpInterfaceAddress,
                                     WRITE_ATTRIBUTE_OPERATION)
-                                            .param(NAME, SECURE_SOCKET_BINDING)
-                                            .param(VALUE, asString(model, SECURE_SOCKET_BINDING))
-                                            .build();
+                                    .param(NAME, SECURE_SOCKET_BINDING)
+                                    .param(VALUE, asString(model, SECURE_SOCKET_BINDING))
+                                    .build();
                             composite.add(writeSecureSocketBinding);
                         } else {
                             Operation writeSecurePortOp = new Operation.Builder(httpInterfaceAddress,
                                     WRITE_ATTRIBUTE_OPERATION)
-                                            .param(NAME, SECURE_PORT)
-                                            .param(VALUE, asString(model, SECURE_PORT))
-                                            .build();
+                                    .param(NAME, SECURE_PORT)
+                                    .param(VALUE, asString(model, SECURE_PORT))
+                                    .build();
                             composite.add(writeSecurePortOp);
                         }
                     }

@@ -107,22 +107,22 @@ public abstract class ConnectionView extends MbuiViewImpl<ConnectionPresenter>
 
         pooledConnectionFactoryTable = new ModelNodeTable.Builder<NamedNode>(
                 Ids.build(MESSAGING_SERVER, POOLED_CONNECTION_FACTORY, Ids.TABLE), metadata)
-                        .button(mbuiContext.resources().constants().add(),
-                                table -> presenter.addPooledConnectionFactory(ServerSubResource.POOLED_CONNECTION_FACTORY),
-                                Constraint.executable(POOLED_CONNECTION_FACTORY_TEMPLATE, ADD))
-                        .button(mbuiContext.resources().constants().remove(),
-                                table -> presenter.remove(ServerSubResource.POOLED_CONNECTION_FACTORY, table.selectedRow()),
-                                Scope.SELECTED,
-                                Constraint.executable(POOLED_CONNECTION_FACTORY_TEMPLATE, REMOVE))
-                        .column(NAME, (cell, type, row, meta) -> row.getName())
-                        .build();
+                .button(mbuiContext.resources().constants().add(),
+                        table -> presenter.addPooledConnectionFactory(ServerSubResource.POOLED_CONNECTION_FACTORY),
+                        Constraint.executable(POOLED_CONNECTION_FACTORY_TEMPLATE, ADD))
+                .button(mbuiContext.resources().constants().remove(),
+                        table -> presenter.remove(ServerSubResource.POOLED_CONNECTION_FACTORY, table.selectedRow()),
+                        Scope.SELECTED,
+                        Constraint.executable(POOLED_CONNECTION_FACTORY_TEMPLATE, REMOVE))
+                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .build();
 
         pooledConnectionFactoryForm = new ModelNodeForm.Builder<NamedNode>(
                 Ids.build(Ids.MESSAGING_POOLED_CONNECTION_FACTORY, Ids.FORM), metadata)
-                        .onSave((form, changedValues) -> presenter
-                                .save(ServerSubResource.POOLED_CONNECTION_FACTORY, form, changedValues))
-                        .prepareReset(form -> presenter.reset(ServerSubResource.POOLED_CONNECTION_FACTORY, form))
-                        .build();
+                .onSave((form, changedValues) -> presenter
+                        .save(ServerSubResource.POOLED_CONNECTION_FACTORY, form, changedValues))
+                .prepareReset(form -> presenter.reset(ServerSubResource.POOLED_CONNECTION_FACTORY, form))
+                .build();
         pooledConnectionFactoryForm.addFormValidation(
                 new CredentialReference.AlternativeValidation<>(PASSWORD, () -> crForm.getModel(),
                         mbuiContext.resources()));

@@ -87,28 +87,28 @@ public class SSLView extends HalViewImpl implements SSLPresenter.MyView {
         String changeAccDesc = certAuthorityMeta.forOperation(CHANGE_ACCOUNT_KEY).getDescription().getDescription();
         caaTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(CERTIFICATE_AUTHORITY_ACCOUNT, TABLE),
                 certAuthorityMeta)
-                        .button(new Button<>(cons.create(), createAccDesc,
-                                table -> presenter.createAccount(table.selectedRow().getName()),
-                                Constraint.executable(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE, CREATE_ACCOUNT)))
+                .button(new Button<>(cons.create(), createAccDesc,
+                        table -> presenter.createAccount(table.selectedRow().getName()),
+                        Constraint.executable(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE, CREATE_ACCOUNT)))
 
-                        .button(new Button<>(cons.deactivate(), deactivateAccDesc,
-                                table -> presenter.deactivateAccount(table.selectedRow().getName()),
-                                Constraint.executable(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE, DEACTIVATE_ACCOUNT)))
+                .button(new Button<>(cons.deactivate(), deactivateAccDesc,
+                        table -> presenter.deactivateAccount(table.selectedRow().getName()),
+                        Constraint.executable(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE, DEACTIVATE_ACCOUNT)))
 
-                        .button(new Button<>(cons.update(), updateAccDesc,
-                                table -> presenter.updateAccount(table.selectedRow().getName()),
-                                Constraint.executable(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE, UPDATE_ACCOUNT)))
+                .button(new Button<>(cons.update(), updateAccDesc,
+                        table -> presenter.updateAccount(table.selectedRow().getName()),
+                        Constraint.executable(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE, UPDATE_ACCOUNT)))
 
-                        .button(new Button<>(cons.getMetadata(), metadataAccDesc,
-                                table -> presenter.getMetadata(table.selectedRow().getName(), this::updateCertificateMetadata),
-                                Constraint.executable(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE, GET_METADATA)))
+                .button(new Button<>(cons.getMetadata(), metadataAccDesc,
+                        table -> presenter.getMetadata(table.selectedRow().getName(), this::updateCertificateMetadata),
+                        Constraint.executable(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE, GET_METADATA)))
 
-                        .button(new Button<>(cons.changeAccountKey(), changeAccDesc,
-                                table -> presenter.changeAccountKey(table.selectedRow().getName()),
-                                Constraint.executable(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE, CHANGE_ACCOUNT_KEY)))
+                .button(new Button<>(cons.changeAccountKey(), changeAccDesc,
+                        table -> presenter.changeAccountKey(table.selectedRow().getName()),
+                        Constraint.executable(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE, CHANGE_ACCOUNT_KEY)))
 
-                        .column(NAME, (cell, type, row, meta) -> row.getName())
-                        .build();
+                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .build();
 
         caaMetadata = new PreTextItem(METADATA);
         caaMetadata.setEnabled(false);

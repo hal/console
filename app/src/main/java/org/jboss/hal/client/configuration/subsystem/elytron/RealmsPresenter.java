@@ -341,9 +341,9 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
                 .forComplexAttribute(ATTRIBUTE_MAPPING);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(
                 Ids.build(Ids.ELYTRON_JDBC_REALM, ATTRIBUTE_MAPPING, Ids.ADD), metadata)
-                        .addOnly()
-                        .include(TO, INDEX)
-                        .build();
+                .addOnly()
+                .include(TO, INDEX)
+                .build();
         AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(Names.ATTRIBUTE_MAPPING),
                 form, (name, model) -> ca.listAdd(jdbcRealm, attributeMappingAttribute(pqIndex),
                         Names.ATTRIBUTE_MAPPING, JDBC_REALM_TEMPLATE, model, this::reloadJdbcRealms));

@@ -157,26 +157,26 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             // deployment
             operations.add(new Operation.Builder(DATA_SOURCE_DEPLOYMENT_TEMPLATE.resolve(statementContext),
                     READ_RESOURCE_OPERATION)
-                            .param(INCLUDE_RUNTIME, true)
-                            .param(RECURSIVE, true)
-                            .build());
+                    .param(INCLUDE_RUNTIME, true)
+                    .param(RECURSIVE, true)
+                    .build());
             operations.add(new Operation.Builder(XA_DATA_SOURCE_DEPLOYMENT_TEMPLATE.resolve(statementContext),
                     READ_RESOURCE_OPERATION)
-                            .param(INCLUDE_RUNTIME, true)
-                            .param(RECURSIVE, true)
-                            .build());
+                    .param(INCLUDE_RUNTIME, true)
+                    .param(RECURSIVE, true)
+                    .build());
 
             // subdeployment
             operations.add(new Operation.Builder(DATA_SOURCE_SUBDEPLOYMENT_TEMPLATE.resolve(statementContext),
                     READ_RESOURCE_OPERATION)
-                            .param(INCLUDE_RUNTIME, true)
-                            .param(RECURSIVE, true)
-                            .build());
+                    .param(INCLUDE_RUNTIME, true)
+                    .param(RECURSIVE, true)
+                    .build());
             operations.add(new Operation.Builder(XA_DATA_SOURCE_SUBDEPLOYMENT_TEMPLATE.resolve(statementContext),
                     READ_RESOURCE_OPERATION)
-                            .param(INCLUDE_RUNTIME, true)
-                            .param(RECURSIVE, true)
-                            .build());
+                    .param(INCLUDE_RUNTIME, true)
+                    .param(RECURSIVE, true)
+                    .build());
 
             if (!environment.isStandalone()) {
                 ResourceAddress serverAddress = AddressTemplate.of(SELECTED_HOST, SELECTED_SERVER)

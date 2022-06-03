@@ -440,10 +440,10 @@ public class ServerGroupActions {
 
         ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(COPY, serverGroup.getName(), Ids.FORM),
                 Metadata.empty())
-                        .fromRequestProperties()
-                        .unboundFormItem(newNameItem, 0)
-                        .requiredOnly()
-                        .build();
+                .fromRequestProperties()
+                .unboundFormItem(newNameItem, 0)
+                .requiredOnly()
+                .build();
 
         AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(Names.SERVER_GROUP),
                 form, (resource, payload) -> {

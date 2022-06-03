@@ -164,7 +164,7 @@ class AddExpressionWizard {
         public static ResolverStep build(Metadata resolversMetadata, OtherSettingsPresenter presenter) {
             Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(ELYTRON_EXPRESSION, RESOLVERS, ADD, FORM),
                     resolversMetadata)
-                            .build();
+                    .build();
 
             StaticAutoComplete autoComplete = new StaticAutoComplete(Collections.emptyList());
             form.getFormItem("secret-key").registerSuggestHandler(autoComplete);

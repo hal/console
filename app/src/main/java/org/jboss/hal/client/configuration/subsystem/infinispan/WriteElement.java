@@ -82,13 +82,13 @@ class WriteElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
 
         emptyState = new EmptyState.Builder(Ids.build(cacheType.baseId, store.baseId, WRITE, Ids.EMPTY),
                 resources.constants().noWrite())
-                        .description(resources.messages().noWrite())
-                        .addAll(elements)
-                        .primaryAction(resources.constants().add(), () -> {
-                            Write write = behindRadio.checked ? BEHIND : THROUGH;
-                            presenter.addWrite(write);
-                        })
-                        .build();
+                .description(resources.messages().noWrite())
+                .addAll(elements)
+                .primaryAction(resources.constants().add(), () -> {
+                    Write write = behindRadio.checked ? BEHIND : THROUGH;
+                    presenter.addWrite(write);
+                })
+                .build();
         emptyState.element().classList.add(marginTopLarge);
 
         throughElement = div()

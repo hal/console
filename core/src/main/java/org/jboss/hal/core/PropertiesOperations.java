@@ -324,7 +324,7 @@ public class PropertiesOperations {
             remove.stream()
                     .map(property -> new Operation.Builder(
                             new ResourceAddress(address).add(propertiesResource, property), REMOVE)
-                                    .build())
+                            .build())
                     .forEach(operations::add);
 
             Composite composite = new Composite(operations);

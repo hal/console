@@ -78,13 +78,13 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
         HTMLSelectElement emptyStoreSelect = storeSelect();
         emptyState = new EmptyState.Builder(Ids.build(cacheType.baseId, STORE, Ids.EMPTY),
                 resources.constants().noStore())
-                        .description(resources.messages().noStore())
-                        .add(emptyStoreSelect)
-                        .primaryAction(resources.constants().add(), () -> {
-                            String value = SelectBoxBridge.Single.element(emptyStoreSelect).getValue();
-                            presenter.addStore(Store.fromResource(value));
-                        })
-                        .build();
+                .description(resources.messages().noStore())
+                .add(emptyStoreSelect)
+                .primaryAction(resources.constants().add(), () -> {
+                    String value = SelectBoxBridge.Single.element(emptyStoreSelect).getValue();
+                    presenter.addStore(Store.fromResource(value));
+                })
+                .build();
 
         selectStoreId = Ids.build(cacheType.baseId, STORE, "select");
         selectStore = storeSelect();
@@ -97,9 +97,9 @@ class StoreElement implements IsElement<HTMLElement>, Attachable, HasPresenter<C
             Metadata metadata = metadataRegistry.lookup(cacheType.template.append(STORE + "=" + store.resource));
             Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(cacheType.baseId, store.baseId, Ids.FORM),
                     metadata)
-                            .onSave((f, changedValues) -> presenter.saveStore(store, changedValues))
-                            .prepareReset(f -> presenter.resetStore(store, f))
-                            .build();
+                    .onSave((f, changedValues) -> presenter.saveStore(store, changedValues))
+                    .prepareReset(f -> presenter.resetStore(store, f))
+                    .build();
             storeForms.put(store, form);
             storeTabs.add(Ids.build(cacheType.baseId, store.baseId, ATTRIBUTES, Ids.TAB),
                     resources.constants().attributes(), form.element());

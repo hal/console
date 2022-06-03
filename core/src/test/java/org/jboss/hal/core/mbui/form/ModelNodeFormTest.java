@@ -78,9 +78,9 @@ public class ModelNodeFormTest {
     public void excludeRequiredAttributes() {
         new ModelNodeForm.Builder("viewAndCreateResource",
                 metadata(new ResourceDescriptionBuilder().requestProperties(ImmutableMap.of("foo", true))))
-                        .fromRequestProperties()
-                        .exclude("foo")
-                        .build();
+                .fromRequestProperties()
+                .exclude("foo")
+                .build();
     }
 
     // ------------------------------------------------------ verify different state machines
@@ -89,8 +89,8 @@ public class ModelNodeFormTest {
     public void createResourceStateMachine() {
         StateMachine stateMachine = new ModelNodeForm.Builder("createResourceStateMachine",
                 metadata(new ResourceDescriptionBuilder().requestProperties(Collections.emptyMap())))
-                        .fromRequestProperties()
-                        .stateMachine();
+                .fromRequestProperties()
+                .stateMachine();
         Assert.assertTrue(stateMachine instanceof AddOnlyStateMachine);
     }
 
@@ -98,8 +98,8 @@ public class ModelNodeFormTest {
     public void editOnlyStateMachine() {
         StateMachine stateMachine = new ModelNodeForm.Builder("editOnlyStateMachine",
                 metadata(new ResourceDescriptionBuilder().attributes()))
-                        .fromRequestProperties()
-                        .stateMachine();
+                .fromRequestProperties()
+                .stateMachine();
         Assert.assertTrue(stateMachine instanceof AddOnlyStateMachine);
     }
 
@@ -107,7 +107,7 @@ public class ModelNodeFormTest {
     public void viewOnlyStateMachine() {
         StateMachine stateMachine = new ModelNodeForm.Builder("viewOnlyStateMachine",
                 metadata(new ResourceDescriptionBuilder().attributes()))
-                        .readOnly().stateMachine();
+                .readOnly().stateMachine();
         Assert.assertTrue(stateMachine instanceof ReadOnlyStateMachine);
     }
 
@@ -115,7 +115,7 @@ public class ModelNodeFormTest {
     public void defaultStateMachine() {
         StateMachine stateMachine = new ModelNodeForm.Builder("defaultStateMachine",
                 metadata(new ResourceDescriptionBuilder().attributes()))
-                        .stateMachine();
+                .stateMachine();
         Assert.assertTrue(stateMachine instanceof ExistingStateMachine);
     }
 
@@ -256,7 +256,7 @@ public class ModelNodeFormTest {
     public void noRuntime() throws Exception {
         ModelNodeForm<ModelNode> form = builder("noRuntime",
                 new ResourceDescriptionBuilder().storage(ImmutableMap.of("foo", CONFIGURATION, "bar", RUNTIME)))
-                        .build();
+                .build();
         Iterable<FormItem> formItems = form.getFormItems();
         Iterator<FormItem> iterator = formItems.iterator();
 
@@ -268,8 +268,8 @@ public class ModelNodeFormTest {
     public void withRuntime() throws Exception {
         ModelNodeForm<ModelNode> form = builder("withRuntime",
                 new ResourceDescriptionBuilder().storage(ImmutableMap.of("foo", CONFIGURATION, "bar", RUNTIME)))
-                        .includeRuntime()
-                        .build();
+                .includeRuntime()
+                .build();
         Iterable<FormItem> formItems = form.getFormItems();
         Iterator<FormItem> iterator = formItems.iterator();
 

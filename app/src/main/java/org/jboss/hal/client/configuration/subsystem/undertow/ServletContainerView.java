@@ -85,9 +85,9 @@ public class ServletContainerView extends HalViewImpl implements ServletContaine
         Metadata configurationMetadata = metadataRegistry.lookup(SERVLET_CONTAINER_TEMPLATE);
         configurationForm = new ModelNodeForm.Builder<>(Ids.UNDERTOW_SERVLET_CONTAINER_CONFIGURATION_FORM,
                 configurationMetadata)
-                        .onSave((form, changedValues) -> presenter.saveServletContainer(changedValues))
-                        .prepareReset(form -> presenter.resetServletContainer(form))
-                        .build();
+                .onSave((form, changedValues) -> presenter.saveServletContainer(changedValues))
+                .prepareReset(form -> presenter.resetServletContainer(form))
+                .build();
 
         Metadata emptyMetadata = Metadata.empty();
 

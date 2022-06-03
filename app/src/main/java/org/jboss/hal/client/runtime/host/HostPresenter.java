@@ -296,8 +296,8 @@ public class HostPresenter
 
                     EnableSSLWizard wzd = new EnableSSLWizard.Builder(existingResources, resources, getEventBus(),
                             statementContext, dispatcher, progress, HostPresenter.this, environment)
-                                    .host(host)
-                                    .build();
+                            .host(host)
+                            .build();
                     wzd.show();
                     return null;
                 });

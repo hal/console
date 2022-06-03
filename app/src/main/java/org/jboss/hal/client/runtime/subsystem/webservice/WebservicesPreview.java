@@ -55,11 +55,11 @@ public class WebservicesPreview extends PreviewContent<SubsystemMetadata> {
 
         noStatistics = new EmptyState.Builder(Ids.WEBSERVICES_STATISTICS_DISABLED,
                 resources.constants().statisticsDisabledHeader())
-                        .description(resources.messages().statisticsDisabled(Names.WEBSERVICES))
-                        .icon(fontAwesome("line-chart"))
-                        .primaryAction(resources.constants().enableStatistics(), this::enableStatistics,
-                                Constraint.writable(WEBSERVICES_CONFIGURATION_TEMPLATE, STATISTICS_ENABLED))
-                        .build();
+                .description(resources.messages().statisticsDisabled(Names.WEBSERVICES))
+                .icon(fontAwesome("line-chart"))
+                .primaryAction(resources.constants().enableStatistics(), this::enableStatistics,
+                        Constraint.writable(WEBSERVICES_CONFIGURATION_TEMPLATE, STATISTICS_ENABLED))
+                .build();
         Elements.setVisible(noStatistics.element(), false);
 
         attributes = new PreviewAttributes<>(new ModelNode(), resources.constants().attributes(),

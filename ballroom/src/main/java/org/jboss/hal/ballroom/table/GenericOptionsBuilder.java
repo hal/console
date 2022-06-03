@@ -173,12 +173,12 @@ public abstract class GenericOptionsBuilder<B extends GenericOptionsBuilder<B, T
             Column<T> column = new ColumnBuilder<T>(Ids.build(Ids.INLINE_ACTION, Ids.uniqueId()),
                     CONSTANTS.actions(),
                     (cell, type, row, meta) -> "<div class=\"" + tableViewHalBtn + "\">" + buttons + "</div>")
-                            .className(tableViewHalActions)
-                            .orderable(false)
-                            .searchable(false)
-                            .safeHtml()
-                            .width(width)
-                            .build();
+                    .className(tableViewHalActions)
+                    .orderable(false)
+                    .searchable(false)
+                    .safeHtml()
+                    .width(width)
+                    .build();
             columns.add(column);
         }
 

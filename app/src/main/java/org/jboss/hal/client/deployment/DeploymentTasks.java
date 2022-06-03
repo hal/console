@@ -339,10 +339,10 @@ class DeploymentTasks {
                     Server referenceServer = runningServers.get(0);
                     Operation operation = new Operation.Builder(referenceServer.getServerAddress(),
                             READ_CHILDREN_RESOURCES_OPERATION)
-                                    .param(CHILD_TYPE, DEPLOYMENT)
-                                    .param(INCLUDE_RUNTIME, true)
-                                    .param(RECURSIVE_DEPTH, 1)
-                                    .build();
+                            .param(CHILD_TYPE, DEPLOYMENT)
+                            .param(INCLUDE_RUNTIME, true)
+                            .param(RECURSIVE_DEPTH, 1)
+                            .build();
                     return dispatcher.execute(operation).then(result -> {
                         Map<String, Deployment> deploymentsByName = result.asPropertyList().stream()
                                 .map(property -> new Deployment(referenceServer, property.getValue()))

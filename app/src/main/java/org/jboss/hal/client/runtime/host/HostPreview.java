@@ -76,19 +76,19 @@ class HostPreview extends RuntimePreview<Host> {
         attributes = new PreviewAttributes<>(host,
                 asList(RELEASE_CODENAME, RELEASE_VERSION, PRODUCT_NAME, PRODUCT_VERSION,
                         HOST_STATE, RUNNING_MODE))
-                                .append(model -> new PreviewAttribute(
-                                        labelBuilder.label(MANAGEMENT_VERSION),
-                                        String.join(".", model.get(MANAGEMENT_MAJOR_VERSION).asString(),
-                                                model.get(MANAGEMENT_MINOR_VERSION).asString(),
-                                                model.get(MANAGEMENT_MICRO_VERSION).asString())))
-                                .append(model -> new PreviewAttribute(labelBuilder.label(LAST_CONNECTED),
-                                        model.getLastConnected() != null
-                                                ? Format.mediumDateTime(model.getLastConnected())
-                                                : Names.NOT_AVAILABLE))
-                                .append(model -> new PreviewAttribute(labelBuilder.label(DISCONNECTED),
-                                        model.getLastConnected() != null
-                                                ? Format.mediumDateTime(model.getDisconnected())
-                                                : Names.NOT_AVAILABLE));
+                .append(model -> new PreviewAttribute(
+                        labelBuilder.label(MANAGEMENT_VERSION),
+                        String.join(".", model.get(MANAGEMENT_MAJOR_VERSION).asString(),
+                                model.get(MANAGEMENT_MINOR_VERSION).asString(),
+                                model.get(MANAGEMENT_MICRO_VERSION).asString())))
+                .append(model -> new PreviewAttribute(labelBuilder.label(LAST_CONNECTED),
+                        model.getLastConnected() != null
+                                ? Format.mediumDateTime(model.getLastConnected())
+                                : Names.NOT_AVAILABLE))
+                .append(model -> new PreviewAttribute(labelBuilder.label(DISCONNECTED),
+                        model.getLastConnected() != null
+                                ? Format.mediumDateTime(model.getDisconnected())
+                                : Names.NOT_AVAILABLE));
         previewBuilder().addAll(attributes);
 
         update(host);

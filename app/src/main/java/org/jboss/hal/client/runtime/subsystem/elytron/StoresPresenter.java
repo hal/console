@@ -554,7 +554,7 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
         Metadata opMetadata = metadata.forOperation(GENERATE_CERTIFICATE_SIGNING_REQUEST);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(
                 Ids.build(template.lastName(), GENERATE_CERTIFICATE_SIGNING_REQUEST), opMetadata)
-                        .build();
+                .build();
         form.setSaveCallback((form1, changedValues) -> {
             ResourceAddress address = template.resolve(statementContext, name);
             Operation operation = new Operation.Builder(address, GENERATE_CERTIFICATE_SIGNING_REQUEST)

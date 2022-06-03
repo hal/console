@@ -50,19 +50,19 @@ class TransportElement extends GenericElement {
 
         threadPoolDefaultForm = new ModelNodeForm.Builder<>(Ids.JGROUPS_TRANSPORT_THREADPOOL_DEFAULT_FORM,
                 threadPoolDefaultMetadata)
-                        .onSave((form, changedValues) -> {
-                            AddressTemplate template1 = SELECTED_TRANSPORT_THREAD_POOL_TEMPLATE
-                                    .replaceWildcards(table.selectedRow().getName(), DEFAULT);
-                            presenter.saveSingleton(template1, threadPoolDefaultMetadata, changedValues,
-                                    resources.messages().modifySingleResourceSuccess(Names.THREAD_POOL + " Default"));
-                        })
-                        .prepareReset(form -> {
-                            AddressTemplate template1 = SELECTED_TRANSPORT_THREAD_POOL_TEMPLATE
-                                    .replaceWildcards(table.selectedRow().getName(), DEFAULT);
-                            presenter.resetSingleton(template1, Names.THREAD_POOL + " Default", form,
-                                    threadPoolDefaultMetadata);
-                        })
-                        .build();
+                .onSave((form, changedValues) -> {
+                    AddressTemplate template1 = SELECTED_TRANSPORT_THREAD_POOL_TEMPLATE
+                            .replaceWildcards(table.selectedRow().getName(), DEFAULT);
+                    presenter.saveSingleton(template1, threadPoolDefaultMetadata, changedValues,
+                            resources.messages().modifySingleResourceSuccess(Names.THREAD_POOL + " Default"));
+                })
+                .prepareReset(form -> {
+                    AddressTemplate template1 = SELECTED_TRANSPORT_THREAD_POOL_TEMPLATE
+                            .replaceWildcards(table.selectedRow().getName(), DEFAULT);
+                    presenter.resetSingleton(template1, Names.THREAD_POOL + " Default", form,
+                            threadPoolDefaultMetadata);
+                })
+                .build();
 
         HTMLElement parentElement = (HTMLElement) table.element().parentNode;
         // as we are reusing the GenericElement, the form is already added to the section element, then we need to

@@ -60,18 +60,18 @@ public class ForkElement implements IsElement<HTMLElement>, Attachable, HasPrese
 
         table = new ModelNodeTable.Builder<NamedNode>(Ids.build(Ids.JGROUPS_CHANNEL_FORK, Ids.TABLE),
                 metadata)
-                        .button(tableButtonFactory.add(CHANNEL_FORK_TEMPLATE,
-                                table -> presenter.addResourceDialog(SELECTED_CHANNEL_FORK_TEMPLATE,
-                                        Ids.JGROUPS_CHANNEL_FORK_ITEM, Names.FORK)))
-                        .button(tableButtonFactory.remove(CHANNEL_FORK_TEMPLATE,
-                                table -> presenter.removeResource(SELECTED_CHANNEL_FORK_TEMPLATE,
-                                        table.selectedRow().getName(), Names.FORK)))
-                        .column(NAME, (cell, t, row, meta) -> row.getName())
-                        .column(new InlineAction<>(Names.PROTOCOL, row -> {
-                            presenter.showChannelProtocol(row);
-                            presenter.showChannelInnerPage(PROTOCOL_ID);
-                        }))
-                        .build();
+                .button(tableButtonFactory.add(CHANNEL_FORK_TEMPLATE,
+                        table -> presenter.addResourceDialog(SELECTED_CHANNEL_FORK_TEMPLATE,
+                                Ids.JGROUPS_CHANNEL_FORK_ITEM, Names.FORK)))
+                .button(tableButtonFactory.remove(CHANNEL_FORK_TEMPLATE,
+                        table -> presenter.removeResource(SELECTED_CHANNEL_FORK_TEMPLATE,
+                                table.selectedRow().getName(), Names.FORK)))
+                .column(NAME, (cell, t, row, meta) -> row.getName())
+                .column(new InlineAction<>(Names.PROTOCOL, row -> {
+                    presenter.showChannelProtocol(row);
+                    presenter.showChannelInnerPage(PROTOCOL_ID);
+                }))
+                .build();
 
         section = section()
                 .add(h(1).textContent(Names.FORK))

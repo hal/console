@@ -384,27 +384,27 @@ public class ModelBrowser implements IsElement<HTMLElement> {
                         resources.messages().addResourceTitle(parent.text),
                         new SingletonContext(parent, children))
 
-                                .addStep(CHOOSE, new ChooseSingletonStep(parent, children, resources))
-                                .addStep(CREATE, new CreateSingletonStep(parent, metadataProcessor, progress,
-                                        eventBus, resources))
+                        .addStep(CHOOSE, new ChooseSingletonStep(parent, children, resources))
+                        .addStep(CREATE, new CreateSingletonStep(parent, metadataProcessor, progress,
+                                eventBus, resources))
 
-                                .onBack((context, currentState) -> currentState == CREATE ? CHOOSE : null)
-                                .onNext((context, currentState) -> currentState == CHOOSE ? CREATE : null)
+                        .onBack((context, currentState) -> currentState == CREATE ? CHOOSE : null)
+                        .onNext((context, currentState) -> currentState == CHOOSE ? CREATE : null)
 
-                                .onFinish((wzrd, context) -> {
-                                    Operation.Builder builder = new Operation.Builder(fqAddress(parent, context.singleton),
-                                            ADD);
-                                    if (context.modelNode != null) {
-                                        builder.payload(context.modelNode);
-                                    }
-                                    dispatcher.execute(builder.build(),
-                                            result -> {
-                                                MessageEvent.fire(eventBus, Message.success(resources.messages()
-                                                        .addResourceSuccess(parent.text, context.singleton)));
-                                                refresh(parent);
-                                            });
-                                })
-                                .build();
+                        .onFinish((wzrd, context) -> {
+                            Operation.Builder builder = new Operation.Builder(fqAddress(parent, context.singleton),
+                                    ADD);
+                            if (context.modelNode != null) {
+                                builder.payload(context.modelNode);
+                            }
+                            dispatcher.execute(builder.build(),
+                                    result -> {
+                                        MessageEvent.fire(eventBus, Message.success(resources.messages()
+                                                .addResourceSuccess(parent.text, context.singleton)));
+                                        refresh(parent);
+                                    });
+                        })
+                        .build();
                 wizard.show();
             }
 

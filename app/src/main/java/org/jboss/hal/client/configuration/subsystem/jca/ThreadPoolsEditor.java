@@ -86,22 +86,22 @@ class ThreadPoolsEditor implements IsElement<HTMLElement>, Attachable, HasPresen
 
         attributesForm = new ModelNodeForm.Builder<ThreadPool>(
                 Ids.build(prefixId, Ids.JCA_THREAD_POOL_ATTRIBUTES_FORM), metadata)
-                        .include(NAME, "allow-core-timeout", THREAD_FACTORY)
-                        .unsorted()
-                        .onSave((form, changedValues) -> presenter.saveThreadPool(workmanagerTemplate, workmanager,
-                                form.getModel(), changedValues))
-                        .prepareReset(form -> presenter.resetThreadPool(workmanagerTemplate, workmanager,
-                                form.getModel(), form))
-                        .build();
+                .include(NAME, "allow-core-timeout", THREAD_FACTORY)
+                .unsorted()
+                .onSave((form, changedValues) -> presenter.saveThreadPool(workmanagerTemplate, workmanager,
+                        form.getModel(), changedValues))
+                .prepareReset(form -> presenter.resetThreadPool(workmanagerTemplate, workmanager,
+                        form.getModel(), form))
+                .build();
         attachables.add(attributesForm);
         sizingForm = new ModelNodeForm.Builder<ThreadPool>(
                 Ids.build(prefixId, Ids.JCA_THREAD_POOL_SIZING_FORM), metadata)
-                        .include(MAX_THREADS, "core-threads", "queue-length")
-                        .onSave((form, changedValues) -> presenter.saveThreadPool(workmanagerTemplate, workmanager,
-                                form.getModel(), changedValues))
-                        .prepareReset(form -> presenter.resetThreadPool(workmanagerTemplate, workmanager,
-                                form.getModel(), form))
-                        .build();
+                .include(MAX_THREADS, "core-threads", "queue-length")
+                .onSave((form, changedValues) -> presenter.saveThreadPool(workmanagerTemplate, workmanager,
+                        form.getModel(), changedValues))
+                .prepareReset(form -> presenter.resetThreadPool(workmanagerTemplate, workmanager,
+                        form.getModel(), form))
+                .build();
         attachables.add(sizingForm);
 
         Tabs tabs = new Tabs(Ids.build(prefixId, Ids.JCA_THREAD_POOL_TAB_CONTAINER))

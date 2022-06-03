@@ -597,9 +597,9 @@ public class ServerPresenter
 
                     EnableSSLWizard ww = new EnableSSLWizard.Builder(existingResources, resources, getEventBus(),
                             statementContext, dispatcher, progress, ServerPresenter.this, environment)
-                                    .undertowServer(serverName)
-                                    .httpsListenerName(httpsName)
-                                    .build();
+                            .undertowServer(serverName)
+                            .httpsListenerName(httpsName)
+                            .build();
                     ww.show();
                     return null;
                 });

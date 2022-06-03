@@ -130,11 +130,11 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
 
         ModelNodeForm.Builder formBuilder = new ModelNodeForm.Builder<NamedNode>(Ids.build(builder.baseId, Ids.FORM),
                 builder.metadata)
-                        .prepareReset(f -> builder.mbuiContext.crud()
-                                .reset(builder.type, f.getModel().getName(), builder.metadata.getTemplate(), f,
-                                        builder.metadata, builder.crudCallback))
-                        .onSave((f, changedValues) -> builder.mbuiContext.crud().save(builder.type, f.getModel().getName(),
-                                builder.metadata.getTemplate(), changedValues, builder.crudCallback));
+                .prepareReset(f -> builder.mbuiContext.crud()
+                        .reset(builder.type, f.getModel().getName(), builder.metadata.getTemplate(), f,
+                                builder.metadata, builder.crudCallback))
+                .onSave((f, changedValues) -> builder.mbuiContext.crud().save(builder.type, f.getModel().getName(),
+                        builder.metadata.getTemplate(), changedValues, builder.crudCallback));
         builder.customFormItems.forEach(formBuilder::customFormItem);
 
         form = formBuilder.build();
@@ -183,17 +183,17 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
                 };
                 ModelNodeForm.Builder<ModelNode> coFormBuilder = new ModelNodeForm.Builder<>(
                         Ids.build(builder.baseId, complexAttribute, Ids.FORM), metadata)
-                                .singleton(ping, callback)
-                                .onSave((f, changedValues) -> builder.mbuiContext.ca()
-                                        .save(selectedResource, complexAttribute, type,
-                                                metadata.getTemplate(), changedValues, builder.crudCallback))
-                                .prepareReset(f -> builder.mbuiContext.ca().reset(selectedResource, complexAttribute, type,
-                                        metadata.getTemplate(), f, new Form.FinishReset<ModelNode>(f) {
-                                            @Override
-                                            public void afterReset(Form<ModelNode> form) {
-                                                builder.crudCallback.execute();
-                                            }
-                                        }));
+                        .singleton(ping, callback)
+                        .onSave((f, changedValues) -> builder.mbuiContext.ca()
+                                .save(selectedResource, complexAttribute, type,
+                                        metadata.getTemplate(), changedValues, builder.crudCallback))
+                        .prepareReset(f -> builder.mbuiContext.ca().reset(selectedResource, complexAttribute, type,
+                                metadata.getTemplate(), f, new Form.FinishReset<ModelNode>(f) {
+                                    @Override
+                                    public void afterReset(Form<ModelNode> form) {
+                                        builder.crudCallback.execute();
+                                    }
+                                }));
                 if (!requiredComplexAttribute) {
                     coFormBuilder.prepareRemove(
                             f -> builder.mbuiContext.ca().remove(selectedResource, complexAttribute, type,

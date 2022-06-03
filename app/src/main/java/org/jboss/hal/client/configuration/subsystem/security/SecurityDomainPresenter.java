@@ -161,7 +161,7 @@ public class SecurityDomainPresenter
         Operation operation = new Operation.Builder(
                 SELECTED_SECURITY_DOMAIN_TEMPLATE.append("authentication=jaspi").resolve(statementContext),
                 READ_RESOURCE_OPERATION)
-                        .build();
+                .build();
         dispatcher.execute(operation,
                 result -> {
                     // error: there's already a 'authentication=jaspi' singleton

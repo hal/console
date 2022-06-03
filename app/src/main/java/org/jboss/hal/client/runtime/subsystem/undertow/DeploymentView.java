@@ -106,16 +106,16 @@ public class DeploymentView extends HalViewImpl implements DeploymentPresenter.M
 
         servletsTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(UNDERTOW_RUNTIME, DEPLOYMENT, SERVLET,
                 Ids.TABLE), servletMetadata)
-                        .button(resources.constants().reload(), table -> presenter.reload(),
-                                Constraint.executable(WEB_DEPLOYMENT_TEMPLATE, READ_RESOURCE_OPERATION))
-                        .column(Names.SERVLET, (cell, type, row, meta) -> row.getName())
-                        .build();
+                .button(resources.constants().reload(), table -> presenter.reload(),
+                        Constraint.executable(WEB_DEPLOYMENT_TEMPLATE, READ_RESOURCE_OPERATION))
+                .column(Names.SERVLET, (cell, type, row, meta) -> row.getName())
+                .build();
 
         servletsForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(Ids.build(UNDERTOW_RUNTIME, DEPLOYMENT, SERVLET,
                 FORM)), servletMetadata)
-                        .includeRuntime()
-                        .readOnly()
-                        .build();
+                .includeRuntime()
+                .readOnly()
+                .build();
 
         HTMLElement servletSection = section()
                 .add(h(1).textContent(Names.SERVLET))
@@ -129,16 +129,16 @@ public class DeploymentView extends HalViewImpl implements DeploymentPresenter.M
 
         websocketsTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(UNDERTOW_RUNTIME, DEPLOYMENT, WEBSOCKET,
                 Ids.TABLE), websocketMetadata)
-                        .button(resources.constants().reload(), table -> presenter.reload(),
-                                Constraint.executable(WEB_DEPLOYMENT_TEMPLATE, READ_RESOURCE_OPERATION))
-                        .column(Names.WEBSOCKET, (cell, type, row, meta) -> row.getName())
-                        .build();
+                .button(resources.constants().reload(), table -> presenter.reload(),
+                        Constraint.executable(WEB_DEPLOYMENT_TEMPLATE, READ_RESOURCE_OPERATION))
+                .column(Names.WEBSOCKET, (cell, type, row, meta) -> row.getName())
+                .build();
 
         websocketsForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(UNDERTOW_RUNTIME, DEPLOYMENT, WEBSOCKET, FORM),
                 websocketMetadata)
-                        .includeRuntime()
-                        .readOnly()
-                        .build();
+                .includeRuntime()
+                .readOnly()
+                .build();
 
         HTMLElement websocketSection = section()
                 .add(h(1).textContent(Names.WEBSOCKETS))

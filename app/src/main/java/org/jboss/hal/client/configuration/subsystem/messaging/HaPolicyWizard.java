@@ -30,35 +30,35 @@ class HaPolicyWizard {
         wizard = new Wizard.Builder<Context, State>(resources.messages().addResourceTitle(Names.HA_POLICY),
                 new Context())
 
-                        .onBack((context, currentState) -> {
-                            State state = null;
-                            switch (currentState) {
-                                case CHOOSE_POLICY:
-                                    state = CHOOSE_STRATEGY;
-                                    break;
-                                default:
-                                    break;
-                            }
-                            return state;
-                        })
+                .onBack((context, currentState) -> {
+                    State state = null;
+                    switch (currentState) {
+                        case CHOOSE_POLICY:
+                            state = CHOOSE_STRATEGY;
+                            break;
+                        default:
+                            break;
+                    }
+                    return state;
+                })
 
-                        .onNext((context, currentState) -> {
-                            State state = null;
-                            switch (currentState) {
-                                case CHOOSE_STRATEGY:
-                                    state = CHOOSE_POLICY;
-                                    break;
-                                default:
-                                    break;
-                            }
-                            return state;
-                        })
+                .onNext((context, currentState) -> {
+                    State state = null;
+                    switch (currentState) {
+                        case CHOOSE_STRATEGY:
+                            state = CHOOSE_POLICY;
+                            break;
+                        default:
+                            break;
+                    }
+                    return state;
+                })
 
-                        .onFinish(callback)
+                .onFinish(callback)
 
-                        .addStep(CHOOSE_STRATEGY, new ChooseStrategyStep(resources))
-                        .addStep(CHOOSE_POLICY, new ChoosePolicyStep(resources))
-                        .build();
+                .addStep(CHOOSE_STRATEGY, new ChooseStrategyStep(resources))
+                .addStep(CHOOSE_POLICY, new ChoosePolicyStep(resources))
+                .build();
     }
 
     void show() {

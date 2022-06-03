@@ -86,8 +86,8 @@ class HandlerTasks {
         public Promise<FlowContext> apply(final FlowContext context) {
             Operation operation = new Operation.Builder(AUDIT_LOG_TEMPLATE.resolve(statementContext),
                     READ_CHILDREN_NAMES_OPERATION)
-                            .param(CHILD_TYPE, HANDLER)
-                            .build();
+                    .param(CHILD_TYPE, HANDLER)
+                    .build();
             return dispatcher.execute(operation)
                     .then(result -> context.resolve(result.asList().stream()
                             .map(ModelNode::asString)

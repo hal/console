@@ -69,13 +69,13 @@ public class SystemPropertiesView extends HalViewImpl implements SystemPropertie
 
         ModelNodeTable.Builder<NamedNode> tb = new ModelNodeTable.Builder<NamedNode>(Ids.SYSTEM_PROPERTY_TABLE,
                 metadata)
-                        .button(resources.constants().add(), table -> presenter.add(),
-                                Constraint.parse("executable(system-property=*:add)"))
-                        .button(tableButtonFactory.remove(Names.SYSTEM_PROPERTY, ROOT_TEMPLATE,
-                                table -> table.selectedRow().getName(),
-                                () -> presenter.reload()))
-                        .column(NAME, (cell, type, row, meta) -> row.getName())
-                        .column(VALUE);
+                .button(resources.constants().add(), table -> presenter.add(),
+                        Constraint.parse("executable(system-property=*:add)"))
+                .button(tableButtonFactory.remove(Names.SYSTEM_PROPERTY, ROOT_TEMPLATE,
+                        table -> table.selectedRow().getName(),
+                        () -> presenter.reload()))
+                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .column(VALUE);
         if (!environment.isStandalone()) {
             tb.column("boot-time");
         }

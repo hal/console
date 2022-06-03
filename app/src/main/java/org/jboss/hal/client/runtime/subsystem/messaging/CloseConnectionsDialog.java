@@ -51,13 +51,13 @@ class CloseConnectionsDialog implements HasPresenter<ServerPresenter> {
     void show() {
         Form<ModelNode> cfaForm = new OperationFormBuilder<>(
                 Ids.MESSAGING_SERVER_CONNECTION_CLOSE_FOR_ADDRESS_FORM, metadata, CLOSE_CONNECTIONS_FOR_ADDRESS)
-                        .build();
+                .build();
         Form<ModelNode> ccForm = new OperationFormBuilder<>(
                 Ids.MESSAGING_SERVER_CONNECTION_CLOSE_CONSUMER_FORM, metadata, CLOSE_CONSUMER_CONNECTIONS_FOR_ADDRESS)
-                        .build();
+                .build();
         Form<ModelNode> cfuForm = new OperationFormBuilder<>(
                 Ids.MESSAGING_SERVER_CONNECTION_CLOSE_FOR_USER_FORM, metadata, CLOSE_CONNECTIONS_FOR_USER)
-                        .build();
+                .build();
         operationToForm = new HashMap<>();
         operationToForm.put(CLOSE_CONNECTIONS_FOR_ADDRESS, cfaForm);
         operationToForm.put(CLOSE_CONSUMER_CONNECTIONS_FOR_ADDRESS, ccForm);

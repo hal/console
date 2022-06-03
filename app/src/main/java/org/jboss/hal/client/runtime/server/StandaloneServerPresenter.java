@@ -230,8 +230,8 @@ public class StandaloneServerPresenter
 
                     new EnableSSLWizard.Builder(existingResources, resources, getEventBus(), statementContext,
                             dispatcher, progress, StandaloneServerPresenter.this, environment)
-                                    .build()
-                                    .show();
+                            .build()
+                            .show();
                     return null;
                 });
     }

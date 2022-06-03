@@ -67,11 +67,11 @@ class JpaPreview extends PreviewContent<JpaStatistic> {
 
         noStatistics = new EmptyState.Builder(Ids.JPA_RUNTIME_STATISTICS_DISABLED,
                 resources.constants().statisticsDisabledHeader())
-                        .description(resources.messages()
-                                .jpaStatisticsDisabled(jpaStatistic.getName(), jpaStatistic.getDeployment()))
-                        .icon(fontAwesome("line-chart"))
-                        .primaryAction(resources.constants().gotoDeployment(), () -> placeManager.revealPlace(placeRequest))
-                        .build();
+                .description(resources.messages()
+                        .jpaStatisticsDisabled(jpaStatistic.getName(), jpaStatistic.getDeployment()))
+                .icon(fontAwesome("line-chart"))
+                .primaryAction(resources.constants().gotoDeployment(), () -> placeManager.revealPlace(placeRequest))
+                .build();
 
         openedSessions = new Utilization(resources.constants().opened(), Names.SESSIONS,
                 environment.isStandalone(), false);

@@ -50,8 +50,8 @@ public class ServerGroupDeploymentView extends HalViewImpl implements ServerGrou
 
         noReferenceServer = new EmptyState.Builder(Ids.REFERENCE_SERVER_EMPTY,
                 resources.constants().noReferenceServer())
-                        .icon(CSS.pfIcon("server"))
-                        .build();
+                .icon(CSS.pfIcon("server"))
+                .build();
         noReferenceServer.element().classList.add(marginTopLarge);
         Elements.setVisible(noReferenceServer.element(), false);
 

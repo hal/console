@@ -116,11 +116,11 @@ class ResourcePanel implements Iterable<HTMLElement> {
                 flattenModel(result, plainObjects);
                 ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(
                         Ids.build(Ids.MODEL_BROWSER, node.id, Ids.FORM), metadata)
-                                .includeRuntime()
-                                .showDeprecated()
-                                .onSave((f, changedValues) -> modelBrowser.save(address, changedValues, metadata))
-                                .prepareReset(f -> modelBrowser.reset(address, f, metadata))
-                                .build();
+                        .includeRuntime()
+                        .showDeprecated()
+                        .onSave((f, changedValues) -> modelBrowser.save(address, changedValues, metadata))
+                        .prepareReset(f -> modelBrowser.reset(address, f, metadata))
+                        .build();
                 tabs.setContent(dataId, form.element());
                 PatternFly.initComponents();
                 form.attach();

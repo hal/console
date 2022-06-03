@@ -130,11 +130,11 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
             List<String> sectionAttributes = mainAttributes.get(section);
             Form<JpaStatistic> form = new ModelNodeForm.Builder<JpaStatistic>(
                     Ids.build(baseId, Ids.FORM, sectionId), metadata)
-                            .readOnly()
-                            .includeRuntime()
-                            .include(sectionAttributes)
-                            .unsorted()
-                            .build();
+                    .readOnly()
+                    .includeRuntime()
+                    .include(sectionAttributes)
+                    .unsorted()
+                    .build();
             registerAttachable(form);
             mainForms.add(form);
             mainAttributesTabs.add(Ids.build(baseId, Ids.TAB, sectionId), section, form.element());
@@ -178,14 +178,14 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
 
         Table<NamedNode> table = new ModelNodeTable.Builder<NamedNode>(
                 Ids.build(baseId, resource, Ids.TABLE), metadata)
-                        .column(NAME, (cell, type, row, meta) -> row.getName())
-                        .build();
+                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .build();
 
         Form<NamedNode> form = new ModelNodeForm.Builder<NamedNode>(Ids.build(baseId, resource, Ids.FORM),
                 metadata)
-                        .readOnly()
-                        .includeRuntime()
-                        .build();
+                .readOnly()
+                .includeRuntime()
+                .build();
 
         registerAttachable(table);
         registerAttachable(form);

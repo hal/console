@@ -87,9 +87,9 @@ public class MailSessionView extends HalViewImpl implements MailSessionPresenter
         Metadata mailSessionMetadata = metadataRegistry.lookup(MAIL_SESSION_TEMPLATE);
         mailSessionForm = new ModelNodeForm.Builder<MailSession>(
                 Ids.MAIL_SESSION_FORM, mailSessionMetadata)
-                        .onSave((form, changedValues) -> presenter.saveMailSession(changedValues))
-                        .prepareReset(form -> presenter.resetMailSession(form))
-                        .build();
+                .onSave((form, changedValues) -> presenter.saveMailSession(changedValues))
+                .prepareReset(form -> presenter.resetMailSession(form))
+                .build();
         registerAttachable(mailSessionForm);
 
         HTMLElement mailSessionElement = section()

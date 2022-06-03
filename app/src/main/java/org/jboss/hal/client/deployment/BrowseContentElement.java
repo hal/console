@@ -235,9 +235,9 @@ class BrowseContentElement implements IsElement<HTMLElement>, Attachable {
 
         Search contentSearch = new Search.Builder(Ids.CONTENT_SEARCH,
                 query -> editor.getEditor().find(query))
-                        .onPrevious(query -> editor.getEditor().findPrevious())
-                        .onNext(query -> editor.getEditor().findNext())
-                        .build();
+                .onPrevious(query -> editor.getEditor().findPrevious())
+                .onNext(query -> editor.getEditor().findNext())
+                .build();
         contentSearch.element().classList.add(marginRightSmall);
 
         pleaseSelect = new EmptyState.Builder(Ids.BROWSE_CONTENT_SELECT_EMPTY, resources.constants().nothingSelected())
@@ -257,13 +257,13 @@ class BrowseContentElement implements IsElement<HTMLElement>, Attachable {
 
         unsupportedFileType = new EmptyState.Builder(Ids.BROWSE_CONTENT_UNSUPPORTED_EMPTY,
                 resources.constants().unsupportedFileType())
-                        .icon(Icons.UNKNOWN)
-                        .description(resources.messages().unsupportedFileTypeDescription())
-                        .primaryAction(resources.constants().download(),
-                                () -> window.location.assign(downloadUrl((tree.getSelected().data))))
-                        .secondaryAction(resources.constants().viewInEditor(),
-                                () -> viewInEditor(tree.getSelected().data))
-                        .build();
+                .icon(Icons.UNKNOWN)
+                .description(resources.messages().unsupportedFileTypeDescription())
+                .primaryAction(resources.constants().download(),
+                        () -> window.location.assign(downloadUrl((tree.getSelected().data))))
+                .secondaryAction(resources.constants().viewInEditor(),
+                        () -> viewInEditor(tree.getSelected().data))
+                .build();
 
         HTMLElement crudContainer;
         root = row()
@@ -554,10 +554,10 @@ class BrowseContentElement implements IsElement<HTMLElement>, Attachable {
                     String contentName = SafeHtmlUtils.htmlEscapeAllowEntities(content.getName());
                     Node<ContentEntry> root = new Node.Builder<>(Ids.CONTENT_TREE_ROOT, contentName,
                             new ContentEntry())
-                                    .root()
-                                    .folder()
-                                    .open()
-                                    .build();
+                            .root()
+                            .folder()
+                            .open()
+                            .build();
                     JsArray<Node<ContentEntry>> nodes = new JsArray<>();
                     new ContentParser().parse(root, nodes, result.isDefined() ? result.asList() : emptyList());
 

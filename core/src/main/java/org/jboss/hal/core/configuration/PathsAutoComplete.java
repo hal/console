@@ -99,8 +99,8 @@ public class PathsAutoComplete extends AutoComplete {
         Options options = new OptionsBuilder<JsonObject>(
                 (query, response) -> Core.INSTANCE.dispatcher().execute(operation,
                         result -> response.response(new NamesResultProcessor().process(query, result))))
-                                .renderItem(new StringRenderer<>(item -> item.get(NAME).asString()))
-                                .build();
+                .renderItem(new StringRenderer<>(item -> item.get(NAME).asString()))
+                .build();
         init(options);
     }
 }

@@ -58,10 +58,10 @@ public class ConfigurationChangesView extends HalViewImpl implements Configurati
         Messages messages = resources.messages();
         EmptyState notEnabledState = new EmptyState.Builder(Ids.CONFIGURATION_CHANGES_NOT_ENABLED,
                 resources.constants().configurationChangesNotEnabled())
-                        .icon(Icons.INFO)
-                        .description(resources.messages().configurationChangesDescription())
-                        .primaryAction(resources.constants().enableConfigurationChanges(), () -> presenter.launchAdd())
-                        .build();
+                .icon(Icons.INFO)
+                .description(resources.messages().configurationChangesDescription())
+                .primaryAction(resources.constants().enableConfigurationChanges(), () -> presenter.launchAdd())
+                .build();
 
         EmptyState emptyState = new EmptyState.Builder(Ids.CONFIGURATION_CHANGES_EMPTY, resources.constants().noItems())
                 .description(resources.messages().noItems().asString() + " " + resources.messages()
@@ -78,28 +78,28 @@ public class ConfigurationChangesView extends HalViewImpl implements Configurati
         listView = new ModelNodeListView.Builder<>(
                 Ids.build(CONFIGURATION_CHANGES, "list"), metadata,
                 dataProvider, item -> new ConfigurationChangeDisplay(item, presenter, resources))
-                        .toolbarAttribute(new Toolbar.Attribute<>(OUTCOME, constants.outcome(),
-                                (node, filter) -> node.getOutcome().toLowerCase().equals(filter.toLowerCase()),
-                                comparing(ConfigurationChange::getOutcome)))
-                        .toolbarAttribute(new Toolbar.Attribute<>(OPERATION, resources.constants().operation(),
-                                (model, filter) -> model.getOperationNames().contains(filter), null))
-                        .toolbarAttribute(new Toolbar.Attribute<>(OPERATION_DATE, constants.operationDate(),
-                                null, comparing(ConfigurationChange::getOperationDate)))
-                        .toolbarAttribute(new Toolbar.Attribute<>(ADDRESS, resources.constants().address(),
-                                (model, filter) -> model.getAddressSegments().contains(filter), null))
-                        .toolbarAttribute(new Toolbar.Attribute<>(REMOTE_ADDRESS, constants.remoteAddress(),
-                                (node, filter) -> node.getRemoteAddress().toLowerCase().contains(filter.toLowerCase()),
-                                comparing(ConfigurationChange::getRemoteAddress)))
-                        .toolbarAttribute(new Toolbar.Attribute<>(ACCESS_MECHANISM, constants.accessMechanism(),
-                                (node, filter) -> node.getAccessMechanism().toLowerCase().equals(filter.toLowerCase()),
-                                comparing(ConfigurationChange::getAccessMechanism)))
-                        .toolbarAction(disableAction)
-                        .toolbarAction(new Toolbar.Action(Ids.build(CONFIGURATION_CHANGES, Ids.REFRESH),
-                                constants.reload(), () -> presenter.reload()))
-                        .noItems(constants.noItems(), messages.noItems())
-                        .emptyState(empty, emptyState)
-                        .emptyState(notEnabled, notEnabledState)
-                        .build();
+                .toolbarAttribute(new Toolbar.Attribute<>(OUTCOME, constants.outcome(),
+                        (node, filter) -> node.getOutcome().toLowerCase().equals(filter.toLowerCase()),
+                        comparing(ConfigurationChange::getOutcome)))
+                .toolbarAttribute(new Toolbar.Attribute<>(OPERATION, resources.constants().operation(),
+                        (model, filter) -> model.getOperationNames().contains(filter), null))
+                .toolbarAttribute(new Toolbar.Attribute<>(OPERATION_DATE, constants.operationDate(),
+                        null, comparing(ConfigurationChange::getOperationDate)))
+                .toolbarAttribute(new Toolbar.Attribute<>(ADDRESS, resources.constants().address(),
+                        (model, filter) -> model.getAddressSegments().contains(filter), null))
+                .toolbarAttribute(new Toolbar.Attribute<>(REMOTE_ADDRESS, constants.remoteAddress(),
+                        (node, filter) -> node.getRemoteAddress().toLowerCase().contains(filter.toLowerCase()),
+                        comparing(ConfigurationChange::getRemoteAddress)))
+                .toolbarAttribute(new Toolbar.Attribute<>(ACCESS_MECHANISM, constants.accessMechanism(),
+                        (node, filter) -> node.getAccessMechanism().toLowerCase().equals(filter.toLowerCase()),
+                        comparing(ConfigurationChange::getAccessMechanism)))
+                .toolbarAction(disableAction)
+                .toolbarAction(new Toolbar.Action(Ids.build(CONFIGURATION_CHANGES, Ids.REFRESH),
+                        constants.reload(), () -> presenter.reload()))
+                .noItems(constants.noItems(), messages.noItems())
+                .emptyState(empty, emptyState)
+                .emptyState(notEnabled, notEnabledState)
+                .build();
         registerAttachable(listView);
         initElements(listView);
     }

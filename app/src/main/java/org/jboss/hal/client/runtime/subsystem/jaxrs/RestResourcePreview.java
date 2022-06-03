@@ -274,15 +274,15 @@ class RestResourcePreview extends PreviewContent<RestResource> {
     private void specifyParameters(String serverUrl, String link, List<String> params) {
         ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(Ids.REST_RESOURCE_PATH_PARAM_FORM,
                 Metadata.empty())
-                        .addOnly()
-                        .onSave((form, changedValues) -> {
-                            String withValues = link;
-                            for (String param : params) {
-                                String value = form.<String> getFormItem(param).getValue();
-                                withValues = withValues.replace("{" + param + "}", value);
-                            }
-                            window.open(serverUrl + withValues, serverId());
-                        });
+                .addOnly()
+                .onSave((form, changedValues) -> {
+                    String withValues = link;
+                    for (String param : params) {
+                        String value = form.<String> getFormItem(param).getValue();
+                        withValues = withValues.replace("{" + param + "}", value);
+                    }
+                    window.open(serverUrl + withValues, serverId());
+                });
         int i = 0;
         for (String param : params) {
             FormItem<String> formItem = new TextBoxItem(param, param);

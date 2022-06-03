@@ -110,8 +110,8 @@ public class HostActions implements Timeouts {
                 .then(metadata -> {
                     Form<ModelNode> form = new OperationFormBuilder<>(
                             Ids.build(RELOAD_HOST, host.getName(), Ids.FORM), metadata, RELOAD)
-                                    .include(RESTART_SERVERS)
-                                    .build();
+                            .include(RESTART_SERVERS)
+                            .build();
 
                     SafeHtml question;
                     if (host.isDomainController()) {

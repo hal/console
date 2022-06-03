@@ -138,18 +138,18 @@ abstract class CacheViewImpl<P extends CachePresenter<?, ?>> extends HalViewImpl
 
             backupTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(cacheType.baseId, BACKUPS, Ids.TABLE),
                     backupMeta)
-                            .button(tableButtonFactory.add(backupTemplate, table -> presenter.addBackup()))
-                            .button(tableButtonFactory.remove(backupTemplate,
-                                    table -> presenter.removeBackup(table.selectedRow().getName())))
-                            .column(NAME, (cell, type, row, meta) -> row.getName())
-                            .build();
+                    .button(tableButtonFactory.add(backupTemplate, table -> presenter.addBackup()))
+                    .button(tableButtonFactory.remove(backupTemplate,
+                            table -> presenter.removeBackup(table.selectedRow().getName())))
+                    .column(NAME, (cell, type, row, meta) -> row.getName())
+                    .build();
 
             backupForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(cacheType.baseId, BACKUPS, Ids.FORM),
                     backupMeta)
-                            .onSave((form, changedValues) -> presenter.saveCacheBackup(form.getModel().getName(),
-                                    changedValues))
-                            .prepareReset(form -> presenter.resetBackup(form.getModel().getName(), form))
-                            .build();
+                    .onSave((form, changedValues) -> presenter.saveCacheBackup(form.getModel().getName(),
+                            changedValues))
+                    .prepareReset(form -> presenter.resetBackup(form.getModel().getName(), form))
+                    .build();
 
             HTMLElement backupSection = section()
                     .add(h(1).textContent(Names.BACKUPS))

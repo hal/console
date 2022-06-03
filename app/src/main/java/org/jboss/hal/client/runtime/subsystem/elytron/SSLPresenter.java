@@ -310,7 +310,7 @@ public class SSLPresenter extends ApplicationFinderPresenter<SSLPresenter.MyView
     void reloadCRL(String name) {
         Operation operation = new Operation.Builder(TRUST_MANAGER_TEMPLATE.resolve(statementContext, name),
                 RELOAD_CERTIFICATE_REVOCATION_LIST)
-                        .build();
+                .build();
         dispatcher.execute(operation, result -> MessageEvent.fire(getEventBus(),
                 Message.success(resources.messages().reloadCRLSuccess(name))),
                 (operation1, failure) -> MessageEvent.fire(getEventBus(),

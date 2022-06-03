@@ -228,10 +228,10 @@ public class SocketBindingGroupPresenter
     void addClientMapping(Metadata metadata) {
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.SOCKET_BINDING_GROUP_INBOUND_CLIENT_MAPPING_ADD,
                 metadata)
-                        .addOnly()
-                        .include(SOURCE_NETWORK, DESTINATION_ADDRESS, DESTINATION_PORT)
-                        .unsorted()
-                        .build();
+                .addOnly()
+                .include(SOURCE_NETWORK, DESTINATION_ADDRESS, DESTINATION_PORT)
+                .unsorted()
+                .build();
         AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(Names.CLIENT_MAPPINGS),
                 form, (name, modelNode) -> {
                     ResourceAddress address = SELECTED_TEMPLATE.append(INBOUND.templateSuffix())

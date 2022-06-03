@@ -107,27 +107,27 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
 
             appSecurityDomainTable = new ModelNodeTable.Builder<NamedNode>(Ids.EJB3_APPLICATION_SECURITY_DOMAIN_TABLE,
                     metadata)
-                            .button(mbuiContext.tableButtonFactory()
-                                    .add(Ids.EJB3_APPLICATION_SECURITY_DOMAIN_ADD, Names.APPLICATION_SECURITY_DOMAIN, template,
-                                            (name, address) -> presenter.reload()))
-                            .button(mbuiContext.tableButtonFactory().remove(Names.APPLICATION_SECURITY_DOMAIN, template,
-                                    (api) -> api.selectedRow().getName(), () -> presenter.reload()))
-                            .column(NAME, (cell, type, row, meta) -> row.getName())
-                            .build();
+                    .button(mbuiContext.tableButtonFactory()
+                            .add(Ids.EJB3_APPLICATION_SECURITY_DOMAIN_ADD, Names.APPLICATION_SECURITY_DOMAIN, template,
+                                    (name, address) -> presenter.reload()))
+                    .button(mbuiContext.tableButtonFactory().remove(Names.APPLICATION_SECURITY_DOMAIN, template,
+                            (api) -> api.selectedRow().getName(), () -> presenter.reload()))
+                    .column(NAME, (cell, type, row, meta) -> row.getName())
+                    .build();
 
             appSecurityDomainForm = new ModelNodeForm.Builder<NamedNode>(Ids.EJB3_APPLICATION_SECURITY_DOMAIN_FORM,
                     metadata)
-                            .onSave((form, changedValues) -> {
-                                String name = form.getModel().getName();
-                                saveForm(Names.APPLICATION_SECURITY_DOMAIN, name,
-                                        template.resolve(statementContext, name), changedValues, metadata);
-                            })
-                            .prepareReset(form -> {
-                                String name = form.getModel().getName();
-                                resetForm(Names.APPLICATION_SECURITY_DOMAIN, name,
-                                        template.resolve(statementContext, name), form, metadata);
-                            })
-                            .build();
+                    .onSave((form, changedValues) -> {
+                        String name = form.getModel().getName();
+                        saveForm(Names.APPLICATION_SECURITY_DOMAIN, name,
+                                template.resolve(statementContext, name), changedValues, metadata);
+                    })
+                    .prepareReset(form -> {
+                        String name = form.getModel().getName();
+                        resetForm(Names.APPLICATION_SECURITY_DOMAIN, name,
+                                template.resolve(statementContext, name), form, metadata);
+                    })
+                    .build();
 
             HTMLElement section = section()
                     .add(h(1).textContent(Names.APPLICATION_SECURITY_DOMAIN))
