@@ -74,7 +74,7 @@ jobs:
           password: ${{ secrets.QUAY_ROBOT_TOKEN }}
       - name: Standalone Tag
         id: standalone-tag
-        run: $MVN package --projects standalone --also-make -P native,prod,theme-hal -Dquarkus.native.container-build=true -Dquarkus.container-image.push=true -Dquarkus.container-image.image=quay.io/halconsole/hal:${{ steps.get-version.outputs.version-without-v }}.Final '-Dquarkus.jib.labels."org.opencontainers.image.revision"='$GITHUB_SHA
+        run: $MVN package --projects standalone --also-make -P native,prod,theme-hal -Dquarkus.native.remote-container-build=true -Dquarkus.container-image.push=true -Dquarkus.container-image.image=quay.io/halconsole/hal:${{ steps.get-version.outputs.version-without-v }}.Final '-Dquarkus.jib.labels."org.opencontainers.image.revision"='$GITHUB_SHA
       - name: Check Latest
         id: check-latest
         run: |
@@ -87,7 +87,7 @@ jobs:
       - name: Standalone Latest
         id: standalone-latest
         if: steps.check-latest.outputs.latest == 'true'
-        run: $MVN package --projects standalone --also-make -P native,prod,theme-hal -Dquarkus.native.container-build=true -Dquarkus.container-image.push=true -Dquarkus.container-image.image=quay.io/halconsole/hal:latest '-Dquarkus.jib.labels."org.opencontainers.image.revision"='$GITHUB_SHA
+        run: $MVN package --projects standalone --also-make -P native,prod,theme-hal -Dquarkus.native.remote-container-build=true -Dquarkus.container-image.push=true -Dquarkus.container-image.image=quay.io/halconsole/hal:latest '-Dquarkus.jib.labels."org.opencontainers.image.revision"='$GITHUB_SHA
 
   publish:
     name: Publish to GitHub Pages
