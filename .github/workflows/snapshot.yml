@@ -25,7 +25,10 @@ jobs:
           cache: maven
       - name: Deploy
         id: deploy
-        run: $MVN -P prod deploy
+        run: $MVN deploy -P prod
+        env:
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
 
   standalone:
     name: Build Standalone Console
