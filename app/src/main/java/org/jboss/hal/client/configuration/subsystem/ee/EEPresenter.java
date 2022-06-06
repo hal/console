@@ -68,7 +68,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.LIST_REMOVE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PATH;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RELATIVE_TO;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 
 public class EEPresenter
@@ -201,12 +200,7 @@ public class EEPresenter
     }
 
     void removeGlobalDirectory(AddressTemplate template) {
-        Operation operation = new Operation.Builder(template.resolve(statementContext), REMOVE).build();
-        dispatcher.execute(operation, result -> {
-            MessageEvent.fire(eventBus, Message.success(
-                    resources.messages().removeResourceSuccess(Names.EE, Names.GLOBAL_DIRECTORY)));
-            reload();
-        });
+        crud.removeSingleton(Names.GLOBAL_DIRECTORY, template, this::reload);
     }
 
     void launchAddDialogGlobalDirectory() {
