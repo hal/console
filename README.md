@@ -10,7 +10,7 @@ HAL is a client side RIA without any server side dependencies. It is a GWT appli
 
 In a nutshell the console uses the following technical stack:
 
-- Java 11
+- [Java 11](https://jdk.java.net/java-se-ri/11)
 - [GWT](https://www.gwtproject.org/)
 - [GWTP](https://github.com/ArcBees/GWTP)
 - [Elemento](https://github.com/hal/elemento)
