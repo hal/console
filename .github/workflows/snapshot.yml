@@ -23,6 +23,18 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
           cache: maven
+      - name: Package
+        id: package
+        run: $MVN package -P prod
+      - name: Set up Maven Settings
+        id: setup-maven-settings
+        uses: actions/setup-java@v3
+        with: # running setup-java again overwrites the settings.xml
+          java-version: 11
+          distribution: temurin
+          server-id: ossrh
+          server-username: OSSRH_USERNAME
+          server-password: OSSRH_PASSWORD
       - name: Deploy
         id: deploy
         run: $MVN deploy -P prod
