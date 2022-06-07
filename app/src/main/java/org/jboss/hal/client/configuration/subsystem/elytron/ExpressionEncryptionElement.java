@@ -43,6 +43,7 @@ import org.jboss.hal.resources.Resources;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.safehtml.shared.SafeHtml;
 
+import elemental2.dom.CSSProperties.MarginTopUnionType;
 import elemental2.dom.HTMLElement;
 
 import static org.jboss.elemento.Elements.h;
@@ -100,6 +101,7 @@ class ExpressionEncryptionElement implements IsElement<HTMLElement>, Attachable,
             emptyStateBuilder.description(resources.constants().restricted());
         }
         emptyState = emptyStateBuilder.build();
+        emptyState.element().style.marginTop = MarginTopUnionType.of("20px");
 
         attributes = new ModelNodeForm.Builder<>(id(FORM), metadata)
                 .exclude(RESOLVERS)
