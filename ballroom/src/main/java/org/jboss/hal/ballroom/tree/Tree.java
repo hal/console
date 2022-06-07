@@ -170,6 +170,10 @@ public class Tree<T> implements IsElement, Attachable {
         api().clear_search();
     }
 
+    public void openAllNodes() {
+        api().open_all();
+    }
+
     // ------------------------------------------------------ events
 
     public void onReady(EventHandler<Void> handler) {
