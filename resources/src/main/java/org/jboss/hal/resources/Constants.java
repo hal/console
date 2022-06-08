@@ -1030,6 +1030,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String settings();
 
+    String setupSSL();
+
     String showAll();
 
     String showSensitive();

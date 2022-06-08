@@ -850,7 +850,6 @@ public interface ModelDescriptionConstants {
     String SECURITY = "security";
     String SECURITY_DOMAIN = "security-domain";
     String SECURITY_MANAGER = "security-manager";
-    String SECURITY_REALM = "security-realm";
     String SECURITY_SETTING = "security-setting";
     String SEGMENTS = "segments";
     String SELECT = "select";

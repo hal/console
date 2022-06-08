@@ -25,13 +25,10 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
-import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.Form.FinishRemove;
 import org.jboss.hal.ballroom.form.Form.FinishReset;
-import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.client.shared.sslwizard.EnableSSLPresenter;
 import org.jboss.hal.client.shared.sslwizard.EnableSSLWizard;
 import org.jboss.hal.config.Environment;
@@ -46,8 +43,6 @@ import org.jboss.hal.core.mvp.ApplicationFinderPresenter;
 import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
-import org.jboss.hal.dmr.Composite;
-import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
@@ -67,24 +62,17 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Footer;
-import org.jboss.hal.spi.Message;
-import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
-import elemental2.dom.HTMLElement;
 import elemental2.promise.Promise;
 
 import static java.util.Collections.singletonList;
-import static org.jboss.elemento.Elements.div;
-import static org.jboss.elemento.Elements.p;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.ELYTRON_SUBSYSTEM_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.FILTER_REF_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.FILTER_SUGGESTIONS;
@@ -96,28 +84,20 @@ import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTempl
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SELECTED_SERVER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SERVER_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SERVER_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT_WEB_MODULE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.FILTER_REF;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HANDLER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.HTTPS_LISTENER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.KEY_MANAGER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.KEY_STORE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.LOCATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURITY_REALM;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_SSL_CONTEXT;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SSL_CONTEXT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TRUST_MANAGER;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEFINE_ATTRIBUTE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDERTOW;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.encodeValue;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
@@ -409,10 +389,12 @@ public class ServerPresenter
                         new ReadChildrenAutoComplete(dispatcher, statementContext, HANDLER_SUGGESTIONS));
         AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(Names.LOCATION), form,
                 (name, model) -> {
-                    ResourceAddress address = SELECTED_HOST_TEMPLATE
-                            .append(LOCATION + EQUALS + encodeValue(name))
-                            .resolve(statementContext);
-                    crud.add(Names.LOCATION, name, address, model, (n, a) -> reloadLocation());
+                    if (name != null) {
+                        ResourceAddress address = SELECTED_HOST_TEMPLATE
+                                .append(LOCATION + EQUALS + encodeValue(name))
+                                .resolve(statementContext);
+                        crud.add(Names.LOCATION, name, address, model, (n, a) -> reloadLocation());
+                    }
                 });
         dialog.show();
     }
@@ -574,7 +556,7 @@ public class ServerPresenter
 
     // ------------------------------------------------------ enable / disable ssl context
 
-    void enableSsl(String httpsName) {
+    void setupSsl(String httpsName) {
         // load some elytron resources in advance for later use in the wizard for form validation
         List<Task<FlowContext>> tasks = new ArrayList<>();
 
@@ -605,70 +587,13 @@ public class ServerPresenter
                 });
     }
 
-    void disableSsl(String httpsListener) {
-        AddressTemplate httpsTemplate = SERVER_TEMPLATE.append(HTTPS_LISTENER + EQ_WILDCARD);
-        Metadata metadata = metadataRegistry.lookup(httpsTemplate);
-        SafeHtml description = resources.messages().disableSSLUndertowQuestion(httpsListener);
-        String label = new LabelBuilder().label(SECURITY_REALM);
-        TextBoxItem securityRealmItem = new TextBoxItem(SECURITY_REALM, label);
-        securityRealmItem.setRequired(true);
-        SafeHtml securityRealmDescription = SafeHtmlUtils.fromTrustedString(
-                metadata.getDescription().get(ATTRIBUTES).get(SECURITY_REALM).get(DESCRIPTION).asString());
-        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.build(SECURITY_REALM, Ids.FORM), Metadata.empty())
-                .unboundFormItem(securityRealmItem, 0, securityRealmDescription)
-                .build();
-
-        HTMLElement content = div()
-                .add(p().innerHtml(description))
-                .add(form.element()).element();
-
-        Dialog dialog = new Dialog.Builder(resources.constants().disableSSL())
-                .size(Dialog.Size.MEDIUM)
-                .primary(resources.constants().yes(), () -> {
-                    boolean valid = form.save();
-                    // if the form contains validation error, don't close the dialog
-                    if (valid) {
-                        ResourceAddress httpsAddress = httpsTemplate.resolve(statementContext, serverName,
-                                httpsListener);
-                        Operation undefineSslCtx = new Operation.Builder(httpsAddress, UNDEFINE_ATTRIBUTE_OPERATION)
-                                .param(NAME, SSL_CONTEXT)
-                                .build();
-                        Operation writeSecurityRealm = new Operation.Builder(httpsAddress, WRITE_ATTRIBUTE_OPERATION)
-                                .param(NAME, SECURITY_REALM)
-                                .param(VALUE, securityRealmItem.getValue())
-                                .build();
-                        Composite composite = new Composite();
-                        composite.add(undefineSslCtx);
-                        composite.add(writeSecurityRealm);
-
-                        dispatcher.execute(composite, (CompositeResult result) -> {
-                            MessageEvent.fire(getEventBus(),
-                                    Message.success(resources.messages().disableSSLUndertowSuccess(httpsListener)));
-                            reload();
-                        }, (operation, failure) -> MessageEvent.fire(getEventBus(),
-                                Message.error(
-                                        resources.messages().disableSSLUndertowError(httpsListener, failure))));
-                    }
-                    return valid;
-                })
-                .secondary(resources.constants().no(), () -> true)
-                .closeIcon(true)
-                .closeOnEsc(true)
-                .add(content)
-                .build();
-        dialog.registerAttachable(form);
-        dialog.show();
-        ModelNode model = new ModelNode().setEmptyObject();
-        form.edit(model);
-    }
-
     @Override
     public void reloadView() {
         reload();
     }
 
     private Task<FlowContext> loadResourceTask(String resourceName) {
-        Task<FlowContext> task = context -> {
+        return context -> {
             ResourceAddress address = ELYTRON_SUBSYSTEM_TEMPLATE.resolve(statementContext);
             Operation operation = new Operation.Builder(address, READ_CHILDREN_NAMES_OPERATION)
                     .param(CHILD_TYPE, resourceName)
@@ -684,7 +609,6 @@ public class ServerPresenter
                         return Promise.resolve(context);
                     });
         };
-        return task;
     }
 
     // ------------------------------------------------------ getter

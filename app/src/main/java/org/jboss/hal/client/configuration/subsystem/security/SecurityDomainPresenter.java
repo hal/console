@@ -74,6 +74,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURITY;
 import static org.jboss.hal.flow.Flow.sequential;
 import static org.jboss.hal.meta.token.NameTokens.SECURITY_DOMAIN;
 
+@Deprecated
 public class SecurityDomainPresenter
         extends MbuiPresenter<SecurityDomainPresenter.MyView, SecurityDomainPresenter.MyProxy>
         implements SupportsExpertMode {

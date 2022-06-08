@@ -39,6 +39,7 @@ import static org.jboss.hal.client.configuration.subsystem.security.AddressTempl
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURITY;
 import static org.jboss.hal.meta.token.NameTokens.SECURITY_CONFIGURATION;
 
+@Deprecated
 public class SecurityPresenter
         extends MbuiPresenter<SecurityPresenter.MyView, SecurityPresenter.MyProxy>
         implements SupportsExpertMode {

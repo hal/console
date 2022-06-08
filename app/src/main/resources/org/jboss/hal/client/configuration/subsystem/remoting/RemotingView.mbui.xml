@@ -192,6 +192,7 @@
                           on-save="${presenter.saveRemoteOutbound(form, changedValues)}"
                           prepare-reset="${presenter.resetRemoteOutbound(form)}">
                         <attributes>
+                            <attribute name="authentication-context"/>
                             <attribute name="outbound-socket-binding-ref">
                                 <suggest-handler>
                                     <templates>
@@ -201,9 +202,6 @@
                                 </suggest-handler>
                             </attribute>
                             <attribute form-item='${new org.jboss.hal.ballroom.form.PropertiesItem("property")}'/>
-                            <attribute name="protocol"/>
-                            <attribute name="security-realm"/>
-                            <attribute name="username"/>
                         </attributes>
                     </form>
                 </metadata>

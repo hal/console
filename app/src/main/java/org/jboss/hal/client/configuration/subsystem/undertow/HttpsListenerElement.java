@@ -43,14 +43,12 @@ import static org.jboss.hal.client.configuration.subsystem.undertow.Listener.HTT
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SSL_CONTEXT;
 import static org.jboss.hal.resources.CSS.halTableButtons;
-import static org.jboss.hal.resources.Ids.DISABLE_SSL;
 import static org.jboss.hal.resources.Ids.ENABLE_SSL;
 import static org.jboss.hal.resources.UIConstants.CONSTRAINT;
 
 class HttpsListenerElement extends ListenerElement {
 
-    private final HTMLButtonElement enableSslButton;
-    private final HTMLButtonElement disableSslButton;
+    private final HTMLButtonElement setupSslButton;
     private String selectedHttps;
 
     HttpsListenerElement(Resources resources, MetadataRegistry metadataRegistry, TableButtonFactory tableButtonFactory) {
@@ -58,17 +56,11 @@ class HttpsListenerElement extends ListenerElement {
         AddressTemplate template = SERVER_TEMPLATE.append(HTTPS.resource + "=*");
         Constraint constraint = Constraint.writable(template, SSL_CONTEXT);
 
-        enableSslButton = button().id(ENABLE_SSL)
-                .textContent(resources.constants().enableSSL())
+        setupSslButton = button().id(ENABLE_SSL)
+                .textContent(resources.constants().setupSSL())
                 .css(Button.DEFAULT_CSS)
                 .data(CONSTRAINT, constraint.data()).element();
-        bind(enableSslButton, click, ev -> presenter.enableSsl(selectedHttps));
-
-        disableSslButton = button().id(DISABLE_SSL)
-                .textContent(resources.constants().disableSSL())
-                .css(Button.DEFAULT_CSS)
-                .data(CONSTRAINT, constraint.data()).element();
-        bind(disableSslButton, click, ev -> presenter.disableSsl(selectedHttps));
+        bind(setupSslButton, click, ev -> presenter.setupSsl(selectedHttps));
 
         Metadata metadata = metadataRegistry.lookup(template);
         table = new ModelNodeTable.Builder<NamedNode>(Ids.build(HTTPS.baseId, Ids.TABLE), metadata)
@@ -98,21 +90,16 @@ class HttpsListenerElement extends ListenerElement {
         HTMLCollection<Element> elems = table.element().getElementsByClassName(halTableButtons);
         if (elems.length > 0) {
             Element tableButtonsElement = elems.item(0);
-            tableButtonsElement.appendChild(enableSslButton);
-            tableButtonsElement.appendChild(disableSslButton);
-            Elements.setVisible(enableSslButton, false);
-            Elements.setVisible(disableSslButton, false);
+            tableButtonsElement.appendChild(setupSslButton);
+            Elements.setVisible(setupSslButton, false);
         }
 
         table.onSelectionChange(table1 -> {
             if (table1.hasSelection()) {
                 selectedHttps = table1.selectedRow().getName();
-                boolean sslContextExists = table1.selectedRow().asModelNode().hasDefined(SSL_CONTEXT);
-                Elements.setVisible(enableSslButton, !sslContextExists);
-                Elements.setVisible(disableSslButton, sslContextExists);
+                Elements.setVisible(setupSslButton, true);
             } else {
-                Elements.setVisible(enableSslButton, false);
-                Elements.setVisible(disableSslButton, false);
+                Elements.setVisible(setupSslButton, false);
             }
         });
 

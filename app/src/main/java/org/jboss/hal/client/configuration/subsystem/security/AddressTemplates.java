@@ -19,6 +19,7 @@ import org.jboss.hal.meta.AddressTemplate;
 
 import static org.jboss.hal.meta.SelectionAwareStatementContext.SELECTION_EXPRESSION;
 
+@Deprecated
 public interface AddressTemplates {
 
     String SECURITY_SUBSYSTEM_ADDRESS = "/{selected.profile}/subsystem=security";

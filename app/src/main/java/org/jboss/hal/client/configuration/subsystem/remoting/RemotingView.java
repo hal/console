@@ -40,7 +40,19 @@ import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
 import static java.util.stream.Collectors.toMap;
-import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.*;
+import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.CONNECTOR_SECURITY_POLICY_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.CONNECTOR_SECURITY_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.CONNECTOR_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.HTTP_CONNECTOR_SECURITY_POLICY_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.HTTP_CONNECTOR_SECURITY_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.HTTP_CONNECTOR_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.LOCAL_OUTBOUND_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.OUTBOUND_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.REMOTE_OUTBOUND_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.SELECTED_CONNECTOR_SECURITY_POLICY_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.SELECTED_CONNECTOR_SECURITY_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.SELECTED_HTTP_CONNECTOR_SECURITY_POLICY_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.SELECTED_HTTP_CONNECTOR_SECURITY_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROPERTY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
@@ -195,7 +207,6 @@ public abstract class RemotingView extends MbuiViewImpl<RemotingPresenter> imple
     }
 
     @Override
-    @SuppressWarnings("ConstantConditions")
     public void attach() {
         super.attach();
         connectorTable.onSelectionChange(
