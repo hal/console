@@ -239,18 +239,21 @@ public class PropertiesOperations {
                 : dispatcher.execute(operations).then(result -> Promise.resolve(context));
         List<Task<FlowContext>> tasks = Arrays.asList(task, new ReadProperties(dispatcher, address, psr),
                 new MergeProperties(dispatcher, address, psr, properties));
-        sequential(new FlowContext(progress.get()), tasks)
-                .then(c -> {
-                    if (name == null) {
-                        MessageEvent.fire(eventBus,
-                                Message.success(resources.messages().modifySingleResourceSuccess(type)));
-                    } else {
-                        MessageEvent.fire(eventBus,
-                                Message.success(resources.messages().modifyResourceSuccess(type, name)));
-                    }
-                    callback.execute();
-                    return null;
-                });
+        sequential(new FlowContext(progress.get()), tasks).subscribe(context -> {
+            if (context.successful()) {
+                if (name == null) {
+                    MessageEvent.fire(eventBus,
+                            Message.success(resources.messages().modifySingleResourceSuccess(type)));
+                } else {
+                    MessageEvent.fire(eventBus,
+                            Message.success(resources.messages().modifyResourceSuccess(type, name)));
+                }
+                callback.execute();
+            } else if (context.failure()) {
+                MessageEvent.fire(eventBus,
+                        Message.error(resources.messages().lastOperationFailed(), context.failureReason()));
+            }
+        });
     }
 
     private static final class ReadProperties implements Task<FlowContext> {
@@ -324,7 +327,7 @@ public class PropertiesOperations {
             remove.stream()
                     .map(property -> new Operation.Builder(
                             new ResourceAddress(address).add(propertiesResource, property), REMOVE)
-                            .build())
+                                    .build())
                     .forEach(operations::add);
 
             Composite composite = new Composite(operations);
