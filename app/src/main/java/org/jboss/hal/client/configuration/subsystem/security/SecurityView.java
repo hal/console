@@ -30,6 +30,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 
 @MbuiView
+@Deprecated
 @SuppressWarnings({ "HardCodedStringLiteral", "WeakerAccess", "unused", "DuplicateStringLiteralInspection" })
 public abstract class SecurityView extends MbuiViewImpl<SecurityPresenter> implements SecurityPresenter.MyView {
 

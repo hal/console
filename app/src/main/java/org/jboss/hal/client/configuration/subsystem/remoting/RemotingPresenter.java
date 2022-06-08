@@ -418,7 +418,7 @@ public class RemotingPresenter
                 });
     }
 
-    // ------------------------------------------------------ local outbound connection
+    // ------------------------------------------------------ remote outbound connection
 
     void selectRemoteOutbound(@Nullable String remoteOutbound) {
         NamedNode namedNode = remoteOutbound == null ? null

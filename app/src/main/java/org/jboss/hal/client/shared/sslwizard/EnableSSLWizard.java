@@ -72,7 +72,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.RELATIVE_TO;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUIRED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURE_PORT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURE_SOCKET_BINDING;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURITY_REALM;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_SSL_CONTEXT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SSL_CONTEXT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.STORE;
@@ -417,7 +416,6 @@ public class EnableSSLWizard {
                                 .build();
                         composite.add(writeSslCtxOp);
                         // undefine the "alternatives" attributes
-                        composite.add(undefineAttribute(httpsAddress, SECURITY_REALM));
                         composite.add(undefineAttribute(httpsAddress, "verify-client"));
                         composite.add(undefineAttribute(httpsAddress, "enabled-cipher-suites"));
                         composite.add(undefineAttribute(httpsAddress, "enabled-protocols"));

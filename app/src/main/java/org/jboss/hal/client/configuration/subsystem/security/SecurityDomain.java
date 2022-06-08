@@ -19,6 +19,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Property;
 
+@Deprecated
 class SecurityDomain extends NamedNode {
 
     SecurityDomain(final Property property) {

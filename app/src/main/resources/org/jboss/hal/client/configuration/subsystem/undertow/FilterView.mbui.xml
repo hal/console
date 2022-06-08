@@ -167,7 +167,6 @@
                         <attribute name="max-retries"/>
                         <attribute name="request-queue-size"/>
                         <attribute name="security-key"/>
-                        <attribute name="security-realm"/>
                         <attribute name="ssl-context"/>
                         <attribute name="use-alias"/>
                         <attribute name="worker"/>

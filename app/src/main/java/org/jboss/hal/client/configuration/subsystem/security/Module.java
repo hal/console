@@ -18,9 +18,15 @@ package org.jboss.hal.client.configuration.subsystem.security;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ACL_MODULE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LOGIN_MODULE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MAPPING_MODULE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.POLICY_MODULE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROVIDER_MODULE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TRUST_MODULE;
 
 /** Enum struct to collect all settings for a specific security module. */
+@Deprecated
 enum Module {
     AUTHENTICATION(Ids.SECURITY_DOMAIN_AUTHENTICATION_ADD, Names.AUTHENTICATION_MODULE, "authentication=classic",
             LOGIN_MODULE), AUTHORIZATION(Ids.SECURITY_DOMAIN_AUTHORIZATION_ADD, Names.AUTHORIZATION_MODULE,

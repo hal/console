@@ -25,11 +25,17 @@ import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ACL_MODULE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LOGIN_MODULE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MAPPING_MODULE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.POLICY_MODULE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROVIDER_MODULE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TRUST_MODULE;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 
 @MbuiView
+@Deprecated
 @SuppressWarnings({ "WeakerAccess", "DuplicateStringLiteralInspection", "HardCodedStringLiteral", "unused" })
 public abstract class SecurityDomainView extends MbuiViewImpl<SecurityDomainPresenter>
         implements SecurityDomainPresenter.MyView {

@@ -22,6 +22,7 @@ import org.jboss.hal.core.finder.PreviewContent;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CACHE_TYPE;
 
+@Deprecated
 class SecurityDomainPreview extends PreviewContent<SecurityDomain> {
 
     SecurityDomainPreview(final SecurityDomain securityDomain) {

@@ -43,9 +43,25 @@ import elemental2.dom.HTMLElement;
 import static org.jboss.elemento.Elements.h;
 import static org.jboss.elemento.Elements.p;
 import static org.jboss.elemento.Elements.section;
-import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.*;
-import static org.jboss.hal.client.configuration.subsystem.security.AddressTemplates.SECURITY_DOMAIN_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.APP_SEC_DOMAIN_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.BEAN_POOL_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.CACHE_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.MDB_DELIVERY_GROUP_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.PASSIVATION_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.REMOTING_PROFILE_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.SERVICE_ASYNC_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.SERVICE_IDENTITY_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.SERVICE_IIOP_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.SERVICE_REMOTE_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.SERVICE_TIMER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.THREAD_POOL_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT_SECURITY_DOMAIN;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT_SFSB_CACHE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT_SFSB_PASSIVATION_DISABLED_CACHE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT_SLSB_INSTANCE_POOL;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PASSIVATION_STORE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVICE;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 import static org.jboss.hal.resources.CSS.fontAwesome;
@@ -146,7 +162,7 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
                 .registerSuggestHandler(new ReadChildrenAutoComplete(dispatcher, statementContext, BEAN_POOL_TEMPLATE));
         configurationForm.getFormItem(DEFAULT_SECURITY_DOMAIN)
                 .registerSuggestHandler(new ReadChildrenAutoComplete(dispatcher, statementContext,
-                        SECURITY_DOMAIN_TEMPLATE));
+                        APP_SEC_DOMAIN_TEMPLATE));
         cacheForm.getFormItem(PASSIVATION_STORE)
                 .registerSuggestHandler(new ReadChildrenAutoComplete(dispatcher, statementContext,
                         PASSIVATION_TEMPLATE));
