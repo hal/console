@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Added
+
+- [HAL-1779](https://issues.redhat.com/browse/HAL-1779): Replace 'discovery-group' and 'broadcast-group' resources
+- [HAL-1739](https://issues.redhat.com/browse/HAL-1739): Add support for new encrypted expression resources
+- [HAL-1709](https://issues.redhat.com/browse/HAL-1709): Add option to start stopped servers in suspended mode
+- [HAL-1596](https://issues.redhat.com/browse/HAL-1596): Expose JMS bridge statistics about messages that have been processed
+- [HAL-1595](https://issues.redhat.com/browse/HAL-1595): Configure support for TLS 1.3
+- [HAL-1594](https://issues.redhat.com/browse/HAL-1594): Configure enhanced mapping of X509Certificate to the underlying identity
+- [HAL-1593](https://issues.redhat.com/browse/HAL-1593): Configure the certificate authority used by a certificate-authority-account
+- [HAL-1592](https://issues.redhat.com/browse/HAL-1592): Configure Enhanced Audit Logging
+- [HAL-1591](https://issues.redhat.com/browse/HAL-1591): Configure module libraries to all deployments running in a server
+- [HAL-1590](https://issues.redhat.com/browse/HAL-1590): Configure SSL Certificate revocation using OCSP
+
 ### Changed
 
 - [HAL-1783](https://issues.redhat.com/browse/HAL-1783): Replace Flow implementation based on JS Promise API
@@ -15,27 +28,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Fixed
 
+- [HAL-1791](https://issues.redhat.com/browse/HAL-1791): Fix EJB view after deprecation of attribute 'cluster' in `/subsystem=ejb3/service=remote`
 - Fix item monitor
+- Fix error handling in `PropertiesOperations`
 
 ### Removed
 
 - [HAL-1785](https://issues.redhat.com/browse/HAL-1785): Remove management column
+- [HAL-1758](https://issues.redhat.com/browse/HAL-1758): Remove legacy security
 
 ### Upgrades
 
-- Bump Ace editor from 1.4.14 to 1.5.0
+- Bump Ace editor from 1.4.14 to 1.5.3
+- Bump Clipboard from 2.0.10 to 2.0.11
 - Bump D3 from 5.9.7 to 5.16.0
-- Bump Datatables.net from 1.11.5 to 1.12.0
+- Bump Datatables.net from 1.11.5 to 1.12.1
 - Bump Datatables.net keytable from 2.6.4 to 2.7.0
 - Bump Datatables.net select from 1.3.4 to 1.4.0
 - Bump Elemental2 from 1.0.0-RC1 to 1.1.0
 - Bump Elemento from 0.9.6 to 1.0.10
 - Bump Guava from 25.0 to 31.1
 - Bump Moment.js from 2.29.1 to 2.29.3
-- Bump Mockito from 4.4.0 to 4.5.0
-- Bump Parcel from 2.3.2 to 2.5.0
+- Bump Mockito from 4.4.0 to 4.6.1
+- Bump Parcel from 2.3.2 to 2.6.0
 - Bump PouchDB from 7.2.2 to 7.3.0
-- Bump Quarkus from 2.7.5.Final to 2.9.1.Final
+- Bump Quarkus from 2.7.5.Final to 2.9.2.Final
 
 ## [3.5.12] - 2022-03-18
 
