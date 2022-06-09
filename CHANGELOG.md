@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [3.6.0] - 2022-06-09
+
 ### Added
 
 - [HAL-1779](https://issues.redhat.com/browse/HAL-1779): Replace 'discovery-group' and 'broadcast-group' resources
@@ -272,7 +274,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - for dependency upgrades
 -->
 
-[Unreleased]: https://github.com/hal/console/compare/v3.5.12...HEAD
+[Unreleased]: https://github.com/hal/console/compare/v3.6.0...HEAD
+[3.6.0]: https://github.com/hal/console/compare/v3.5.12...v3.6.0
 [3.5.12]: https://github.com/hal/console/compare/v3.5.11...v3.5.12
 [3.5.11]: https://github.com/hal/console/compare/v3.5.10...v3.5.11
 [3.5.10]: https://github.com/hal/console/compare/v3.5.9...v3.5.10
