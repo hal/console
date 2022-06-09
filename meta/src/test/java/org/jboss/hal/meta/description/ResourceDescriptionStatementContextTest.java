@@ -63,16 +63,16 @@ public class ResourceDescriptionStatementContextTest {
 
     @Test
     public void selectedServerConfig() throws Exception {
-        ResourceAddress address = AddressTemplate.of("/host=master/{selected.server-config}/foo=bar")
+        ResourceAddress address = AddressTemplate.of("/host=primary/{selected.server-config}/foo=bar")
                 .resolve(statementContext);
-        assertEquals("/host=master/server-config=*/foo=bar", address.toString());
+        assertEquals("/host=primary/server-config=*/foo=bar", address.toString());
     }
 
     @Test
     public void selectedServer() throws Exception {
-        ResourceAddress address = AddressTemplate.of("/host=master/{selected.server}/foo=bar")
+        ResourceAddress address = AddressTemplate.of("/host=primary/{selected.server}/foo=bar")
                 .resolve(statementContext);
-        assertEquals("/host=master/server=*/foo=bar", address.toString());
+        assertEquals("/host=primary/server=*/foo=bar", address.toString());
     }
 
     @Test

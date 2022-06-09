@@ -40,8 +40,8 @@ import static java.util.stream.StreamSupport.stream;
  * Examples:
  *
  * <pre>
- * /host=master/server-config=server-one &rarr; /host=&#42;/server-config=&#42;
- * /host=master/server=server-one/subsystem=data-sources &rarr; /host=&#42;/server=&#42;/subsystem=data-sources
+ * /host=primary/server-config=server-one &rarr; /host=&#42;/server-config=&#42;
+ * /host=primary/server=server-one/subsystem=data-sources &rarr; /host=&#42;/server=&#42;/subsystem=data-sources
  * /server-group=main-server-group &rarr; /server-group=&#42;
  * /subsystem=mail/mail-session=foo/server=bar &rarr; /subsystem=mail/mail-session=foo/server=bar
  * </pre>

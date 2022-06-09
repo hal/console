@@ -48,7 +48,7 @@ import org.jboss.hal.resources.Names;
  *     "server-groups" => {
  *         "main-server-group" => {
  *             "host" => {
- *                 "master" => {
+ *                 "primary" => {
  *                     "server-one" => {
  *                         "response" => {
  *                             "outcome" => "success",

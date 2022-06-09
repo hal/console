@@ -159,8 +159,8 @@ public abstract class HostView extends MbuiViewImpl<HostPresenter> implements Ho
                 }
             }
         }
-        // slave host controller doesn't have an http-interface, but if the http-interface is currently displayed
-        // for a domain controller and user switch to a slave host controller, display the native interface
+        // Secondary host controller doesn't have an http-interface, but if the http-interface is currently displayed
+        // for a domain controller and user switch to a secondary host controller, display the native interface
         if (Elements.isVisible(httpManagementInterfaceElement.element()) && !httpExists) {
             navigation.show(NATIVE_INTERFACE_ITEM);
         }

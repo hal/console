@@ -25,23 +25,23 @@ import com.google.gwt.core.client.GWT;
 
 import static java.util.Arrays.asList;
 
-public class BlacklistValidation
+public class BlocklistValidation
         implements FormItemValidation<Object> { // needs to be <Object> because it's used in generated code
 
     private static final Messages MESSAGES = GWT.create(Messages.class);
 
-    private final SortedSet<String> blacklist;
+    private final SortedSet<String> blocklist;
 
-    public BlacklistValidation(final String first, final String... rest) {
-        this.blacklist = Sets.newTreeSet();
-        this.blacklist.add(first);
+    public BlocklistValidation(final String first, final String... rest) {
+        this.blocklist = Sets.newTreeSet();
+        this.blocklist.add(first);
         if (rest != null) {
-            this.blacklist.addAll(asList(rest));
+            this.blocklist.addAll(asList(rest));
         }
     }
 
-    public BlacklistValidation(Iterable<String> blacklist) {
-        this.blacklist = Sets.newTreeSet(blacklist);
+    public BlocklistValidation(Iterable<String> blocklist) {
+        this.blocklist = Sets.newTreeSet(blocklist);
     }
 
     @Override
@@ -50,11 +50,11 @@ public class BlacklistValidation
             return ValidationResult.OK;
         } else {
             // noinspection SuspiciousMethodCalls
-            return blacklist.contains(value) ? ValidationResult.invalid(errorMessage()) : ValidationResult.OK;
+            return blocklist.contains(value) ? ValidationResult.invalid(errorMessage()) : ValidationResult.OK;
         }
     }
 
     protected String errorMessage() {
-        return MESSAGES.blacklist("\"" + Joiner.on("\", \"").join(blacklist) + "\"");
+        return MESSAGES.blocklist("\"" + Joiner.on("\", \"").join(blocklist) + "\"");
     }
 }

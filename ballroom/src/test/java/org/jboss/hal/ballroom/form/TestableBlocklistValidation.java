@@ -15,9 +15,9 @@
  */
 package org.jboss.hal.ballroom.form;
 
-public class TestableBlacklistValidation extends BlacklistValidation {
+public class TestableBlocklistValidation extends BlocklistValidation {
 
-    TestableBlacklistValidation(final String first, final String... rest) {
+    TestableBlocklistValidation(final String first, final String... rest) {
         super(first, rest);
     }
 

@@ -40,7 +40,7 @@ public class SecurityContextStatementContextTest {
     @Test
     public void domainController() throws Exception {
         ResourceAddress address = AddressTemplate.of("/{domain.controller}/foo=bar").resolve(statementContext);
-        assertEquals("/host=master/foo=bar", address.toString());
+        assertEquals("/host=primary/foo=bar", address.toString());
     }
 
     @Test
@@ -58,21 +58,21 @@ public class SecurityContextStatementContextTest {
     @Test
     public void selectedHost() throws Exception {
         ResourceAddress address = AddressTemplate.of("/{selected.host}/foo=bar").resolve(statementContext);
-        assertEquals("/host=master/foo=bar", address.toString());
+        assertEquals("/host=primary/foo=bar", address.toString());
     }
 
     @Test
     public void selectedServerConfig() throws Exception {
-        ResourceAddress address = AddressTemplate.of("/host=master/{selected.server-config}/foo=bar")
+        ResourceAddress address = AddressTemplate.of("/host=primary/{selected.server-config}/foo=bar")
                 .resolve(statementContext);
-        assertEquals("/host=master/server-config=*/foo=bar", address.toString());
+        assertEquals("/host=primary/server-config=*/foo=bar", address.toString());
     }
 
     @Test
     public void selectedServer() throws Exception {
-        ResourceAddress address = AddressTemplate.of("/host=master/{selected.server}/foo=bar")
+        ResourceAddress address = AddressTemplate.of("/host=primary/{selected.server}/foo=bar")
                 .resolve(statementContext);
-        assertEquals("/host=master/server=server-one/foo=bar", address.toString());
+        assertEquals("/host=primary/server=server-one/foo=bar", address.toString());
     }
 
     @Test

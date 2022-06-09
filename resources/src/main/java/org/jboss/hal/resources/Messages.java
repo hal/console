@@ -677,9 +677,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     SafeHtml replicationLiveOnly();
 
-    SafeHtml replicationMaster();
+    SafeHtml replicationPrimary();
 
-    SafeHtml replicationSlave();
+    SafeHtml replicationSecondary();
 
     SafeHtml replicationStrategy();
 
@@ -829,9 +829,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     SafeHtml sharedStoreColocated();
 
-    SafeHtml sharedStoreMaster();
+    SafeHtml sharedStorePrimary();
 
-    SafeHtml sharedStoreSlave();
+    SafeHtml sharedStoreSecondary();
 
     SafeHtml sharedStoreStrategy();
 
@@ -1011,7 +1011,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     String available(double value);
 
-    String blacklist(String blacklist);
+    String blocklist(String blocklist);
 
     String bootErrors();
 

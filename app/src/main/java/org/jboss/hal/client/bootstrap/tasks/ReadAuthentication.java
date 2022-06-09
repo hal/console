@@ -66,7 +66,7 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 /**
  * Reads attributes from {@code /core-service=management/access=authorization}. This is implemented in an extra bootstrap
  * function, because the operation might fail in some corner cases (e.g. when the current user is a host scoped role scoped to a
- * slave host).
+ * secondary host).
  */
 public final class ReadAuthentication implements Task<FlowContext> {
 

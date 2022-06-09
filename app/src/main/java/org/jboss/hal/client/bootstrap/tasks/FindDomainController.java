@@ -36,8 +36,8 @@ import static org.jboss.hal.client.bootstrap.tasks.ReadHostNames.HOST_NAMES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES_ONLY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.MASTER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PRIMARY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 
 public final class FindDomainController implements Task<FlowContext> {
@@ -66,8 +66,8 @@ public final class FindDomainController implements Task<FlowContext> {
                                     .param(INCLUDE_RUNTIME, true)
                                     .build();
                             return (Task<FlowContext>) c -> dispatcher.execute(operation).then(result -> {
-                                boolean master = result.get(MASTER).asBoolean();
-                                if (master) {
+                                boolean primary = result.get(PRIMARY).asBoolean();
+                                if (primary) {
                                     String name = result.get(NAME).asString();
                                     environment.setDomainController(name);
                                     logger.info("Found domain controller: {}", name);

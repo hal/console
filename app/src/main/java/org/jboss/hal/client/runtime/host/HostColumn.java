@@ -127,7 +127,7 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
                 .showCount()
                 // Unlike other columns the host column does not have a custom breadcrumb item handler.
                 // It makes no sense to replace the host in a finder path like
-                // "host => master / server => server-one / subsystem => logging / log-file => server.log"
+                // "host => primary / server => server-one / subsystem => logging / log-file => server.log"
                 .useFirstActionAsBreadcrumbHandler()
                 .withFilter()
                 .filterDescription(resources.messages().hostColumnFilterDescription()));

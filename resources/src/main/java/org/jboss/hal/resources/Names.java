@@ -225,7 +225,7 @@ public interface Names {
     String MANAGEMENT_OPERATIONS = "Management Operations";
     String MAPPERS_DECODERS = "Mappers / Decoders";
     String MAPPING_MODULE = "Mapping Module";
-    String MASTER = "Master";
+    String PRIMARY = "Primary";
     String MAXIMUM_PERMISSIONS = "Maximum Permissions";
     String MB = "MB";
     String MECHANISM_CONFIGURATION = "Mechanism Configuration";
@@ -309,8 +309,8 @@ public interface Names {
     String REMOTE_SITE = "Remote Site";
     String REPLICATED_CACHE = "Replicated Cache";
     String REPLICATION_COLOCATED = "Replication Colocated";
-    String REPLICATION_MASTER = "Replication Master";
-    String REPLICATION_SLAVE = "Replication Slave";
+    String REPLICATION_PRIMARY = "Replication Primary";
+    String REPLICATION_SECONDARY = "Replication Secondary";
     String REQUESTS = "Requests";
     String RESOLVERS = "Resolvers";
     String RESOURCE = "Resource";
@@ -339,14 +339,14 @@ public interface Names {
     String SESSION_ID = "Session ID";
     String SESSIONS = "Sessions";
     String SHARED_STORE_COLOCATED = "Shared Store Colocated";
-    String SHARED_STORE_MASTER = "Shared Store Master";
-    String SHARED_STORE_SLAVE = "Shared Store Slave";
+    String SHARED_STORE_PRIMARY = "Shared Store Primary";
+    String SHARED_STORE_SECONDARY = "Shared Store Secondary";
     String SIMPLE_PERMISSION_MAPPER = "Simple Permission Mapper";
     String SINGLE_SIGN_ON = "Single Sign On";
     String SINGLETON_BEAN = "Singleton Bean";
     String SIZE_ACTION_HANDLER = "Size ActionHandler";
     String SHORT_RUNNING = "short running";
-    String SLAVE = "Slave";
+    String SECONDARY = "Secondary";
     String SMALLRYE = "Smallrye";
     String SOCKET_ACTION_HANDLER = "Socket ActionHandler";
     String SOCKET_BINDING = "Socket Binding";

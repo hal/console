@@ -23,9 +23,40 @@ import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 
 import static elemental2.dom.DomGlobal.document;
-import static org.jboss.elemento.Elements.*;
+import static org.jboss.elemento.Elements.a;
+import static org.jboss.elemento.Elements.code;
+import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.h;
+import static org.jboss.elemento.Elements.li;
 import static org.jboss.elemento.Elements.nav;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.elemento.Elements.p;
+import static org.jboss.elemento.Elements.pre;
+import static org.jboss.elemento.Elements.setVisible;
+import static org.jboss.elemento.Elements.span;
+import static org.jboss.elemento.Elements.strong;
+import static org.jboss.elemento.Elements.ul;
+import static org.jboss.hal.resources.CSS.alert;
+import static org.jboss.hal.resources.CSS.alertDanger;
+import static org.jboss.hal.resources.CSS.bootstrapError;
+import static org.jboss.hal.resources.CSS.column;
+import static org.jboss.hal.resources.CSS.columnLg;
+import static org.jboss.hal.resources.CSS.columnMd;
+import static org.jboss.hal.resources.CSS.columnSm;
+import static org.jboss.hal.resources.CSS.containerFluid;
+import static org.jboss.hal.resources.CSS.errorCircleO;
+import static org.jboss.hal.resources.CSS.logo;
+import static org.jboss.hal.resources.CSS.logoText;
+import static org.jboss.hal.resources.CSS.logoTextFirst;
+import static org.jboss.hal.resources.CSS.logoTextLast;
+import static org.jboss.hal.resources.CSS.marginTopLarge;
+import static org.jboss.hal.resources.CSS.navbar;
+import static org.jboss.hal.resources.CSS.navbarBrand;
+import static org.jboss.hal.resources.CSS.navbarDefault;
+import static org.jboss.hal.resources.CSS.navbarFixedTop;
+import static org.jboss.hal.resources.CSS.navbarHeader;
+import static org.jboss.hal.resources.CSS.navbarPf;
+import static org.jboss.hal.resources.CSS.pfIcon;
+import static org.jboss.hal.resources.CSS.row;
 import static org.jboss.hal.resources.UIConstants.TARGET;
 
 public class BootstrapFailed implements IsElement<HTMLDivElement> {
@@ -98,7 +129,7 @@ public class BootstrapFailed implements IsElement<HTMLDivElement> {
                                                                         .add(li()
                                                                                 .add(p().textContent("Domain:"))
                                                                                 .add(pre().textContent(
-                                                                                        "/host=master" + ADD_ALLOWED_ORIGIN))))
+                                                                                        "/host=primary" + ADD_ALLOWED_ORIGIN))))
                                                                 .element()))))))
                 .element();
 

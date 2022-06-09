@@ -558,7 +558,6 @@ public interface ModelDescriptionConstants {
     String MAPPED_ROLE_MAPPER = "mapped-role-mapper";
     String MAPPED_ROLES = "mapped-roles";
     String MAPPING_MODULE = "mapping-module";
-    String MASTER = "master";
     String MATCH_ALL = "match-all";
     String MAX = "max";
     String MAX_ACTIVE_SESSIONS = "max-active-sessions";
@@ -688,6 +687,7 @@ public interface ModelDescriptionConstants {
     String PREDEFINED_FILTER = "predefined-filter";
     String PREFIX = "prefix";
     String PRESERVE = "preserve";
+    String PRIMARY = "primary";
     String PRIMARY_OWNER = "primary-owner";
     String PRINCIPAL_QUERY = "principal-query";
     String PRINCIPALS = "principals";
@@ -784,8 +784,8 @@ public interface ModelDescriptionConstants {
     String REMOVE_MESSAGES = "remove-messages";
     String REPLICATED_CACHE = "replicated-cache";
     String REPLICATION_COLOCATED = "replication-colocated";
-    String REPLICATION_MASTER = "replication-master";
-    String REPLICATION_SLAVE = "replication-slave";
+    String REPLICATION_PRIMARY = "replication-primary";
+    String REPLICATION_SECONDARY = "replication-secondary";
     String REPLY_PROPERTIES = "reply-properties";
     String REQUEST_CONTROLLER = "request-controller";
     String REQUEST_COUNT = "request-count";
@@ -843,6 +843,7 @@ public interface ModelDescriptionConstants {
     String SCRIPT = "script";
     String SEARCH_BASE_DN = "search-base-dn";
     String SEARCH_PATH = "search-path";
+    String SECONDARY = "secondary";
     String SECRET_KEY_CREDENTIAL_STORE = "secret-key-credential-store";
     String SECURE_INTERFACE = "secure-interface";
     String SECURE_PORT = "secure-port";
@@ -885,8 +886,8 @@ public interface ModelDescriptionConstants {
     String SET_SECRET = "set-secret";
     String SETTING = "setting";
     String SHARED_STORE_COLOCATED = "shared-store-colocated";
-    String SHARED_STORE_MASTER = "shared-store-master";
-    String SHARED_STORE_SLAVE = "shared-store-slave";
+    String SHARED_STORE_PRIMARY = "shared-store-primary";
+    String SHARED_STORE_SECONDARY = "shared-store-secondary";
     String SHOULD_RENEW_CERTIFICATE = "should-renew-certificate";
     String SHOW_HISTORY_OPERATION = "show-history";
     String SHUTDOWN = "shutdown";
@@ -898,7 +899,6 @@ public interface ModelDescriptionConstants {
     String SINGLETON = "singleton";
     String SIZE_ROTATING_FILE_AUDIT_LOG = "size-rotating-file-audit-log";
     String SIZE_ROTATING_FILE_HANDLER = "size-rotating-file-handler";
-    String SLAVE = "slave";
     String SMTP = "smtp";
     String SOCKET_BINDING = "socket-binding";
     String SOCKET_BINDING_DEFAULT_INTERFACE = "socket-binding-default-interface";
