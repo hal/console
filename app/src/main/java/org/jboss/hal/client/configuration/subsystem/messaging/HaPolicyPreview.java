@@ -29,7 +29,7 @@ import static java.util.Collections.singletonList;
 
 class HaPolicyPreview extends PreviewContent<StaticItem> {
 
-    @SuppressWarnings("DuplicateStringLiteralInspection") private static final Map<HaPolicy, PreviewAttributes<ModelNode>> ATTRIBUTES = new ImmutableMap.Builder<HaPolicy, PreviewAttributes<ModelNode>>()
+    private static final Map<HaPolicy, PreviewAttributes<ModelNode>> ATTRIBUTES = new ImmutableMap.Builder<HaPolicy, PreviewAttributes<ModelNode>>()
             .put(HaPolicy.LIVE_ONLY, new PreviewAttributes<>(new ModelNode(),
                     asList("scale-down", "scale-down-cluster-name", "scale-down-connectors",
                             "scale-down-discovery-group", "scale-down-group-name")))
@@ -52,12 +52,27 @@ class HaPolicyPreview extends PreviewContent<StaticItem> {
                             "scale-down-discovery-group")))
             .build();
 
+    private final HaPolicy haPolicy;
+    private final ModelNode modelNode;
+
     HaPolicyPreview(final HaPolicy haPolicy, final ModelNode modelNode) {
         super(haPolicy.type);
+        this.haPolicy = haPolicy;
+        this.modelNode = modelNode;
+        refreshHaPolicy(haPolicy, modelNode);
+    }
+
+    private void refreshHaPolicy(final HaPolicy haPolicy, final ModelNode modelNode) {
         if (ATTRIBUTES.containsKey(haPolicy)) {
             PreviewAttributes<ModelNode> attributes = ATTRIBUTES.get(haPolicy);
             previewBuilder().addAll(attributes);
             attributes.refresh(modelNode);
         }
+    }
+
+    @Override
+    public void update(final StaticItem item) {
+        super.update(item);
+        refreshHaPolicy(haPolicy, modelNode);
     }
 }

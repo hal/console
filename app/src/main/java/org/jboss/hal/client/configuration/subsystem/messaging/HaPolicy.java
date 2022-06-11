@@ -18,15 +18,18 @@ package org.jboss.hal.client.configuration.subsystem.messaging;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.CrudOperations;
+import org.jboss.hal.core.CrudOperations.ReadChildrenCallback;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
@@ -40,6 +43,7 @@ import org.jboss.hal.spi.Callback;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_SERVER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CONFIGURATION;
@@ -135,6 +139,21 @@ public enum HaPolicy {
                 break;
         }
         return result;
+    }
+
+    static void readChildren(CrudOperations crud, ResourceAddress address, int depth,
+            ReadChildrenCallback callback) {
+        // as a workaround for WFLY-14053, we filter aliased names like "master" and "slave"
+        // from the result of the read-children operation.
+        crud.readChildren(address, HA_POLICY, depth).then(children -> {
+            Predicate<Property> predicate = child -> child.getName().contains("master") || child.getName()
+                    .contains("slave");
+            List<Property> policies = children.stream()
+                    .filter(predicate.negate())
+                    .collect(toList());
+            callback.execute(policies);
+            return null;
+        });
     }
 
     final String baseId;

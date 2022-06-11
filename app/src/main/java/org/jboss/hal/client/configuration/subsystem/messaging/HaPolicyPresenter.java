@@ -64,7 +64,6 @@ import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemp
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SHARED_STORE_COLOCATED_SECONDARY_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SHARED_STORE_PRIMARY_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SHARED_STORE_SECONDARY_ADDRESS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.HA_POLICY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MESSAGING_ACTIVEMQ;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 
@@ -135,7 +134,7 @@ public class HaPolicyPresenter
     @Override
     protected void reload() {
         ResourceAddress address = SELECTED_SERVER_TEMPLATE.resolve(statementContext);
-        crud.readChildren(address, HA_POLICY, 2, children -> {
+        HaPolicy.readChildren(crud, address, 2, children -> {
             if (children.isEmpty()) {
                 haPolicy = null;
                 getView().empty();
