@@ -15,23 +15,24 @@
  */
 package org.jboss.hal.client.bootstrap.tasks;
 
-import javax.inject.Inject;
-
+import com.google.gwt.core.client.JsonUtils;
+import com.google.gwt.json.client.JSONObject;
+import com.google.web.bindery.event.shared.EventBus;
+import elemental2.dom.XMLHttpRequest;
 import org.jboss.hal.config.Build;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.web.bindery.event.shared.EventBus;
-
-import elemental2.dom.XMLHttpRequest;
+import javax.inject.Inject;
 
 import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.GET;
 
 public class CheckForUpdate implements InitializedTask {
 
-    private static final String METADATA_URL = "https://raw.githubusercontent.com/hal/console/main/version.txt";
+    private static final String METADATA_URL = "https://api.github.com/repos/hal/console/releases/latest";
+
     private static final Logger logger = LoggerFactory.getLogger(CheckForUpdate.class);
 
     private final Environment environment;
@@ -43,6 +44,16 @@ public class CheckForUpdate implements InitializedTask {
         this.eventBus = eventBus;
     }
 
+    private String getVersionFromResponse(String responseText) {
+        JSONObject data = new JSONObject(JsonUtils.safeEval(responseText));
+        String version = data.get("tag_name").toString();
+        version = version.substring(1, version.length() - 1);
+        if (version.startsWith("v")) {
+            version = version.substring(1);
+        }
+        return version;
+    }
+
     @Override
     public void run() {
         // only check for community updates
@@ -52,7 +63,8 @@ public class CheckForUpdate implements InitializedTask {
             logger.debug("Check for update");
             XMLHttpRequest xhr = new XMLHttpRequest();
             xhr.onload = event -> {
-                String versionText = xhr.responseText;
+                String xhrResponse = xhr.responseText;
+                String versionText = getVersionFromResponse(xhrResponse);
                 try {
                     logger.debug("Online version {}", versionText);
                     Version version = Version.parseVersion(versionText);
