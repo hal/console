@@ -19,7 +19,6 @@ import java.util.Date;
 
 import javax.inject.Inject;
 
-import com.google.common.base.Strings;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
@@ -44,14 +43,48 @@ import static elemental2.dom.DomGlobal.document;
 import static elemental2.dom.DomGlobal.setTimeout;
 import static elemental2.dom.DomGlobal.window;
 import static java.lang.Math.max;
+
+import static org.jboss.gwt.elemento.core.Elements.a;
+import static org.jboss.gwt.elemento.core.Elements.div;
+import static org.jboss.gwt.elemento.core.Elements.h;
+
 import static org.jboss.gwt.elemento.core.Elements.i;
+import static org.jboss.gwt.elemento.core.Elements.input;
 import static org.jboss.gwt.elemento.core.Elements.label;
-import static org.jboss.gwt.elemento.core.Elements.*;
 import static org.jboss.gwt.elemento.core.EventType.click;
 import static org.jboss.gwt.elemento.core.InputType.checkbox;
 import static org.jboss.hal.ballroom.Skeleton.MARGIN_BIG;
-import static org.jboss.hal.resources.CSS.*;
-import static org.jboss.hal.resources.UIConstants.*;
+import static org.jboss.hal.resources.CSS.bootstrapSwitch;
+import static org.jboss.hal.resources.CSS.btn;
+import static org.jboss.hal.resources.CSS.btnDefault;
+import static org.jboss.hal.resources.CSS.btnGroup;
+import static org.jboss.hal.resources.CSS.clickable;
+import static org.jboss.hal.resources.CSS.column;
+import static org.jboss.hal.resources.CSS.columnLg;
+import static org.jboss.hal.resources.CSS.columnMd;
+import static org.jboss.hal.resources.CSS.columnSm;
+import static org.jboss.hal.resources.CSS.editorButtons;
+import static org.jboss.hal.resources.CSS.editorControls;
+import static org.jboss.hal.resources.CSS.editorStatus;
+import static org.jboss.hal.resources.CSS.fontAwesome;
+import static org.jboss.hal.resources.CSS.logFileEditorContainer;
+import static org.jboss.hal.resources.CSS.logFileFollow;
+import static org.jboss.hal.resources.CSS.logFileLoading;
+import static org.jboss.hal.resources.CSS.marginBottomLarge;
+import static org.jboss.hal.resources.CSS.marginBottomSmall;
+import static org.jboss.hal.resources.CSS.marginLeftSmall;
+import static org.jboss.hal.resources.CSS.px;
+import static org.jboss.hal.resources.CSS.refresh;
+import static org.jboss.hal.resources.CSS.row;
+import static org.jboss.hal.resources.CSS.spinner;
+import static org.jboss.hal.resources.CSS.spinnerLg;
+import static org.jboss.hal.resources.UIConstants.BODY;
+import static org.jboss.hal.resources.UIConstants.CONTAINER;
+import static org.jboss.hal.resources.UIConstants.HASH;
+import static org.jboss.hal.resources.UIConstants.PLACEMENT;
+import static org.jboss.hal.resources.UIConstants.TOGGLE;
+import static org.jboss.hal.resources.UIConstants.TOOLTIP;
+import static org.jboss.hal.resources.UIConstants.TOP;
 
 public class LogFileView extends HalViewImpl implements LogFilePresenter.MyView {
 
@@ -74,6 +107,7 @@ public class LogFileView extends HalViewImpl implements LogFilePresenter.MyView 
 
     private final Search search;
     private AceEditor editor;
+    private Clipboard clipboard;
     private LogFilePresenter presenter;
 
     @Inject
@@ -114,7 +148,7 @@ public class LogFileView extends HalViewImpl implements LogFilePresenter.MyView 
                                                 .data(CONTAINER, BODY)
                                                 .data(PLACEMENT, TOP)
                                                 .on(click, event -> presenter.reloadFile())
-                                                .title(resources.constants().references())
+                                                .title(resources.constants().refresh())
                                                 .add(i().css(fontAwesome(refresh))))
                                         .add(copyToClipboard = a().css(btn, btnDefault, clickable)
                                                 .data(TOGGLE, TOOLTIP)
@@ -137,23 +171,8 @@ public class LogFileView extends HalViewImpl implements LogFilePresenter.MyView 
                                 .element()))
                 .element();
 
-        Clipboard clipboard = new Clipboard(copyToClipboard);
-        clipboard.onCopy(event -> copyToClipboard(event.client));
         registerAttachable(editor);
         initElement(root);
-    }
-
-    private void copyToClipboard(Clipboard clipboard) {
-        String value = editor.getEditor().getSession().getValue();
-        if (!Strings.isNullOrEmpty(value)) {
-            clipboard.setText(value);
-            Tooltip tooltip = Tooltip.element(copyToClipboard);
-            tooltip.hide()
-                    .setTitle(resources.constants().copied())
-                    .show()
-                    .onHide(() -> tooltip.setTitle(resources.constants().copyToClipboard()));
-            setTimeout((o) -> tooltip.hide(), 1000);
-        }
     }
 
     @Override
@@ -171,11 +190,26 @@ public class LogFileView extends HalViewImpl implements LogFilePresenter.MyView 
             adjustEditorHeight();
             return null;
         };
+
+        Clipboard.Options options = new Clipboard.Options();
+        options.text = element -> editor.getEditor().getSession().getValue();
+        clipboard = new Clipboard(copyToClipboard, options);
+        clipboard.on("success", event -> {
+            Tooltip tooltip = Tooltip.element(copyToClipboard);
+            tooltip.hide()
+                    .setTitle(resources.constants().copied())
+                    .show()
+                    .onHide(() -> tooltip.setTitle(resources.constants().copyToClipboard()));
+            setTimeout((o) -> tooltip.hide(), 3000);
+        });
     }
 
     @Override
     public void detach() {
         super.detach();
+        if (clipboard != null) {
+            clipboard.destroy();
+        }
         window.onresize = null;
 
         SwitchBridge.Api.element(tailMode).destroy();
@@ -202,8 +236,8 @@ public class LogFileView extends HalViewImpl implements LogFilePresenter.MyView 
     public void loading() {
         status.textContent = resources.constants().loadingPleaseWait();
         status.title = resources.constants().loadingPleaseWait();
-        int top = (int) (loading.offsetHeight + editor.element().offsetHeight / 2);
-        loading.style.top = -1 * top + "px"; //NON-NLS
+        int top = loading.offsetHeight + editor.element().offsetHeight / 2;
+        loading.style.top = -1 * top + "px"; // NON-NLS
         editorContainer.classList.add(logFileLoading);
     }
 
@@ -249,9 +283,9 @@ public class LogFileView extends HalViewImpl implements LogFilePresenter.MyView 
         HTMLElement lineElement = (HTMLElement) document.querySelector(
                 HASH + Ids.LOG_FILE_EDITOR + " .ace_text-layer .ace_line"); //NON-NLS
         if (lineElement != null) {
-            lineHeight = (int) lineElement.offsetHeight;
+            lineHeight = lineElement.offsetHeight;
         }
-        return (int) (editor.element().offsetHeight / lineHeight);
+        return editor.element().offsetHeight / lineHeight;
     }
 
     private void statusUpdate(int lines) {
