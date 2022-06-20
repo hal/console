@@ -38,7 +38,11 @@ import org.slf4j.LoggerFactory;
 
 import elemental2.dom.HTMLElement;
 
-import static org.jboss.elemento.Elements.*;
+import static org.jboss.elemento.Elements.a;
+import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.h;
+import static org.jboss.elemento.Elements.p;
+import static org.jboss.elemento.Elements.section;
 import static org.jboss.elemento.EventType.click;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.resources.CSS.clearfix;
@@ -59,8 +63,8 @@ public class HaPolicyView extends HalViewImpl implements HaPolicyPresenter.MyVie
 
     private HaPolicyPresenter presenter;
     private Form<ModelNode> currentForm;
-    private Form<ModelNode> currentMasterForm;
-    private Form<ModelNode> currentSlaveForm;
+    private Form<ModelNode> currentPrimaryForm;
+    private Form<ModelNode> currentSecondaryForm;
 
     @Inject
     public HaPolicyView(MetadataRegistry metadataRegistry, Resources resources) {
@@ -79,12 +83,12 @@ public class HaPolicyView extends HalViewImpl implements HaPolicyPresenter.MyVie
 
         createSimple(HaPolicy.LIVE_ONLY);
         createColocated(HaPolicy.REPLICATION_COLOCATED);
-        createSimple(HaPolicy.REPLICATION_MASTER);
-        createSimple(HaPolicy.REPLICATION_SLAVE);
+        createSimple(HaPolicy.REPLICATION_PRIMARY);
+        createSimple(HaPolicy.REPLICATION_SECONDARY);
 
         createColocated(HaPolicy.SHARED_STORE_COLOCATED);
-        createSimple(HaPolicy.SHARED_STORE_MASTER);
-        createSimple(HaPolicy.SHARED_STORE_SLAVE);
+        createSimple(HaPolicy.SHARED_STORE_PRIMARY);
+        createSimple(HaPolicy.SHARED_STORE_SECONDARY);
 
         root = div().element();
         initElement(root);
@@ -109,14 +113,14 @@ public class HaPolicyView extends HalViewImpl implements HaPolicyPresenter.MyVie
     private void createColocated(HaPolicy haPolicy) {
         Metadata colocatedMetadata = metadataRegistry.lookup(haPolicy.template);
         Form<ModelNode> colocatedForm = form(haPolicy);
-        Form<ModelNode> masterForm = form(haPolicy.master);
-        Form<ModelNode> slaveForm = form(haPolicy.slave);
+        Form<ModelNode> primaryForm = form(haPolicy.primary);
+        Form<ModelNode> secondaryForm = form(haPolicy.secondary);
 
         Tabs tabs = new Tabs(Ids.build(haPolicy.baseId, Ids.TAB_CONTAINER));
         tabs.add(Ids.build(haPolicy.baseId, Ids.TAB), resources.constants().attributes(),
                 colocatedForm.element());
-        tabs.add(Ids.build(haPolicy.master.baseId, Ids.TAB), Names.MASTER, masterForm.element());
-        tabs.add(Ids.build(haPolicy.slave.baseId, Ids.TAB), Names.SLAVE, slaveForm.element());
+        tabs.add(Ids.build(haPolicy.primary.baseId, Ids.TAB), Names.PRIMARY, primaryForm.element());
+        tabs.add(Ids.build(haPolicy.secondary.baseId, Ids.TAB), Names.SECONDARY, secondaryForm.element());
 
         HTMLElement element = section().css(clearfix)
                 .add(h(1).textContent(haPolicy.type))
@@ -127,8 +131,8 @@ public class HaPolicyView extends HalViewImpl implements HaPolicyPresenter.MyVie
                 .add(tabs).element();
 
         policyForms.put(haPolicy, colocatedForm);
-        policyForms.put(haPolicy.master, masterForm);
-        policyForms.put(haPolicy.slave, slaveForm);
+        policyForms.put(haPolicy.primary, primaryForm);
+        policyForms.put(haPolicy.secondary, secondaryForm);
         policyElements.put(haPolicy, element);
     }
 
@@ -150,11 +154,11 @@ public class HaPolicyView extends HalViewImpl implements HaPolicyPresenter.MyVie
         if (currentForm != null) {
             currentForm.detach();
         }
-        if (currentMasterForm != null) {
-            currentMasterForm.detach();
+        if (currentPrimaryForm != null) {
+            currentPrimaryForm.detach();
         }
-        if (currentSlaveForm != null) {
-            currentSlaveForm.detach();
+        if (currentSecondaryForm != null) {
+            currentSecondaryForm.detach();
         }
     }
 
@@ -184,15 +188,15 @@ public class HaPolicyView extends HalViewImpl implements HaPolicyPresenter.MyVie
             currentForm.attach();
             currentForm.view(modelNode);
 
-            if (haPolicy.master != null && policyForms.containsKey(haPolicy.master)) {
-                currentMasterForm = policyForms.get(haPolicy.master);
-                currentMasterForm.attach();
-                currentMasterForm.view(failSafeGet(modelNode, "configuration/master")); // NON-NLS
+            if (haPolicy.primary != null && policyForms.containsKey(haPolicy.primary)) {
+                currentPrimaryForm = policyForms.get(haPolicy.primary);
+                currentPrimaryForm.attach();
+                currentPrimaryForm.view(failSafeGet(modelNode, "configuration/primary")); // NON-NLS
             }
-            if (haPolicy.slave != null && policyForms.containsKey(haPolicy.slave)) {
-                currentSlaveForm = policyForms.get(haPolicy.slave);
-                currentSlaveForm.attach();
-                currentSlaveForm.view(failSafeGet(modelNode, "configuration/slave")); // NON-NLS
+            if (haPolicy.secondary != null && policyForms.containsKey(haPolicy.secondary)) {
+                currentSecondaryForm = policyForms.get(haPolicy.secondary);
+                currentSecondaryForm.attach();
+                currentSecondaryForm.view(failSafeGet(modelNode, "configuration/secondary")); // NON-NLS
             }
 
         } else {

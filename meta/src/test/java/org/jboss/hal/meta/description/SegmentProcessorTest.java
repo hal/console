@@ -132,8 +132,8 @@ public class SegmentProcessorTest {
     @Test
     public void host() throws Exception {
         Fixture fixture = new Fixture.Builder("host")
-                .segments("host", "master")
-                .expected("host", "master")
+                .segments("host", "primary")
+                .expected("host", "primary")
                 .build();
         SegmentProcessor.process(fixture.segments, consumer);
         assertFixture(fixture, consumer.result);
@@ -142,7 +142,7 @@ public class SegmentProcessorTest {
     @Test
     public void host2() throws Exception {
         Fixture fixture = new Fixture.Builder("host2")
-                .segments("host", "master", "subsystem", "jmx")
+                .segments("host", "primary", "subsystem", "jmx")
                 .expected("host", "*", "subsystem", "jmx")
                 .build();
         SegmentProcessor.process(fixture.segments, consumer);

@@ -24,39 +24,39 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 
 @SuppressWarnings("HardCodedStringLiteral")
-public class BlacklistValidationTest {
+public class BlocklistValidationTest {
 
-    private TestableBlacklistValidation blacklistValidation;
+    private TestableBlocklistValidation blocklistValidation;
 
     @Before
     public void setUp() {
         GWTMockUtilities.disarm();
-        blacklistValidation = new TestableBlacklistValidation("foo", "bar");
+        blocklistValidation = new TestableBlocklistValidation("foo", "bar");
     }
 
     @Test
     public void validateNull() {
-        assertSame(ValidationResult.OK, blacklistValidation.validate(null));
+        assertSame(ValidationResult.OK, blocklistValidation.validate(null));
     }
 
     @Test
     public void validateEmpty() {
-        assertSame(ValidationResult.OK, blacklistValidation.validate(""));
+        assertSame(ValidationResult.OK, blocklistValidation.validate(""));
     }
 
     @Test
     public void validateBlank() {
-        assertSame(ValidationResult.OK, blacklistValidation.validate("   "));
+        assertSame(ValidationResult.OK, blocklistValidation.validate("   "));
     }
 
     @Test
     public void validateOk() {
-        assertSame(ValidationResult.OK, blacklistValidation.validate("ok"));
+        assertSame(ValidationResult.OK, blocklistValidation.validate("ok"));
     }
 
     @Test
     public void invalid() {
-        assertFalse(blacklistValidation.validate("foo").isValid());
-        assertFalse(blacklistValidation.validate("bar").isValid());
+        assertFalse(blocklistValidation.validate("foo").isValid());
+        assertFalse(blocklistValidation.validate("bar").isValid());
     }
 }

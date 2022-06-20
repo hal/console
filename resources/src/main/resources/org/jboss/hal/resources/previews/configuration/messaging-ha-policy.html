@@ -12,6 +12,6 @@
 <p><strong>Note</strong><br/> If you deploy just one pair of live / backup servers, you cannot effectively use a load balancer in front of the pair because the backup instance is not actively processing messages. Moreover, services such as JNDI and the Undertow web server are not active on the backup server either. For these reasons, deploying JEE applications to an instance of ${build.shortName} being used as a backup messaging server is not supported.</p>
 
 <h2>HA Policies</h2>
-<p>${build.shortName} messaging supports two different strategies for backing up a server: <em>replication</em> and <em>shared store</em>. Each strategy can take the role of a master or slave. Remember that only one HA policy option can be configured per messaging server.</p>
+<p>${build.shortName} messaging supports two different strategies for backing up a server: <em>replication</em> and <em>shared store</em>. Each strategy can take the role of a primary or secondary server. Remember that only one HA policy option can be configured per messaging server.</p>
 
 <p>For more information about high availability and the different strategies and policies, see <a target="_blank" href="https://access.redhat.com/documentation/en/red-hat-jboss-enterprise-application-platform/7.0/paged/configuring-messaging/chapter-29-high-availability">High Availability</a>.</p>

@@ -271,9 +271,9 @@ public class ManagementOperationsPresenter extends
                                             ModelNode opResult = op.get(RESULT);
                                             // the result has two addresses
                                             // 1) the active-operation address itself, example
-                                            // /host=master/server=server-three/core-service=management/service=management-operations/active-operation=1940701884
+                                            // /host=primary/server=server-three/core-service=management/service=management-operations/active-operation=1940701884
                                             // 2) the resource address
-                                            // /host=master/server=server-three/subsystem=elytron/filesystem-realm=file1
+                                            // /host=primary/server=server-three/subsystem=elytron/filesystem-realm=file1
                                             // the active-operation address should be store to later use it to cancel, if needed
                                             // the resource address is displayed to the user
                                             ModelNode activeOpAddress = op.get(ADDRESS);

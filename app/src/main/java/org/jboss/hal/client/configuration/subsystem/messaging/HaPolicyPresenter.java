@@ -54,17 +54,16 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.LIVE_ONLY_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.REPLICATION_COLOCATED_ADDRESS;
-import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.REPLICATION_COLOCATED_MASTER_ADDRESS;
-import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.REPLICATION_COLOCATED_SLAVE_ADDRESS;
-import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.REPLICATION_MASTER_ADDRESS;
-import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.REPLICATION_SLAVE_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.REPLICATION_COLOCATED_PRIMARY_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.REPLICATION_COLOCATED_SECONDARY_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.REPLICATION_PRIMARY_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.REPLICATION_SECONDARY_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_SERVER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SHARED_STORE_COLOCATED_ADDRESS;
-import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SHARED_STORE_COLOCATED_MASTER_ADDRESS;
-import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SHARED_STORE_COLOCATED_SLAVE_ADDRESS;
-import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SHARED_STORE_MASTER_ADDRESS;
-import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SHARED_STORE_SLAVE_ADDRESS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.HA_POLICY;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SHARED_STORE_COLOCATED_PRIMARY_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SHARED_STORE_COLOCATED_SECONDARY_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SHARED_STORE_PRIMARY_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SHARED_STORE_SECONDARY_ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MESSAGING_ACTIVEMQ;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 
@@ -81,7 +80,7 @@ public class HaPolicyPresenter
     private final StatementContext statementContext;
     private final Resources resources;
     private String serverName;
-    private HaPolicy haPolicy; // the 'top-level' policy selected in the wizard - not one of the *_COLOCATED_(MASTER|SLAVE)
+    private HaPolicy haPolicy; // the 'top-level' policy selected in the wizard - not one of the *_COLOCATED_(PRIMARY|SECONDARY)
                                // policies
 
     @Inject
@@ -135,7 +134,7 @@ public class HaPolicyPresenter
     @Override
     protected void reload() {
         ResourceAddress address = SELECTED_SERVER_TEMPLATE.resolve(statementContext);
-        crud.readChildren(address, HA_POLICY, 2, children -> {
+        HaPolicy.readChildren(crud, address, 2, children -> {
             if (children.isEmpty()) {
                 haPolicy = null;
                 getView().empty();
@@ -185,15 +184,15 @@ public class HaPolicyPresenter
     @ProxyCodeSplit
     @Requires({ LIVE_ONLY_ADDRESS,
             REPLICATION_COLOCATED_ADDRESS,
-            REPLICATION_COLOCATED_MASTER_ADDRESS,
-            REPLICATION_COLOCATED_SLAVE_ADDRESS,
-            REPLICATION_MASTER_ADDRESS,
-            REPLICATION_SLAVE_ADDRESS,
+            REPLICATION_COLOCATED_PRIMARY_ADDRESS,
+            REPLICATION_COLOCATED_SECONDARY_ADDRESS,
+            REPLICATION_PRIMARY_ADDRESS,
+            REPLICATION_SECONDARY_ADDRESS,
             SHARED_STORE_COLOCATED_ADDRESS,
-            SHARED_STORE_COLOCATED_MASTER_ADDRESS,
-            SHARED_STORE_COLOCATED_SLAVE_ADDRESS,
-            SHARED_STORE_MASTER_ADDRESS,
-            SHARED_STORE_SLAVE_ADDRESS })
+            SHARED_STORE_COLOCATED_PRIMARY_ADDRESS,
+            SHARED_STORE_COLOCATED_SECONDARY_ADDRESS,
+            SHARED_STORE_PRIMARY_ADDRESS,
+            SHARED_STORE_SECONDARY_ADDRESS })
     @NameToken(NameTokens.MESSAGING_SERVER_HA_POLICY)
     public interface MyProxy extends ProxyPlace<HaPolicyPresenter> {
     }

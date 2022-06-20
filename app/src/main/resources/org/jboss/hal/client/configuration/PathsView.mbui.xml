@@ -26,7 +26,7 @@
                 <action handler-ref="add-resource">
                     <attributes>
                         <attribute name="name"
-                                   validation-handler='${new org.jboss.hal.ballroom.form.BlacklistValidation("jboss.home", "user.home", "user.dir", "java.home", "jboss.server.base.dir")}'/>
+                                   validation-handler='${new org.jboss.hal.ballroom.form.BlocklistValidation("jboss.home", "user.home", "user.dir", "java.home", "jboss.server.base.dir")}'/>
                         <attribute name="path"/>
                         <attribute name="relative-to"
                                    suggest-handler="${new org.jboss.hal.core.configuration.PathsAutoComplete()}"/>

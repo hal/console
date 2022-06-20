@@ -26,7 +26,11 @@ import org.jboss.hal.dmr.ResourceAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADDRESS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STEPS;
 
 class CompositeRrdParser {
 
@@ -89,7 +93,7 @@ class CompositeRrdParser {
         List<Property> operationSegments = operationAddress.asPropertyList();
         List<Property> resultSegments = resultAddress.asPropertyList();
 
-        // For rrd operations against running servers using wildcards like /host=master/server=server-one/interface=*
+        // For rrd operations against running servers using wildcards like /host=primary/server=server-one/interface=*
         // the result does *not* contain absolute addresses. Since we need them in the registries,
         // this method fixes this corner case.
         if (operationSegments.size() > 2 &&

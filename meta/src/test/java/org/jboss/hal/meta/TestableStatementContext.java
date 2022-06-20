@@ -19,7 +19,12 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import static org.jboss.hal.meta.SelectionAwareStatementContext.SELECTION_KEY;
-import static org.jboss.hal.meta.StatementContext.Expression.*;
+import static org.jboss.hal.meta.StatementContext.Expression.DOMAIN_CONTROLLER;
+import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_GROUP;
+import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_HOST;
+import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_PROFILE;
+import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_SERVER;
+import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_SERVER_CONFIG;
 
 public class TestableStatementContext implements StatementContext {
 
@@ -27,10 +32,10 @@ public class TestableStatementContext implements StatementContext {
 
     public TestableStatementContext() {
         context = new EnumMap<>(Expression.class);
-        context.put(DOMAIN_CONTROLLER, "master");
+        context.put(DOMAIN_CONTROLLER, "primary");
         context.put(SELECTED_PROFILE, "full");
         context.put(SELECTED_GROUP, "main-server-group");
-        context.put(SELECTED_HOST, "master");
+        context.put(SELECTED_HOST, "primary");
         context.put(SELECTED_SERVER_CONFIG, "server-one");
         context.put(SELECTED_SERVER, "server-one");
     }

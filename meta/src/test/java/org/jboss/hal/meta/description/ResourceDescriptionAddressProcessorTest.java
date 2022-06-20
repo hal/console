@@ -60,9 +60,9 @@ public class ResourceDescriptionAddressProcessorTest {
     @Test
     public void host() throws Exception {
         ResourceAddress input = new ResourceAddress()
-                .add("host", "master");
+                .add("host", "primary");
         ResourceAddress expected = new ResourceAddress()
-                .add("host", "master");
+                .add("host", "primary");
 
         ResourceAddress result = processor.apply(input);
         assertEquals(expected, result);
@@ -71,7 +71,7 @@ public class ResourceDescriptionAddressProcessorTest {
     @Test
     public void host2() throws Exception {
         ResourceAddress input = new ResourceAddress()
-                .add("host", "master")
+                .add("host", "primary")
                 .add("subsystem", "jmx");
         ResourceAddress expected = new ResourceAddress()
                 .add("host", "*")

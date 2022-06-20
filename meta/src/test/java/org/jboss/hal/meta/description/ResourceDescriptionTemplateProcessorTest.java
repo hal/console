@@ -55,8 +55,8 @@ public class ResourceDescriptionTemplateProcessorTest {
 
     @Test
     public void host() throws Exception {
-        AddressTemplate input = AddressTemplate.of("/host=master");
-        AddressTemplate expected = AddressTemplate.of("/host=master");
+        AddressTemplate input = AddressTemplate.of("/host=primary");
+        AddressTemplate expected = AddressTemplate.of("/host=primary");
 
         AddressTemplate result = processor.apply(input);
         assertEquals(expected, result);
@@ -64,7 +64,7 @@ public class ResourceDescriptionTemplateProcessorTest {
 
     @Test
     public void host2() throws Exception {
-        AddressTemplate input = AddressTemplate.of("/host=master/subsystem=jmx");
+        AddressTemplate input = AddressTemplate.of("/host=primary/subsystem=jmx");
         AddressTemplate expected = AddressTemplate.of("/host=*/subsystem=jmx");
 
         AddressTemplate result = processor.apply(input);
@@ -73,7 +73,7 @@ public class ResourceDescriptionTemplateProcessorTest {
 
     @Test
     public void server() throws Exception {
-        AddressTemplate input = AddressTemplate.of("/host=master/server=server-one");
+        AddressTemplate input = AddressTemplate.of("/host=primary/server=server-one");
         AddressTemplate expected = AddressTemplate.of("/host=*/server=*");
 
         AddressTemplate result = processor.apply(input);
@@ -83,7 +83,7 @@ public class ResourceDescriptionTemplateProcessorTest {
     @Test
     public void server2() throws Exception {
         AddressTemplate input = AddressTemplate.of(
-                "/host=master/server=server-one/subsystem=datasources/data-source=*");
+                "/host=primary/server=server-one/subsystem=datasources/data-source=*");
         AddressTemplate expected = AddressTemplate.of("/host=*/server=*/subsystem=datasources/data-source=*");
 
         AddressTemplate result = processor.apply(input);
@@ -92,7 +92,7 @@ public class ResourceDescriptionTemplateProcessorTest {
 
     @Test
     public void serverConfig() throws Exception {
-        AddressTemplate input = AddressTemplate.of("/host=master/server-config=server-one");
+        AddressTemplate input = AddressTemplate.of("/host=primary/server-config=server-one");
         AddressTemplate expected = AddressTemplate.of("/host=*/server-config=*");
 
         AddressTemplate result = processor.apply(input);
@@ -101,7 +101,7 @@ public class ResourceDescriptionTemplateProcessorTest {
 
     @Test
     public void serverConfig2() throws Exception {
-        AddressTemplate input = AddressTemplate.of("/host=master/server-config=server-one/jvm=*");
+        AddressTemplate input = AddressTemplate.of("/host=primary/server-config=server-one/jvm=*");
         AddressTemplate expected = AddressTemplate.of("/host=*/server-config=*/jvm=*");
 
         AddressTemplate result = processor.apply(input);

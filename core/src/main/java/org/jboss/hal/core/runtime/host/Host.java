@@ -30,7 +30,11 @@ import static org.jboss.hal.core.runtime.RunningMode.ADMIN_ONLY;
 import static org.jboss.hal.core.runtime.RunningState.RELOAD_REQUIRED;
 import static org.jboss.hal.core.runtime.RunningState.RESTART_REQUIRED;
 import static org.jboss.hal.core.runtime.RunningState.STARTING;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST_STATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PRIMARY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNNING_MODE;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 
 /**
@@ -131,7 +135,7 @@ public class Host extends HasServersNode {
     }
 
     public boolean isDomainController() {
-        return hasDefined(MASTER) && get(MASTER).asBoolean();
+        return hasDefined(PRIMARY) && get(PRIMARY).asBoolean();
     }
 
     public RunningState getHostState() {

@@ -18,15 +18,18 @@ package org.jboss.hal.client.configuration.subsystem.messaging;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.CrudOperations;
+import org.jboss.hal.core.CrudOperations.ReadChildrenCallback;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
@@ -40,8 +43,14 @@ import org.jboss.hal.spi.Callback;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_SERVER_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CONFIGURATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HA_POLICY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PRIMARY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SECONDARY;
 
 public enum HaPolicy {
 
@@ -50,57 +59,57 @@ public enum HaPolicy {
             ModelDescriptionConstants.LIVE_ONLY,
             AddressTemplates.LIVE_ONLY_TEMPLATE),
 
-    REPLICATION_COLOCATED_MASTER(Ids.MESSAGING_HA_REPLICATION_COLOCATED_MASTER,
-            Names.REPLICATION_COLOCATED + Constants.SLASH + Names.MASTER,
-            ModelDescriptionConstants.REPLICATION_COLOCATED + "/" + CONFIGURATION + Constants.EQUALS + MASTER,
-            AddressTemplates.REPLICATION_COLOCATED_MASTER_TEMPLATE),
+    REPLICATION_COLOCATED_PRIMARY(Ids.MESSAGING_HA_REPLICATION_COLOCATED_PRIMARY,
+            Names.REPLICATION_COLOCATED + Constants.SLASH + Names.PRIMARY,
+            ModelDescriptionConstants.REPLICATION_COLOCATED + "/" + CONFIGURATION + Constants.EQUALS + PRIMARY,
+            AddressTemplates.REPLICATION_COLOCATED_PRIMARY_TEMPLATE),
 
-    REPLICATION_COLOCATED_SLAVE(Ids.MESSAGING_HA_REPLICATION_COLOCATED_SLAVE,
-            Names.REPLICATION_COLOCATED + Constants.SLASH + Names.SLAVE,
-            ModelDescriptionConstants.REPLICATION_COLOCATED + "/" + CONFIGURATION + Constants.EQUALS + SLAVE,
-            AddressTemplates.REPLICATION_COLOCATED_SLAVE_TEMPLATE),
+    REPLICATION_COLOCATED_SECONDARY(Ids.MESSAGING_HA_REPLICATION_COLOCATED_SECONDARY,
+            Names.REPLICATION_COLOCATED + Constants.SLASH + Names.SECONDARY,
+            ModelDescriptionConstants.REPLICATION_COLOCATED + "/" + CONFIGURATION + Constants.EQUALS + SECONDARY,
+            AddressTemplates.REPLICATION_COLOCATED_SECONDARY_TEMPLATE),
 
     REPLICATION_COLOCATED(Ids.MESSAGING_HA_REPLICATION_COLOCATED,
             Names.REPLICATION_COLOCATED,
             ModelDescriptionConstants.REPLICATION_COLOCATED,
             AddressTemplates.REPLICATION_COLOCATED_TEMPLATE,
-            REPLICATION_COLOCATED_MASTER, REPLICATION_COLOCATED_SLAVE),
+            REPLICATION_COLOCATED_PRIMARY, REPLICATION_COLOCATED_SECONDARY),
 
-    REPLICATION_MASTER(Ids.MESSAGING_HA_REPLICATION_MASTER,
-            Names.REPLICATION_MASTER,
-            ModelDescriptionConstants.REPLICATION_MASTER,
-            AddressTemplates.REPLICATION_MASTER_TEMPLATE),
+    REPLICATION_PRIMARY(Ids.MESSAGING_HA_REPLICATION_PRIMARY,
+            Names.REPLICATION_PRIMARY,
+            ModelDescriptionConstants.REPLICATION_PRIMARY,
+            AddressTemplates.REPLICATION_PRIMARY_TEMPLATE),
 
-    REPLICATION_SLAVE(Ids.MESSAGING_HA_REPLICATION_SLAVE,
-            Names.REPLICATION_SLAVE,
-            ModelDescriptionConstants.REPLICATION_SLAVE,
-            AddressTemplates.REPLICATION_SLAVE_TEMPLATE),
+    REPLICATION_SECONDARY(Ids.MESSAGING_HA_REPLICATION_SECONDARY,
+            Names.REPLICATION_SECONDARY,
+            ModelDescriptionConstants.REPLICATION_SECONDARY,
+            AddressTemplates.REPLICATION_SECONDARY_TEMPLATE),
 
-    SHARED_STORE_COLOCATED_MASTER(Ids.MESSAGING_HA_SHARED_STORE_COLOCATED_MASTER,
-            Names.SHARED_STORE_COLOCATED + Constants.SLASH + Names.MASTER,
-            ModelDescriptionConstants.SHARED_STORE_COLOCATED + "/" + CONFIGURATION + Constants.EQUALS + MASTER,
-            AddressTemplates.SHARED_STORE_COLOCATED_MASTER_TEMPLATE),
+    SHARED_STORE_COLOCATED_PRIMARY(Ids.MESSAGING_HA_SHARED_STORE_COLOCATED_PRIMARY,
+            Names.SHARED_STORE_COLOCATED + Constants.SLASH + Names.PRIMARY,
+            ModelDescriptionConstants.SHARED_STORE_COLOCATED + "/" + CONFIGURATION + Constants.EQUALS + PRIMARY,
+            AddressTemplates.SHARED_STORE_COLOCATED_PRIMARY_TEMPLATE),
 
-    SHARED_STORE_COLOCATED_SLAVE(Ids.MESSAGING_HA_SHARED_STORE_COLOCATED_SLAVE,
-            Names.SHARED_STORE_COLOCATED + Constants.SLASH + Names.SLAVE,
-            ModelDescriptionConstants.SHARED_STORE_COLOCATED + "/" + CONFIGURATION + Constants.EQUALS + SLAVE,
-            AddressTemplates.SHARED_STORE_COLOCATED_SLAVE_TEMPLATE),
+    SHARED_STORE_COLOCATED_SECONDARY(Ids.MESSAGING_HA_SHARED_STORE_COLOCATED_SECONDARY,
+            Names.SHARED_STORE_COLOCATED + Constants.SLASH + Names.SECONDARY,
+            ModelDescriptionConstants.SHARED_STORE_COLOCATED + "/" + CONFIGURATION + Constants.EQUALS + SECONDARY,
+            AddressTemplates.SHARED_STORE_COLOCATED_SECONDARY_TEMPLATE),
 
     SHARED_STORE_COLOCATED(Ids.MESSAGING_HA_SHARED_STORE_COLOCATED,
             Names.SHARED_STORE_COLOCATED,
             ModelDescriptionConstants.SHARED_STORE_COLOCATED,
             AddressTemplates.SHARED_STORE_COLOCATED_TEMPLATE,
-            SHARED_STORE_COLOCATED_MASTER, SHARED_STORE_COLOCATED_SLAVE),
+            SHARED_STORE_COLOCATED_PRIMARY, SHARED_STORE_COLOCATED_SECONDARY),
 
-    SHARED_STORE_MASTER(Ids.MESSAGING_HA_SHARED_STORE_MASTER,
-            Names.SHARED_STORE_MASTER,
-            ModelDescriptionConstants.SHARED_STORE_MASTER,
-            AddressTemplates.SHARED_STORE_MASTER_TEMPLATE),
+    SHARED_STORE_PRIMARY(Ids.MESSAGING_HA_SHARED_STORE_PRIMARY,
+            Names.SHARED_STORE_PRIMARY,
+            ModelDescriptionConstants.SHARED_STORE_PRIMARY,
+            AddressTemplates.SHARED_STORE_PRIMARY_TEMPLATE),
 
-    SHARED_STORE_SLAVE(Ids.MESSAGING_HA_SHARED_STORE_SLAVE,
-            Names.SHARED_STORE_SLAVE,
-            ModelDescriptionConstants.SHARED_STORE_SLAVE,
-            AddressTemplates.SHARED_STORE_SLAVE_TEMPLATE);
+    SHARED_STORE_SECONDARY(Ids.MESSAGING_HA_SHARED_STORE_SECONDARY,
+            Names.SHARED_STORE_SECONDARY,
+            ModelDescriptionConstants.SHARED_STORE_SECONDARY,
+            AddressTemplates.SHARED_STORE_SECONDARY_TEMPLATE);
 
     public static HaPolicy fromResourceName(String resourceName) {
         HaPolicy result = null;
@@ -111,20 +120,20 @@ public enum HaPolicy {
             case ModelDescriptionConstants.REPLICATION_COLOCATED:
                 result = REPLICATION_COLOCATED;
                 break;
-            case ModelDescriptionConstants.REPLICATION_MASTER:
-                result = REPLICATION_MASTER;
+            case ModelDescriptionConstants.REPLICATION_PRIMARY:
+                result = REPLICATION_PRIMARY;
                 break;
-            case ModelDescriptionConstants.REPLICATION_SLAVE:
-                result = REPLICATION_SLAVE;
+            case ModelDescriptionConstants.REPLICATION_SECONDARY:
+                result = REPLICATION_SECONDARY;
                 break;
             case ModelDescriptionConstants.SHARED_STORE_COLOCATED:
                 result = SHARED_STORE_COLOCATED;
                 break;
-            case ModelDescriptionConstants.SHARED_STORE_MASTER:
-                result = SHARED_STORE_MASTER;
+            case ModelDescriptionConstants.SHARED_STORE_PRIMARY:
+                result = SHARED_STORE_PRIMARY;
                 break;
-            case ModelDescriptionConstants.SHARED_STORE_SLAVE:
-                result = SHARED_STORE_SLAVE;
+            case ModelDescriptionConstants.SHARED_STORE_SECONDARY:
+                result = SHARED_STORE_SECONDARY;
                 break;
             default:
                 break;
@@ -132,25 +141,40 @@ public enum HaPolicy {
         return result;
     }
 
+    static void readChildren(CrudOperations crud, ResourceAddress address, int depth,
+            ReadChildrenCallback callback) {
+        // as a workaround for WFLY-14053, we filter aliased names like "master" and "slave"
+        // from the result of the read-children operation.
+        crud.readChildren(address, HA_POLICY, depth).then(children -> {
+            Predicate<Property> predicate = child -> child.getName().contains("master") || child.getName()
+                    .contains("slave");
+            List<Property> policies = children.stream()
+                    .filter(predicate.negate())
+                    .collect(toList());
+            callback.execute(policies);
+            return null;
+        });
+    }
+
     final String baseId;
     final String type;
     final String singleton;
     final AddressTemplate template;
-    final HaPolicy master;
-    final HaPolicy slave;
+    final HaPolicy primary;
+    final HaPolicy secondary;
 
     HaPolicy(final String baseId, final String type, final String singleton, final AddressTemplate template) {
         this(baseId, type, singleton, template, null, null);
     }
 
     HaPolicy(final String baseId, final String type, final String singleton, final AddressTemplate template,
-            final HaPolicy master, final HaPolicy slave) {
+            final HaPolicy primary, final HaPolicy secondary) {
         this.baseId = baseId;
         this.type = type;
         this.singleton = singleton;
         this.template = template;
-        this.master = master;
-        this.slave = slave;
+        this.primary = primary;
+        this.secondary = secondary;
     }
 
     AddressTemplate singleton() {
@@ -158,10 +182,10 @@ public enum HaPolicy {
     }
 
     List<HaPolicy> children() {
-        if (master == null && slave == null) {
+        if (primary == null && secondary == null) {
             return emptyList();
         }
-        return asList(master, slave); // oder is important!
+        return asList(primary, secondary); // oder is important!
     }
 
     /**

@@ -48,7 +48,6 @@ import com.google.web.bindery.event.shared.EventBus;
 import elemental2.promise.Promise;
 
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.SELECTED_SERVER_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.HA_POLICY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 
 @AsyncColumn(Ids.MESSAGING_SERVER_SETTINGS)
@@ -99,7 +98,7 @@ public class ServerSettingsColumn
                 StatementContext serverStatementContext = new SelectionAwareStatementContext(statementContext,
                         () -> server);
                 ResourceAddress address = SELECTED_SERVER_TEMPLATE.resolve(serverStatementContext);
-                crud.readChildren(address, HA_POLICY, children -> {
+                HaPolicy.readChildren(crud, address, 1, children -> {
 
                     items.add(new StaticItem.Builder(Names.DESTINATIONS)
                             .id(Ids.MESSAGING_SERVER_DESTINATION)
