@@ -78,7 +78,7 @@ public class DataSource extends NamedNode {
     }
 
     public boolean isStatisticsEnabled() {
-        return hasDefined(STATISTICS_ENABLED) && get(STATISTICS_ENABLED).asBoolean(false);
+        return get("statistics", JDBC, STATISTICS_ENABLED).asBoolean();
     }
 
     public void setDriver(JdbcDriver driver) {

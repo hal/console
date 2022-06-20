@@ -91,7 +91,7 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
         customPreviews.put(BATCH_JBERET, new BatchPreview(dispatcher, statementContext, resources));
         customPreviews.put(EJB3, new ThreadPoolPreview(dispatcher, statementContext, resources));
         customPreviews.put(TRANSACTIONS, new TransactionsPreview(dispatcher, statementContext, resources));
-        customPreviews.put(UNDERTOW, new UndertowPreview(dispatcher, statementContext, resources));
+        customPreviews.put(UNDERTOW, new UndertowPreview(resources));
         customPreviews.put(WEBSERVICES, new WebservicesPreview(dispatcher, statementContext, resources));
 
         ItemsProvider<SubsystemMetadata> itemsProvider = (context, callback) -> {

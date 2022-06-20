@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.resources;
 
@@ -26,14 +26,14 @@ import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.resources.Strings.substringAfterLast;
 
 /**
- * IDs used in HTML elements and across multiple classes. Please add IDs to this interface even if there's already an
- * equivalent or similar constant in {@code ModelDescriptionConstants} (SoC).
+ * IDs used in HTML elements and across multiple classes. Please add IDs to this interface even if there's already an equivalent
+ * or similar constant in {@code ModelDescriptionConstants} (SoC).
  * <p>
- * The IDs defined here are reused by QA. So please make sure that IDs are not spread over the code base but gathered in
- * this interface. This is not always possible - for instance if the ID contains dynamic parts like a resource name or
- * selected server. But IDs which only contain static strings should be part of this interface.
+ * The IDs defined here are reused by QA. So please make sure that IDs are not spread over the code base but gathered in this
+ * interface. This is not always possible - for instance if the ID contains dynamic parts like a resource name or selected
+ * server. But IDs which only contain static strings should be part of this interface.
  */
-@SuppressWarnings({"DuplicateStringLiteralInspection", "SpellCheckingInspection"})
+@SuppressWarnings({ "DuplicateStringLiteralInspection", "SpellCheckingInspection" })
 public interface Ids {
 
     // ------------------------------------------------------ ids (a-z)
@@ -189,6 +189,8 @@ public interface Ids {
     String EJB3_APPLICATION_SECURITY_DOMAIN_ITEM = "ejb3-app-security-domain-item";
     String EJB3_APPLICATION_SECURITY_DOMAIN_TABLE = "ejb3-app-security-domain-table";
     String EJB3_DEPLOYMENT = "ejb3-deployment";
+    String EJB3_DEPLOYMENT_STATISTICS_DISABLED = "ejb3-deployment-statistics-disabled";
+    String EJB3_STATISTICS_DISABLED = "ejb3-statistics-disabled";
     String ELYTRON = "elytron";
     String ELYTRON_ADD_PREFIX_ROLE_MAPPER = "elytron-add-prefix-role-mapper";
     String ELYTRON_ADD_SUFFIX_ROLE_MAPPER = "elytron-add-suffix-role-mapper";
@@ -595,6 +597,7 @@ public interface Ids {
     String MESSAGING_SERVER_TRANSACTION_ITEM = "msg-server-transaction-item";
     String MESSAGING_SERVER_TRANSACTION_FORM = "msg-server-transaction-form";
     String MESSAGING_SERVER_TRANSACTION_TABLE = "msg-server-transaction-table";
+    String MESSAGING_STATISTICS_DISABLED = "messaging-statistics-disabled";
     String MICRO_PROFILE_CONFIG_SOURCE = "microprofile-config-source";
     String MICRO_PROFILE_HEALTH = "microprofile-health";
     String MICRO_PROFILE_METRICS_FORM = "microprofile-metrics-form";
@@ -869,7 +872,6 @@ public interface Ids {
     String XA_DATA_SOURCE_RUNTIME_POOL_TAB = "xa-data-source-runtime-pool-tab";
     String XA_DATA_SOURCE_RUNTIME_TAB_CONTAINER = "xa-data-source-runtime-tab-container";
 
-
     // ------------------------------------------------------ resource ids (a-z)
 
     static String cacheContainer(String name) {
@@ -1022,8 +1024,7 @@ public interface Ids {
     // ------------------------------------------------------ methods
 
     /**
-     * Turns a label which can contain whitespace and upper/lower case characters into an all lowercase id separated by
-     * "-".
+     * Turns a label which can contain whitespace and upper/lower case characters into an all lowercase id separated by "-".
      */
     static String asId(String text) {
         String[] parts = text.split("[-\\s]");

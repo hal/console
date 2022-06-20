@@ -32,6 +32,7 @@ import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -48,7 +49,7 @@ public class EndpointColumn extends FinderColumn<DeploymentResource> {
     @Inject
     public EndpointColumn(FinderPathFactory finderPathFactory, Places places, Finder finder,
             ColumnActionFactory columnActionFactory,
-            Dispatcher dispatcher,
+            Dispatcher dispatcher, StatementContext statementContext,
             DeploymentResources deploymentResources, Resources resources) {
 
         super(new Builder<DeploymentResource>(finder, Ids.ENDPOINT, Names.ENDPOINT)
@@ -100,7 +101,8 @@ public class EndpointColumn extends FinderColumn<DeploymentResource> {
                     }
                 })
 
-                .onPreview(item -> new EndpointPreview(finderPathFactory, places, item, dispatcher, resources))
+                .onPreview(
+                        item -> new EndpointPreview(finderPathFactory, places, item, dispatcher, statementContext, resources))
                 .useFirstActionAsBreadcrumbHandler()
                 .withFilter()
                 .filterDescription(resources.messages().endpointColumnFilterDescription())
