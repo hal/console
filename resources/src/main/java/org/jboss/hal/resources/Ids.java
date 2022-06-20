@@ -197,6 +197,8 @@ public interface Ids {
     String EJB3_APPLICATION_SECURITY_DOMAIN_ITEM = "ejb3-app-security-domain-item";
     String EJB3_APPLICATION_SECURITY_DOMAIN_TABLE = "ejb3-app-security-domain-table";
     String EJB3_DEPLOYMENT = "ejb3-deployment";
+    String EJB3_DEPLOYMENT_STATISTICS_DISABLED = "ejb3-deployment-statistics-disabled";
+    String EJB3_STATISTICS_DISABLED = "ejb3-statistics-disabled";
     String ELYTRON = "elytron";
     String ELYTRON_ADD_PREFIX_ROLE_MAPPER = "elytron-add-prefix-role-mapper";
     String ELYTRON_ADD_SUFFIX_ROLE_MAPPER = "elytron-add-suffix-role-mapper";
@@ -614,6 +616,7 @@ public interface Ids {
     String MESSAGING_SERVER_TRANSACTION_TABLE = "msg-server-transaction-table";
     String MESSAGING_SOCKET_BROADCAST_GROUP = "messaging-socket-broadcast-group";
     String MESSAGING_SOCKET_DISCOVERY_GROUP = "messaging-socket-discovery-group";
+    String MESSAGING_STATISTICS_DISABLED = "messaging-statistics-disabled";
     String MICRO_PROFILE_CONFIG_SOURCE = "microprofile-config-source";
     String MICRO_PROFILE_HEALTH = "microprofile-health";
     String MICRO_PROFILE_METRICS_FORM = "microprofile-metrics-form";

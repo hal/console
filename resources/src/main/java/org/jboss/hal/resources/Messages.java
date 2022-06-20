@@ -442,6 +442,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     SafeHtml messageServerStopped(String name, String server);
 
+    SafeHtml messagingServerStatisticsDisabled(String server);
+
     SafeHtml metadataError();
 
     SafeHtml microprofileHealthOutcome(String outcome);

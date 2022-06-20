@@ -134,7 +134,7 @@ public class EjbColumn extends FinderColumn<EjbNode> {
                         return Promise.resolve(ejbs);
                     });
                 })
-                .onPreview(item -> new EjbPreview(item, finderPathFactory, places, dispatcher, resources))
+                .onPreview(item -> new EjbPreview(item, finderPathFactory, places, dispatcher, statementContext, resources))
                 .useFirstActionAsBreadcrumbHandler()
                 .withFilter()
                 .filterDescription(resources.messages().ejbFilterDescription())
