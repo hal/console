@@ -30,8 +30,8 @@ public interface StatementContext {
     enum Expression {
         /**
          * Please note that this tuple might not always resolve to the domain controller. For some edge cases (e.g. when the
-         * current user is assigned to a host scoped role which is scoped to a secondary host), this tuple is resolved to the first
-         * host which was read during bootstrap. In any case it is resolved to an existing host.
+         * current user is assigned to a host scoped role which is scoped to a secondary host), this tuple is resolved to the
+         * first host which was read during bootstrap. In any case it is resolved to an existing host.
          * <p>
          * Address templates which use this tuple must be prepared that it does not always resolve to the domain controller.
          */

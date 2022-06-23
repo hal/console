@@ -529,7 +529,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
         new AddResourceDialog(resources.messages().addResourceTitle(type), form,
                 (name, model) -> ca.add(ldapKeyStore, NEW_ITEM_TEMPLATE, Names.NEW_ITEM_TEMPLATE,
                         AddressTemplates.LDAP_KEY_STORE_TEMPLATE, model, this::reloadLdapKeyStores))
-                                .show();
+                .show();
     }
 
     Operation pingNewItemTemplate(String ldapKeyStore) {
@@ -620,8 +620,8 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
             // SecretKeyCredentials are either in a "credential-store" or a "secret-key-credential-store"
             Operation operation = new Operation.Builder(ELYTRON_SUBSYSTEM_TEMPLATE.resolve(statementContext),
                     READ_CHILDREN_NAMES_OPERATION)
-                            .param(CHILD_TYPE, CREDENTIAL_STORE)
-                            .build();
+                    .param(CHILD_TYPE, CREDENTIAL_STORE)
+                    .build();
 
             return dispatcher.execute(operation).then(result -> {
                 ModelNode store = new ModelNode().set(storeName);
@@ -695,7 +695,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                 (name, model) -> crud.add(type, name, AddressTemplates.SERVER_SSL_SNI_CONTEXT_TEMPLATE, model,
                         (name1, address) -> reload(SERVER_SSL_SNI_CONTEXT,
                                 nodes -> getView().updateResourceElement(SERVER_SSL_SNI_CONTEXT, nodes))))
-                                        .show();
+                .show();
     }
 
     // ------------------------------------------------------ syslog audit log

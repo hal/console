@@ -6,9 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Added
+
+- [HAL-1793](https://issues.redhat.com/browse/HAL-1793): Determine the availability of statistics in case of unresolved expressions
+- [HAL-1079](https://issues.redhat.com/browse/HAL-1079): Adding expand all button to show all tree in deployment detail
+
 ### Changed
 
 - [HAL-1780](https://issues.redhat.com/browse/HAL-1780): Problematic language usage deprecation
+- [HAL-1781](https://issues.redhat.com/browse/HAL-1781): Enhance check for update feature
 
 ### Fixed
 
@@ -18,6 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - Bump Ace editor from 1.5.3 to 1.6.0
 - Bump Parcel from 2.6.0 to 2.6.2
+- Bump Quarkus from 2.9.2.Final to 2.10.0.Final
 
 ## [3.6.0] - 2022-06-09
 
