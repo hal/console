@@ -304,31 +304,30 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
                 .onNext((context, currentState) -> currentState == UPLOAD ? NAMES : null)
 
                 .stayOpenAfterFinish()
-                .onFinish((wzd, context) -> {
-                    String name = context.name;
-                    String runtimeName = context.runtimeName;
+                .onFinish((wzd, wizardContext) -> {
+                    String name = wizardContext.name;
+                    String runtimeName = wizardContext.runtimeName;
                     wzd.showProgress(resources.constants().deploymentInProgress(),
                             resources.messages().deploymentInProgress(name));
 
                     List<Task<FlowContext>> tasks = asList(new CheckDeployment(dispatcher, name),
-                            new UploadOrReplace(environment, dispatcher, name, runtimeName, context.file,
-                                    context.enabled));
+                            new UploadOrReplace(environment, dispatcher, name, runtimeName, wizardContext.file,
+                                    wizardContext.enabled));
                     sequential(new FlowContext(progress.get()), tasks)
-                            .then(__ -> {
-                                refresh(Ids.deployment(name));
-                                wzd.showSuccess(resources.constants().uploadSuccessful(),
-                                        resources.messages().uploadSuccessful(name),
-                                        resources.messages().view(Names.DEPLOYMENT),
-                                        cxt -> {
-                                            /* nothing to do, deployment is already selected */
-                                        });
-                                return null;
-                            })
-                            .catch_(error -> {
-                                wzd.showError(resources.constants().deploymentError(),
-                                        resources.messages().deploymentError(name),
-                                        String.valueOf(error));
-                                return null;
+                            .subscribe(flowContext -> {
+                                if (flowContext.successful()) {
+                                    refresh(Ids.deployment(name));
+                                    wzd.showSuccess(resources.constants().uploadSuccessful(),
+                                            resources.messages().uploadSuccessful(name),
+                                            resources.messages().view(Names.DEPLOYMENT),
+                                            cxt -> {
+                                                /* nothing to do, deployment is already selected */
+                                            });
+                                } else {
+                                    wzd.showError(resources.constants().deploymentError(),
+                                            resources.messages().deploymentError(name),
+                                            flowContext.failureReason());
+                                }
                             });
                 })
                 .build();

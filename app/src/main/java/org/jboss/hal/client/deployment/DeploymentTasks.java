@@ -462,7 +462,7 @@ class DeploymentTasks {
                             context.set(UPLOAD_STATISTICS, statistics);
                         }
                         statistics.recordFailed(name);
-                        return Promise.resolve(context);
+                        return Promise.reject(error);
                     });
         }
     }

@@ -13,12 +13,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Changed
 
-- [HAL-1780](https://issues.redhat.com/browse/HAL-1780): Problematic language usage deprecation
 - [HAL-1781](https://issues.redhat.com/browse/HAL-1781): Enhance check for update feature
+- [HAL-1780](https://issues.redhat.com/browse/HAL-1780): Problematic language usage deprecation
 
 ### Fixed
 
 - [HAL-1796](https://issues.redhat.com/browse/HAL-1796): Unable to create elytron syslog audit resources
+- [HAL-1794](https://issues.redhat.com/browse/HAL-1794): Deployment wizard showing success even when it failed
 
 ### Upgrades
 
