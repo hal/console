@@ -117,14 +117,14 @@ public class TransactionsPreview extends PreviewContent<SubsystemMetadata> {
         ResourceAddress addressWeb = TRANSACTION_RUNTIME_TEMPLATE.resolve(statementContext);
         Operation opWeb = new Operation.Builder(addressWeb, READ_RESOURCE_OPERATION)
                 .param(INCLUDE_RUNTIME, true)
+                .param(RESOLVE_EXPRESSIONS, true)
                 .build();
         dispatcher.execute(opWeb, result -> {
-            boolean statsEnabled = result.get(STATISTICS_ENABLED).asBoolean(false);
-            Elements.setVisible(noStatistics.element(), !statsEnabled);
+            boolean statsAvailable = result.get(NUMBER_OF_TRANSACTIONS).asLong() > 0;
+            boolean statsEnabled = result.get(STATISTICS_ENABLED).asBoolean(statsAvailable);
 
             if (statsEnabled) {
                 attributes.refresh(result);
-                long maxTransactions = result.get(NUMBER_OF_TRANSACTIONS).asLong();
                 long committed = result.get(NUMBER_OF_COMMITTED_TRANSACTIONS).asLong();
                 long aborted = result.get(NUMBER_OF_ABORTED_TRANSACTIONS).asLong();
                 long timedout = result.get(NUMBER_OF_TIMEDOUT_TRANSACTIONS).asLong();
@@ -142,13 +142,11 @@ public class TransactionsPreview extends PreviewContent<SubsystemMetadata> {
                 txUpdates.put(TransactionStatus.RESOURCE_ROLLBACK.name(), resourceRollbacks);
                 txUpdates.put(TransactionStatus.APPLICATION_ROLLBACK.name(), appRollbacks);
                 transactions.update(txUpdates);
-
-                Elements.setVisible(attributesElement, true);
-                Elements.setVisible(transactions.element(), true);
-            } else {
-                Elements.setVisible(attributesElement, false);
-                Elements.setVisible(transactions.element(), false);
             }
+
+            Elements.setVisible(noStatistics.element(), !statsEnabled);
+            Elements.setVisible(attributesElement, statsEnabled);
+            Elements.setVisible(transactions.element(), statsEnabled);
         });
     }
 

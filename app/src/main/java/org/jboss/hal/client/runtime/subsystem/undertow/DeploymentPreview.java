@@ -73,10 +73,13 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.LINK;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MAX_ACTIVE_SESSIONS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_ATTRIBUTE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REJECTED_SESSIONS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESOLVE_EXPRESSIONS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SESSIONS_CREATED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SESSION_AVG_ALIVE_TIME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SESSION_MAX_ALIVE_TIME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.STATISTICS_ENABLED;
@@ -198,17 +201,19 @@ class DeploymentPreview extends PreviewContent<DeploymentResource> {
                 .param(INCLUDE_RUNTIME, true)
                 .build();
         ResourceAddress webRuntimeAddress = WEB_SUBSYSTEM_TEMPLATE.resolve(statementContext);
-        Operation opSubsystem = new Operation.Builder(webRuntimeAddress, READ_RESOURCE_OPERATION)
-                .param(INCLUDE_RUNTIME, true)
+        Operation opStatistics = new Operation.Builder(webRuntimeAddress, READ_ATTRIBUTE_OPERATION)
+                .param(NAME, STATISTICS_ENABLED)
+                .param(RESOLVE_EXPRESSIONS, true)
                 .build();
-        dispatcher.execute(new Composite(opDeployment, opSubsystem), (CompositeResult compositeResult) -> {
+        dispatcher.execute(new Composite(opDeployment, opStatistics), (CompositeResult compositeResult) -> {
 
             ModelNode deploymentResult = compositeResult.step(0).get(RESULT);
-            ModelNode subsystemResult = compositeResult.step(1).get(RESULT);
+            ModelNode statisticsResult = compositeResult.step(1).get(RESULT);
             DeploymentResource deploymentStats = new DeploymentResource(item.getAddress(), deploymentResult);
             previewAttributes.refresh(deploymentStats);
 
-            boolean statsEnabled = subsystemResult.get(STATISTICS_ENABLED).asBoolean(false);
+            boolean statsAvailable = deploymentStats.get(SESSIONS_CREATED).asLong() > 0;
+            boolean statsEnabled = statisticsResult.asBoolean(statsAvailable);
             if (statsEnabled) {
                 Map<String, Long> updatedSession = new HashMap<>();
                 updatedSession.put(ACTIVE_SESSIONS, deploymentStats.get(ACTIVE_SESSIONS).asLong());

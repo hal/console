@@ -15,8 +15,6 @@
  */
 package org.jboss.hal.client.runtime.subsystem.webservice;
 
-import org.jboss.elemento.Elements;
-import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.subsystem.SubsystemMetadata;
@@ -24,10 +22,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
-import org.jboss.hal.meta.security.Constraint;
-import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
@@ -35,14 +30,11 @@ import elemental2.dom.HTMLElement;
 
 import static java.util.Arrays.asList;
 import static org.jboss.elemento.Elements.section;
-import static org.jboss.hal.client.runtime.subsystem.webservice.AddressTemplates.WEBSERVICES_CONFIGURATION_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.webservice.AddressTemplates.WEBSERVICES_RUNTIME_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.resources.CSS.fontAwesome;
 
 public class WebservicesPreview extends PreviewContent<SubsystemMetadata> {
 
-    private EmptyState noStatistics;
     private Dispatcher dispatcher;
     private StatementContext statementContext;
     private HTMLElement attributesElement;
@@ -53,15 +45,6 @@ public class WebservicesPreview extends PreviewContent<SubsystemMetadata> {
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
 
-        noStatistics = new EmptyState.Builder(Ids.WEBSERVICES_STATISTICS_DISABLED,
-                resources.constants().statisticsDisabledHeader())
-                .description(resources.messages().statisticsDisabled(Names.WEBSERVICES))
-                .icon(fontAwesome("line-chart"))
-                .primaryAction(resources.constants().enableStatistics(), this::enableStatistics,
-                        Constraint.writable(WEBSERVICES_CONFIGURATION_TEMPLATE, STATISTICS_ENABLED))
-                .build();
-        Elements.setVisible(noStatistics.element(), false);
-
         attributes = new PreviewAttributes<>(new ModelNode(), resources.constants().attributes(),
                 asList("modify-wsdl-address", "wsdl-host", "wsdl-path-rewrite-rule", "wsdl-port", "wsdl-secure-port",
                         "wsdl-uri-scheme"));
@@ -69,7 +52,6 @@ public class WebservicesPreview extends PreviewContent<SubsystemMetadata> {
                 .addAll(attributes).element();
 
         previewBuilder()
-                .add(noStatistics)
                 .add(attributesElement);
     }
 
@@ -81,20 +63,7 @@ public class WebservicesPreview extends PreviewContent<SubsystemMetadata> {
                 .param(RESOLVE_EXPRESSIONS, true)
                 .build();
         dispatcher.execute(opSubsystem, result -> {
-            boolean statsEnabled = result.get(STATISTICS_ENABLED).asBoolean(false);
             attributes.refresh(result);
-            Elements.setVisible(noStatistics.element(), !statsEnabled);
-            Elements.setVisible(attributesElement, statsEnabled);
         });
-    }
-
-    private void enableStatistics() {
-        ResourceAddress address = AddressTemplate.of("{selected.profile}/subsystem=webservices")
-                .resolve(statementContext);
-        Operation operation = new Operation.Builder(address, WRITE_ATTRIBUTE_OPERATION)
-                .param(NAME, STATISTICS_ENABLED)
-                .param(VALUE, true)
-                .build();
-        dispatcher.execute(operation, result -> update(null));
     }
 }

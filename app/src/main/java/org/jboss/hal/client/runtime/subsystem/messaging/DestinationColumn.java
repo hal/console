@@ -110,7 +110,8 @@ public class DestinationColumn extends FinderColumn<Destination> {
 
         super(new Builder<Destination>(finder, Ids.MESSAGING_SERVER_DESTINATION_RUNTIME, Names.DESTINATION)
                 .columnAction(columnActionFactory.refresh(Ids.MESSAGING_SERVER_DESTINATION_REFRESH))
-                .onPreview(item -> new DestinationPreview(item, finderPathFactory, places, dispatcher, resources))
+                .onPreview(item -> new DestinationPreview(item, finderPathFactory, places, dispatcher, statementContext,
+                        resources))
                 .useFirstActionAsBreadcrumbHandler()
                 .pinnable()
                 .showCount()

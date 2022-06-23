@@ -120,11 +120,13 @@ class ListenerPreview extends PreviewContent<NamedNode> {
                 .resolve(statementContext, webserver);
         Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                 .param(INCLUDE_RUNTIME, true)
+                .param(RESOLVE_EXPRESSIONS, true)
                 .build();
         dispatcher.execute(operation, result -> {
             NamedNode listenerResult = new NamedNode(result);
             previewAttributes.refresh(listenerResult);
-            boolean statisticsEnabled = listenerResult.get(RECORD_REQUEST_START_TIME).asBoolean(false);
+            boolean statsAvailable = result.get(REQUEST_COUNT).asLong() > 0;
+            boolean statisticsEnabled = listenerResult.get(RECORD_REQUEST_START_TIME).asBoolean(statsAvailable);
 
             if (statisticsEnabled) {
                 Map<String, Long> processingTimes = new HashMap<>();
