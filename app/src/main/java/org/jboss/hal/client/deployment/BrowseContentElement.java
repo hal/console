@@ -197,6 +197,7 @@ class BrowseContentElement implements IsElement<HTMLElement>, Attachable {
     private final AceEditor editor;
 
     private final HTMLButtonElement collapseButton;
+    private final HTMLButtonElement expandAllButton;
     private final Optional<HTMLButtonElement> addContentButton;
     private final Optional<HTMLButtonElement> uploadContentButton;
     private final HTMLElement downloadContentLink;
@@ -275,6 +276,12 @@ class BrowseContentElement implements IsElement<HTMLElement>, Attachable {
                                                         .on(click, event -> refresh())
                                                         .title(resources.constants().refresh())
                                                         .add(i().css(fontAwesome(refresh))))
+                                                .add(expandAllButton = button().css(btn, btnDefault)
+                                                        .on(click, event -> {
+                                                            tree.openAllNodes();
+                                                        })
+                                                        .title(resources.constants().expandAll())
+                                                        .add(i().css(fontAwesome(CSS.list))).element())
                                                 .add(collapseButton = button().css(btn, btnDefault)
                                                         .on(click, event -> {
                                                             Node<ContentEntry> selection = tree.getSelected();

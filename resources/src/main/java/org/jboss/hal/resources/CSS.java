@@ -229,6 +229,7 @@ public interface CSS {
     String last = "last";
     String lead = "lead";
     String link = "link";
+    String list = "list";
     String listGroup = "list-group";
     String listGroupItem = "list-group-item";
     String listGroupItemValue = "list-group-item-value";

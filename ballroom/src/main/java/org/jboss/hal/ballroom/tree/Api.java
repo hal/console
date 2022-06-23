@@ -42,6 +42,9 @@ class Api<T> {
     native void open_node(String id, JsCallback callback);
 
     @JsMethod
+    native void open_all();
+
+    @JsMethod
     native void refresh_node(String id);
 
     @JsMethod
