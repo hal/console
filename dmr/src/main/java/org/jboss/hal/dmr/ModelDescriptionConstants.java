@@ -748,6 +748,7 @@ public interface ModelDescriptionConstants {
     String REALMS = "realms";
     String REASON = "reason";
     String RECORD_REQUEST_START_TIME = "record-request-start-time";
+    String RECONNECT_ATTEMPTS = "reconnect-attempts";
     String RECOVERY_PLUGIN_CLASS_NAME = "recovery-plugin-class-name";
     String RECURSIVE = "recursive";
     String RECURSIVE_DEPTH = "recursive-depth";

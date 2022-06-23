@@ -110,6 +110,7 @@ import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTempla
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.SIZE_ROTATING_FILE_AUDIT_LOG_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.SYSLOG_AUDIT_LOG_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.TRUST_MANAGER_ADDRESS;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.SYSLOG_AUDIT_LOG;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ALIAS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CAPABILITY_REFERENCE;
@@ -142,6 +143,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_ATTRIBUTE_OPERATI
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REALM;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REALMS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RECONNECT_ATTEMPTS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RELATIVE_TO;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESOLVERS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
@@ -237,7 +239,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                 ElytronResource.FILE_AUDIT_LOG.resource,
                 ElytronResource.SIZE_ROTATING_FILE_AUDIT_LOG.resource,
                 ElytronResource.PERIODIC_ROTATING_FILE_AUDIT_LOG.resource,
-                ElytronResource.SYSLOG_AUDIT_LOG.resource,
+                SYSLOG_AUDIT_LOG.resource,
                 ElytronResource.AGGREGATE_SECURITY_EVENT_LISTENER.resource,
                 ElytronResource.CUSTOM_SECURITY_EVENT_LISTENER.resource,
                 ElytronResource.PERMISSION_SET.resource,
@@ -284,7 +286,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                             asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateResourceElement(ElytronResource.PERIODIC_ROTATING_FILE_AUDIT_LOG.resource,
                             asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
-                    getView().updateResourceElement(ElytronResource.SYSLOG_AUDIT_LOG.resource,
+                    getView().updateResourceElement(SYSLOG_AUDIT_LOG.resource,
                             asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateResourceElement(ElytronResource.AGGREGATE_SECURITY_EVENT_LISTENER.resource,
                             asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
@@ -527,7 +529,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
         new AddResourceDialog(resources.messages().addResourceTitle(type), form,
                 (name, model) -> ca.add(ldapKeyStore, NEW_ITEM_TEMPLATE, Names.NEW_ITEM_TEMPLATE,
                         AddressTemplates.LDAP_KEY_STORE_TEMPLATE, model, this::reloadLdapKeyStores))
-                .show();
+                                .show();
     }
 
     Operation pingNewItemTemplate(String ldapKeyStore) {
@@ -618,8 +620,8 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
             // SecretKeyCredentials are either in a "credential-store" or a "secret-key-credential-store"
             Operation operation = new Operation.Builder(ELYTRON_SUBSYSTEM_TEMPLATE.resolve(statementContext),
                     READ_CHILDREN_NAMES_OPERATION)
-                    .param(CHILD_TYPE, CREDENTIAL_STORE)
-                    .build();
+                            .param(CHILD_TYPE, CREDENTIAL_STORE)
+                            .build();
 
             return dispatcher.execute(operation).then(result -> {
                 ModelNode store = new ModelNode().set(storeName);
@@ -693,7 +695,21 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                 (name, model) -> crud.add(type, name, AddressTemplates.SERVER_SSL_SNI_CONTEXT_TEMPLATE, model,
                         (name1, address) -> reload(SERVER_SSL_SNI_CONTEXT,
                                 nodes -> getView().updateResourceElement(SERVER_SSL_SNI_CONTEXT, nodes))))
-                .show();
+                                        .show();
+    }
+
+    // ------------------------------------------------------ syslog audit log
+
+    void addSyslogAuditLog() {
+        String id = Ids.build(SYSLOG_AUDIT_LOG.baseId, Ids.ADD);
+        String type = new LabelBuilder().label(SYSLOG_AUDIT_LOG.resource);
+        Metadata metadata = metadataRegistry.lookup(SYSLOG_AUDIT_LOG.template);
+        AddResourceDialog dialog = new AddResourceDialog(id, type, metadata, (name, model) -> {
+            model.get(RECONNECT_ATTEMPTS).set(1); // w/o 1 a running syslog server is required!
+            crud.add(type, name, SYSLOG_AUDIT_LOG.template, model, (n, a) -> reload(SYSLOG_AUDIT_LOG.resource,
+                    nodes -> getView().updateResourceElement(SYSLOG_AUDIT_LOG.resource, nodes)));
+        });
+        dialog.show();
     }
 
     // -------------------------------------------- Policy
