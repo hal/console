@@ -10,10 +10,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - [HAL-1780](https://issues.redhat.com/browse/HAL-1780): Problematic language usage deprecation
 
+### Fixed
+
+- [HAL-1796](https://issues.redhat.com/browse/HAL-1796): Unable to create elytron syslog audit resources
+
 ### Upgrades
 
 - Bump Ace editor from 1.5.3 to 1.6.0
-- Bump Parcel from 2.6.0 to 2.6.1
+- Bump Parcel from 2.6.0 to 2.6.2
 
 ## [3.6.0] - 2022-06-09
 

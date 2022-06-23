@@ -66,7 +66,18 @@ import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResour
 import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.SIZE_ROTATING_FILE_AUDIT_LOG;
 import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.SYSLOG_AUDIT_LOG;
 import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.TRUST_MANAGER;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ACTION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CLASS_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CREDENTIAL_REFERENCE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT_REALM;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.FLAG;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MODULE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PERMISSIONS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REALM;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REALMS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RELATIVE_TO;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_AUTH_MODULES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SSL_CONTEXT;
 
 public class OtherSettingsView extends HalViewImpl implements OtherSettingsPresenter.MyView {
 
@@ -304,9 +315,11 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                 labelBuilder.label(SIZE_ROTATING_FILE_AUDIT_LOG.resource));
 
         addResourceElement(SYSLOG_AUDIT_LOG,
-                SYSLOG_AUDIT_LOG.resourceElement(mbuiContext,
+                SYSLOG_AUDIT_LOG.resourceElementBuilder(mbuiContext,
                         () -> presenter.reload(SYSLOG_AUDIT_LOG.resource,
-                                nodes -> updateResourceElement(SYSLOG_AUDIT_LOG.resource, nodes))),
+                                nodes -> updateResourceElement(SYSLOG_AUDIT_LOG.resource, nodes)))
+                        .onAdd(() -> presenter.addSyslogAuditLog())
+                        .build(),
                 Ids.ELYTRON_LOGS_ITEM,
                 Ids.build(SYSLOG_AUDIT_LOG.baseId, Ids.ITEM),
                 labelBuilder.label(SYSLOG_AUDIT_LOG.resource));
