@@ -69,10 +69,6 @@
             <artifactId>guava-gwt</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.google.gwt</groupId>
-            <artifactId>gwt-elemental</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.gwtplatform</groupId>
             <artifactId>gwtp-processors</artifactId>
         </dependency>

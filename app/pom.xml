@@ -96,10 +96,6 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>com.google.gwt</groupId>
-            <artifactId>gwt-elemental</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava-gwt</artifactId>
         </dependency>
