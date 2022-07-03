@@ -111,7 +111,7 @@ jobs:
         run: $MVN package -P prod,theme-hal
       - name: Publish
         id: publish
-        uses: JamesIves/github-pages-deploy-action@v4.3.3
+        uses: JamesIves/github-pages-deploy-action@v4.3.4
         with:
           branch: gh-pages
           folder: ./app/target/gh-pages
