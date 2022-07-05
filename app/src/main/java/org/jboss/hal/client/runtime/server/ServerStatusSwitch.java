@@ -52,6 +52,8 @@ public abstract class ServerStatusSwitch implements Consumer<Server> {
     public final void accept(final Server server) {
         if (serverActions.isPending(server)) {
             onPending(server);
+        } else if (server.hasOperationFailure()) {
+            onFailed(server);
         } else if (server.hasBootErrors()) {
             onBootErrors(server);
         } else if (server.isFailed()) {

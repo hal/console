@@ -75,6 +75,11 @@ public class Composite extends Operation implements Iterable<Operation> {
         return this;
     }
 
+    public Composite addHeader(String name, int value) {
+        get(OPERATION_HEADERS).get(name).set(value);
+        return this;
+    }
+
     public Composite addHeader(String name, boolean value) {
         get(OPERATION_HEADERS).get(name).set(value);
         return this;

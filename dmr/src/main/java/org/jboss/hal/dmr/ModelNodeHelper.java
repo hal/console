@@ -165,11 +165,11 @@ public class ModelNodeHelper {
         return defaultValue;
     }
 
-    public static <E extends Enum<E>> E asEnumValue(ModelNode modelNode, Function<String, E> valueOf, E defaultValue) {
+    public static <E extends Enum<E>> E asEnumValue(ModelNode modelNodeValue, Function<String, E> valueOf, E defaultValue) {
         E value = defaultValue;
-        String converted = LOWER_HYPHEN.to(UPPER_UNDERSCORE, modelNode.asString());
+        String convertedValue = LOWER_HYPHEN.to(UPPER_UNDERSCORE, modelNodeValue.asString());
         try {
-            value = valueOf.apply(converted);
+            value = valueOf.apply(convertedValue);
         } catch (IllegalArgumentException ignored) {
         }
         return value;

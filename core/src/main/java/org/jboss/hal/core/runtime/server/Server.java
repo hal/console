@@ -26,7 +26,16 @@ import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.resources.Ids;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.GROUP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNNING_MODE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_CONFIG;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_STATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STATUS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SUSPEND_STATE;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 
 /**
@@ -41,6 +50,7 @@ public class Server extends NamedNode {
     private final boolean standalone;
     private Version managementVersion;
     private boolean bootErrors;
+    private String operationFailure;
 
     public Server(String host, ModelNode node) {
         this(host, node.get(NAME).asString(), node, false);
@@ -55,6 +65,7 @@ public class Server extends NamedNode {
         this.standalone = standalone;
         this.managementVersion = ManagementModel.parseVersion(modelNode);
         this.bootErrors = false;
+        this.operationFailure = null;
         get(HOST).set(host);
         if (standalone) {
             get(STATUS).set(ServerConfigStatus.STARTED.name().toLowerCase());
@@ -81,6 +92,14 @@ public class Server extends NamedNode {
 
     public void setBootErrors(boolean bootErrors) {
         this.bootErrors = bootErrors;
+    }
+
+    public boolean hasOperationFailure() {
+        return operationFailure != null;
+    }
+
+    public void setOperationFailure(String operationFailure) {
+        this.operationFailure = operationFailure;
     }
 
     public String getServerGroup() {

@@ -15,7 +15,10 @@
  */
 package org.jboss.hal.core.runtime.host;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 import org.jboss.hal.config.Version;
 import org.jboss.hal.core.runtime.HasServersNode;
@@ -26,6 +29,7 @@ import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.ManagementModel;
 
+import static java.util.Comparator.comparing;
 import static org.jboss.hal.core.runtime.RunningMode.ADMIN_ONLY;
 import static org.jboss.hal.core.runtime.RunningState.RELOAD_REQUIRED;
 import static org.jboss.hal.core.runtime.RunningState.RESTART_REQUIRED;
@@ -43,6 +47,31 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
  * until the host is reloaded.
  */
 public class Host extends HasServersNode {
+
+    /**
+     * Sorts the specified hosts alphabetically with the domain controller as first element.
+     */
+    public static List<Host> sort(List<Host> hosts) {
+        List<Host> sortedHosts;
+        if (hosts != null) {
+            sortedHosts = new ArrayList<>(hosts);
+            sortedHosts.sort(comparing(Host::getName));
+        } else {
+            sortedHosts = new ArrayList<>();
+        }
+        Host domainController = null;
+        for (Iterator<Host> iterator = sortedHosts.iterator(); iterator.hasNext() && domainController == null;) {
+            Host host = iterator.next();
+            if (host.isDomainController()) {
+                domainController = host;
+                iterator.remove();
+            }
+        }
+        if (domainController != null) {
+            sortedHosts.add(0, domainController);
+        }
+        return sortedHosts;
+    }
 
     // TODO rename to booting. Booting is different from starting as it marks
     // an old host (mgmt model version < 10) which is starting. Unlike hosts
@@ -139,12 +168,14 @@ public class Host extends HasServersNode {
     }
 
     public RunningState getHostState() {
-        return asEnumValue(this, HOST_STATE, RunningState::valueOf, RunningState.UNDEFINED);
+        // noinspection Convert2MethodRef (method reference causes GWT compiler issues!)
+        return asEnumValue(this, HOST_STATE, name -> RunningState.valueOf(name), RunningState.UNDEFINED);
     }
 
     /** @return the state as defined by {@code server.running-mode} */
     public RunningMode getRunningMode() {
-        return asEnumValue(this, RUNNING_MODE, RunningMode::valueOf, RunningMode.UNDEFINED);
+        // noinspection Convert2MethodRef (method reference causes GWT compiler issues!)
+        return asEnumValue(this, RUNNING_MODE, name -> RunningMode.valueOf(name), RunningMode.UNDEFINED);
     }
 
     /** Shortcut for {@link #isConnected()} {@code && !}{@link #isBooting()} */
