@@ -244,6 +244,11 @@ public class Operation extends ModelNode {
             return this;
         }
 
+        public Builder header(String name, int value) {
+            header.get(name).set(value);
+            return this;
+        }
+
         public Builder header(String name, boolean value) {
             header.get(name).set(value);
             return this;

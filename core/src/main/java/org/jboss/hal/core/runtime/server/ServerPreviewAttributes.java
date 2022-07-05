@@ -17,17 +17,21 @@ package org.jboss.hal.core.runtime.server;
 
 import org.jboss.hal.core.finder.PreviewAttributes;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNNING_MODE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_STATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SUSPEND_STATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.URL;
 
 public final class ServerPreviewAttributes {
 
     public static void refresh(Server server, PreviewAttributes<Server> serverAttributes) {
         serverAttributes.refresh(server);
-        serverAttributes.setVisible(PROFILE, server.isStarted());
-        serverAttributes.setVisible(URL, server.isStarted());
-        serverAttributes.setVisible(RUNNING_MODE, server.isStarted());
-        serverAttributes.setVisible(SERVER_STATE, server.isStarted());
-        serverAttributes.setVisible(SUSPEND_STATE, server.isStarted());
+        serverAttributes.setVisible(PROFILE, !server.hasOperationFailure() && server.isStarted());
+        serverAttributes.setVisible(URL, !server.hasOperationFailure() && server.isStarted());
+        serverAttributes.setVisible(RUNNING_MODE, !server.hasOperationFailure() && server.isStarted());
+        serverAttributes.setVisible(SERVER_STATE, !server.hasOperationFailure() && server.isStarted());
+        serverAttributes.setVisible(SUSPEND_STATE, !server.hasOperationFailure() && server.isStarted());
     }
 
     private ServerPreviewAttributes() {

@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - [HAL-1796](https://issues.redhat.com/browse/HAL-1796): Unable to create elytron syslog audit resources
 - [HAL-1794](https://issues.redhat.com/browse/HAL-1794): Deployment wizard showing success even when it failed
+- [HAL-1795](https://issues.redhat.com/browse/HAL-1795): Domain console is not resilient to unresponsive managed server
 
 ### Upgrades
 

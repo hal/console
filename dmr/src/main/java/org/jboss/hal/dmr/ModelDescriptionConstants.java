@@ -103,6 +103,7 @@ public interface ModelDescriptionConstants {
     String BINARY = "binary";
     String BINARY_JDBC = "binary-jdbc";
     String BLOCKING = "blocking";
+    String BLOCKING_TIMEOUT = "blocking-timeout";
     String BOOT_CLASS_PATH = "boot-class-path";
     String BOOT_CLASS_PATH_SUPPORTED = "boot-class-path-supported";
     String BOOT_TIME = "boot-time";

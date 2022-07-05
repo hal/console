@@ -67,7 +67,6 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import elemental2.promise.Promise;
 
-import static elemental2.dom.DomGlobal.console;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.CONFIGURATION_CHANGES_ADDRESS;
@@ -233,7 +232,6 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
             Host host = event.getHost();
             ItemMonitor.stopProgress(Ids.host(host.getAddressName()));
             event.getServers().forEach(server -> ItemMonitor.stopProgress(server.getId()));
-            console.log("### Refresh host column");
             refresh(RESTORE_SELECTION);
         }
     }

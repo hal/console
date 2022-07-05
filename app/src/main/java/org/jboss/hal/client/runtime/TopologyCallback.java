@@ -13,29 +13,10 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-/* styles used in configuration or runtime views */
+package org.jboss.hal.client.runtime;
 
-.hal-execution-duration {
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  justify-content: space-around;
-}
+@FunctionalInterface
+interface TopologyCallback<T> {
 
-.hal-execution-time {
-  flex: 1 0 auto;
-  margin-right: 40px;
-}
-
-.hal-conf-changes-additional-info {
-  flex: 1 0 auto;
-}
-
-.rest-resources p {
-  margin-bottom: 5px;
-}
-
-.pending {
-  cursor: progress;
+    void execute(T data);
 }

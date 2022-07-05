@@ -915,6 +915,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     SafeHtml topologyError();
 
+    SafeHtml topologyTimeout();
+
     SafeHtml tourAccessControl();
 
     SafeHtml tourAccessControlRoles();

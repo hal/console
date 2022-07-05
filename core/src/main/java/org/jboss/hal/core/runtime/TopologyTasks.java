@@ -53,12 +53,12 @@ import elemental2.promise.Promise;
 import static java.lang.Math.max;
 import static java.util.Collections.emptyList;
 import static java.util.Comparator.comparing;
-import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.groupingBy;
+import static java.util.function.UnaryOperator.identity;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES_ONLY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.BLOCKING_TIMEOUT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CONNECTED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CORE_SERVICE;
@@ -80,7 +80,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.REGISTERED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNNING_MODE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SELECT;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_CONFIG;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_STATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SUSPEND_STATE;
@@ -92,13 +91,15 @@ import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
 
 public final class TopologyTasks {
 
-    public static final String HOST = "topologyFunctions.host"; // Host
-    public static final String HOSTS = "topologyFunctions.hosts"; // List<Host>
-    public static final String SERVER_GROUPS = "topologyFunctions.serverGroups"; // List<ServerGroup>
-    public static final String SERVERS = "topologyFunctions.servers"; // List<Server>
+    public static final String HOST = "topologyTasks.host"; // Host
+    public static final String HOSTS = "topologyTasks.hosts"; // List<Host>
+    public static final String SERVER_GROUPS = "topologyTasks.serverGroups"; // List<ServerGroup>
+    public static final String SERVERS = "topologyTasks.servers"; // List<Server>
+    public static final String SERVER = "topologyTasks.server"; // Server
 
-    private static final String HOST_NAMES = "topologyFunctions.hostNames"; // List<String>
+    private static final String HOST_NAMES = "topologyTasks.hostNames"; // List<String>
     private static final String WILDCARD = "*";
+    private static final int OPERATION_TIMEOUT = 3; // seconds
     private static final Logger logger = LoggerFactory.getLogger(TopologyTasks.class);
 
     // ------------------------------------------------------ topology
@@ -118,7 +119,8 @@ public final class TopologyTasks {
     }
 
     /**
-     * Returns a list of tasks to read the topology.
+     * Returns a list of tasks to read the basic topology. This only includes hosts and server groups, but <em>no</em> servers.
+     * Servers are read in a second step to make the whole process more resilient.
      *
      * <p>
      * The context is populated with the following keys:
@@ -126,18 +128,13 @@ public final class TopologyTasks {
      * <li>{@link #HOSTS}: The ordered list of hosts with the domain controller as first element. Each host contains its
      * servers.</li>
      * <li>{@link #SERVER_GROUPS}: The ordered list of server groups. Each server group contains its servers.</li>
-     * <li>{@link #SERVERS}: The list of all servers in the domain.</li>
      * </ul>
-     * Started servers contain additional attributes and optional server boot errors.
      */
     public static List<Task<FlowContext>> topology(Environment environment, Dispatcher dispatcher) {
         List<Task<FlowContext>> tasks = new ArrayList<>();
-        tasks.add(new HostsNames(environment, dispatcher));
         tasks.add(new Hosts(environment, dispatcher));
         tasks.add(new DisconnectedHosts(environment, dispatcher));
         tasks.add(new ServerGroups(environment, dispatcher));
-        tasks.add(new StartedServers(environment, dispatcher));
-        tasks.add(new Topology(environment));
         return tasks;
     }
 
@@ -155,9 +152,8 @@ public final class TopologyTasks {
     public static List<Task<FlowContext>> hosts(Environment environment, Dispatcher dispatcher) {
         List<Task<FlowContext>> tasks = new ArrayList<>();
         tasks.add(new HostsNames(environment, dispatcher));
-        tasks.add(new Hosts(environment, dispatcher));
+        tasks.add(new HostsAndServerConfigs(environment, dispatcher));
         tasks.add(new DisconnectedHosts(environment, dispatcher));
-        tasks.add(new StartedServers(environment, dispatcher));
         tasks.add(new Topology(environment));
         return tasks;
     }
@@ -175,10 +171,24 @@ public final class TopologyTasks {
     public static List<Task<FlowContext>> serverGroups(Environment environment, Dispatcher dispatcher) {
         List<Task<FlowContext>> tasks = new ArrayList<>();
         tasks.add(new HostsNames(environment, dispatcher));
-        tasks.add(new Hosts(environment, dispatcher));
+        tasks.add(new HostsAndServerConfigs(environment, dispatcher));
         tasks.add(new ServerGroups(environment, dispatcher));
-        tasks.add(new StartedServers(environment, dispatcher));
         tasks.add(new Topology(environment));
+        return tasks;
+    }
+
+    /**
+     * Returns a list of tasks to read the server configs of one host.
+     *
+     * <p>
+     * The context is populated with the following keys:
+     * <ul>
+     * <li>{@link #SERVERS}: The list of server configs of one host.</li>
+     * </ul>
+     */
+    public static List<Task<FlowContext>> serverConfigsOfHost(Environment environment, Dispatcher dispatcher, String host) {
+        List<Task<FlowContext>> tasks = new ArrayList<>();
+        tasks.add(new ServersConfigsOfHost(environment, dispatcher, host));
         return tasks;
     }
 
@@ -188,13 +198,12 @@ public final class TopologyTasks {
      * <p>
      * The context is populated with the following keys:
      * <ul>
-     * <li>{@link #SERVERS}: The list of servers of one host.</li>
+     * <li>{@link #SERVERS}: The list of server configs of one host.</li>
      * </ul>
-     * Started servers contain additional attributes and optional server boot errors.
      */
     public static List<Task<FlowContext>> serversOfHost(Environment environment, Dispatcher dispatcher, String host) {
         List<Task<FlowContext>> tasks = new ArrayList<>();
-        tasks.add(new ServersOfHost(environment, dispatcher, host));
+        tasks.add(new ServersConfigsOfHost(environment, dispatcher, host));
         tasks.add(new StartedServers(environment, dispatcher));
         return tasks;
     }
@@ -213,7 +222,7 @@ public final class TopologyTasks {
             String serverGroup) {
         List<Task<FlowContext>> tasks = new ArrayList<>();
         tasks.add(new HostsNames(environment, dispatcher));
-        tasks.add(new ServersOfServerGroup(environment, dispatcher, serverGroup));
+        tasks.add(new ServerConfigsOfServerGroup(environment, dispatcher, serverGroup));
         tasks.add(new StartedServers(environment, dispatcher));
         return tasks;
     }
@@ -234,6 +243,26 @@ public final class TopologyTasks {
         tasks.add(new HostsNames(environment, dispatcher));
         tasks.add(new RunningServers(environment, dispatcher, query));
         return tasks;
+    }
+
+    /**
+     * Returns a map of composite operations to read the runtime attributes of started servers.
+     */
+    public static Map<String, Composite> startedServerOperations(List<Server> serverConfigs) {
+        return serverConfigs.stream()
+                .filter(Server::isStarted)
+                .collect(toMap(Server::getId, server -> {
+                    List<Operation> operations = new ArrayList<>();
+                    operations.add(new Operation.Builder(server.getServerAddress(), READ_RESOURCE_OPERATION)
+                            .param(ATTRIBUTES_ONLY, true)
+                            .param(INCLUDE_RUNTIME, true)
+                            .build());
+                    operations.add(new Operation.Builder(server.getServerAddress().add(CORE_SERVICE, MANAGEMENT),
+                            READ_BOOT_ERRORS).build());
+                    Composite composite = new Composite(operations);
+                    composite.addHeader(BLOCKING_TIMEOUT, OPERATION_TIMEOUT);
+                    return composite;
+                }));
     }
 
     // ------------------------------------------------------ tasks
@@ -258,41 +287,10 @@ public final class TopologyTasks {
                 return Promise.resolve(context);
 
             } else {
-                List<Host> hosts = context.get(HOSTS);
-                List<Host> sortedHosts;
-                if (hosts != null) {
-                    sortedHosts = new ArrayList<>(hosts);
-                    sortedHosts.sort(comparing(Host::getName));
-                } else {
-                    sortedHosts = new ArrayList<>();
-                }
-                Host domainController = null;
-                for (Iterator<Host> iterator = sortedHosts.iterator(); iterator.hasNext() && domainController == null;) {
-                    Host host = iterator.next();
-                    if (host.isDomainController()) {
-                        domainController = host;
-                        iterator.remove();
-                    }
-                }
-                if (domainController != null) {
-                    sortedHosts.add(0, domainController);
-                }
-                hosts = sortedHosts;
-
-                List<Server> servers = context.get(SERVERS);
-                List<ServerGroup> serverGroups = context.get(SERVER_GROUPS);
-                if (serverGroups != null && servers != null) {
-                    Map<String, List<Server>> serversByServerGroup = servers.stream()
-                            .collect(groupingBy(Server::getServerGroup));
-                    for (ServerGroup serverGroup : serverGroups) {
-                        List<Server> serversOfServerGroup = serversByServerGroup
-                                .getOrDefault(serverGroup.getName(), emptyList());
-                        serversOfServerGroup.forEach(serverGroup::addServer);
-                    }
-                } else {
-                    serverGroups = emptyList();
-                    servers = emptyList();
-                }
+                List<Host> hosts = Host.sort(context.get(HOSTS));
+                List<Server> servers = context.get(SERVERS, emptyList());
+                List<ServerGroup> serverGroups = context.get(SERVER_GROUPS, emptyList());
+                ServerGroup.addServers(serverGroups, servers);
                 context.set(HOSTS, hosts);
                 context.set(SERVER_GROUPS, serverGroups);
                 context.set(SERVERS, servers);
@@ -350,6 +348,44 @@ public final class TopologyTasks {
         @Override
         public Promise<FlowContext> apply(final FlowContext context) {
             List<Host> hosts = new ArrayList<>();
+            context.set(HOSTS, hosts);
+
+            if (environment.isStandalone()) {
+                return Promise.resolve(context);
+            } else {
+                Operation operation = new Operation.Builder(ResourceAddress.root(),
+                        READ_CHILDREN_RESOURCES_OPERATION)
+                                .param(CHILD_TYPE, ModelDescriptionConstants.HOST)
+                                .param(INCLUDE_RUNTIME, true)
+                                .build();
+                return dispatcher.execute(operation)
+                        .then(result -> {
+                            hosts.addAll(result.asPropertyList().stream()
+                                    .map(Host::new)
+                                    .collect(toList()));
+                            return Promise.resolve(context);
+                        })
+                        .catch_(error -> {
+                            logger.error("TopologyTasks.Hosts failed: {}", error);
+                            return context.reject(String.valueOf(error));
+                        });
+            }
+        }
+    }
+
+    private static final class HostsAndServerConfigs implements Task<FlowContext> {
+
+        private final Environment environment;
+        private final Dispatcher dispatcher;
+
+        private HostsAndServerConfigs(Environment environment, Dispatcher dispatcher) {
+            this.environment = environment;
+            this.dispatcher = dispatcher;
+        }
+
+        @Override
+        public Promise<FlowContext> apply(final FlowContext context) {
+            List<Host> hosts = new ArrayList<>();
             List<Server> servers = new ArrayList<>();
             context.set(HOSTS, hosts);
             context.set(SERVERS, servers);
@@ -370,8 +406,8 @@ public final class TopologyTasks {
                                     .add(SERVER_CONFIG, WILDCARD);
                             Operation serverConfigOperation = new Operation.Builder(serverConfigAddress,
                                     READ_RESOURCE_OPERATION)
-                                    .param(INCLUDE_RUNTIME, true)
-                                    .build();
+                                            .param(INCLUDE_RUNTIME, true)
+                                            .build();
                             Composite composite = new Composite(hostOperation, serverConfigOperation);
                             return (Task<FlowContext>) (FlowContext c) -> dispatcher.execute(composite)
                                     .then(result -> {
@@ -389,7 +425,7 @@ public final class TopologyTasks {
                                         return Promise.resolve(c);
                                     })
                                     .catch_(error -> {
-                                        logger.error("TopologyTasks.Hosts failed: {}", error);
+                                        logger.error("TopologyTasks.HostsAndServerConfigs failed: {}", error);
                                         Host h = String.valueOf(error).contains(ERROR_WFY_CTL_0379)
                                                 ? Host.booting(host)
                                                 : Host.failed(host);
@@ -485,9 +521,9 @@ public final class TopologyTasks {
             } else {
                 Operation operation = new Operation.Builder(ResourceAddress.root(),
                         READ_CHILDREN_RESOURCES_OPERATION)
-                        .param(CHILD_TYPE, ModelDescriptionConstants.SERVER_GROUP)
-                        .param(INCLUDE_RUNTIME, true)
-                        .build();
+                                .param(CHILD_TYPE, ModelDescriptionConstants.SERVER_GROUP)
+                                .param(INCLUDE_RUNTIME, true)
+                                .build();
                 return dispatcher.execute(operation)
                         .then(result -> {
                             serverGroups.addAll(result.asPropertyList().stream()
@@ -504,13 +540,13 @@ public final class TopologyTasks {
         }
     }
 
-    private static final class ServersOfHost implements Task<FlowContext> {
+    private static final class ServersConfigsOfHost implements Task<FlowContext> {
 
         private final Environment environment;
         private final Dispatcher dispatcher;
         private final String host;
 
-        private ServersOfHost(Environment environment, Dispatcher dispatcher, String host) {
+        private ServersConfigsOfHost(Environment environment, Dispatcher dispatcher, String host) {
             this.environment = environment;
             this.dispatcher = dispatcher;
             this.host = host;
@@ -544,13 +580,13 @@ public final class TopologyTasks {
         }
     }
 
-    private static final class ServersOfServerGroup implements Task<FlowContext> {
+    private static final class ServerConfigsOfServerGroup implements Task<FlowContext> {
 
         private final Environment environment;
         private final Dispatcher dispatcher;
         private final String serverGroup;
 
-        private ServersOfServerGroup(Environment environment, Dispatcher dispatcher, String serverGroup) {
+        private ServerConfigsOfServerGroup(Environment environment, Dispatcher dispatcher, String serverGroup) {
             this.environment = environment;
             this.dispatcher = dispatcher;
             this.serverGroup = serverGroup;
@@ -691,9 +727,8 @@ public final class TopologyTasks {
                                 .param(ATTRIBUTES_ONLY, true)
                                 .param(INCLUDE_RUNTIME, true)
                                 .build());
-                        operations.add(
-                                new Operation.Builder(server.getServerAddress().add(CORE_SERVICE, MANAGEMENT),
-                                        READ_BOOT_ERRORS).build());
+                        operations.add(new Operation.Builder(server.getServerAddress().add(CORE_SERVICE, MANAGEMENT),
+                                READ_BOOT_ERRORS).build());
                     }
                 }
                 if (!operations.isEmpty()) {

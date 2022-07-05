@@ -353,6 +353,7 @@ public interface CSS {
     String panelHeading = "panel-heading";
     String panelTitle = "panel-title";
     String paused = "paused";
+    String pending = "pending";
     String pin = "pin";
     String pinned = "pinned";
     String pinnable = "pinnable";
