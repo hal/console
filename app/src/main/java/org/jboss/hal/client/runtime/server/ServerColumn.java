@@ -502,15 +502,17 @@ public class ServerColumn extends FinderColumn<Server> implements ServerActionHa
 
                                 AddResourceDialog dialog = new AddResourceDialog(resources.messages().addServerTitle(),
                                         form, (resource, payload) -> {
+                                            if (payload != null) {
+                                                payload.get(GROUP).set(statementContext.selectedServerGroup());
+                                                String serverName = nameItem.getValue();
+                                                ResourceAddress address = serverConfigTemplate(hostFormItem.getValue())
+                                                        .resolve(statementContext, serverName);
 
-                                            payload.get(GROUP).set(statementContext.selectedServerGroup());
-                                            String serverName = nameItem.getValue();
-                                            ResourceAddress address = serverConfigTemplate(hostFormItem.getValue())
-                                                    .resolve(statementContext, serverName);
+                                                crud.add(serverName, address, payload,
+                                                        resources.messages().addResourceSuccess(Names.SERVER, serverName),
+                                                        (name, address1) -> refresh(RESTORE_SELECTION));
 
-                                            crud.add(serverName, address, payload,
-                                                    resources.messages().addResourceSuccess(Names.SERVER, serverName),
-                                                    (name, address1) -> refresh(RESTORE_SELECTION));
+                                            }
                                         });
                                 dialog.getForm().<String> getFormItem(NAME).addValidationHandler(
                                         createUniqueValidation());
