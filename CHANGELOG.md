@@ -24,9 +24,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Upgrades
 
-- Bump Ace editor from 1.5.3 to 1.6.0
+- Bump Ace editor from 1.5.3 to 1.7.1
+- Bump GWT from 2.9.0 to 2.10.0
 - Bump Parcel from 2.6.0 to 2.6.2
-- Bump Quarkus from 2.9.2.Final to 2.10.0.Final
+- Bump Quarkus from 2.9.2.Final to 2.10.1.Final
 
 ## [3.6.0] - 2022-06-09
 
