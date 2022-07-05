@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [3.6.1] - 2022-07-05
+
 ### Added
 
 - [HAL-1793](https://issues.redhat.com/browse/HAL-1793): Determine the availability of statistics in case of unresolved expressions
@@ -297,7 +299,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - for dependency upgrades
 -->
 
-[Unreleased]: https://github.com/hal/console/compare/v3.6.0...HEAD
+[Unreleased]: https://github.com/hal/console/compare/v3.6.1...HEAD
+[3.6.1]: https://github.com/hal/console/compare/v3.6.0...v3.6.1
 [3.6.0]: https://github.com/hal/console/compare/v3.5.12...v3.6.0
 [3.5.12]: https://github.com/hal/console/compare/v3.5.11...v3.5.12
 [3.5.11]: https://github.com/hal/console/compare/v3.5.10...v3.5.11
