@@ -41,6 +41,7 @@ public abstract class AbstractEnvironment implements Environment {
     private String name;
     private String organization;
     private OperationMode operationMode;
+    private boolean primarySecondary;
     private String domainController;
     private Version managementVersion;
     private AccessControlProvider accessControlProvider;
@@ -59,6 +60,7 @@ public abstract class AbstractEnvironment implements Environment {
         this.operationMode = STANDALONE;
         this.name = null;
         this.organization = null;
+        this.primarySecondary = true;
         this.domainController = null;
         this.managementVersion = Version.EMPTY_VERSION;
         this.accessControlProvider = AccessControlProvider.SIMPLE;
@@ -122,6 +124,16 @@ public abstract class AbstractEnvironment implements Environment {
     @Override
     public void setOperationMode(OperationMode operationMode) {
         this.operationMode = operationMode;
+    }
+
+    @Override
+    public boolean isPrimarySecondary() {
+        return primarySecondary;
+    }
+
+    @Override
+    public void setPrimarySecondary(boolean primarySecondary) {
+        this.primarySecondary = primarySecondary;
     }
 
     @Override

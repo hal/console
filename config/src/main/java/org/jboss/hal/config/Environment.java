@@ -49,6 +49,13 @@ public interface Environment {
 
     void setOperationMode(OperationMode operationMode);
 
+    /**
+     * @return whether the naming in domain mode uses primary/secondary or master/slave.
+     */
+    boolean isPrimarySecondary();
+
+    void setPrimarySecondary(boolean primarySecondary);
+
     /** @return the name of the domain controller (DC). */
     String getDomainController();
 

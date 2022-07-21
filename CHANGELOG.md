@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Fixed
+
+- [HAL-1800](https://issues.redhat.com/browse/HAL-1800): Provide backward compatibility after migration from master/slave → primary/secondary
+
+### Upgrades
+
+- Bump ACE editor from 1.7.1 to 1.8.0
+- Bump Moment from 2.29.3 to 2.29.4
+- Bump Quarkus from 2.10.1.Final to 2.10.3.Final
+
 ## [3.6.1] - 2022-07-05
 
 ### Added
