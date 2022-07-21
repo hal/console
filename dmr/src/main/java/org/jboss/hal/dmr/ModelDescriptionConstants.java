@@ -559,6 +559,7 @@ public interface ModelDescriptionConstants {
     String MAPPED_ROLE_MAPPER = "mapped-role-mapper";
     String MAPPED_ROLES = "mapped-roles";
     String MAPPING_MODULE = "mapping-module";
+    String MASTER = "master";
     String MATCH_ALL = "match-all";
     String MAX = "max";
     String MAX_ACTIVE_SESSIONS = "max-active-sessions";

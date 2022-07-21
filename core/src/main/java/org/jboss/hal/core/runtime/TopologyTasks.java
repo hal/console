@@ -355,9 +355,9 @@ public final class TopologyTasks {
             } else {
                 Operation operation = new Operation.Builder(ResourceAddress.root(),
                         READ_CHILDREN_RESOURCES_OPERATION)
-                                .param(CHILD_TYPE, ModelDescriptionConstants.HOST)
-                                .param(INCLUDE_RUNTIME, true)
-                                .build();
+                        .param(CHILD_TYPE, ModelDescriptionConstants.HOST)
+                        .param(INCLUDE_RUNTIME, true)
+                        .build();
                 return dispatcher.execute(operation)
                         .then(result -> {
                             hosts.addAll(result.asPropertyList().stream()
@@ -406,8 +406,8 @@ public final class TopologyTasks {
                                     .add(SERVER_CONFIG, WILDCARD);
                             Operation serverConfigOperation = new Operation.Builder(serverConfigAddress,
                                     READ_RESOURCE_OPERATION)
-                                            .param(INCLUDE_RUNTIME, true)
-                                            .build();
+                                    .param(INCLUDE_RUNTIME, true)
+                                    .build();
                             Composite composite = new Composite(hostOperation, serverConfigOperation);
                             return (Task<FlowContext>) (FlowContext c) -> dispatcher.execute(composite)
                                     .then(result -> {
@@ -521,9 +521,9 @@ public final class TopologyTasks {
             } else {
                 Operation operation = new Operation.Builder(ResourceAddress.root(),
                         READ_CHILDREN_RESOURCES_OPERATION)
-                                .param(CHILD_TYPE, ModelDescriptionConstants.SERVER_GROUP)
-                                .param(INCLUDE_RUNTIME, true)
-                                .build();
+                        .param(CHILD_TYPE, ModelDescriptionConstants.SERVER_GROUP)
+                        .param(INCLUDE_RUNTIME, true)
+                        .build();
                 return dispatcher.execute(operation)
                         .then(result -> {
                             serverGroups.addAll(result.asPropertyList().stream()

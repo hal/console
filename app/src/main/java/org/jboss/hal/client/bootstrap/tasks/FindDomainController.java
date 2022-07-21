@@ -36,6 +36,7 @@ import static org.jboss.hal.client.bootstrap.tasks.ReadHostNames.HOST_NAMES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES_ONLY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MASTER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PRIMARY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
@@ -66,10 +67,19 @@ public final class FindDomainController implements Task<FlowContext> {
                                     .param(INCLUDE_RUNTIME, true)
                                     .build();
                             return (Task<FlowContext>) c -> dispatcher.execute(operation).then(result -> {
-                                boolean primary = result.get(PRIMARY).asBoolean();
+                                boolean primary = false;
+                                boolean primarySecondary = true;
+                                if (result.hasDefined(PRIMARY)) {
+                                    primary = result.get(PRIMARY).asBoolean();
+                                    primarySecondary = true;
+                                } else if (result.hasDefined(MASTER)) {
+                                    primary = result.get(MASTER).asBoolean();
+                                    primarySecondary = false;
+                                }
                                 if (primary) {
                                     String name = result.get(NAME).asString();
                                     environment.setDomainController(name);
+                                    environment.setPrimarySecondary(primarySecondary);
                                     logger.info("Found domain controller: {}", name);
                                 }
                                 return Promise.resolve(c);

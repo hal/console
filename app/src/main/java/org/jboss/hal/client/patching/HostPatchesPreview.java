@@ -34,7 +34,6 @@ import static org.jboss.elemento.EventType.click;
 import static org.jboss.hal.client.patching.HostPatchesColumn.hostTemplate;
 import static org.jboss.hal.client.patching.HostPatchesColumn.namedNodeToHost;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CORE_SERVICE_PATCHING;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.PRIMARY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESTART;
 import static org.jboss.hal.resources.CSS.alertLink;
 import static org.jboss.hal.resources.CSS.clickable;
@@ -49,7 +48,7 @@ class HostPatchesPreview extends RuntimePreview<Host> {
 
     @SuppressWarnings("HardCodedStringLiteral")
     HostPatchesPreview(HostActions hostActions, Host host, Resources resources) {
-        super(host.getName(), host.get(PRIMARY).asBoolean() ? Names.DOMAIN_CONTROLLER : Names.HOST_CONTROLLER,
+        super(host.getName(), host.isDomainController() ? Names.DOMAIN_CONTROLLER : Names.HOST_CONTROLLER,
                 resources);
         this.hostActions = hostActions;
         this.resources = resources;

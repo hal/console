@@ -20,7 +20,9 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Version;
+import org.jboss.hal.core.Core;
 import org.jboss.hal.core.runtime.HasServersNode;
 import org.jboss.hal.core.runtime.RunningMode;
 import org.jboss.hal.core.runtime.RunningState;
@@ -36,6 +38,7 @@ import static org.jboss.hal.core.runtime.RunningState.RESTART_REQUIRED;
 import static org.jboss.hal.core.runtime.RunningState.STARTING;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST_STATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MASTER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PRIMARY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNNING_MODE;
@@ -47,6 +50,8 @@ import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
  * until the host is reloaded.
  */
 public class Host extends HasServersNode {
+
+    private static final Environment _environment = Core.INSTANCE.environment();
 
     /**
      * Sorts the specified hosts alphabetically with the domain controller as first element.
@@ -164,7 +169,11 @@ public class Host extends HasServersNode {
     }
 
     public boolean isDomainController() {
-        return hasDefined(PRIMARY) && get(PRIMARY).asBoolean();
+        if (_environment.isPrimarySecondary()) {
+            return hasDefined(PRIMARY) && get(PRIMARY).asBoolean();
+        } else {
+            return hasDefined(MASTER) && get(MASTER).asBoolean();
+        }
     }
 
     public RunningState getHostState() {
