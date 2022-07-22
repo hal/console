@@ -31,7 +31,7 @@ jobs:
         run: gu install native-image
       - name: Build
         id: build
-        run: $MVN package --projects standalone --also-make -P native,prod,theme-hal
+        run: $MVN install --projects standalone --also-make -P native,prod,theme-hal
       - name: Upload
         id: upload
         uses: actions/upload-release-asset@v1
@@ -68,7 +68,7 @@ jobs:
         run: gu install native-image
       - name: Build
         id: build
-        run: $MVN package --projects standalone --also-make -P native,prod,theme-hal
+        run: $MVN install --projects standalone --also-make -P native,prod,theme-hal
       - name: Upload
         id: upload
         uses: actions/upload-release-asset@v1
@@ -113,7 +113,7 @@ jobs:
         id: build
         run: |
           "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
-          .\mvnw.cmd package -Pnative
+          .\mvnw.cmd install -Pnative
       - name: Upload
         id: upload
         uses: actions/upload-release-asset@v1
