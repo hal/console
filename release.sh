@@ -158,11 +158,14 @@ sed -E -i '' -e 's/\[([0-9]+\.[0-9]+\.[0-9]+)\.Final\]/[\1]/g' -e 's/v([0-9]+\.[
 msg "Push changes"
 git commit --quiet -am "Release ${RELEASE_VERSION}"
 git push --quiet upstream main &> /dev/null
+git push --quiet origin main &> /dev/null
 msg "Push tag"
 git tag "${TAG}"
 git push --quiet --tags upstream main &> /dev/null
+git push --quiet --tags origin main &> /dev/null
 ./versionBump.sh "${SNAPSHOT_VERSION}"
 msg "Push changes"
 git commit --quiet -am "Next is ${NEXT_VERSION}"
 git push --quiet upstream main &> /dev/null
+git push --quiet origin main &> /dev/null
 msg "Done. Watch the release workflow at https://github.com/hal/console/actions/workflows/release.yml"
