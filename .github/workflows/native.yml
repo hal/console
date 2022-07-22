@@ -26,12 +26,19 @@ jobs:
         run: |
           VERSION=$( ./mvnw help:evaluate -Dexpression=project.version --non-recursive --quiet -DforceStdout )
           echo "::set-output name=version::$VERSION"
+      - name: Wait for Maven Central
+        id: wait-for-maven-central
+        uses: ifaxity/wait-on-action
+        with:
+          resource: https://repo1.maven.org/maven2/org/jboss/hal/hal-bom/${{ steps.read-version.outputs.version }}/hal-bom-${{ steps.read-version.outputs.version }}.pom
+          interval: 60000 # 1 minute
+          timeout: 3600000 # 1 hour
       - name: Install Native Image
         id: install-native-image
         run: gu install native-image
       - name: Build
         id: build
-        run: $MVN install --projects standalone --also-make -P native,prod,theme-hal
+        run: $MVN package --projects standalone --also-make -P native,prod,theme-hal
       - name: Upload
         id: upload
         uses: actions/upload-release-asset@v1
@@ -63,12 +70,19 @@ jobs:
         run: |
           VERSION=$( ./mvnw help:evaluate -Dexpression=project.version --non-recursive --quiet -DforceStdout )
           echo "::set-output name=version::$VERSION"
+      - name: Wait for Maven Central
+        id: wait-for-maven-central
+        uses: ifaxity/wait-on-action
+        with:
+          resource: https://repo1.maven.org/maven2/org/jboss/hal/hal-bom/${{ steps.read-version.outputs.version }}/hal-bom-${{ steps.read-version.outputs.version }}.pom
+          interval: 60000 # 1 minute
+          timeout: 3600000 # 1 hour
       - name: Install Native Image
         id: install-native-image
         run: gu install native-image
       - name: Build
         id: build
-        run: $MVN install --projects standalone --also-make -P native,prod,theme-hal
+        run: $MVN package --projects standalone --also-make -P native,prod,theme-hal
       - name: Upload
         id: upload
         uses: actions/upload-release-asset@v1
@@ -100,6 +114,13 @@ jobs:
         run: |
           $version = (cmd /c ".\mvnw.cmd help:evaluate -Dexpression=project.version --non-recursive --quiet -DforceStdout") | Out-String
           echo "::set-output name=version::${version}"
+      - name: Wait for Maven Central
+        id: wait-for-maven-central
+        uses: ifaxity/wait-on-action
+        with:
+          resource: https://repo1.maven.org/maven2/org/jboss/hal/hal-bom/${{ steps.read-version.outputs.version }}/hal-bom-${{ steps.read-version.outputs.version }}.pom
+          interval: 60000 # 1 minute
+          timeout: 3600000 # 1 hour
       - name: Install Native Image
         id: install-native-image
         run: gu.cmd install native-image
@@ -113,7 +134,7 @@ jobs:
         id: build
         run: |
           "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
-          .\mvnw.cmd install -Pnative
+          .\mvnw.cmd package -Pnative
       - name: Upload
         id: upload
         uses: actions/upload-release-asset@v1

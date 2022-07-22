@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Upgrades
+
+- Bump ACE editor from 1.8.0 to 1.8.1
+
 ## [3.6.2] - 2022-07-22
 
 ### Fixed
