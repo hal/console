@@ -1,17 +1,17 @@
 /*
- * Copyright 2015-2016 Red Hat, Inc, and individual contributors.
+ *  Copyright 2022 Red Hat
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jboss.hal.client.runtime.subsystem.undertow;
 
@@ -20,9 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-import elemental2.dom.HTMLElement;
 import org.jboss.gwt.elemento.core.Elements;
 import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.LabelBuilder;
@@ -54,10 +51,42 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+
+import elemental2.dom.HTMLElement;
+
 import static java.util.stream.Collectors.toList;
-import static org.jboss.gwt.elemento.core.Elements.*;
+import static org.jboss.gwt.elemento.core.Elements.a;
+import static org.jboss.gwt.elemento.core.Elements.asHtmlElement;
+import static org.jboss.gwt.elemento.core.Elements.h;
+import static org.jboss.gwt.elemento.core.Elements.htmlElements;
+import static org.jboss.gwt.elemento.core.Elements.section;
+import static org.jboss.gwt.elemento.core.Elements.setVisible;
+import static org.jboss.gwt.elemento.core.Elements.span;
+import static org.jboss.gwt.elemento.core.Elements.stream;
 import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_SUBSYSTEM_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ACTIVE_SESSIONS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CONTEXT_ROOT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.EXPIRED_SESSIONS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LINK;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MAX_ACTIVE_SESSIONS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_ATTRIBUTE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REJECTED_SESSIONS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESOLVE_EXPRESSIONS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SESSIONS_CREATED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SESSION_AVG_ALIVE_TIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SESSION_MAX_ALIVE_TIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STATISTICS_ENABLED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDERTOW;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VIRTUAL_HOST;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
 class DeploymentPreview extends PreviewContent<DeploymentResource> {
@@ -172,17 +201,19 @@ class DeploymentPreview extends PreviewContent<DeploymentResource> {
                 .param(INCLUDE_RUNTIME, true)
                 .build();
         ResourceAddress webRuntimeAddress = WEB_SUBSYSTEM_TEMPLATE.resolve(statementContext);
-        Operation opSubsystem = new Operation.Builder(webRuntimeAddress, READ_RESOURCE_OPERATION)
-                .param(INCLUDE_RUNTIME, true)
+        Operation opStatistics = new Operation.Builder(webRuntimeAddress, READ_ATTRIBUTE_OPERATION)
+                .param(NAME, STATISTICS_ENABLED)
+                .param(RESOLVE_EXPRESSIONS, true)
                 .build();
-        dispatcher.execute(new Composite(opDeployment, opSubsystem), (CompositeResult compositeResult) -> {
+        dispatcher.execute(new Composite(opDeployment, opStatistics), (CompositeResult compositeResult) -> {
 
             ModelNode deploymentResult = compositeResult.step(0).get(RESULT);
-            ModelNode subsystemResult = compositeResult.step(1).get(RESULT);
+            ModelNode statisticsResult = compositeResult.step(1).get(RESULT);
             DeploymentResource deploymentStats = new DeploymentResource(item.getAddress(), deploymentResult);
             previewAttributes.refresh(deploymentStats);
 
-            boolean statsEnabled = subsystemResult.get(STATISTICS_ENABLED).asBoolean(false);
+            boolean statsAvailable = deploymentStats.get(SESSIONS_CREATED).asLong() > 0;
+            boolean statsEnabled = statisticsResult.asBoolean(statsAvailable);
             if (statsEnabled) {
                 Map<String, Long> updatedSession = new HashMap<>();
                 updatedSession.put(ACTIVE_SESSIONS, deploymentStats.get(ACTIVE_SESSIONS).asLong());
@@ -223,7 +254,7 @@ class DeploymentPreview extends PreviewContent<DeploymentResource> {
     private void injectUrls() {
         List<HTMLElement> linkContainers = new ArrayList<>();
         forEach(e -> {
-            List<HTMLElement> elements = stream(e.querySelectorAll("[data-" + LINK + "]")) //NON-NLS
+            List<HTMLElement> elements = stream(e.querySelectorAll("[data-" + LINK + "]")) // NON-NLS
                     .filter(htmlElements())
                     .map(asHtmlElement())
                     .collect(toList());
@@ -233,7 +264,7 @@ class DeploymentPreview extends PreviewContent<DeploymentResource> {
             String host = environment.isStandalone() ? Server.STANDALONE.getHost() : statementContext.selectedHost();
             String serverGroup = statementContext.selectedServerGroup();
             String server = environment.isStandalone() ? Server.STANDALONE.getName() : statementContext.selectedServer();
-            //noinspection Duplicates
+            // noinspection Duplicates
             serverActions.readUrl(environment.isStandalone(), host, serverGroup, server,
                     new AsyncCallback<ServerUrl>() {
                         @Override
