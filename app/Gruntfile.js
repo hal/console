@@ -75,12 +75,6 @@ module.exports = function (grunt) {
                     },
                     {
                         expand: true,
-                        cwd: '<%= config.node %>/zeroclipboard/dist',
-                        src: 'ZeroClipboard.swf',
-                        dest: '<%= config.public %>/js'
-                    },
-                    {
-                        expand: true,
                         cwd: '<%= config.js %>',
                         src: '*.js',
                         dest: '<%= config.public %>/js'
@@ -157,7 +151,7 @@ module.exports = function (grunt) {
                     '<%= config.node %>/jstree/dist/jstree.js',
                     '<%= config.node %>/pouchdb/dist/pouchdb.js',
                     '<%= config.js %>/tagmanager.js',
-                    '<%= config.node %>/zeroclipboard/dist/ZeroClipboard.js',
+                    '<%= config.node %>/clipboard/dist/clipboard.js',
                     '<%= config.node %>/patternfly/dist/js/patternfly.js'
                 ],
                 dest: '<%= config.public %>/js/external.js'
@@ -197,7 +191,7 @@ module.exports = function (grunt) {
                     '<%= config.node %>/jstree/dist/jstree.min.js',
                     '<%= config.node %>/pouchdb/dist/pouchdb.min.js',
                     '<%= config.js %>/tagmanager.js',
-                    '<%= config.node %>/zeroclipboard/dist/ZeroClipboard.min.js',
+                    '<%= config.node %>/clipboard/dist/clipboard.min.js',
                     '<%= config.node %>/patternfly/dist/js/patternfly.min.js'
                 ],
                 dest: '<%= config.public %>/js/external.min.js'
