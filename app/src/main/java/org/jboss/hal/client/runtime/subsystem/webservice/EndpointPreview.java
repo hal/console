@@ -54,6 +54,7 @@ import static org.jboss.elemento.Elements.a;
 import static org.jboss.elemento.Elements.h;
 import static org.jboss.elemento.Elements.section;
 import static org.jboss.hal.client.runtime.subsystem.webservice.AddressTemplates.WEBSERVICES_CONFIGURATION_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.webservice.AddressTemplates.WEBSERVICES_RUNTIME_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.AVERAGE_PROCESSING_TIME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CLASS;
@@ -173,7 +174,7 @@ class EndpointPreview extends PreviewContent<DeploymentResource> {
                 .param(CHILD_TYPE, ENDPOINT)
                 .param(INCLUDE_RUNTIME, true)
                 .build();
-        ResourceAddress configurationAddress = WEBSERVICES_CONFIGURATION_TEMPLATE.resolve(statementContext);
+        ResourceAddress configurationAddress = WEBSERVICES_RUNTIME_TEMPLATE.resolve(statementContext);
         Operation opStatistics = new Operation.Builder(configurationAddress, READ_ATTRIBUTE_OPERATION)
                 .param(NAME, STATISTICS_ENABLED)
                 .param(RESOLVE_EXPRESSIONS, true)
