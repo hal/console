@@ -154,6 +154,24 @@ public class ResourceAddress extends ModelNode {
     }
 
     /**
+     * Checks if this resource address starts with the specified address.
+     *
+     * @param address The address to check as start
+     * @return true if this address starts with the passed one, false otherwise
+     */
+    public boolean startsWith(ResourceAddress address) {
+        if (this.size() < address.size()) {
+            return false;
+        }
+        for (int i = 0; i < address.size(); i++) {
+            if (!this.get(i).equals(address.get(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Replaces the value in the specified segment
      *
      * @param name The name of the segment.

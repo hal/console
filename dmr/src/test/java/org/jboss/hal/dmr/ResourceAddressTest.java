@@ -65,6 +65,21 @@ public class ResourceAddressTest {
         assertArrayEquals(new String[] { "subsystem", "ee", "context-service", "default" }, segments(address));
     }
 
+    @Test
+    public void startsWith() {
+        ResourceAddress address = ResourceAddress.from("/host=primary/server=server1");
+        assertTrue(ResourceAddress.root().startsWith(ResourceAddress.root()));
+        assertTrue(ResourceAddress.from("/host=primary/server=server1").startsWith(ResourceAddress.root()));
+        assertTrue(ResourceAddress.from("/host=primary/server=server1").startsWith(address));
+        assertTrue(ResourceAddress.from("/host=primary/server=server1/").startsWith(address));
+        assertTrue(ResourceAddress.from("/host=primary/server=server1/subsystem=undertow").startsWith(address));
+        assertFalse(ResourceAddress.root().startsWith(address));
+        assertFalse(ResourceAddress.from("/host=primary").startsWith(address));
+        assertFalse(ResourceAddress.from("/host=primary/server=server2").startsWith(address));
+        assertFalse(ResourceAddress.from("/host=secondary/server=server1").startsWith(address));
+        assertFalse(ResourceAddress.from("/subsystem=undertow").startsWith(address));
+    }
+
     private String[] segments(ResourceAddress address) {
         List<String> segments = new ArrayList<>();
         for (Property property : address.asPropertyList()) {

@@ -27,7 +27,9 @@ import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mvp.Places;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -55,14 +57,21 @@ public class EndpointColumn extends FinderColumn<DeploymentResource> {
 
                 .columnAction(columnActionFactory.refresh(Ids.ENDPOINT_REFRESH))
 
-                .itemsProvider(context -> deploymentResources.readChildren(WEBSERVICES, ENDPOINT,
-                        (address, modelNode) -> {
-                            String name = address.lastValue().replaceAll("%3A", ":");
-                            return new DeploymentResource(name, address, modelNode);
-                        }).then(endpoints -> {
-                            endpoints.sort(Comparator.comparing(DeploymentResource::getName));
-                            return Promise.resolve(endpoints);
-                        }))
+                .itemsProvider(context -> {
+                    ResourceAddress baseAddress = AddressTemplate.of("{selected.host}/{selected.server}")
+                            .resolve(statementContext);
+                    return deploymentResources.readChildren(WEBSERVICES, ENDPOINT,
+                            (address, modelNode) -> {
+                                String name = address.lastValue().replaceAll("%3A", ":");
+                                ResourceAddress newAddress = baseAddress.isDefined() && !address.startsWith(baseAddress)
+                                        ? new ResourceAddress().add(baseAddress).add(address)
+                                        : address;
+                                return new DeploymentResource(name, newAddress, modelNode);
+                            }).then(endpoints -> {
+                                endpoints.sort(Comparator.comparing(DeploymentResource::getName));
+                                return Promise.resolve(endpoints);
+                            });
+                })
 
                 .itemRenderer(item -> new ItemDisplay<DeploymentResource>() {
                     @Override
