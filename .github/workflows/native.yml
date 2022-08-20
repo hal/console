@@ -28,7 +28,7 @@ jobs:
           echo "::set-output name=version::$VERSION"
       - name: Wait for Maven Central
         id: wait-for-maven-central
-        uses: ifaxity/wait-on-action
+        uses: iFaxity/wait-on-action@v1
         with:
           resource: https://repo1.maven.org/maven2/org/jboss/hal/hal-bom/${{ steps.read-version.outputs.version }}/hal-bom-${{ steps.read-version.outputs.version }}.pom
           interval: 60000 # 1 minute
@@ -72,7 +72,7 @@ jobs:
           echo "::set-output name=version::$VERSION"
       - name: Wait for Maven Central
         id: wait-for-maven-central
-        uses: ifaxity/wait-on-action
+        uses: iFaxity/wait-on-action@v1
         with:
           resource: https://repo1.maven.org/maven2/org/jboss/hal/hal-bom/${{ steps.read-version.outputs.version }}/hal-bom-${{ steps.read-version.outputs.version }}.pom
           interval: 60000 # 1 minute
@@ -116,7 +116,7 @@ jobs:
           echo "::set-output name=version::${version}"
       - name: Wait for Maven Central
         id: wait-for-maven-central
-        uses: ifaxity/wait-on-action
+        uses: iFaxity/wait-on-action@v1
         with:
           resource: https://repo1.maven.org/maven2/org/jboss/hal/hal-bom/${{ steps.read-version.outputs.version }}/hal-bom-${{ steps.read-version.outputs.version }}.pom
           interval: 60000 # 1 minute
