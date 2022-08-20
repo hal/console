@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [3.6.3] - 2022-08-20
+
 ### Fixed 
 
 - [HAL-1803](https://issues.redhat.com/browse/HAL-1803): Tests are not executed in main
@@ -324,7 +326,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - for dependency upgrades
 -->
 
-[Unreleased]: https://github.com/hal/console/compare/v3.6.2...HEAD
+[Unreleased]: https://github.com/hal/console/compare/v3.6.3...HEAD
+[3.6.3]: https://github.com/hal/console/compare/v3.6.2...v3.6.3
 [3.6.2]: https://github.com/hal/console/compare/v3.6.1...v3.6.2
 [3.6.1]: https://github.com/hal/console/compare/v3.6.0...v3.6.1
 [3.6.0]: https://github.com/hal/console/compare/v3.5.12...v3.6.0
