@@ -45,7 +45,7 @@
 
             <!-- GWT -->
             <dependency>
-                <groupId>com.google.gwt</groupId>
+                <groupId>org.gwtproject</groupId>
                 <artifactId>gwt</artifactId>
                 <version>${version.gwt}</version>
                 <type>pom</type>

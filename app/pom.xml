@@ -189,6 +189,8 @@
                         </goals>
                         <configuration>
                             <nodeVersion>${version.node}</nodeVersion>
+                            <npmVersion>${version.npm}</npmVersion>
+                            <npmVersion></npmVersion>
                             <skip>${skip.gwt}</skip>
                         </configuration>
                     </execution>

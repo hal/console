@@ -107,6 +107,7 @@
         <version.junit>4.13.2</version.junit>
         <version.mockito>4.7.0</version.mockito>
         <version.node>v16.14.0</version.node>
+        <version.npm>8.18.0</version.npm>
         <version.quarkus>2.11.2.Final</version.quarkus>
         <version.slf4j>1.7.36</version.slf4j>
         <version.slf4j.gwt>1.7.7.1</version.slf4j.gwt>
@@ -346,7 +347,7 @@
                         <include>org.jboss.hal:hal-resources</include>
                         <include>org.jboss.hal:hal-spi</include>
                         <include>com.google.elemental2:*</include>
-                        <include>com.google.gwt:gwt-user</include>
+                        <include>org.gwtproject:gwt-user</include>
                         <include>com.google.guava:guava</include>
                         <include>com.gwtplatform:gwtp-all</include>
                         <include>org.jboss.elemento:elemento-core</include>

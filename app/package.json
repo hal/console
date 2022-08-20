@@ -54,8 +54,5 @@
   },
   "dependenciesComments": {
     "bootstrap-switch": "Please use version '~3.3.5', since 3.4.x would require Bootstrap 4.x"
-  },
-  "overrides": {
-    "node-fetch": "2.6.7"
   }
 }

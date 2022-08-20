@@ -36,7 +36,7 @@
     <dependencies>
         <!-- Dependencies used by all GWT modules -->
         <dependency>
-            <groupId>com.google.gwt</groupId>
+            <groupId>org.gwtproject</groupId>
             <artifactId>gwt-user</artifactId>
         </dependency>
     </dependencies>
