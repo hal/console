@@ -31,7 +31,9 @@ import org.jboss.hal.core.finder.FinderContext;
 import org.jboss.hal.core.finder.FinderPathFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mvp.Places;
+import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -57,10 +59,15 @@ public class EndpointColumn extends FinderColumn<DeploymentResource> {
                 .columnAction(columnActionFactory.refresh(Ids.ENDPOINT_REFRESH))
 
                 .itemsProvider((FinderContext context, AsyncCallback<List<DeploymentResource>> callback) -> {
+                    ResourceAddress baseAddress = AddressTemplate.of("{selected.host}/{selected.server}")
+                            .resolve(statementContext);
                     deploymentResources.readChildren(WEBSERVICES, ENDPOINT,
                             (address, modelNode) -> {
                                 String name = address.lastValue().replaceAll("%3A", ":");
-                                DeploymentResource deploymentResource = new DeploymentResource(name, address,
+                                ResourceAddress newAddress = baseAddress.isDefined() && !address.startsWith(baseAddress)
+                                        ? new ResourceAddress().add(baseAddress).add(address)
+                                        : address;
+                                DeploymentResource deploymentResource = new DeploymentResource(name, newAddress,
                                         modelNode);
                                 return deploymentResource;
 
