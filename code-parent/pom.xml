@@ -90,6 +90,12 @@
                 <groupId>org.jboss.elemento</groupId>
                 <artifactId>elemento-core</artifactId>
                 <version>${version.elemento}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.junit.jupiter</groupId>
+                        <artifactId>junit-jupiter</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <!-- Annotation Processing -->
