@@ -141,7 +141,10 @@ public class Places {
 
     public String historyToken(PlaceRequest placeRequest) {
         String href = location();
-        href = href.substring(0, href.indexOf('#'));
+        int pos = href.indexOf('#');
+        if (pos != -1) {
+            href = href.substring(0, pos);
+        }
         return href + "#" + tokenFormatter.toHistoryToken(singletonList(placeRequest));
     }
 
