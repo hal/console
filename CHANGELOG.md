@@ -6,9 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Fixed 
+
+- [HAL-1803](https://issues.redhat.com/browse/HAL-1803): Tests are not executed in main
+- [HAL-1802](https://issues.redhat.com/browse/HAL-1802): HAL console unavailable after GWT upgrade to 2.10.0
+- [HAL-1801](https://issues.redhat.com/browse/HAL-1801): No resource definition registered for webservices endpoints on a host slave
+
 ### Upgrades
 
-- Bump ACE editor from 1.8.0 to 1.8.1
+- Bump ACE editor from 1.8.0 to 1.9.6
+- Bump Mockito from 4.6.1 to 4.7.0
+- Bump Quarkus from 2.10.3.Final to 2.11.2.Final
+- Bump Parcel from 2.6.2 to 2.7.0
 
 ## [3.6.2] - 2022-07-22
 
