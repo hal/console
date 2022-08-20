@@ -1,12 +1,12 @@
 Manifest-Version: 1.0
 Created-By: Apache Maven 3.8.5
 Built-By: runner
-Build-Jdk: 11.0.15
+Build-Jdk: 11.0.16
 Specification-Title: HAL :: Console
 Specification-Version: 3.6
 Specification-Vendor: Red Hat
 Implementation-Title: HAL :: Console
-Implementation-Version: 3.6.2.Final
+Implementation-Version: 3.6.3.Final
 Implementation-Vendor-Id: org.jboss.hal
 Implementation-Vendor: Red Hat
 Implementation-URL: https://hal.github.io/hal-code-parent/hal-gwt-parent
@@ -15,10 +15,10 @@ Java-Vendor: Eclipse Adoptium
 Java-Version: 11
 Os-Arch: amd64
 Os-Name: Linux
-Os-Version: 5.15.0-1014-azure
+Os-Version: 5.15.0-1017-azure
 Scm-Connection: scm:git:git@github.com:hal/console.git/hal-code-parent/h
  al-gwt-parent/hal-console
-Scm-Revision: 08f8f3f09e71c94e9a9ac4ce7f0bfa64cf301f3d
+Scm-Revision: 7eb39dd728a0ddcbe3694fc2c92d9c454f15082f
 Scm-Url: https://github.com/hal/console/hal-code-parent/hal-gwt-parent/h
  al-console
 
