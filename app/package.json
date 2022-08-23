@@ -47,7 +47,7 @@
     "js-cookie": "^3.0.1",
     "jstree": "^3.3.12",
     "moment": "^2.29.4",
-    "moment-timezone": "^0.5.34",
+    "moment-timezone": "^0.5.35",
     "patternfly": "^3.59.5",
     "pouchdb": "^7.3.0",
     "pouchdb-browser": "^7.3.0"
