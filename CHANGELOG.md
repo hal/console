@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Changed
+
+- Update i18n resources
+
+### Upgrades
+
+- Bump jQuery from 3.6.0 to 3.6.1
+- Bump Moment Timezone from 0.5.34 to 0.5.37
+- Bump Quarkus from 2.11.2.Final to 2.11.3.Final
+- Bump SLF4J from 1.7.36 to 2.0.0
+
 ## [3.6.3] - 2022-08-20
 
 ### Fixed 
