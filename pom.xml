@@ -105,10 +105,10 @@
         <version.jboss.dmr>1.6.1.Final</version.jboss.dmr>
         <version.jdom>2.0.2</version.jdom>
         <version.junit>4.13.2</version.junit>
-        <version.mockito>4.7.0</version.mockito>
+        <version.mockito>4.8.0</version.mockito>
         <version.node>v16.14.0</version.node>
         <version.npm>8.18.0</version.npm>
-        <version.quarkus>2.11.3.Final</version.quarkus>
+        <version.quarkus>2.12.1.Final</version.quarkus>
         <version.slf4j>2.0.0</version.slf4j>
         <version.slf4j.gwt>1.7.7.1</version.slf4j.gwt>
         <version.validation>1.0.0.GA</version.validation>
