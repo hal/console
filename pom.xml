@@ -109,7 +109,7 @@
         <version.node>v16.14.0</version.node>
         <version.npm>8.18.0</version.npm>
         <version.quarkus>2.12.2.Final</version.quarkus>
-        <version.slf4j>2.0.0</version.slf4j>
+        <version.slf4j>2.0.1</version.slf4j>
         <version.slf4j.gwt>1.7.7.1</version.slf4j.gwt>
         <version.validation>1.0.0.GA</version.validation>
 
