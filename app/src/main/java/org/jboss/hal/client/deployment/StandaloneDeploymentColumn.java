@@ -36,6 +36,7 @@ import org.jboss.hal.client.deployment.wizard.UploadDeploymentStep;
 import org.jboss.hal.client.shared.uploadwizard.UploadElement;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.CrudOperations;
+import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.deployment.Deployment;
 import org.jboss.hal.core.deployment.Deployment.Status;
 import org.jboss.hal.core.finder.ColumnAction;
@@ -51,6 +52,7 @@ import org.jboss.hal.core.runtime.server.ServerActions;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
@@ -83,8 +85,10 @@ import elemental2.promise.Promise;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.elemento.Elements.span;
+import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.DATA_SOURCE_SUBSYSTEM_TEMPLATE;
 import static org.jboss.hal.client.deployment.StandaloneDeploymentColumn.DEPLOYMENT_ADDRESS;
 import static org.jboss.hal.client.deployment.wizard.DeploymentState.NAMES;
 import static org.jboss.hal.client.deployment.wizard.DeploymentState.UPLOAD;
@@ -93,6 +97,7 @@ import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTI
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CONTENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DATA_SOURCE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DISABLED;
@@ -106,7 +111,9 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.PATH;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE_DEPTH;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEPLOY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.XA_DATA_SOURCE;
 import static org.jboss.hal.flow.Flow.sequential;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
@@ -324,14 +331,96 @@ public class StandaloneDeploymentColumn extends FinderColumn<Deployment> {
                                                 /* nothing to do, deployment is already selected */
                                             });
                                 } else {
-                                    wzd.showError(resources.constants().deploymentError(),
-                                            resources.messages().deploymentError(name),
-                                            flowContext.failureReason());
+                                    if (isFailureReasonDueToInvalidDataSource(flowContext.failureReason())) {
+                                        // for now isFailureReasonDueToInvalidDataSource(String failureReason) and
+                                        // returnInvalidDataSourceName(String error) dependend on error messages
+                                        // WFLYCTL0412 and WFLYCTL0180 not to be changed
+                                        getAvailableDataSources().then(availableDataSources -> {
+                                            SafeHtml message;
+                                            String invalidDataSource = returnInvalidDataSourceName(flowContext.failureReason());
+                                            if (availableDataSources.contains(invalidDataSource)) {
+                                                message = resources.messages().dataSourceInvalidJta(name,
+                                                        invalidDataSource, availableDataSources);
+                                            } else {
+                                                message = resources.messages().dataSourceDoesntExist(name,
+                                                        invalidDataSource, availableDataSources);
+                                            }
+                                            wzd.showError(resources.constants().deploymentError(), message,
+                                                    flowContext.failureReason());
+                                            return null;
+                                        });
+                                    } else {
+                                        wzd.showError(resources.constants().deploymentError(),
+                                                resources.messages().deploymentError(name),
+                                                flowContext.failureReason());
+                                    }
+
                                 }
                             });
                 })
                 .build();
         wizard.show();
+    }
+
+    /**
+     *
+     * @param error is failure reason containing error messages WFLYCTL0412 and WFLYCTL0180
+     * @return name of invalid data source as string
+     */
+    private String returnInvalidDataSourceName(String error) {
+        String wrongDS = error.substring(error.indexOf("[\""), error.indexOf("\"],"));
+        return wrongDS.substring(wrongDS.lastIndexOf(".")).substring(1);
+    }
+
+    /**
+     * this method is meant to be replaced later after refactoring of failure reason which is returned after unsuccessful upload
+     * of deployment due to invalid data source
+     *
+     * @param failureReason error message from unsuccessful uploading of deployment
+     * @return true if the failure reason contains error messages WFLYCTL0412, WFLYCTL0180
+     */
+    private boolean isFailureReasonDueToInvalidDataSource(String failureReason) {
+        return failureReason != null
+                && failureReason.contains("WFLYCTL0412: Required services that are not installed")
+                && failureReason.contains("WFLYCTL0180: Services with missing/unavailable dependencies")
+                && failureReason.contains("persistenceunit");
+    }
+
+    /**
+     * this method extracts all available data sources
+     *
+     * @return string of all available data sources
+     */
+    private Promise<String> getAvailableDataSources() {
+        ResourceAddress dataSourceAddress = DATA_SOURCE_SUBSYSTEM_TEMPLATE.resolve(statementContext);
+        Operation dataSourceOperation = new Operation.Builder(dataSourceAddress, READ_CHILDREN_RESOURCES_OPERATION)
+                .param(CHILD_TYPE, DATA_SOURCE).build();
+        Operation xaDataSourceOperation = new Operation.Builder(dataSourceAddress, READ_CHILDREN_RESOURCES_OPERATION)
+                .param(CHILD_TYPE, XA_DATA_SOURCE).build();
+
+        return dispatcher.execute(new Composite(dataSourceOperation, xaDataSourceOperation)).then(result -> {
+            List<DataSource> combined = new ArrayList<>();
+            combined.addAll(result.step(0).get(RESULT).asPropertyList().stream()
+                    .map(property -> new DataSource(property, false)).collect(toList()));
+            combined.addAll(result.step(1).get(RESULT).asPropertyList().stream()
+                    .map(property -> new DataSource(property, true)).collect(toList()));
+            combined.sort(comparing(NamedNode::getName));
+            return Promise.resolve(extractDataSources(combined));
+        });
+    }
+
+    /**
+     * this method extract string name of data sources
+     *
+     * @param dataSourceList is list of available data sources
+     * @return string of all available data sources
+     */
+    private String extractDataSources(List<DataSource> dataSourceList) {
+        StringBuilder dataSources = new StringBuilder();
+        for (DataSource dataSource : dataSourceList) {
+            dataSources.append(dataSource.getName()).append(", ");
+        }
+        return dataSources.substring(0, dataSources.length() - 2);
     }
 
     private void replace(Deployment deployment) {
