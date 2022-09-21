@@ -150,11 +150,15 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     SafeHtml dataSourceAddError();
 
+    SafeHtml dataSourceDoesntExist(String deploymentName, String wrongDataSource, String availableDataSources);
+
     SafeHtml dataSourceDisabled(String name);
 
     SafeHtml dataSourceDisabledNoStatistics(String name);
 
     SafeHtml dataSourceEnabled(String name);
+
+    SafeHtml dataSourceInvalidJta(String deploymentName, String wrongDataSource, String availableDataSources);
 
     SafeHtml dataSourceStatisticsDisabled(String name);
 
