@@ -47,12 +47,18 @@
     "js-cookie": "^3.0.1",
     "jstree": "^3.3.12",
     "moment": "^2.29.4",
-    "moment-timezone": "^0.5.37",
     "patternfly": "^3.59.5",
     "pouchdb": "^7.3.0",
     "pouchdb-browser": "^7.3.0"
   },
   "dependenciesComments": {
     "bootstrap-switch": "Please use version '~3.3.5', since 3.4.x would require Bootstrap 4.x"
+  },
+  "overrides": {
+    "moment-timezone": "0.5.37",
+    "patternfly": {
+      "bootstrap-select": "1.13.18",
+      "jquery": "3.6.1"
+    }
   }
 }

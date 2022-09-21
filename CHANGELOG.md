@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - [HAL-1805](https://issues.redhat.com/browse/HAL-1805) Fix wording "datasource" → "data source"
 - [HAL-1806](https://issues.redhat.com/browse/HAL-1806) Fix typo "commited" → "committed"
+- Fix NPM package vulnerabilities
 
 ### Upgrades
 
