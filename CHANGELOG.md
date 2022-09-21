@@ -6,6 +6,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Added 
+
+- Add SECURITY.md file
+- Add CODEOWNERS file
+
+### Changed
+
+- Update code of conduct
+
+### Fixed
+
+- [HAL-1805](https://issues.redhat.com/browse/HAL-1805) Fix wording "datasource" → "data source"
+- [HAL-1806](https://issues.redhat.com/browse/HAL-1806) Fix typo "commited" → "committed"
+
+### Upgrades
+
+- Bump ACE editor from 1.9.6 to 1.11.0
+- Bump Mockito from 4.7.0 4.8.0
+- Bump Quarkus from 2.11.2.Final to 2.12.3.Final
+- Bump SLF4J from 2.0.0 to 2.0.2
+
 ## [3.6.4] - 2022-08-31
 
 ### Changed
