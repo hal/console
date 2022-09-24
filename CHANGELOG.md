@@ -24,7 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Upgrades
 
-- Bump ACE editor from 1.9.6 to 1.11.0
+- Bump ACE editor from 1.9.6 to 1.11.1
 - Bump Mockito from 4.7.0 4.8.0
 - Bump Quarkus from 2.11.2.Final to 2.12.3.Final
 - Bump SLF4J from 2.0.0 to 2.0.2
