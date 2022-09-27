@@ -937,6 +937,7 @@ public interface ModelDescriptionConstants {
     String STATE = "state";
     String STATE_TRANSFER = "state-transfer";
     String STATIC_CONNECTORS = "static-connectors";
+    String STATISTICS = "statistics";
     String STATISTICS_ENABLED = "statistics-enabled";
     String STATUS = "status";
     String STEPS = "steps";
