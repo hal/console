@@ -118,8 +118,10 @@ parse_params "$@"
 setup_colors
 
 FINAL_VERSION="${RELEASE_VERSION}.Final"
+GIT_REMOTES=("origin" "upstream")
 SNAPSHOT_VERSION="${NEXT_VERSION}-SNAPSHOT"
 TAG="v${RELEASE_VERSION}"
+WORKFLOW_URL="https://github.com/hal/console/actions/workflows/release.yml"
 
 is_semver "${RELEASE_VERSION}" || die "Release version is not a semantic version"
 is_semver "${NEXT_VERSION}" || die "Next version is not a semantic version"
@@ -157,15 +159,21 @@ mvn --quiet -DskipModules keepachangelog:release &> /dev/null
 sed -E -i '' -e 's/\[([0-9]+\.[0-9]+\.[0-9]+)\.Final\]/[\1]/g' -e 's/v([0-9]+\.[0-9]+\.[0-9]+)\.Final/v\1/g' CHANGELOG.md
 msg "Push changes"
 git commit --quiet -am "Release ${RELEASE_VERSION}"
-git push --quiet upstream main &> /dev/null
-git push --quiet origin main &> /dev/null
+for remote in "${GIT_REMOTES[@]}"; do
+  git push --quiet "${remote}" main &> /dev/null
+  msg "    ${YELLOW}✓${NOFORMAT} ${remote}"
+done
 msg "Push tag"
 git tag "${TAG}"
-git push --quiet --tags upstream main &> /dev/null
-git push --quiet --tags origin main &> /dev/null
+for remote in "${GIT_REMOTES[@]}"; do
+  git push --quiet --tags "${remote}" main &> /dev/null
+  msg "    ${YELLOW}✓${NOFORMAT} ${remote}"
+done
 ./versionBump.sh "${SNAPSHOT_VERSION}"
 msg "Push changes"
 git commit --quiet -am "Next is ${NEXT_VERSION}"
-git push --quiet upstream main &> /dev/null
-git push --quiet origin main &> /dev/null
-msg "Done. Watch the release workflow at https://github.com/hal/console/actions/workflows/release.yml"
+for remote in "${GIT_REMOTES[@]}"; do
+  git push --quiet "${remote}" main &> /dev/null
+  msg "    ${YELLOW}✓${NOFORMAT} ${remote}"
+done
+msg "Done. Watch the release workflow at ${WORKFLOW_URL}"
