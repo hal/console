@@ -41,8 +41,10 @@ public interface UIConstants {
 
     String ARIA_DESCRIBEDBY = "aria-describedby";
     String ALERT = "alert";
+    String ADD_CIRCLE_O = "add-circle-o";
     String BODY = "body";
     String BUTTON = "button";
+    String BOTTOM = "bottom";
     String CHECKED = "checked";
     String COLLAPSE = "collapse";
     String CONSTRAINT = "constraint";

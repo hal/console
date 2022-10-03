@@ -104,7 +104,7 @@ public class ColumnActionFactory {
     }
 
     public <T> ColumnAction<T> add(String id, String type, AddressTemplate template, ColumnActionHandler<T> handler) {
-        return add(id, type, template, pfIcon("add-circle-o"), handler);
+        return add(id, type, template, pfIcon(UIConstants.ADD_CIRCLE_O), handler);
     }
 
     public <T> ColumnAction<T> add(String id, String type, AddressTemplate template, String iconCss,
@@ -119,14 +119,14 @@ public class ColumnActionFactory {
     }
 
     public HTMLElement addButton(String type) {
-        return addButton(resources.messages().addResourceTitle(type), pfIcon("add-circle-o"));
+        return addButton(resources.messages().addResourceTitle(type), pfIcon(UIConstants.ADD_CIRCLE_O));
     }
 
     public HTMLElement addButton(String title, String iconCss) {
         return span().css(iconCss)
                 .title(title)
                 .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
-                .data(UIConstants.PLACEMENT, "bottom").element();
+                .data(UIConstants.PLACEMENT, UIConstants.BOTTOM).element();
     }
 
     public <T> ColumnAction<T> refresh(String id) {
@@ -138,7 +138,7 @@ public class ColumnActionFactory {
                 .css(fontAwesome(CSS.refresh))
                 .title(resources.constants().refresh())
                 .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
-                .data(UIConstants.PLACEMENT, "bottom").element();
+                .data(UIConstants.PLACEMENT, UIConstants.BOTTOM).element();
         return new ColumnAction.Builder<T>(id)
                 .element(element)
                 .handler(handler)
