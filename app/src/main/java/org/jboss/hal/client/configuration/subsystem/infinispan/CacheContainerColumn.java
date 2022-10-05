@@ -47,6 +47,7 @@ import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
@@ -143,7 +144,7 @@ public class CacheContainerColumn extends FinderColumn<CacheContainer> {
                 .handler(column -> addRemoteCacheContainer())
                 .constraint(Constraint.executable(REMOTE_CACHE_CONTAINER_TEMPLATE, ADD))
                 .build());
-        addColumnActions(Ids.CACHE_CONTAINER_ADD_ACTIONS, pfIcon("add-circle-o"), resources.constants().add(),
+        addColumnActions(Ids.CACHE_CONTAINER_ADD_ACTIONS, pfIcon(UIConstants.ADD_CIRCLE_O), resources.constants().add(),
                 addActions);
         addColumnAction(columnActionFactory.refresh(Ids.CACHE_CONTAINER_REFRESH));
 

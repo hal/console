@@ -50,6 +50,7 @@ import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
@@ -164,7 +165,7 @@ public class CacheColumn extends FinderColumn<Cache> {
                     .constraint(Constraint.executable(cacheType.template, ADD))
                     .build());
         }
-        addColumnActions(Ids.CACHE_ADD_ACTIONS, pfIcon("add-circle-o"), resources.constants().add(), addActions);
+        addColumnActions(Ids.CACHE_ADD_ACTIONS, pfIcon(UIConstants.ADD_CIRCLE_O), resources.constants().add(), addActions);
         addColumnAction(columnActionFactory.refresh(Ids.CACHE_REFRESH));
 
         setItemRenderer(item -> new ItemDisplay<Cache>() {

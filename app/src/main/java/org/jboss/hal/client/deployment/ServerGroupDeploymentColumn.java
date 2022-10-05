@@ -70,6 +70,7 @@ import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
@@ -170,7 +171,7 @@ public class ServerGroupDeploymentColumn extends FinderColumn<ServerGroupDeploym
                 .handler(column -> addUnmanaged())
                 .constraint(Constraint.executable(SERVER_GROUP_DEPLOYMENT_TEMPLATE, ADD))
                 .build());
-        addColumnActions(Ids.SERVER_GROUP_DEPLOYMENT_ADD_ACTIONS, pfIcon("add-circle-o"), resources.constants().add(),
+        addColumnActions(Ids.SERVER_GROUP_DEPLOYMENT_ADD_ACTIONS, pfIcon(UIConstants.ADD_CIRCLE_O), resources.constants().add(),
                 addActions);
         addColumnAction(columnActionFactory.refresh(Ids.SERVER_GROUP_DEPLOYMENT_REFRESH));
 

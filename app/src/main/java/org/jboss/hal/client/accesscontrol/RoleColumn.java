@@ -65,6 +65,7 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
+import org.jboss.hal.resources.UIConstants;
 
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.web.bindery.event.shared.EventBus;
@@ -179,7 +180,7 @@ public class RoleColumn extends FinderColumn<Role> {
                             SERVER_GROUP_SCOPED_ROLE_TEMPLATE, AddressTemplate.of("/server-group=*"),
                             Ids.ROLE_SERVER_GROUP_SCOPED_FORM, SERVER_GROUPS))
                     .build());
-            addColumnActions(Ids.ROLE_ADD, pfIcon("add-circle-o"), resources.constants().add(), actions);
+            addColumnActions(Ids.ROLE_ADD, pfIcon(UIConstants.ADD_CIRCLE_O), resources.constants().add(), actions);
         }
         addColumnAction(columnActionFactory.refresh(Ids.ROLE_REFRESH,
                 column -> accessControl.reload(() -> refresh(RefreshMode.RESTORE_SELECTION))));

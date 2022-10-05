@@ -74,6 +74,7 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.Strings;
+import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Column;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
@@ -193,7 +194,7 @@ public class ContentColumn extends FinderColumn<Content> {
                 .handler(column -> createEmpty())
                 .constraint(Constraint.executable(CONTENT_TEMPLATE, ADD))
                 .build());
-        addColumnActions(Ids.CONTENT_ADD_ACTIONS, pfIcon("add-circle-o"), resources.constants().add(), addActions);
+        addColumnActions(Ids.CONTENT_ADD_ACTIONS, pfIcon(UIConstants.ADD_CIRCLE_O), resources.constants().add(), addActions);
         addColumnAction(columnActionFactory.refresh(Ids.CONTENT_REFRESH));
         setPreviewCallback(item -> new ContentPreview(this, item, environment, places,
                 metadataRegistry.lookup(SERVER_GROUP_DEPLOYMENT_TEMPLATE), resources));
