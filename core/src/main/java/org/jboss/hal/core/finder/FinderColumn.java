@@ -188,7 +188,7 @@ public class FinderColumn<T> implements IsElement<HTMLDivElement>, Attachable {
                         .add(hiddenColumns = span().css(CSS.hiddenColumns, fontAwesome("angle-double-left"))
                                 .title(CONSTANTS.hiddenColumns())
                                 .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
-                                .data(UIConstants.PLACEMENT, "bottom")
+                                .data(UIConstants.PLACEMENT, UIConstants.BOTTOM)
                                 .element())
                         .add(headerElement = h(1, builder.title).title(builder.title).element())
                         .element())
@@ -732,7 +732,7 @@ public class FinderColumn<T> implements IsElement<HTMLDivElement>, Attachable {
             HTMLElement element = span().css(iconsCss)
                     .title(title)
                     .data(UIConstants.TOGGLE, UIConstants.TOOLTIP)
-                    .data(UIConstants.PLACEMENT, "bottom")
+                    .data(UIConstants.PLACEMENT, UIConstants.BOTTOM)
                     .element();
             ColumnAction<T> dropdownAction = new ColumnAction.Builder<T>(id)
                     .element(element)
