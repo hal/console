@@ -51,12 +51,12 @@ import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
-import org.jboss.hal.resources.UIConstants;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
@@ -150,7 +150,8 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                 .handler(column -> prepareWizard(true))
                 .constraint(Constraint.executable(XA_DATA_SOURCE_TEMPLATE, ADD))
                 .build());
-        addColumnActions(Ids.DATA_SOURCE_ADD_ACTIONS, pfIcon(UIConstants.ADD_CIRCLE_O), resources.constants().add(), addActions);
+        addColumnActions(Ids.DATA_SOURCE_ADD_ACTIONS, pfIcon(UIConstants.ADD_CIRCLE_O), resources.constants().add(),
+                addActions);
         addColumnAction(columnActionFactory.refresh(Ids.DATA_SOURCE_REFRESH));
 
         setItemsProvider(context -> {

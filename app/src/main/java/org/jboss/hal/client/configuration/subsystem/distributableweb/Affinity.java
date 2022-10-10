@@ -22,14 +22,16 @@ import org.jboss.hal.resources.Names;
 /** Represents the different affinity singletons of a specific session management resource. */
 enum Affinity {
 
-    UNDEFINED(ModelDescriptionConstants.UNDEFINED, ModelDescriptionConstants.UNDEFINED, "null"), // represents undefined
-                                                                                                 // affinity, not an actual type
-                                                                                                 // in the subsystem
+    // represents undefined affinity, not an actual type in the subsystem
+    UNDEFINED(ModelDescriptionConstants.UNDEFINED, Names.UNDEFINED, "null"),
 
-    LOCAL(Ids.AFFINITY_LOCAL, Names.LOCAL, ModelDescriptionConstants.LOCAL), NONE(Ids.AFFINITY_NONE, Names.NONE,
-            ModelDescriptionConstants.NONE), PRIMARY_OWNER(Ids.AFFINITY_PRIMARY_OWNER, Names.PRIMARY_OWNER,
-                    ModelDescriptionConstants.PRIMARY_OWNER), RANKED(Ids.AFFINITY_RANKED, Names.RANKED,
-                            ModelDescriptionConstants.RANKED);
+    LOCAL(Ids.AFFINITY_LOCAL, Names.LOCAL, ModelDescriptionConstants.LOCAL),
+
+    NONE(Ids.AFFINITY_NONE, Names.NONE, ModelDescriptionConstants.NONE),
+
+    PRIMARY_OWNER(Ids.AFFINITY_PRIMARY_OWNER, Names.PRIMARY_OWNER, ModelDescriptionConstants.PRIMARY_OWNER),
+
+    RANKED(Ids.AFFINITY_RANKED, Names.RANKED, ModelDescriptionConstants.RANKED);
 
     static Affinity fromResource(String resource) {
         if (resource != null) {

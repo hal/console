@@ -283,7 +283,7 @@ public interface Names {
     String PORTS = "Ports";
     String POST_HANDLER_CHAIN = "Post Handler Chain";
     String PRE_HANDLER_CHAIN = "Pre Handler Chain";
-    String PRIMARY_OWNER = "primary-owner";
+    String PRIMARY_OWNER = "Primary owner";
     String PRINCIPAL_QUERY = "Principal Query";
     String PRODUCERS = "Producers";
     String PROFILE = "Profile";
@@ -295,7 +295,7 @@ public interface Names {
     String QUERY = "Query";
     String QUERY_CACHE = "Query Cache";
 
-    String RANKED = "ranked";
+    String RANKED = "Ranked";
     String REALM = "Realm";
     String RELAY = "Relay";
     String REMOTE_ACCEPTOR = "Remote Acceptor";
@@ -387,6 +387,7 @@ public interface Names {
     String TRUST_MANAGER = "Trust Manager";
     String TRUST_MODULE = "Trust Module";
 
+    String UNDEFINED = "Undefined";
     String UNKNOWN = "unknown";
     String UNMANAGED_DEPLOYMENT = "Unmanaged Deployment";
     String UNDERTOW = "Undertow";
