@@ -206,7 +206,7 @@ public interface Names {
     String LOAD_METRIC = "Load Metric";
     String LOAD_PROVIDER_DYNAMIC = "Load Provider Dynamic";
     String LOAD_PROVIDER_SIMPLE = "Load Provider Simple";
-    String LOCAL = "Local";
+    String LOCAL = "local";
     String LOCAL_CACHE = "Local Cache";
     String LOCAL_OUTBOUND_CONNECTION = "Local Outbound Connection";
     String LOCATION = "Location";
@@ -251,7 +251,7 @@ public interface Names {
     String NEW_ITEM_TEMPLATE = "New Item Template";
     String NODE = "Node";
     String NON_HEAP = "Non-heap";
-    String NONE = "None";
+    String NONE = "none";
     String NOT_AVAILABLE = "n/a";
     String NYI = "not yet implemented";
 
@@ -283,7 +283,7 @@ public interface Names {
     String PORTS = "Ports";
     String POST_HANDLER_CHAIN = "Post Handler Chain";
     String PRE_HANDLER_CHAIN = "Pre Handler Chain";
-    String PRIMARY_OWNER = "Primary owner";
+    String PRIMARY_OWNER = "primary owner";
     String PRINCIPAL_QUERY = "Principal Query";
     String PRODUCERS = "Producers";
     String PROFILE = "Profile";
@@ -295,7 +295,7 @@ public interface Names {
     String QUERY = "Query";
     String QUERY_CACHE = "Query Cache";
 
-    String RANKED = "Ranked";
+    String RANKED = "ranked";
     String REALM = "Realm";
     String RELAY = "Relay";
     String REMOTE_ACCEPTOR = "Remote Acceptor";
@@ -387,7 +387,7 @@ public interface Names {
     String TRUST_MANAGER = "Trust Manager";
     String TRUST_MODULE = "Trust Module";
 
-    String UNDEFINED = "Undefined";
+    String UNDEFINED = "undefined";
     String UNKNOWN = "unknown";
     String UNMANAGED_DEPLOYMENT = "Unmanaged Deployment";
     String UNDERTOW = "Undertow";
