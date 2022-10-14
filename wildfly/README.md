@@ -1,6 +1,11 @@
 # WildFly Images
 
-This folder contains scripts and Dockerfiles to build and run WildFly images for all WildFly versions >= 10.0.0.Final. The images build on top of [quay.io/wildfly/wildfly](https://quay.io/repository/wildfly/wildfly) and are hosted at [quay.io/halconsole/wildfly](https://quay.io/repository/halconsole/wildfly). 
+This folder contains scripts and Dockerfiles to build and run WildFly images for all WildFly versions >= 10.0.0.Final. The images build on top of [quay.io/wildfly/wildfly](https://quay.io/repository/wildfly/wildfly) and are hosted at 
+
+- [quay.io/halconsole/wildfly](https://quay.io/repository/halconsole/wildfly) 
+- [quay.io/halconsole/wildfly-development](https://quay.io/repository/halconsole/wildfly-development) 
+- [quay.io/halconsole/wildfly-domain](https://quay.io/repository/halconsole/wildfly-domain) 
+- [quay.io/halconsole/wildfly-domain-development](https://quay.io/repository/halconsole/wildfly-domain-development) 
 
 The images are mainly intended for the development and testing of HAL. If you're looking for (Jakarta EE) application development with WildFly, the official [WildFly images](https://quay.io/organization/wildfly) might be a better match. 
 
@@ -8,7 +13,7 @@ The images add an admin user `admin:admin` and [allowed origins](https://docs.wi
 
 - http://localhost:8888 (used by GWT dev mode)
 - http://localhost:9090 (used by HAL standalone)
-- http://hal:9090 (used by the HAL test suite)
+- http://hal:9090 (used by the HAL [test suite](https://github.com/hal/manatoko))
 - http://hal.github.io (latest online console)
 - https://hal.github.io (latest online console)
 
