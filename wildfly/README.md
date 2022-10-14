@@ -18,7 +18,7 @@ In addition, the images contain a `standalone-<config>-insecure.xml`  configurat
 
 ## Scripts
 
-Most scripts accept a WildFly version as `<major>[.<minor>]` with `major` being mandatory >= 10 and `minor` being optional >= 0 and <= 9. If the version is omitted, the latest WildFly development issue will be used. This image is built from the main branch at https:://github.org/wildfly/wildfly. 
+Most scripts accept a WildFly version as `<major>[.<minor>]` with `major` being mandatory >= 10 and `minor` being optional >= 0 and <= 9. If the version is omitted, the latest WildFly development issue will be used. This image is built from https:://github.org/wildfly/wildfly and is updated daily. 
 
 In addition, all scripts support the following flags:
 
