@@ -1,0 +1,39 @@
+name: WildFly Development Image
+
+on: workflow_dispatch
+
+jobs:
+
+  wildfly:
+    name: WildFly
+    runs-on: ubuntu-latest
+    env:
+      MVN: ./mvnw --show-version --batch-mode -Dcheckstyle.skip  -Denforcer.skip  -Dfindbugs.skip -Dformatter.skip -Dgmaven.execute.skip -Dimpsort.skip -Dlicense.skip -Dmaven.javadoc.skip -Dpmd.skip -DskipITs -DskipTests
+    steps:
+      - name: Checkout WildFly
+        id: checkout-wildfly
+        uses: actions/checkout@v3
+        with:
+          repository: wildfly/wildfly
+          path: wildfly
+      - name: Set up JDK
+        id: setup-jdk
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: maven
+      - name: Build WildFly
+        id: build-wildfly
+        run: |
+          cd wildfly
+          $MVN install -P release
+
+  docker:
+    name: Docker
+    runs-on: ubuntu-latest
+    needs: wildfly
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v3

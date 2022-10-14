@@ -1,0 +1,29 @@
+FROM jboss/base-jdk:11
+
+LABEL maintainer="Harald Pehl <hpehl@redhat.com>"
+
+ENV JBOSS_HOME /opt/jboss/wildfly
+ARG WILDFLY_VERSION
+COPY wildfly-${WILDFLY_VERSION}.tar.gz /
+
+
+USER root
+ARG WILDFLY_VERSION
+RUN tar xf /wildfly-${WILDFLY_VERSION}.tar.gz --directory=/ \
+    && mv /wildfly-${WILDFLY_VERSION} $JBOSS_HOME \
+    && rm /wildfly-${WILDFLY_VERSION}.tar.gz \
+    && chown -R jboss:0 ${JBOSS_HOME} \
+    && chmod -R g+rw ${JBOSS_HOME}
+
+USER jboss
+RUN /opt/jboss/wildfly/bin/add-user.sh -u admin -p admin --silent
+RUN sed -e 's/<http-interface\(.*\)security-realm="ManagementRealm"\(.*\)>/<http-interface\1\2>/' -e 's/<http-interface\(.*\)http-authentication-factory="management-http-authentication"\(.*\)>/<http-interface\1\2>/' -e 's/<http-upgrade\(.*\)sasl-authentication-factory="management-sasl-authentication"\(.*\)\/>/<http-upgrade\1\2\/>/' /opt/jboss/wildfly/domain/configuration/host.xml > /opt/jboss/wildfly/domain/configuration/host-insecure.xml
+RUN sed -i '/allowed-origins=".*"/! s/<http-interface\(.*\)>/<http-interface\1 allowed-origins="http:\/\/localhost:8888 http:\/\/localhost:9090 http:\/\/hal:9090 http:\/\/hal.github.io https:\/\/hal.github.io">/' /opt/jboss/wildfly/domain/configuration/host*.xml
+RUN sed -i '/<server .*auto-start.*/! s/\(<server .*"\)\(>\)$/\1 auto-start="false"\2/' /opt/jboss/wildfly/domain/configuration/host*.xml
+RUN sed -i '/<server .*auto-start.*/! s/\(<server .*"\)\(\/>\)$/\1 auto-start="false"\2/' /opt/jboss/wildfly/domain/configuration/host*.xml
+RUN sed -i 's/\(<server.*auto-start="\)true\(".*\)/\1false\2/' /opt/jboss/wildfly/domain/configuration/host*.xml
+
+ENV LAUNCH_JBOSS_IN_BACKGROUND true
+EXPOSE 8080 9990
+ENTRYPOINT ["/opt/jboss/wildfly/bin/domain.sh", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0"]
+CMD ["-c", "domain.xml"]
