@@ -5,6 +5,10 @@ trap cleanup SIGINT SIGTERM ERR EXIT
 
 VERSION=0.0.1
 
+script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
+readonly script_dir
+cd "${script_dir}"
+
 usage() {
   cat <<EOF
 USAGE:
