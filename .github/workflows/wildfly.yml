@@ -1,6 +1,9 @@
 name: WildFly Development Image
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
 
 jobs:
   wildfly:
@@ -18,7 +21,7 @@ jobs:
           cache: maven
       - name: Build WildFly
         id: build-wildfly
-        run: wildfly/build-wildfly.sh
+        run: wildfly/build-wildfly.sh --no-color
       - name: Login to Quay.io
         id: login-to-quay-io
         uses: docker/login-action@v2
@@ -28,4 +31,4 @@ jobs:
           password: ${{ secrets.QUAY_ROBOT_TOKEN }}
       - name: Push WildFly
         id: push-wildfly
-        run: wildfly/push-wildfly.sh
+        run: wildfly/push-wildfly.sh --no-color
