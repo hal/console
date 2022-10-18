@@ -129,7 +129,7 @@ jobs:
         uses: al-cheb/configure-pagefile-action@v1.2
       - name: Setup MSVC
         id: setup-msvc
-        uses: ilammy/msvc-dev-cmd@v1.11.0
+        uses: ilammy/msvc-dev-cmd@v1.12.0
       - name: Build
         id: build
         run: |
