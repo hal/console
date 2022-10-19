@@ -65,7 +65,7 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
             JdbcDriver driver = new JdbcDriver(H2);
             driver.get(DRIVER_MODULE_NAME).set("com.h2database.h2");
             driver.get(DRIVER_CLASS_NAME).set("org.h2.Driver");
-            driver.get(DRIVER_XA_DATASOURCE_CLASS_NAME).set("org.h2.jdbcx.JdbcDataSource");
+            driver.get(DRIVER_XA_DATASOURCE_CLASS_NAME);
             return driver;
         };
         setup.add(new DataSourceTemplate(H2, DataSourceTemplate.Vendor.H2,
@@ -99,7 +99,7 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
             JdbcDriver driver = new JdbcDriver(POSTGRESQL);
             driver.get(DRIVER_MODULE_NAME).set("org.postgresql");
             driver.get(DRIVER_CLASS_NAME).set("org.postgresql.Driver");
-            driver.get(DRIVER_XA_DATASOURCE_CLASS_NAME).set("org.postgresql.xa.PGXADataSource");
+            driver.get(DRIVER_XA_DATASOURCE_CLASS_NAME);
             return driver;
         };
         setup.add(new DataSourceTemplate(POSTGRESQL, POSTGRE_SQL,
@@ -141,7 +141,7 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
             JdbcDriver driver = new JdbcDriver(MYSQL);
             driver.get(DRIVER_MODULE_NAME).set("com.mysql");
             driver.get(DRIVER_CLASS_NAME).set("com.mysql.cj.jdbc.Driver");
-            driver.get(DRIVER_XA_DATASOURCE_CLASS_NAME).set("com.mysql.cj.jdbc.MysqlXADataSource");
+            driver.get(DRIVER_XA_DATASOURCE_CLASS_NAME);
             return driver;
         };
         setup.add(new DataSourceTemplate(MYSQL, DataSourceTemplate.Vendor.MYSQL,
@@ -183,7 +183,7 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
             JdbcDriver driver = new JdbcDriver(MARIADB);
             driver.get(DRIVER_MODULE_NAME).set("org.mariadb");
             driver.get(DRIVER_CLASS_NAME).set("org.mariadb.jdbc.Driver");
-            driver.get(DRIVER_XA_DATASOURCE_CLASS_NAME).set("org.mariadb.jdbc.MariaDbDataSource");
+            driver.get(DRIVER_XA_DATASOURCE_CLASS_NAME);
             return driver;
         };
         setup.add(new DataSourceTemplate(MARIADB, DataSourceTemplate.Vendor.MARIA_DB,
@@ -225,7 +225,7 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
             JdbcDriver driver = new JdbcDriver(ORACLE);
             driver.get(DRIVER_MODULE_NAME).set("com.oracle");
             driver.get(DRIVER_CLASS_NAME).set("oracle.jdbc.driver.OracleDriver");
-            driver.get(DRIVER_XA_DATASOURCE_CLASS_NAME).set("oracle.jdbc.xa.client.OracleXADataSource");
+            driver.get(DRIVER_XA_DATASOURCE_CLASS_NAME);
             return driver;
         };
         setup.add(new DataSourceTemplate(ORACLE, DataSourceTemplate.Vendor.ORACLE,
@@ -271,7 +271,7 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
             JdbcDriver driver = new JdbcDriver(SQLSERVER);
             driver.get(DRIVER_MODULE_NAME).set("com.microsoft");
             driver.get(DRIVER_CLASS_NAME).set("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-            driver.get(DRIVER_XA_DATASOURCE_CLASS_NAME).set("com.microsoft.sqlserver.jdbc.SQLServerXADataSource");
+            driver.get(DRIVER_XA_DATASOURCE_CLASS_NAME);
             return driver;
         };
         setup.add(new DataSourceTemplate(SQLSERVER, SQL_SERVER,
@@ -311,7 +311,7 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
             JdbcDriver driver = new JdbcDriver("ibmdb2");
             driver.get(DRIVER_MODULE_NAME).set("com.ibm");
             driver.get(DRIVER_CLASS_NAME).set("com.ibm.db2.jcc.DB2Driver");
-            driver.get(DRIVER_XA_DATASOURCE_CLASS_NAME).set("COM.ibm.db2.jdbc.DB2XADataSource");
+            driver.get(DRIVER_XA_DATASOURCE_CLASS_NAME);
             return driver;
         };
         setup.add(new DataSourceTemplate("db2", DB2,
@@ -360,7 +360,7 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
             JdbcDriver driver = new JdbcDriver(SYBASE);
             driver.get(DRIVER_MODULE_NAME).set("com.sybase");
             driver.get(DRIVER_CLASS_NAME).set("com.sybase.jdbc.SybDriver");
-            driver.get(DRIVER_XA_DATASOURCE_CLASS_NAME).set("com.sybase.jdbc4.jdbc.SybXADataSource");
+            driver.get(DRIVER_XA_DATASOURCE_CLASS_NAME);
             return driver;
         };
         setup.add(new DataSourceTemplate(SYBASE, DataSourceTemplate.Vendor.SYBASE,
