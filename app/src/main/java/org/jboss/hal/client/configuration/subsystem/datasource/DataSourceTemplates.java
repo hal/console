@@ -107,7 +107,7 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                     DataSource dataSource = new DataSource("PostgresDS", false);
                     dataSource.get(JNDI_NAME).set("java:/PostgresDS");
                     dataSource.get(DRIVER_NAME).set(POSTGRESQL);
-                    dataSource.get(CONNECTION_URL).set("jdbc:postgresql://localhost:5432/postgresdb");
+                    dataSource.get(CONNECTION_URL).set("jdbc:postgresql://localhost:5432/" + DATABASE_NAME);
                     dataSource.get(USER_NAME).set(ADMIN);
                     dataSource.get(PASSWORD).set(ADMIN);
                     dataSource.get(VALIDATE_ON_MATCH).set(true);
@@ -149,7 +149,7 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                     DataSource dataSource = new DataSource("MySqlDS", false);
                     dataSource.get(JNDI_NAME).set("java:/MySqlDS");
                     dataSource.get(DRIVER_NAME).set(MYSQL);
-                    dataSource.get(CONNECTION_URL).set("jdbc:mysql://localhost:3306/mysqldb");
+                    dataSource.get(CONNECTION_URL).set("jdbc:mysql://localhost:3306/" + DATABASE_NAME);
                     dataSource.get(USER_NAME).set(ADMIN);
                     dataSource.get(PASSWORD).set(ADMIN);
                     dataSource.get(VALIDATE_ON_MATCH).set(true);
@@ -191,7 +191,7 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                     DataSource dataSource = new DataSource("MariaDB", false);
                     dataSource.get(JNDI_NAME).set("java:/MariaDB");
                     dataSource.get(DRIVER_NAME).set(MARIADB);
-                    dataSource.get(CONNECTION_URL).set("jdbc:mariadb://localhost:3306/db");
+                    dataSource.get(CONNECTION_URL).set("jdbc:mariadb://localhost:3306/" + DATABASE_NAME);
                     dataSource.get(USER_NAME).set(ADMIN);
                     dataSource.get(PASSWORD).set(ADMIN);
                     dataSource.get(VALIDATE_ON_MATCH).set(true);
@@ -233,7 +233,7 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                     DataSource dataSource = new DataSource("OracleDS", false);
                     dataSource.get(JNDI_NAME).set("java:/OracleDS");
                     dataSource.get(DRIVER_NAME).set(ORACLE);
-                    dataSource.get(CONNECTION_URL).set("jdbc:oracle:thin:@localhost:1521:orcalesid");
+                    dataSource.get(CONNECTION_URL).set("jdbc:oracle:thin:@localhost:1521:" + DATABASE_NAME);
                     dataSource.get(USER_NAME).set(ADMIN);
                     dataSource.get(PASSWORD).set(ADMIN);
                     dataSource.get(VALIDATE_ON_MATCH).set(true);
@@ -280,7 +280,7 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                     dataSource.get(JNDI_NAME).set("java:/MSSQLDS");
                     dataSource.get(DRIVER_NAME).set(SQLSERVER);
                     dataSource.get(CONNECTION_URL)
-                            .set("jdbc:sqlserver://localhost:1433;DatabaseName=MyDatabase");
+                            .set("jdbc:sqlserver://localhost:1433;DatabaseName=" + DATABASE_NAME);
                     dataSource.get(USER_NAME).set(ADMIN);
                     dataSource.get(PASSWORD).set(ADMIN);
                     dataSource.get(VALIDATE_ON_MATCH).set(true);
@@ -319,7 +319,7 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                     DataSource dataSource = new DataSource("DB2DS", false);
                     dataSource.get(JNDI_NAME).set("java:/DB2DS");
                     dataSource.get(DRIVER_NAME).set("ibmdb2");
-                    dataSource.get(CONNECTION_URL).set("jdbc:db2:yourdatabase");
+                    dataSource.get(CONNECTION_URL).set("jdbc:db2:" + DATABASE_NAME);
                     dataSource.get(USER_NAME).set(ADMIN);
                     dataSource.get(PASSWORD).set(ADMIN);
                     dataSource.get(VALIDATE_ON_MATCH).set(true);
@@ -368,7 +368,8 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
                     DataSource dataSource = new DataSource("SybaseDB", false);
                     dataSource.get(JNDI_NAME).set("java:/SybaseDB");
                     dataSource.get(DRIVER_NAME).set(SYBASE);
-                    dataSource.get(CONNECTION_URL).set("jdbc:sybase:Tds:localhost:5000/mydatabase?JCONNECT_VERSION=6");
+                    dataSource.get(CONNECTION_URL)
+                            .set("jdbc:sybase:Tds:localhost:5000/" + DATABASE_NAME + "?JCONNECT_VERSION=6");
                     dataSource.get(USER_NAME).set(ADMIN);
                     dataSource.get(PASSWORD).set(ADMIN);
                     dataSource.get(VALIDATE_ON_MATCH).set(true);
