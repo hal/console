@@ -115,3 +115,15 @@ Here are some tips on increasing the chance that your pull request is accepted:
 
  * Write a [good commit message](https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html)
  * Include tests that fail without your code, and pass with it
+
+# Issues
+
+HAL uses JIRA to manage issues. All issues can be found [here](https://issues.redhat.com/projects/HAL/issues).
+
+To create a new issue, comment on an existing issue, or assign an issue to yourself, you'll need to first [create a JIRA account](https://issues.redhat.com/).
+
+## Good First Issues
+
+Want to contribute to HAL but aren't quite sure where to start? Check out our issues with the `good-first-issue` label. These are a triaged set of issues that are great for getting started on our project. These can be found [here](https://issues.redhat.com/browse/HAL-1600?filter=12402986).
+
+Once you have selected an issue you'd like to work on, make sure it's not already assigned to someone else. To assign an issue to yourself, simply click on "Start Progress". This will automatically assign the issue to you.
