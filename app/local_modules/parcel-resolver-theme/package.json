@@ -8,6 +8,6 @@
   },
   "devDependencies": {
     "@parcel/diagnostic": "^2.6.2",
-    "parcel": "^2.7.0"
+    "parcel": "^2.8.0"
   }
 }
