@@ -48,6 +48,13 @@ public final class StartAnalytics implements Task<FlowContext> {
     private static final String PRODUCTION_ID = "UA-89365654-1";
     private static final String DEVELOPMENT_ID = "UA-89365654-2";
     private static final String UNKNOWN_ID = "UA-89365654-4";
+    
+    private static final String TS_HTML = "ts.html";
+    private static final String SCRIPT = "script";
+    private static final String ANONYMIZE_IP = "anonymizeIp";
+    private static final String COOKIE_DOMAIN = "cookieDomain";
+    private static final String TRACKING_ID = "trackingId";
+    private static final String AUTO = "auto";
 
     private static final Logger logger = LoggerFactory.getLogger(StartAnalytics.class);
 
@@ -67,7 +74,7 @@ public final class StartAnalytics implements Task<FlowContext> {
     @Override
     public Promise<FlowContext> apply(final FlowContext context) {
         String pathname = window.location.pathname;
-        boolean testSuite = pathname.endsWith("ts.html");
+        boolean testSuite = pathname.endsWith(TS_HTML);
         boolean collectUserData = settings.get(COLLECT_USER_DATA).asBoolean();
         if (!testSuite && collectUserData) {
             String id;
@@ -79,7 +86,7 @@ public final class StartAnalytics implements Task<FlowContext> {
                 id = UNKNOWN_ID;
             }
 
-            HTMLScriptElement script = (HTMLScriptElement) document.createElement("script");
+            HTMLScriptElement script = (HTMLScriptElement) document.createElement(SCRIPT);
             script.text = "(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');ga('create', "
                     + stringify(
                             config(id))
@@ -114,9 +121,9 @@ public final class StartAnalytics implements Task<FlowContext> {
 
     private JsonObject config(String id) {
         JsonObject config = JsonObject.create();
-        config.put("anonymizeIp", true);
-        config.put("cookieDomain", "auto");
-        config.put("trackingId", id);
+        config.put(ANONYMIZE_IP, true);
+        config.put(COOKIE_DOMAIN, AUTO);
+        config.put(TRACKING_ID, id);
         return config;
     }
 }
