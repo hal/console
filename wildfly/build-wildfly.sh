@@ -187,6 +187,10 @@ else
   if [[ "$WILDFLY_MAJOR_VERSION" -lt "24" ]]; then
     BASE=docker.io/jboss/wildfly
   fi
+  # Use JDK17 for for WildFly 27 and above
+  if [[ "$WILDFLY_MAJOR_VERSION" -gt "26" ]]; then
+    WILDFLY_VERSION=$WILDFLY_VERSION-jdk17
+  fi
 
   msg
   msg "Build WildFly ${CYAN}standalone${NOFORMAT} ${YELLOW}${WILDFLY_VERSION}${NOFORMAT}"
