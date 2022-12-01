@@ -456,6 +456,7 @@ public interface ModelDescriptionConstants {
     String JAX_RS = "jaxrs";
     String JCA = "jca";
     String JDBC = "jdbc";
+    String JDBC_COMPLIANT = "jdbc-compliant";
     String JDBC_DRIVER = "jdbc-driver";
     String JDBC_REALM = "jdbc-realm";
     String JDR = "jdr";

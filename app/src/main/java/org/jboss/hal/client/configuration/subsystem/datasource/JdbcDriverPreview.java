@@ -29,6 +29,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_CLASS_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_DATASOURCE_CLASS_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_VERSION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_XA_DATASOURCE_CLASS_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.JDBC_COMPLIANT;
 
 class JdbcDriverPreview extends PreviewContent<JdbcDriver> {
 
@@ -52,7 +53,7 @@ class JdbcDriverPreview extends PreviewContent<JdbcDriver> {
                 .append(DRIVER_DATASOURCE_CLASS_NAME)
                 .append(DRIVER_XA_DATASOURCE_CLASS_NAME)
                 .append(model -> new PreviewAttribute(labelBuilder.label(DRIVER_VERSION), model.getDriverVersion()))
-                .append("jdbc-compliant"); // NON-NLS
+                .append(JDBC_COMPLIANT); // NON-NLS
         previewBuilder().addAll(attributes);
     }
 }
