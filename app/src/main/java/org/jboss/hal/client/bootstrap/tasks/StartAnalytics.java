@@ -48,7 +48,7 @@ public final class StartAnalytics implements Task<FlowContext> {
     private static final String PRODUCTION_ID = "UA-89365654-1";
     private static final String DEVELOPMENT_ID = "UA-89365654-2";
     private static final String UNKNOWN_ID = "UA-89365654-4";
-    
+
     private static final String TS_HTML = "ts.html";
     private static final String SCRIPT = "script";
     private static final String ANONYMIZE_IP = "anonymizeIp";
