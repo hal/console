@@ -1,5 +1,3 @@
-// noinspection JSValidateTypes
-
 /*
  *  Copyright 2022 Red Hat
  *
@@ -31,10 +29,10 @@ require("bootstrap-switch");
 
 // Datatables
 // https://datatables.net/download/npm
-require("datatables.net")(window, $);
-require("datatables.net-select")(window, $);
-require("datatables.net-buttons")(window, $);
-require("datatables.net-keytable")(window, $);
+require("datatables.net")
+require("datatables.net-select")
+require("datatables.net-buttons")
+require("datatables.net-keytable")
 
 // Ace Editor
 require("ace-builds");
