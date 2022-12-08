@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [3.6.5] - 2022-12-08
+
 ### Added 
 
 - [HAL-1425](https://issues.redhat.com/browse/HAL-1425): Deployment with persistence.xml - check if data source is available
@@ -373,7 +375,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - for dependency upgrades
 -->
 
-[Unreleased]: https://github.com/hal/console/compare/v3.6.4...HEAD
+[Unreleased]: https://github.com/hal/console/compare/v3.6.5...HEAD
+[3.6.5]: https://github.com/hal/console/compare/v3.6.4...v3.6.5
 [3.6.4]: https://github.com/hal/console/compare/v3.6.3...v3.6.4
 [3.6.3]: https://github.com/hal/console/compare/v3.6.2...v3.6.3
 [3.6.2]: https://github.com/hal/console/compare/v3.6.1...v3.6.2
