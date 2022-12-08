@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Upgrades
+
+- Bump GraalVM to 22.3.0
+
 ## [3.6.5] - 2022-12-08
 
 ### Added 

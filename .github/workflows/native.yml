@@ -19,7 +19,7 @@ jobs:
         id: setup-graalvm
         uses: DeLaGuardo/setup-graalvm@5.0
         with:
-          graalvm: 22.0.0.2
+          graalvm: 22.3.0
           java: java11
       - name: Read Version
         id: read-version
@@ -63,7 +63,7 @@ jobs:
         id: setup-graalvm
         uses: DeLaGuardo/setup-graalvm@5.0
         with:
-          graalvm: 22.0.0.2
+          graalvm: 22.3.0
           java: java11
       - name: Read Version
         id: read-version
@@ -107,7 +107,7 @@ jobs:
         id: setup-graalvm
         uses: DeLaGuardo/setup-graalvm@5.0
         with:
-          graalvm: 22.0.0.2
+          graalvm: 22.3.0
           java: java11
       - name: Read Version
         id: read-version
