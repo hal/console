@@ -24,10 +24,13 @@ import static org.jboss.hal.client.configuration.subsystem.infinispan.Table.STRI
 /** Represents the different store singletons of a specific cache resource. */
 public enum Store {
 
-    CUSTOM(Ids.CACHE_STORE_CUSTOM, Names.CUSTOM, ModelDescriptionConstants.CUSTOM, true), FILE(Ids.CACHE_STORE_FILE, Names.FILE,
-            ModelDescriptionConstants.FILE, false), HOT_ROD(Ids.CACHE_STORE_HOT_ROD, Names.HOT_ROD,
-                    ModelDescriptionConstants.HOTROD,
-                    true), JDBC(Ids.CACHE_STORE_JDBC, Names.JDBC, ModelDescriptionConstants.JDBC, true, STRING);
+    CUSTOM(Ids.CACHE_STORE_CUSTOM, Names.CUSTOM, ModelDescriptionConstants.CUSTOM, true),
+
+    FILE(Ids.CACHE_STORE_FILE, Names.FILE, ModelDescriptionConstants.FILE, false),
+
+    HOT_ROD(Ids.CACHE_STORE_HOT_ROD, Names.HOT_ROD, ModelDescriptionConstants.HOTROD, true),
+
+    JDBC(Ids.CACHE_STORE_JDBC, Names.JDBC, ModelDescriptionConstants.JDBC, true, STRING);
 
     static Store fromResource(String resource) {
         if (resource != null) {

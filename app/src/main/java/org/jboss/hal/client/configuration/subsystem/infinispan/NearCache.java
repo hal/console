@@ -21,8 +21,9 @@ import org.jboss.hal.resources.Names;
 
 enum NearCache {
 
-    NONE(Ids.NEAR_CACHE_NONE, Names.NONE, ModelDescriptionConstants.NONE), INVALIDATION(Ids.NEAR_CACHE_INVALIDATION,
-            Names.INVALIDATION, ModelDescriptionConstants.INVALIDATION);
+    NONE(Ids.NEAR_CACHE_NONE, Names.NONE, ModelDescriptionConstants.NONE),
+
+    INVALIDATION(Ids.NEAR_CACHE_INVALIDATION, Names.INVALIDATION, ModelDescriptionConstants.INVALIDATION);
 
     final String baseId;
     final String type;

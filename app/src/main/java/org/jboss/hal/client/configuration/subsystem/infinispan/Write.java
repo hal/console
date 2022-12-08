@@ -21,8 +21,9 @@ import org.jboss.hal.resources.Names;
 
 enum Write {
 
-    BEHIND(Ids.CACHE_STORE_WRITE_BEHIND, Names.WRITE_BEHIND, ModelDescriptionConstants.BEHIND), THROUGH(
-            Ids.CACHE_STORE_WRITE_THROUGH, Names.WRITE_THROUGH, ModelDescriptionConstants.THROUGH);
+    BEHIND(Ids.CACHE_STORE_WRITE_BEHIND, Names.WRITE_BEHIND, ModelDescriptionConstants.BEHIND),
+
+    THROUGH(Ids.CACHE_STORE_WRITE_THROUGH, Names.WRITE_THROUGH, ModelDescriptionConstants.THROUGH);
 
     final String baseId;
     final String type;

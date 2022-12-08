@@ -24,8 +24,9 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.MEMORY;
 /** Represents the different memory singletons of a specific cache resource. */
 enum Memory {
 
-    HEAP(Ids.CACHE_MEMORY_HEAP, Names.HEAP, ModelDescriptionConstants.HEAP), OFF_HEAP(Ids.CACHE_MEMORY_OFF_HEAP, Names.OFF_HEAP,
-            ModelDescriptionConstants.OFF_HEAP);
+    HEAP(Ids.CACHE_MEMORY_HEAP, Names.HEAP, ModelDescriptionConstants.HEAP),
+
+    OFF_HEAP(Ids.CACHE_MEMORY_OFF_HEAP, Names.OFF_HEAP, ModelDescriptionConstants.OFF_HEAP);
 
     static Memory fromResource(String resource) {
         if (resource != null) {
