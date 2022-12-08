@@ -46,8 +46,8 @@ All recent development happens in the branch `main`. There are additional branch
 |--------|---------------------------------------------------|
 | main   | Main branch used for development                  |
 | 3.3.x  | Branch used for WildFly 23.x - 26.x and EAP 7.4.x |
-| 3.2.x  | Branch used for WildDly 17.x - 22.x and EAP 7.3.x |
-| 3.1.x  | Branch used for WildDly 16.x and EAP 7.2.x        |
+| 3.2.x  | Branch used for WildFly 17.x - 22.x and EAP 7.3.x |
+| 3.1.x  | Branch used for WildFly 16.x and EAP 7.2.x        |
 | 3.0.x  | Branch used for WildFly 13.x - 15.x and EAP 7.2.x |
 
 See [branches](https://hal.github.io/development/branches/) for all details. 
