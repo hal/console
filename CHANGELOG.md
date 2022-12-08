@@ -14,21 +14,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Changed
 
+- [HAL-1816](https://issues.redhat.com/browse/HAL-1816): Hardcoded string "jdbc-compliant" could be replaced by `ModelDescriptionConstants`
+- [HAL-1815](https://issues.redhat.com/browse/HAL-1815): Hardcoded database name in CONNECTION_URL should be replaced by a generic name
+- [HAL-1814](https://issues.redhat.com/browse/HAL-1814): Adding `contains()` of `Set<>` in `isSuperuser()` and `isAdministrator()` methods
+- [HAL-1810](https://issues.redhat.com/browse/HAL-1810): Adding constants to `UIConstants`
+- [HAL-1808](https://issues.redhat.com/browse/HAL-1808): Adding `STATISTICS` to `ModelDescriptionConstants`
+- [HAL-1656](https://issues.redhat.com/browse/HAL-1656): Driver-XA classes should not be hardcoded in console code
 - Update code of conduct
 
 ### Fixed
 
-- [HAL-1805](https://issues.redhat.com/browse/HAL-1805): Fix wording "datasource" → "data source"
+- [HAL-1821](https://issues.redhat.com/browse/HAL-1821): Unable to configure Infinispan subsystem via Web Console
 - [HAL-1806](https://issues.redhat.com/browse/HAL-1806): Fix typo "commited" → "committed"
+- [HAL-1805](https://issues.redhat.com/browse/HAL-1805): Fix wording "datasource" → "data source"
 - Fix NPM package vulnerabilities
 - Fix mixed case in affinity select element
 
 ### Upgrades
 
-- Bump ACE editor from 1.9.6 to 1.11.1
-- Bump Mockito from 4.7.0 4.8.0
-- Bump Quarkus from 2.11.2.Final to 2.12.3.Final
-- Bump SLF4J from 2.0.0 to 2.0.2
+- Bump ACE editor to 1.13.2
+- Bump Datatables to 1.12.1
+- Bump Mockito to 4.9.0
+- Bump Parcel to 2.8.0 
+- Bump PouchDB to 7.3.1
+- Bump Quarkus to 2.14.3.Final
+- Bump SLF4J to 2.0.2
 
 ## [3.6.4] - 2022-08-31
 
