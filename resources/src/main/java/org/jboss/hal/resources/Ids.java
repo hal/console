@@ -91,17 +91,12 @@ public interface Ids {
     String CACHE_CONTAINER_TRANSPORT_EMPTY = "cc-transport-empty";
     String CACHE_CONTAINER_TRANSPORT_FORM = "cc-transport-form";
     String CACHE_CONTAINER_TRANSPORT_ITEM = "cc-transport-item";
-    String CACHE_MEMORY_BINARY = "cache-memory-binary";
     String CACHE_MEMORY_HEAP = "cache-memory-heap";
-    String CACHE_MEMORY_OBJECT = "cache-memory-object";
     String CACHE_MEMORY_OFF_HEAP = "cache-memory-off-heap";
-    String CACHE_STORE_BINARY_JDBC = "cache-store-binary-jdbc";
-    String CACHE_STORE_BINARY_TABLE = "binary-table";
     String CACHE_STORE_CUSTOM = "cache-store-custom";
     String CACHE_STORE_FILE = "cache-store-file";
     String CACHE_STORE_HOT_ROD = "cache-store-hot-rod";
     String CACHE_STORE_JDBC = "cache-store-jdbc";
-    String CACHE_STORE_MIXED_JDBC = "cache-store-mixed-jdbc";
     String CACHE_STORE_STRING_TABLE = "string-table";
     String CACHE_STORE_WRITE_BEHIND = "behind";
     String CACHE_STORE_WRITE_THROUGH = "write";

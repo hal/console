@@ -19,19 +19,15 @@ import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 
-import static org.jboss.hal.client.configuration.subsystem.infinispan.Table.BINARY;
 import static org.jboss.hal.client.configuration.subsystem.infinispan.Table.STRING;
 
 /** Represents the different store singletons of a specific cache resource. */
 public enum Store {
 
-    BINARY_JDBC(Ids.CACHE_STORE_BINARY_JDBC, Names.BINARY_JDBC, ModelDescriptionConstants.BINARY_JDBC, true, BINARY), CUSTOM(
-            Ids.CACHE_STORE_CUSTOM, Names.CUSTOM, ModelDescriptionConstants.CUSTOM,
-            true), FILE(Ids.CACHE_STORE_FILE, Names.FILE, ModelDescriptionConstants.FILE, false), HOT_ROD(
-                    Ids.CACHE_STORE_HOT_ROD, Names.HOT_ROD, ModelDescriptionConstants.HOTROD,
-                    true), JDBC(Ids.CACHE_STORE_JDBC, Names.JDBC, ModelDescriptionConstants.JDBC, true, STRING), MIXED_JDBC(
-                            Ids.CACHE_STORE_MIXED_JDBC, Names.MIXED_JDBC, ModelDescriptionConstants.MIXED_JDBC, true,
-                            BINARY, STRING);
+    CUSTOM(Ids.CACHE_STORE_CUSTOM, Names.CUSTOM, ModelDescriptionConstants.CUSTOM, true), FILE(Ids.CACHE_STORE_FILE, Names.FILE,
+            ModelDescriptionConstants.FILE, false), HOT_ROD(Ids.CACHE_STORE_HOT_ROD, Names.HOT_ROD,
+                    ModelDescriptionConstants.HOTROD,
+                    true), JDBC(Ids.CACHE_STORE_JDBC, Names.JDBC, ModelDescriptionConstants.JDBC, true, STRING);
 
     static Store fromResource(String resource) {
         if (resource != null) {
