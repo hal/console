@@ -21,8 +21,7 @@ import org.jboss.hal.resources.Names;
 
 enum Table {
 
-    BINARY(Ids.CACHE_STORE_BINARY_TABLE, Names.BINARY_TABLE, ModelDescriptionConstants.BINARY), STRING(
-            Ids.CACHE_STORE_STRING_TABLE, Names.STRING_TABLE, ModelDescriptionConstants.STRING);
+    STRING(Ids.CACHE_STORE_STRING_TABLE, Names.STRING_TABLE, ModelDescriptionConstants.STRING);
 
     final String baseId;
     final String type;

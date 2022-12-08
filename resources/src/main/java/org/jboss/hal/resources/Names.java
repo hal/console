@@ -42,9 +42,6 @@ public interface Names {
     String BALANCER = "Balancer";
     String BATCH = "Batch";
     String BATCH_STATUS = "Batch Status";
-    String BINARY = "Binary";
-    String BINARY_JDBC = "Binary JDBC";
-    String BINARY_TABLE = "Binary Table";
     String BINDINGS_DIRECTORY = "Bindings Directory";
     String BOOT_ERRORS = "Boot Errors";
     String BOOTSTRAP = "Bootstrap";
@@ -243,7 +240,6 @@ public interface Names {
     String MINIMUM_PERMISSIONS = "Minimum Permissions";
     String MISSING_DEPENDENCIES = "Missing Dependencies";
     String MISSING_TRANSITIVE_DEPENDENCIES = "Missing Transitive Dependencies";
-    String MIXED_JDBC = "Mixed JDBC";
     String MODCLUSTER = "Modcluster";
     String MODULE = "Module";
 
@@ -255,7 +251,6 @@ public interface Names {
     String NOT_AVAILABLE = "n/a";
     String NYI = "not yet implemented";
 
-    String OBJECT = "Object";
     String OFF_HEAP = "Off Heap";
     String OUTBOUND_CONNECTION = "Outbound Connection";
     String OTHER_SETTINGS = "Other Settings";

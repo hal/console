@@ -100,8 +100,6 @@ public interface ModelDescriptionConstants {
     String BATCH_STATUS = "batch-status";
     String BEAN_VALIDATION = "bean-validation";
     String BEHIND = "behind";
-    String BINARY = "binary";
-    String BINARY_JDBC = "binary-jdbc";
     String BLOCKING = "blocking";
     String BLOCKING_TIMEOUT = "blocking-timeout";
     String BOOT_CLASS_PATH = "boot-class-path";
@@ -589,7 +587,6 @@ public interface ModelDescriptionConstants {
     String MIN_PROCESSING_TIME = "min-processing-time";
     String MINIMUM_PERMISSIONS = "minimum-permissions";
     String MISSING_TRANSITIVE_DEPENDENCY_PROBLEMS = "missing-transitive-dependency-problems";
-    String MIXED_JDBC = "mixed-jdbc";
     String MODCLUSTER = "modcluster";
     String MODE = "mode";
     String MODEL_DESCRIPTION = "model-description";
