@@ -43,7 +43,7 @@
     "events": "^3.3.0",
     "font-awesome": "^4.7.0",
     "google-code-prettify": "^1.0.5",
-    "jquery": "^3.6.1",
+    "jquery": "^3.6.2",
     "js-cookie": "^3.0.1",
     "jstree": "^3.3.12",
     "moment": "^2.29.4",
