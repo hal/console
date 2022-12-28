@@ -6,9 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Fixed
+
+- [HAL-1822](https://issues.redhat.com/browse/HAL-1822): TopologyTasks.RunningServers uses invalid resource addresses (thanks @anilabhabaral)
+
 ### Upgrades
 
-- Bump GraalVM to 22.3.0
+- Bump ACE editor to 1.14.0
+- Bump JQuery to 3.6.3
+- Bump Mockito to 4.10.0
+- Bump Parcel to 2.8.2
+- Bump PouchDB to 8.0.0
+- Bump Quarkus to 2.15.1.Final
+- Update GraalVM to 22.3.0
 
 ## [3.6.5] - 2022-12-08
 
