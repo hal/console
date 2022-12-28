@@ -95,7 +95,7 @@ public final class TopologyTasks {
     public static final String HOSTS = "topologyTasks.hosts"; // List<Host>
     public static final String SERVER_GROUPS = "topologyTasks.serverGroups"; // List<ServerGroup>
     public static final String SERVERS = "topologyTasks.servers"; // List<Server>
-    public static final String SERVER = "topologyTasks.server"; // Server
+    public static final String SERVER = "server"; // Server
 
     private static final String HOST_NAMES = "topologyTasks.hostNames"; // List<String>
     private static final String WILDCARD = "*";
