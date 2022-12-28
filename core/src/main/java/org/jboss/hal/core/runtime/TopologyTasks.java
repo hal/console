@@ -661,7 +661,7 @@ public final class TopologyTasks {
                         .map(host -> {
                             ResourceAddress address = new ResourceAddress()
                                     .add(ModelDescriptionConstants.HOST, host)
-                                    .add(SERVER, WILDCARD);
+                                    .add(ModelDescriptionConstants.SERVER, WILDCARD);
                             // Note for mixed domains with servers w/o support for SUSPEND_STATE attribute:
                             // The query operation won't fail, instead the unsupported attributes just won't be
                             // part of the response payload (kudos to the guy who implemented the query operation!)
