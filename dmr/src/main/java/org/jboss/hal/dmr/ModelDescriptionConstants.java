@@ -827,6 +827,7 @@ public interface ModelDescriptionConstants {
     String ROLLBACK_PREPARED_TRANSACTION = "rollback-prepared-transaction";
     String ROLLBACK_TO = "rollback-to";
     String ROUTING = "routing";
+    String RUNNING = "running";
     String RUNNING_EXECUTIONS = "running-executions";
     String RUNNING_MODE = "running-mode";
     String RUNNING_TIME = "running-time";
@@ -861,6 +862,7 @@ public interface ModelDescriptionConstants {
     String SEND_MESSAGES_TO_DEAD_LETTER_ADDRESS = "send-messages-to-dead-letter-address";
     String SENSITIVE = "sensitive";
     String SERVER = "server";
+    String SERVERS = "servers";
     String SERVER_AUTH_MODULES = "server-auth-modules";
     String SERVER_CONFIG = "server-config";
     String SERVER_GROUP = "server-group";

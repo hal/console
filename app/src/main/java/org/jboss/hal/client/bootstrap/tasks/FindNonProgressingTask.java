@@ -51,8 +51,10 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.QUERY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNNING;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SELECT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVERS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_STATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVICE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.WHERE;
@@ -117,7 +119,7 @@ public final class FindNonProgressingTask implements Task<FlowContext> {
                         .add(SERVER, WILDCARD);
                 Operation operation = new Operation.Builder(address, QUERY)
                         .param(SELECT, new ModelNode().add(HOST).add(NAME))
-                        .param(WHERE, new ModelNode().set(SERVER_STATE, "running"))
+                        .param(WHERE, new ModelNode().set(SERVER_STATE, RUNNING))
                         .build();
                 return dispatcher.execute(operation)
                         .then(result -> {
@@ -127,7 +129,7 @@ public final class FindNonProgressingTask implements Task<FlowContext> {
                                         .map(r -> hostServerAddress(r.get(RESULT)))
                                         .collect(Collectors.toList());
                             }
-                            return c.resolve("servers", servers);
+                            return c.resolve(SERVERS, servers);
                         });
             };
 
@@ -135,7 +137,7 @@ public final class FindNonProgressingTask implements Task<FlowContext> {
             Task<FlowContext> findNonProgressingTask = c -> {
 
                 List<String> hosts = c.get(HOSTS);
-                List<String> servers = c.get("servers");
+                List<String> servers = c.get(SERVERS);
 
                 Composite composite = new Composite();
                 for (String host : hosts) {
