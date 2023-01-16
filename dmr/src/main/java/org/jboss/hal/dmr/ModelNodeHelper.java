@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.dmr;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
@@ -31,6 +32,7 @@ import com.google.gwt.i18n.shared.DateTimeFormat;
 
 import static com.google.common.base.CaseFormat.LOWER_HYPHEN;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HAL_INDEX;
 
@@ -226,7 +228,7 @@ public class ModelNodeHelper {
     }
 
     /**
-     * Turns a list of properties into a model node.
+     * Turns a list of properties (keys and values) into a model node.
      *
      * @param properties A list of properties with even size.
      *
@@ -243,6 +245,34 @@ public class ModelNodeHelper {
                     if (value != null) {
                         modelNode.get(key).set(value);
                     }
+                }
+            }
+        }
+        return modelNode;
+    }
+
+    /**
+     * Turns all properties which contain one or more '.' into nested model nodes.
+     */
+    public static ModelNode flatToNested(ModelNode modelNode) {
+        if (modelNode != null && modelNode.isDefined()) {
+            List<Property> dottedProperties = modelNode.asPropertyList().stream()
+                    .filter(property -> property.getName().indexOf('.') != -1)
+                    .sorted(comparing(Property::getName).reversed())
+                    .collect(toList());
+            if (!dottedProperties.isEmpty()) {
+                for (Property property : dottedProperties) {
+                    String name = property.getName();
+                    ModelNode value = property.getValue();
+                    String[] parts = name.split("\\.");
+                    ModelNode check = modelNode.get(parts);
+                    if (!check.isDefined()) {
+                        check.set(value);
+                    }
+                }
+                List<String> cleanup = new ArrayList<>(dottedProperties.stream().map(Property::getName).collect(toList()));
+                for (String name : cleanup) {
+                    modelNode.remove(name);
                 }
             }
         }

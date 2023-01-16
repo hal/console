@@ -20,6 +20,11 @@ import org.jboss.hal.dmr.ModelNode;
 public class DefaultMapping<T> implements DataMapping<T> {
 
     @Override
+    public void addAttributeDescription(final String name, final ModelNode attributeDescription) {
+        // empty
+    }
+
+    @Override
     public void newModel(T model, Form<T> form) {
         for (FormItem formItem : form.getBoundFormItems()) {
             formItem.clearError();

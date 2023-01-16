@@ -122,7 +122,7 @@ public interface Names {
 
     String FACTORIES_TRANSFORMERS = "Factories / Transformers";
     String FILE = "File";
-    String FILE_ACTION_HANDLER = "File ActionHandler";
+    String FILE_HANDLER = "File Handler";
     String FILESYSTEM_REALM = "Filesystem Realm";
     String FILTERING_KEY_STORE = "Filtering Key Store";
     String FILTERS = "Filters";
@@ -267,8 +267,8 @@ public interface Names {
     String PATCHING = "Patching";
     String PATHS = "Paths";
     String PATTERN_FORMATTER = "Pattern Formatter";
-    String PERIODIC_ACTION_HANDLER = "Periodic ActionHandler";
-    String PERIODIC_SIZE_ACTION_HANDLER = "Periodic Size ActionHandler";
+    String PERIODIC_HANDLER = "Periodic Handler";
+    String PERIODIC_SIZE_HANDLER = "Periodic Size Handler";
     String PERMISSIONS = "Permissions";
     String PERMISSION_MAPPINGS = "Permission Mappings";
     String PERSISTENCE = "Persistence";
@@ -339,7 +339,7 @@ public interface Names {
     String SIMPLE_PERMISSION_MAPPER = "Simple Permission Mapper";
     String SINGLE_SIGN_ON = "Single Sign On";
     String SINGLETON_BEAN = "Singleton Bean";
-    String SIZE_ACTION_HANDLER = "Size ActionHandler";
+    String SIZE_HANDLER = "Size Handler";
     String SHORT_RUNNING = "short running";
     String SECONDARY = "Secondary";
     String SMALLRYE = "Smallrye";
