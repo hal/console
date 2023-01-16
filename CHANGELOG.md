@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - [HAL-1826](https://issues.redhat.com/browse/HAL-1826): Support nested attributes in MBUI views
 
+### Changed
+
+- [HAL-1818](https://issues.redhat.com/browse/HAL-1818): "servers" and "running" could be a part of ModelDescriptionConstants inside FindNonProgressingTask (thanks @anilabhabaral)
+
 ### Fixed
 
 - [HAL-1822](https://issues.redhat.com/browse/HAL-1822): TopologyTasks.RunningServers uses invalid resource addresses (thanks @anilabhabaral)
