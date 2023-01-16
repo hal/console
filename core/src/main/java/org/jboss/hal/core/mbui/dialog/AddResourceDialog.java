@@ -27,6 +27,7 @@ import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Constants;
 
@@ -87,7 +88,10 @@ public class AddResourceDialog {
 
     private void saveForm(Callback callback, ModelNode model) {
         String name = nameItem != null ? nameItem.getValue() : null;
-        callback.onAdd(name, model);
+        // take care of properties like 'file.path' or 'file.relative-to'
+        // and nest them before executing the add operation.
+        ModelNode nested = ModelNodeHelper.flatToNested(model);
+        callback.onAdd(name, nested);
     }
 
     public Form<ModelNode> getForm() {

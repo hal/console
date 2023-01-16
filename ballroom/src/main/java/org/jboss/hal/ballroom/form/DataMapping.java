@@ -22,6 +22,8 @@ import org.jboss.hal.dmr.ModelNode;
  */
 public interface DataMapping<T> {
 
+    void addAttributeDescription(String name, ModelNode attributeDescription);
+
     void newModel(T model, Form<T> form);
 
     void populateFormItems(T model, Form<T> form);

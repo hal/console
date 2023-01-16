@@ -314,8 +314,9 @@
                         <actions>
                             <action handler-ref="add-resource">
                                 <attributes>
-                                    <attribute name="file"
-                                               provider='${new org.jboss.hal.core.ui.FileFormItem("file", true)}'/>
+                                    <attribute name="file.path"/>
+                                    <attribute name="file.relative-to"
+                                               suggest-handler="${new org.jboss.hal.core.configuration.PathsAutoComplete()}"/>
                                     <attribute name="formatter"/>
                                     <attribute name="level"/>
                                 </attributes>
@@ -336,8 +337,9 @@
                             <attribute name="autoflush"/>
                             <attribute name="enabled"/>
                             <attribute name="encoding"/>
-                            <attribute name="file"
-                                       provider='${new org.jboss.hal.core.ui.FileFormItem("file", true)}'/>
+                            <attribute name="file.path"/>
+                            <attribute name="file.relative-to"
+                                       suggest-handler="${new org.jboss.hal.core.configuration.PathsAutoComplete()}"/>
                             <attribute name="filter-spec"/>
                             <attribute name="formatter"/>
                             <attribute name="level"/>
@@ -369,8 +371,9 @@
                         <actions>
                             <action handler-ref="add-resource">
                                 <attributes>
-                                    <attribute name="file"
-                                               provider='${new org.jboss.hal.core.ui.FileFormItem("file", true)}'/>
+                                    <attribute name="file.path"/>
+                                    <attribute name="file.relative-to"
+                                               suggest-handler="${new org.jboss.hal.core.configuration.PathsAutoComplete()}"/>
                                     <attribute name="formatter"/>
                                     <attribute name="level"/>
                                     <attribute name="suffix"/>
@@ -392,8 +395,9 @@
                             <attribute name="autoflush"/>
                             <attribute name="enabled"/>
                             <attribute name="encoding"/>
-                            <attribute name="file"
-                                       provider='${new org.jboss.hal.core.ui.FileFormItem("file", true)}'/>
+                            <attribute name="file.path"/>
+                            <attribute name="file.relative-to"
+                                       suggest-handler="${new org.jboss.hal.core.configuration.PathsAutoComplete()}"/>
                             <attribute name="filter-spec"/>
                             <attribute name="formatter"/>
                             <attribute name="level"/>
@@ -426,8 +430,9 @@
                         <actions>
                             <action handler-ref="add-resource">
                                 <attributes>
-                                    <attribute name="file"
-                                               provider='${new org.jboss.hal.core.ui.FileFormItem("file", true)}'/>
+                                    <attribute name="file.path"/>
+                                    <attribute name="file.relative-to"
+                                               suggest-handler="${new org.jboss.hal.core.configuration.PathsAutoComplete()}"/>
                                     <attribute name="formatter"/>
                                     <attribute name="level"/>
                                     <attribute name="max-backup-index"/>
@@ -451,8 +456,9 @@
                             <attribute name="autoflush"/>
                             <attribute name="enabled"/>
                             <attribute name="encoding"/>
-                            <attribute name="file"
-                                       provider='${new org.jboss.hal.core.ui.FileFormItem("file", true)}'/>
+                            <attribute name="file.path"/>
+                            <attribute name="file.relative-to"
+                                       suggest-handler="${new org.jboss.hal.core.configuration.PathsAutoComplete()}"/>
                             <attribute name="filter-spec"/>
                             <attribute name="formatter"/>
                             <attribute name="level"/>
@@ -488,8 +494,9 @@
                         <actions>
                             <action handler-ref="add-resource">
                                 <attributes>
-                                    <attribute name="file"
-                                               provider='${new org.jboss.hal.core.ui.FileFormItem("file", true)}'/>
+                                    <attribute name="file.path"/>
+                                    <attribute name="file.relative-to"
+                                               suggest-handler="${new org.jboss.hal.core.configuration.PathsAutoComplete()}"/>
                                     <attribute name="formatter"/>
                                     <attribute name="level"/>
                                     <attribute name="max-backup-index"/>
@@ -513,8 +520,9 @@
                             <attribute name="autoflush"/>
                             <attribute name="enabled"/>
                             <attribute name="encoding"/>
-                            <attribute name="file"
-                                       provider='${new org.jboss.hal.core.ui.FileFormItem("file", true)}'/>
+                            <attribute name="file.path"/>
+                            <attribute name="file.relative-to"
+                                       suggest-handler="${new org.jboss.hal.core.configuration.PathsAutoComplete()}"/>
                             <attribute name="filter-spec"/>
                             <attribute name="formatter"/>
                             <attribute name="level"/>
