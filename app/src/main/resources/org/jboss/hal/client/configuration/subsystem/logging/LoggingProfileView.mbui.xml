@@ -275,8 +275,9 @@
                             <attribute name="autoflush"/>
                             <attribute name="enabled"/>
                             <attribute name="encoding"/>
-                            <attribute name="file"
-                                       provider='${new org.jboss.hal.core.ui.FileFormItem("file", true)}'/>
+                            <attribute name="file.path"/>
+                            <attribute name="file.relative-to"
+                                       suggest-handler="${new org.jboss.hal.core.configuration.PathsAutoComplete()}"/>
                             <attribute name="filter-spec"/>
                             <attribute name="formatter"/>
                             <attribute name="level"/>
@@ -328,8 +329,9 @@
                             <attribute name="autoflush"/>
                             <attribute name="enabled"/>
                             <attribute name="encoding"/>
-                            <attribute name="file"
-                                       provider='${new org.jboss.hal.core.ui.FileFormItem("file", true)}'/>
+                            <attribute name="file.path"/>
+                            <attribute name="file.relative-to"
+                                       suggest-handler="${new org.jboss.hal.core.configuration.PathsAutoComplete()}"/>
                             <attribute name="filter-spec"/>
                             <attribute name="formatter"/>
                             <attribute name="level"/>
@@ -382,8 +384,9 @@
                             <attribute name="autoflush"/>
                             <attribute name="enabled"/>
                             <attribute name="encoding"/>
-                            <attribute name="file"
-                                       provider='${new org.jboss.hal.core.ui.FileFormItem("file", true)}'/>
+                            <attribute name="file.path"/>
+                            <attribute name="file.relative-to"
+                                       suggest-handler="${new org.jboss.hal.core.configuration.PathsAutoComplete()}"/>
                             <attribute name="filter-spec"/>
                             <attribute name="formatter"/>
                             <attribute name="level"/>
@@ -438,8 +441,9 @@
                             <attribute name="autoflush"/>
                             <attribute name="enabled"/>
                             <attribute name="encoding"/>
-                            <attribute name="file"
-                                       provider='${new org.jboss.hal.core.ui.FileFormItem("file", true)}'/>
+                            <attribute name="file.path"/>
+                            <attribute name="file.relative-to"
+                                       suggest-handler="${new org.jboss.hal.core.configuration.PathsAutoComplete()}"/>
                             <attribute name="filter-spec"/>
                             <attribute name="formatter"/>
                             <attribute name="level"/>

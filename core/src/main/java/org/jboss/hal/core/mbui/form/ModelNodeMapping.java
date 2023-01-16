@@ -25,6 +25,7 @@ import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.ModelNodeItem;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
 import org.slf4j.Logger;
@@ -49,6 +50,11 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
     }
 
     @Override
+    public void addAttributeDescription(final String name, final ModelNode attributeDescription) {
+        attributeDescriptions.add(new Property(name, attributeDescription));
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public void populateFormItems(T model, Form<T> form) {
         String id = id(form);
@@ -56,7 +62,11 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
             formItem.clearError();
 
             String name = formItem.getName();
-            if (model.hasDefined(name)) {
+            boolean nested = name.indexOf('.') != -1;
+            ModelNode value = nested
+                    ? ModelNodeHelper.failSafeGet(model, name.replace('.', '/'))
+                    : model.get(name);
+            if (value.isDefined()) {
                 ModelNode attributeDescription = findAttribute(name);
                 if (attributeDescription == null) {
                     logger.error("{}: Unable to populate form item '{}': No attribute description found in\n{}",
@@ -64,7 +74,6 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
                     continue;
                 }
 
-                ModelNode value = model.get(name);
                 ModelType valueType = value.getType();
                 if (valueType == EXPRESSION) {
                     if (formItem.supportsExpressions()) {
