@@ -293,8 +293,6 @@
                     <filesets>
                         <fileset>
                             <directory>.parcel-cache</directory>
-                            <directory>node</directory>
-                            <directory>node_modules</directory>
                         </fileset>
                     </filesets>
                 </configuration>
