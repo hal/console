@@ -155,8 +155,8 @@ public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPr
         ResourceAddress address = SELECTED_CONNECTION_DEFINITIONS_TEMPLATE.resolve(selectionAwareStatementContext,
                 name);
         Metadata metadata = mbuiContext.metadataRegistry().lookup(CONNECTION_DEFINITIONS_TEMPLATE);
-        Map<String, String> properties = form.getFormItem(CONFIG_PROPERTIES) != null
-                ? form.<Map<String, String>> getFormItem(CONFIG_PROPERTIES).getValue()
+        Map<String, String> properties = connectionDefinitionsForm.getFormItem(CONFIG_PROPERTIES) != null
+                ? connectionDefinitionsForm.<Map<String, String>> getFormItem(CONFIG_PROPERTIES).getValue()
                 : Collections.emptyMap();
         mbuiContext.po().saveWithProperties(Names.CONNECTION_DEFINITION, name, address, changedValues, metadata,
                 CONFIG_PROPERTIES, properties, () -> presenter.reload());
