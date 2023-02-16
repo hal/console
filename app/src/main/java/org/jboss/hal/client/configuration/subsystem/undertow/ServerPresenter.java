@@ -244,7 +244,6 @@ public class ServerPresenter
                     crud.add(Names.HOST, name, address, model, (n, a) -> reload());
                 });
         dialog.show();
-
     }
 
     void saveHost(String name, Map<String, Object> changedValues) {

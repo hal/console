@@ -74,6 +74,7 @@ public interface Names {
     String CONNECTOR_SERVICE = "Connector Service";
     String CONNECTORS = "Connectors";
     String CONSUMERS = "Consumers";
+    String CONSOLE_ACCESS_LOG = "Console Access Log";
     String CONSOLE_ACTION_HANDLER = "Console ActionHandler";
     String CONTEXT = "Context";
     String CONTEXT_ROOT = "Context Root";

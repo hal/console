@@ -16,22 +16,34 @@
 package org.jboss.hal.client.configuration.subsystem.undertow;
 
 import org.jboss.hal.dmr.ModelDescriptionConstants;
+import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 
+import static org.jboss.hal.resources.CSS.fontAwesome;
+import static org.jboss.hal.resources.CSS.pfIcon;
+
 enum HostSetting {
 
-    ACCESS_LOG(Ids.UNDERTOW_HOST_ACCESS_LOG, Names.ACCESS_LOG, ModelDescriptionConstants.ACCESS_LOG), HTTP_INVOKER(
-            Ids.UNDERTOW_HOST_HTTP_INVOKER, Names.HTTP_INVOKER, ModelDescriptionConstants.HTTP_INVOKER), SINGLE_SIGN_ON(
-                    Ids.UNDERTOW_HOST_SINGLE_SIGN_ON, Names.SINGLE_SIGN_ON, ModelDescriptionConstants.SINGLE_SIGN_ON);
+    ACCESS_LOG(Ids.UNDERTOW_HOST_ACCESS_LOG, Names.ACCESS_LOG, Icons.LOCK, ModelDescriptionConstants.ACCESS_LOG),
+
+    CONSOLE_ACCESS_LOG(Ids.UNDERTOW_HOST_CONSOLE_ACCESS_LOG, Names.CONSOLE_ACCESS_LOG, fontAwesome("laptop"),
+            ModelDescriptionConstants.CONSOLE_ACCESS_LOG),
+
+    HTTP_INVOKER(Ids.UNDERTOW_HOST_HTTP_INVOKER, Names.HTTP_INVOKER, pfIcon("service"), ModelDescriptionConstants.HTTP_INVOKER),
+
+    SINGLE_SIGN_ON(Ids.UNDERTOW_HOST_SINGLE_SIGN_ON, Names.SINGLE_SIGN_ON, pfIcon("key"),
+            ModelDescriptionConstants.SINGLE_SIGN_ON);
 
     final String baseId;
     final String type;
+    final String icon;
     final String resource;
 
-    HostSetting(final String baseId, final String type, final String resource) {
+    HostSetting(final String baseId, final String type, final String icon, final String resource) {
         this.baseId = baseId;
         this.type = type;
+        this.icon = icon;
         this.resource = resource;
     }
 
