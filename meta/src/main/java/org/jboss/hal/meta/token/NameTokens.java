@@ -123,6 +123,7 @@ public interface NameTokens {
     String UNDERTOW_BYTE_BUFFER_POOL = "undertow-byte-buffer-pool";
     String UNDERTOW_FILTER = "undertow-filter";
     String UNDERTOW_HANDLER = "undertow-handler";
+    String UNDERTOW_HOST = "undertow-host";
     String UNDERTOW_RUNTIME_DEPLOYMENT_VIEW = "undertow-runtime-deployment";
     String UNDERTOW_SERVER = "undertow-server";
     String UNDERTOW_SERVLET_CONTAINER = "undertow-servlet-container";

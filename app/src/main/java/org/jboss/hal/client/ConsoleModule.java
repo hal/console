@@ -407,6 +407,11 @@ public class ConsoleModule extends AbstractPresenterModule {
                 Mbui_HostView.class,
                 HostPresenter.MyProxy.class);
 
+        bindPresenter(org.jboss.hal.client.configuration.subsystem.undertow.HostPresenter.class,
+                org.jboss.hal.client.configuration.subsystem.undertow.HostPresenter.MyView.class,
+                org.jboss.hal.client.configuration.subsystem.undertow.HostView.class,
+                org.jboss.hal.client.configuration.subsystem.undertow.HostPresenter.MyProxy.class);
+
         bindPresenter(IiopPresenter.class,
                 IiopPresenter.MyView.class,
                 Mbui_IiopView.class,

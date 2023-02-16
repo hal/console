@@ -179,6 +179,7 @@ public interface ModelDescriptionConstants {
     String CONNECTOR_NAME = "connector-name";
     String CONNECTOR_SERVICE = "connector-service";
     String CONNECTORS = "connectors";
+    String CONSOLE_ACCESS_LOG = "console-access-log";
     String CONSOLE_HANDLER = "console-handler";
     String CONSTANT_HEADERS = "constant-headers";
     String CONSTANT_PERMISSION_MAPPER = "constant-permission-mapper";

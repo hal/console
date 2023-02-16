@@ -49,11 +49,25 @@ import static org.jboss.elemento.Elements.p;
 import static org.jboss.elemento.Elements.section;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
-import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.*;
+import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.FILTER_REF_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.HANDLER_SUGGESTIONS;
+import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.HOST_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.LOCATION_FILTER_REF_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.LOCATION_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SELECTED_SERVER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SERVER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SERVLET_CONTAINER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.undertow.Listener.AJP;
 import static org.jboss.hal.client.configuration.subsystem.undertow.Listener.HTTP;
 import static org.jboss.hal.client.configuration.subsystem.undertow.Listener.HTTPS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT_HOST;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.FILTER_REF;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HANDLER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LOCATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PRIORITY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVLET_CONTAINER;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
@@ -121,12 +135,20 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
 
         hostSettingForms = new EnumMap<>(HostSetting.class);
         for (HostSetting setting : HostSetting.values()) {
+            // Skip console access log until HAL-1600 has been implemented
+            if (setting == HostSetting.CONSOLE_ACCESS_LOG) {
+                continue;
+            }
             hostSettingForms.put(setting, hostSetting(setting));
         }
 
         Tabs tabs = new Tabs(Ids.UNDERTOW_HOST_ATTRIBUTES_TAB_CONTAINER);
         tabs.add(Ids.UNDERTOW_HOST_ATTRIBUTES_TAB, resources.constants().attributes(), hostForm.element());
         for (HostSetting setting : HostSetting.values()) {
+            // Skip console access log until HAL-1600 has been implemented
+            if (setting == HostSetting.CONSOLE_ACCESS_LOG) {
+                continue;
+            }
             tabs.add(Ids.build(setting.baseId, Ids.TAB), setting.type,
                     hostSettingForms.get(setting).element());
         }
@@ -268,6 +290,10 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
             if (t.hasSelection()) {
                 presenter.selectHost(t.selectedRow().getName());
                 for (HostSetting setting : HostSetting.values()) {
+                    // Skip console access log until HAL-1600 has been implemented
+                    if (setting == HostSetting.CONSOLE_ACCESS_LOG) {
+                        continue;
+                    }
                     hostSettingForms.get(setting).view(failSafeGet(t.selectedRow(), setting.path()));
                 }
             } else {

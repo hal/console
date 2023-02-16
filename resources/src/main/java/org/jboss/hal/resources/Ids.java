@@ -791,12 +791,18 @@ public interface Ids {
     String UNDERTOW_APP_SECURITY_DOMAIN_TAB_CONTAINER = "undertow-application-security-domain-tab-container";
     String UNDERTOW_DEPLOYMENT_STATISTICS_DISABLED = "undertow-deployment-statistics-disabled";
     String UNDERTOW_GLOBAL_SETTINGS = "undertow-global-settings";
+    String UNDERTOW_HOST = "undertow-host";
     String UNDERTOW_HOST_ACCESS_LOG = "undertow-host-access-log";
     String UNDERTOW_HOST_ACTION_COLUMN = "undertow-host-action-column";
     String UNDERTOW_HOST_ADD = "undertow-host-add";
+    String UNDERTOW_HOST_ATTRIBUTES_ITEM = "undertow-host-item";
     String UNDERTOW_HOST_ATTRIBUTES_FORM = "undertow-host-form";
     String UNDERTOW_HOST_ATTRIBUTES_TAB = "undertow-host-tab";
     String UNDERTOW_HOST_ATTRIBUTES_TAB_CONTAINER = "undertow-host-tab-container";
+    String UNDERTOW_HOST_CONSOLE_ACCESS_LOG = "undertow-host-console-access-log";
+    String UNDERTOW_HOST_CONSOLE_ACCESS_LOG_TAB_CONTAINER = "undertow-host-console-access-log-tab-container";
+    String UNDERTOW_HOST_CONSOLE_ACCESS_LOG_ATTRIBUTES_TAB = "undertow-host-console-access-log-attributes-tab";
+    String UNDERTOW_HOST_CONSOLE_ACCESS_LOG_KEYS_TAB = "undertow-host-console-access-log-keys-tab";
     String UNDERTOW_HOST_FILTER_REF_ADD = "undertow-host-filter-ref-add";
     String UNDERTOW_HOST_FILTER_REF_FORM = "undertow-host-filter-ref-form";
     String UNDERTOW_HOST_FILTER_REF_PAGE = "undertow-host-filter-ref-page";
@@ -813,6 +819,7 @@ public interface Ids {
     String UNDERTOW_HOST_LOCATION_TABLE = "undertow-host-location-table";
     String UNDERTOW_HOST_MAIN_PAGE = "undertow-host-main-page";
     String UNDERTOW_HOST_PAGES = "undertow-host-pages";
+    String UNDERTOW_HOST_REFRESH = "undertow-host-refresh";
     String UNDERTOW_HOST_SINGLE_SIGN_ON = "undertow-host-single-sign-on";
     String UNDERTOW_HOST_TABLE = "undertow-host-table";
     String UNDERTOW_LISTENER_PROCESSING_DISABLED = "undertow-listener-processing-disabled";
@@ -1023,12 +1030,16 @@ public interface Ids {
         return substringAfterLast(id, "undertow-modcluster-balancer-");
     }
 
+    static String extractUndertowServer(String id) {
+        return substringAfterLast(id, "us-");
+    }
+
     static String undertowServer(String name) {
         return build("us", name);
     }
 
-    static String extractUndertowServer(String id) {
-        return substringAfterLast(id, "us-");
+    static String undertowHost(String name) {
+        return build("uhst", name);
     }
 
     static String undertowServletContainer(String name) {

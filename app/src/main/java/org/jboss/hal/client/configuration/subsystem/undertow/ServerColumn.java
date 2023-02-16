@@ -89,6 +89,11 @@ public class ServerColumn extends FinderColumn<NamedNode> {
                         ServerColumn.this));
                 return actions;
             }
+
+            // TODO Activate if HAL-1600 is fully implemented
+            /*
+             * @Override public String nextColumn() { return Ids.UNDERTOW_HOST; }
+             */
         });
     }
 }
