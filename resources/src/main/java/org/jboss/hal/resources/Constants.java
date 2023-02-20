@@ -972,6 +972,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String resume();
 
+    String revert();
+
     String review();
 
     String revoke();

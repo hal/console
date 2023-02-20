@@ -69,6 +69,5 @@ public class UndertowColumn extends FinderColumn<StaticItem> {
         setItemsProvider(context -> Promise.resolve(items));
         setBreadcrumbItemsProvider(
                 context -> Promise.resolve(items.stream().filter(item -> item.getNextColumn() == null).collect(toList())));
-
     }
 }

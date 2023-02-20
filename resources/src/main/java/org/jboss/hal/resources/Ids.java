@@ -774,6 +774,7 @@ public interface Ids {
     String TLC_MANAGEMENT = "tlc-management";
     String TLC_PATCHING = "tlc-patching";
     String TLC_RUNTIME = "tlc-runtime";
+    String TLC_UPDATE = "tlc-update";
     String TOOLBAR = "toolbar";
     String TOOLBAR_ACTION_DROPDOWN = "toolbar-action-dropdown";
     String TOOLBAR_FILTER = "toolbar-filter";
@@ -870,6 +871,11 @@ public interface Ids {
     String UNDERTOW_SINGLE_SIGN_ON_TAB = "undertow-single-sign-on-table";
     String UNDERTOW_STATISTICS_DISABLED = "undertow-statistics-disabled";
     String UNMANAGED_FORM = "unmanaged-form";
+    String UPDATE = "update";
+    String UPDATE_CHANNEL = "update-channel";
+    String UPDATE_CHANNEL_REFRESH = "update-channel-refresh";
+    String UPDATE_HISTORY = "update-history";
+    String UPDATE_HISTORY_REFRESH = "update-history-refresh";
     String UPLOAD_FILE_INPUT = "upload-file-input";
     String UPLOAD_NAMES_FORM = "upload-names-form";
     String USER = "user";

@@ -57,6 +57,7 @@ public interface Names {
     String CACHING_REALM = "Caching Realm";
     String CATEGORY = "Category";
     String CHANNEL = "Channel";
+    String CHANNELS = "Channels";
     String CLIENT_CONFIGURATION = "Client Configuration";
     String CLIENT_MAPPING = "Client Mapping";
     String CLIENT_MAPPINGS = "Client Mappings";
@@ -141,6 +142,7 @@ public interface Names {
     String HANDLERS = "Handlers";
     String HANDLER_CHAIN = "Handler Chain";
     String HEAP = "Heap";
+    String HISTORY = "History";
     String HOMEPAGE = "Homepage";
     String HOST = "Host";
     String HOST_CONTROLLER = "Host Controller";
@@ -387,6 +389,7 @@ public interface Names {
     String UNKNOWN = "unknown";
     String UNMANAGED_DEPLOYMENT = "Unmanaged Deployment";
     String UNDERTOW = "Undertow";
+    String UPDATE = "Update";
     String URL = "URL";
     String USER_PASSWORD_MAPPER = "User Password Mapper";
 

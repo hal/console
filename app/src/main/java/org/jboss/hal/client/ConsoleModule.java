@@ -182,6 +182,8 @@ import org.jboss.hal.client.tools.MacroEditorPresenter;
 import org.jboss.hal.client.tools.MacroEditorView;
 import org.jboss.hal.client.tools.ModelBrowserPresenter;
 import org.jboss.hal.client.tools.ModelBrowserView;
+import org.jboss.hal.client.update.UpdateFinderPresenter;
+import org.jboss.hal.client.update.UpdateFinderView;
 import org.jboss.hal.core.ExceptionHandler;
 import org.jboss.hal.core.mvp.HalPlaceManager;
 import org.jboss.hal.meta.token.NameTokens;
@@ -716,6 +718,11 @@ public class ConsoleModule extends AbstractPresenterModule {
                 org.jboss.hal.client.runtime.subsystem.transaction.TransactionsPresenter.MyView.class,
                 org.jboss.hal.client.runtime.subsystem.transaction.TransactionsView.class,
                 org.jboss.hal.client.runtime.subsystem.transaction.TransactionsPresenter.MyProxy.class);
+
+        bindPresenter(UpdateFinderPresenter.class,
+                UpdateFinderPresenter.MyView.class,
+                UpdateFinderView.class,
+                UpdateFinderPresenter.MyProxy.class);
 
         bindPresenter(UnderTheBridgePresenter.class,
                 UnderTheBridgePresenter.MyView.class,

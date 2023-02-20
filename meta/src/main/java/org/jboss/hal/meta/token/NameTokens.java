@@ -127,6 +127,7 @@ public interface NameTokens {
     String UNDERTOW_RUNTIME_DEPLOYMENT_VIEW = "undertow-runtime-deployment";
     String UNDERTOW_SERVER = "undertow-server";
     String UNDERTOW_SERVLET_CONTAINER = "undertow-servlet-container";
+    String UPDATE = "update";
     String WEBSERVICES = ModelDescriptionConstants.WEBSERVICES;
     String WEBSERVICES_RUNTIME = "webservices-runtime";
 

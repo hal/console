@@ -136,6 +136,7 @@ public interface ModelDescriptionConstants {
     String CHANGE_MESSAGE_PRIORITY = "change-message-priority";
     String CHANGE_MESSAGES_PRIORITY = "change-messages-priority";
     String CHANNEL = "channel";
+    String CHANNELS = "channels";
     String CHECK = "check";
     String CHECKS = "checks";
     String CHILD_TYPE = "child-type";
@@ -233,6 +234,7 @@ public interface ModelDescriptionConstants {
     String DATASOURCE_CLASS = "datasource-class";
     String DATASOURCE_CLASS_INFO = "datasource-class-info";
     String DATASOURCES = "datasources";
+    String DATE = "date";
     String DEACTIVATE_ACCOUNT = "deactivate-account";
     String DEAD_LETTER_ADDRESS = "dead-letter-address";
     String DEFAULT = "default";
@@ -393,6 +395,7 @@ public interface ModelDescriptionConstants {
     String HEADERS = "headers";
     String HEADER_NAME = "header-name";
     String HEAP = "heap";
+    String HISTORY = "history";
     String HIBERNATE_PERSISTENCE_UNIT = "hibernate-persistence-unit";
     String HOMEPAGE = "homepage";
     String HOST = "host";
@@ -438,6 +441,7 @@ public interface ModelDescriptionConstants {
     String INPUT_ARGUMENTS = "input-arguments";
     String INPUT_STREAM_INDEX = "input-stream-index";
     String INSTALLED_DRIVER_LIST = "installed-driver-list";
+    String INSTALLER = "installer";
     String INSTANCE_COUNT = "instance-count";
     String INSTANCE_ID = "instance-id";
     String INTERFACE = "interface";
@@ -494,6 +498,7 @@ public interface ModelDescriptionConstants {
     String KEYCLOAK = "keycloak";
     String KEYCLOAK_SERVER_URL = "keycloak-server-url";
     String KILL = "kill";
+    String KIND = "kind";
     String KILL_SERVERS = "kill-servers";
     String LARGEST_THREAD_COUNT = "largest-thread-count";
     String LAST_ACCESSED_TIME = "last-accessed-time";
@@ -685,6 +690,7 @@ public interface ModelDescriptionConstants {
     String POSSIBLE_CAUSES = "possible-causes";
     String POST_HANDLER_CHAIN = "post-handler-chain";
     String PRE_HANDLER_CHAIN = "pre-handler-chain";
+    String PREPARE_REVERT = "prepare-revert";
     String PREDEFINED_FILTER = "predefined-filter";
     String PREFIX = "prefix";
     String PRESERVE = "preserve";
@@ -819,6 +825,7 @@ public interface ModelDescriptionConstants {
     String RESULT = "result";
     String RESUME = "resume";
     String RESUME_SERVERS = "resume-servers";
+    String REVISION = "revision";
     String REVOKE_CERTIFICATE = "revoke-certificate";
     String ROLE = "role";
     String ROLE_MAP = "role-map";
@@ -1010,6 +1017,7 @@ public interface ModelDescriptionConstants {
     String UNIT = "unit";
     String UNREGISTERED = "unregistered";
     String UP = "UP";
+    String UPDATE = "update";
     String UPDATE_ACCOUNT = "update-account";
     String UPDATE_AUTO_START_WITH_SERVER_STATUS = "update-auto-start-with-server-status";
     String UPTIME = "uptime";

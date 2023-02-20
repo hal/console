@@ -187,6 +187,7 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
         HTMLElement logout;
         HTMLElement reconnect;
         HTMLElement patching;
+        HTMLElement update;
         HTMLElement accessControl;
         HTMLElement backLink;
         HTMLElement root = nav().css(navbar, navbarDefault, navbarFixedTop, navbarPf)
@@ -294,6 +295,11 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
                                                 .id(Ids.TLC_PATCHING)
                                                 .textContent(Names.PATCHING))
                                         .element())
+                                .add(update = li()
+                                        .add(a().css(clickable)
+                                                .id(Ids.TLC_UPDATE)
+                                                .textContent(Names.UPDATE))
+                                        .element())
                                 .add(accessControl = li()
                                         .add(a().css(clickable)
                                                 .id(Ids.TLC_ACCESS_CONTROL)
@@ -338,10 +344,18 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
         boolean su = ac.isSuperUserOrAdministrator();
         if (!su) {
             topLevelCategories.removeChild(patching);
+            topLevelCategories.removeChild(update);
             topLevelCategories.removeChild(accessControl);
         }
 
         if (!environment.isPatchingEnabled() && topLevelCategories.contains(patching)) {
+            topLevelCategories.removeChild(patching);
+        }
+        if (!environment.isUpdateEnabled() && topLevelCategories.contains(update)) {
+            topLevelCategories.removeChild(update);
+        }
+        if (environment.isPatchingEnabled() && environment.isUpdateEnabled()) {
+            // show update over patching
             topLevelCategories.removeChild(patching);
         }
 
@@ -354,6 +368,7 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
         tlcPlaceRequests.put(NameTokens.CONFIGURATION, new PlaceRequest.Builder().nameToken(NameTokens.CONFIGURATION).build());
         tlcPlaceRequests.put(NameTokens.RUNTIME, new PlaceRequest.Builder().nameToken(NameTokens.RUNTIME).build());
         tlcPlaceRequests.put(NameTokens.PATCHING, new PlaceRequest.Builder().nameToken(NameTokens.PATCHING).build());
+        tlcPlaceRequests.put(NameTokens.UPDATE, new PlaceRequest.Builder().nameToken(NameTokens.UPDATE).build());
         tlcPlaceRequests.put(accessControlNameToken, new PlaceRequest.Builder().nameToken(accessControlNameToken).build());
         // @formatter:on
 
@@ -365,6 +380,7 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
                         NameTokens.CONFIGURATION,
                         NameTokens.RUNTIME,
                         NameTokens.PATCHING,
+                        NameTokens.UPDATE,
                         accessControlNameToken,
                 },
                 new String[] {
@@ -373,6 +389,7 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
                         Ids.TLC_CONFIGURATION,
                         Ids.TLC_RUNTIME,
                         Ids.TLC_PATCHING,
+                        Ids.TLC_UPDATE,
                         Ids.TLC_ACCESS_CONTROL,
                 });
 

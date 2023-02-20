@@ -46,6 +46,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CORE_SERVICE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DOMAIN_ORGANIZATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INSTALLER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.LAUNCH_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ORGANIZATION;
@@ -166,6 +167,7 @@ public final class ReadEnvironment implements Task<FlowContext> {
 
                     ModelNode step = result.step(2).get(RESULT);
                     environment.setPatchingEnabled(!environment.isStandalone() || step.get(PATCHING).isDefined());
+                    environment.setUpdateEnabled(step.get(INSTALLER).isDefined());
                     return Promise.resolve(context);
                 });
     }

@@ -110,6 +110,16 @@ public class ModelNodeHelper {
                     // see https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#ISO_ZONED_DATE_TIME
                     date = date.substring(0, date.indexOf('['));
                 }
+                if (date.indexOf('.') == -1) {
+                    // dates w/o millis throw IAEs
+                    // fix 2023-02-23T19:23:45Z --> 2023-02-23T19:23:45.000Z
+                    int lastColon = date.lastIndexOf(':');
+                    date = date.substring(0, lastColon) +
+                            ":" +
+                            date.substring(lastColon + 1, lastColon + 3) +
+                            ".000" +
+                            date.substring(lastColon + 3);
+                }
                 return ISO_8601.parse(date);
             } catch (IllegalArgumentException ignore) {
             }

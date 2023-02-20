@@ -87,4 +87,8 @@ public interface Environment {
     void setPatchingEnabled(boolean enabled);
 
     boolean isPatchingEnabled();
+
+    void setUpdateEnabled(boolean enabled);
+
+    boolean isUpdateEnabled();
 }
