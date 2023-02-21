@@ -66,7 +66,9 @@ class ApplyUpdateStep extends WizardStep<UpdateContext, UpdateState> {
     @Override
     protected Promise<UpdateContext> onShowAndWait(final UpdateContext updateContext) {
         wizard().showProgress("Applying Update",
-                SafeHtmlUtils.fromSafeConstant("The server is being restarted to apply the update. This operation might take up to " + Timeouts.APPLY_UPDATE + " seconds."));
+                SafeHtmlUtils
+                        .fromSafeConstant("The server is being restarted to apply the update. This operation might take up to "
+                                + Timeouts.APPLY_UPDATE + " seconds."));
 
         Operation operation = new Operation.Builder(ROOT_TEMPLATE.resolve(statementContext), SHUTDOWN)
                 .param(PERFORM_INSTALLATION, true)
