@@ -144,6 +144,7 @@ public interface ModelDescriptionConstants {
     String CLASS = "class";
     String CLASS_NAME = "class-name";
     String CLASS_PATH = "class-path";
+    String CLEAN = "clean";
     String CLEAR_CACHE = "clear-cache";
     String CLEAR_TEXT = "clear-text";
     String CLIENT_ADDRESS = "client-address";
@@ -367,6 +368,7 @@ public interface ModelDescriptionConstants {
     String FORMATTER = "formatter";
     String FROM = "from";
     String FULL_REPLACE_DEPLOYMENT = "full-replace-deployment";
+    String GAV = "gav";
     String GENERATE_CERTIFICATE_SIGNING_REQUEST = "generate-certificate-signing-request";
     String GENERATE_KEY_PAIR = "generate-key-pair";
     String GENERATE_SECRET_KEY = "generate-secret-key";
@@ -525,6 +527,7 @@ public interface ModelDescriptionConstants {
     String LIST_SESSION_ATTRIBUTES = "list-session-attributes";
     String LIST_SESSIONS = "list-sessions";
     String LIST_SESSIONS_AS_JSON = "list-sessions-as-json";
+    String LIST_UPDATES = "list-updates";
     String LISTENER = "listener";
     String LIVE_ONLY = "live-only";
     String LOAD = "load";
@@ -560,6 +563,7 @@ public interface ModelDescriptionConstants {
     String MANAGEMENT_OPERATIONS = "management-operations";
     String MANAGEMENT_SPEC_VERSION = "management-spec-version";
     String MANAGEMENT_VERSION = "management-version";
+    String MANIFEST = "manifest";
     String MAPPED_REGEX_REALM_MAPPER = "mapped-regex-realm-mapper";
     String MAPPED_ROLE_MAPPER = "mapped-role-mapper";
     String MAPPED_ROLES = "mapped-roles";
@@ -666,6 +670,7 @@ public interface ModelDescriptionConstants {
     String PATTERN_FORMATTER = "pattern-formatter";
     String PAUSE = "pause";
     String PAUSED = "paused";
+    String PERFORM_INSTALLATION = "perform-installation";
     String PERIODIC_ROTATING_FILE_AUDIT_LOG = "periodic-rotating-file-audit-log";
     String PERIODIC_ROTATING_FILE_HANDLER = "periodic-rotating-file-handler";
     String PERIODIC_SIZE_ROTATING_FILE_HANDLER = "periodic-size-rotating-file-handler";
@@ -690,6 +695,7 @@ public interface ModelDescriptionConstants {
     String POSSIBLE_CAUSES = "possible-causes";
     String POST_HANDLER_CHAIN = "post-handler-chain";
     String PRE_HANDLER_CHAIN = "pre-handler-chain";
+    String PREPARE_UPDATES = "prepare-updates";
     String PREPARE_REVERT = "prepare-revert";
     String PREDEFINED_FILTER = "predefined-filter";
     String PREFIX = "prefix";
@@ -795,6 +801,7 @@ public interface ModelDescriptionConstants {
     String REPLICATION_PRIMARY = "replication-primary";
     String REPLICATION_SECONDARY = "replication-secondary";
     String REPLY_PROPERTIES = "reply-properties";
+    String REPOSITORIES = "repositories";
     String REQUEST_CONTROLLER = "request-controller";
     String REQUEST_COUNT = "request-count";
     String REQUEST_PROPERTIES = "request-properties";
@@ -825,6 +832,7 @@ public interface ModelDescriptionConstants {
     String RESULT = "result";
     String RESUME = "resume";
     String RESUME_SERVERS = "resume-servers";
+    String RETURN_CODE = "return-code";
     String REVISION = "revision";
     String REVOKE_CERTIFICATE = "revoke-certificate";
     String ROLE = "role";
@@ -1018,6 +1026,7 @@ public interface ModelDescriptionConstants {
     String UNREGISTERED = "unregistered";
     String UP = "UP";
     String UPDATE = "update";
+    String UPDATES = "updates";
     String UPDATE_ACCOUNT = "update-account";
     String UPDATE_AUTO_START_WITH_SERVER_STATUS = "update-auto-start-with-server-status";
     String UPTIME = "uptime";

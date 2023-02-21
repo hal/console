@@ -41,12 +41,73 @@ import elemental2.dom.HTMLLIElement;
 import elemental2.dom.HTMLParagraphElement;
 
 import static elemental2.dom.DomGlobal.document;
-import static org.jboss.elemento.Elements.*;
+import static org.jboss.elemento.Elements.a;
+import static org.jboss.elemento.Elements.button;
+import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.h;
+import static org.jboss.elemento.Elements.li;
+import static org.jboss.elemento.Elements.p;
+import static org.jboss.elemento.Elements.pre;
+import static org.jboss.elemento.Elements.span;
+import static org.jboss.elemento.Elements.ul;
 import static org.jboss.elemento.EventType.bind;
 import static org.jboss.elemento.EventType.click;
 import static org.jboss.hal.ballroom.dialog.Modal.$;
-import static org.jboss.hal.resources.CSS.*;
-import static org.jboss.hal.resources.UIConstants.*;
+import static org.jboss.hal.resources.CSS.active;
+import static org.jboss.hal.resources.CSS.blankSlatePf;
+import static org.jboss.hal.resources.CSS.blankSlatePfIcon;
+import static org.jboss.hal.resources.CSS.blankSlatePfMainAction;
+import static org.jboss.hal.resources.CSS.blankSlatePfSecondaryAction;
+import static org.jboss.hal.resources.CSS.btn;
+import static org.jboss.hal.resources.CSS.btnCancel;
+import static org.jboss.hal.resources.CSS.btnDefault;
+import static org.jboss.hal.resources.CSS.btnLg;
+import static org.jboss.hal.resources.CSS.btnPrimary;
+import static org.jboss.hal.resources.CSS.clearfix;
+import static org.jboss.hal.resources.CSS.close;
+import static org.jboss.hal.resources.CSS.collapse;
+import static org.jboss.hal.resources.CSS.fontAwesome;
+import static org.jboss.hal.resources.CSS.glyphicon;
+import static org.jboss.hal.resources.CSS.marginLeft5;
+import static org.jboss.hal.resources.CSS.modal;
+import static org.jboss.hal.resources.CSS.modalBody;
+import static org.jboss.hal.resources.CSS.modalContent;
+import static org.jboss.hal.resources.CSS.modalDialog;
+import static org.jboss.hal.resources.CSS.modalFooter;
+import static org.jboss.hal.resources.CSS.modalHeader;
+import static org.jboss.hal.resources.CSS.modalLg;
+import static org.jboss.hal.resources.CSS.modalTitle;
+import static org.jboss.hal.resources.CSS.pfIcon;
+import static org.jboss.hal.resources.CSS.spinner;
+import static org.jboss.hal.resources.CSS.spinnerLg;
+import static org.jboss.hal.resources.CSS.wizardHalErrorText;
+import static org.jboss.hal.resources.CSS.wizardHalNoSidebar;
+import static org.jboss.hal.resources.CSS.wizardPf;
+import static org.jboss.hal.resources.CSS.wizardPfBody;
+import static org.jboss.hal.resources.CSS.wizardPfComplete;
+import static org.jboss.hal.resources.CSS.wizardPfContents;
+import static org.jboss.hal.resources.CSS.wizardPfErrorIcon;
+import static org.jboss.hal.resources.CSS.wizardPfFooter;
+import static org.jboss.hal.resources.CSS.wizardPfMain;
+import static org.jboss.hal.resources.CSS.wizardPfProcess;
+import static org.jboss.hal.resources.CSS.wizardPfRow;
+import static org.jboss.hal.resources.CSS.wizardPfStep;
+import static org.jboss.hal.resources.CSS.wizardPfStepNumber;
+import static org.jboss.hal.resources.CSS.wizardPfStepTitle;
+import static org.jboss.hal.resources.CSS.wizardPfSteps;
+import static org.jboss.hal.resources.CSS.wizardPfStepsIndicator;
+import static org.jboss.hal.resources.CSS.wizardPfSuccessIcon;
+import static org.jboss.hal.resources.UIConstants.COLLAPSE;
+import static org.jboss.hal.resources.UIConstants.CONTROLS;
+import static org.jboss.hal.resources.UIConstants.EXPANDED;
+import static org.jboss.hal.resources.UIConstants.FALSE;
+import static org.jboss.hal.resources.UIConstants.HASH;
+import static org.jboss.hal.resources.UIConstants.HIDDEN;
+import static org.jboss.hal.resources.UIConstants.LABEL;
+import static org.jboss.hal.resources.UIConstants.ROLE;
+import static org.jboss.hal.resources.UIConstants.TABINDEX;
+import static org.jboss.hal.resources.UIConstants.TOGGLE;
+import static org.jboss.hal.resources.UIConstants.TRUE;
 
 /**
  * General purpose wizard relying on a context for the common data and an enum representing the states of the different steps.
@@ -426,13 +487,23 @@ public class Wizard<C, S extends Enum<S>> {
         });
         Elements.setVisible(blankSlate, false);
         stepElements.forEach((s, element) -> Elements.setVisible(element, s == state));
-        currentStep().onShow(context);
 
-        cancelButton.disabled = false;
-        backButton.disabled = state == initialState;
-        nextButton.disabled = false;
-        nextText.textContent = lastStates.contains(state) ? CONSTANTS.finish() : CONSTANTS.next();
-        Elements.setVisible(nextIcon, !lastStates.contains(state));
+        if (currentStep().asyncShow) {
+            currentStep().onShowAndWait(context).finally_(() -> {
+                cancelButton.disabled = false;
+                backButton.disabled = state == initialState;
+                nextButton.disabled = false;
+                nextText.textContent = lastStates.contains(state) ? CONSTANTS.finish() : CONSTANTS.next();
+                Elements.setVisible(nextIcon, !lastStates.contains(state));
+            });
+        } else {
+            currentStep().onShow(context);
+            cancelButton.disabled = false;
+            backButton.disabled = state == initialState;
+            nextButton.disabled = false;
+            nextText.textContent = lastStates.contains(state) ? CONSTANTS.finish() : CONSTANTS.next();
+            Elements.setVisible(nextIcon, !lastStates.contains(state));
+        }
     }
 
     private WizardStep<C, S> currentStep() {

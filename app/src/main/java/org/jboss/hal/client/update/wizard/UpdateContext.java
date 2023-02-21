@@ -13,34 +13,19 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-.wizard-pf-row {
-  @media (min-width: @screen-sm-min) {
-    height: 750px;
-  }
-}
-.wizard-hal-no-sidebar {
-  margin-left: 0;
-}
+package org.jboss.hal.client.update.wizard;
 
-.wizard-pf-main .blank-slate-pf {
-  padding: 40px 80px;
-}
+import java.util.List;
 
-.wizard-pf-error-icon {
-  color: @color-pf-red-300;
-  font-size: (@font-size-base * 5.6);
-  line-height: (@font-size-base * 5.6);
-}
+public class UpdateContext {
 
-.wizard-hal-error-text {
-  text-align: left;
-  white-space: pre;
-}
+    public final List<String> updates;
+    public boolean offline;
+    public boolean prepared;
 
-.wizard-pf-step-title {
-  .text-overflow();
-}
-
-.wizard-pf-step {
-    line-height: 19px !important;
+    public UpdateContext(final List<String> updates) {
+        this.updates = updates;
+        this.offline = false;
+        this.prepared = false;
+    }
 }

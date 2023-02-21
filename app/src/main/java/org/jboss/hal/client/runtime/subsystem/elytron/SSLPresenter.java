@@ -233,7 +233,7 @@ public class SSLPresenter extends ApplicationFinderPresenter<SSLPresenter.MyView
         Dialog dialog = new Dialog.Builder(title)
                 .add(p().textContent(resources.messages().updateAccountQuestion(name)).element())
                 .add(form.element())
-                .primary(resources.constants().update(), form::save)
+                .primary(resources.constants().updateServer(), form::save)
                 .size(Dialog.Size.MEDIUM)
                 .closeOnEsc(true)
                 .cancel()

@@ -873,8 +873,13 @@ public interface Ids {
     String UNMANAGED_FORM = "unmanaged-form";
     String UPDATE = "update";
     String UPDATE_CHANNEL = "update-channel";
+    String UPDATE_CHANNEL_ADD = "update-channel-add";
     String UPDATE_CHANNEL_REFRESH = "update-channel-refresh";
     String UPDATE_HISTORY = "update-history";
+    String UPDATE_HISTORY_ADD_ACTIONS = "update-history-add-actions";
+    String UPDATE_HISTORY_ADD_ONLINE = "update-history-add-online";
+    String UPDATE_HISTORY_ADD_OFFLINE = "update-history-add-offline";
+    String UPDATE_HISTORY_CLEAN = "update-history-clean";
     String UPDATE_HISTORY_REFRESH = "update-history-refresh";
     String UPLOAD_FILE_INPUT = "upload-file-input";
     String UPLOAD_NAMES_FORM = "upload-names-form";

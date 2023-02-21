@@ -130,6 +130,7 @@ public interface Names {
     String FILTERS = "Filters";
     String FORK = "Fork";
 
+    String GAV = "GAV";
     String GENERIC_ACCEPTOR = "Generic Acceptor";
     String GENERIC_CONNECTOR = "Generic Connector";
     String GLOBAL_DIRECTORY = "Global Directory";
@@ -223,6 +224,7 @@ public interface Names {
     String MANAGEMENT_CONSOLE = "Management Console";
     String MANAGEMENT_MODEL = "Management Model";
     String MANAGEMENT_OPERATIONS = "Management Operations";
+    String MANIFEST = "Manifest";
     String MAPPERS_DECODERS = "Mappers / Decoders";
     String MAPPING_MODULE = "Mapping Module";
     String PRIMARY = "Primary";

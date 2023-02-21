@@ -1164,9 +1164,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String unsupportedFileType();
 
-    String update();
-
     String updateAccount();
+
+    String updateServer();
 
     String upload();
 
@@ -1183,6 +1183,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String uploadPatch();
 
     String uploadSuccessful();
+
+    String uploadZip();
 
     String used();
 

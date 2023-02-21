@@ -15,8 +15,6 @@
  */
 package org.jboss.hal.client.update;
 
-import java.util.Date;
-
 import org.jboss.elemento.HtmlContentBuilder;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.LabelBuilder;
@@ -24,8 +22,6 @@ import org.jboss.hal.core.finder.PreviewAttributes;
 import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.ModelNodeHelper;
-import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.StatementContext;
@@ -41,23 +37,21 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.HISTORY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.KIND;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REVISION;
 
-public class HistoryPreview extends PreviewContent<NamedNode> {
+public class HistoryPreview extends PreviewContent<HistoryItem> {
 
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
     private final HtmlContentBuilder<HTMLPreElement> pre;
 
-    public HistoryPreview(final NamedNode history, final Dispatcher dispatcher, final StatementContext statementContext,
+    public HistoryPreview(final HistoryItem history, final Dispatcher dispatcher, final StatementContext statementContext,
             final Resources resources) {
         super(history.getName());
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
 
-        PreviewAttributes<NamedNode> attributes = new PreviewAttributes<>(history);
-        attributes.append(model -> {
-            Date date = ModelNodeHelper.failSafeDate(model, DATE);
-            return new PreviewAttribute(new LabelBuilder().label(DATE), Format.mediumDateTime(date));
-        });
+        PreviewAttributes<HistoryItem> attributes = new PreviewAttributes<>(history);
+        attributes.append(
+                model -> new PreviewAttribute(new LabelBuilder().label(DATE), Format.mediumDateTime(history.getDate())));
         attributes.append(KIND);
         previewBuilder().addAll(attributes);
         previewBuilder()
@@ -66,7 +60,7 @@ public class HistoryPreview extends PreviewContent<NamedNode> {
     }
 
     @Override
-    public void update(final NamedNode item) {
+    public void update(final HistoryItem item) {
         Operation operation = new Operation.Builder(AddressTemplates.INSTALLER_TEMPLATE.resolve(statementContext), HISTORY)
                 .param(REVISION, item.getName())
                 .build();

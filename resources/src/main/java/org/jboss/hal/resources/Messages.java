@@ -527,6 +527,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     SafeHtml noTransport();
 
+    SafeHtml noUpdates();
+
     SafeHtml noWrite();
 
     SafeHtml obtainCertificateError(String alias, String resource, String error);
@@ -1231,11 +1233,17 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     String undertowListenerProcessingDisabled(String listener, String server);
 
+    SafeHtml unknownReturnCode(int returnCode);
+
     String unknownResourceDetails(String address, String reason);
 
     String updateAccountQuestion(String name);
 
     String updateAvailable(String current, String update);
+
+    SafeHtml updatesAvailable();
+
+    SafeHtml updatesAvailableDescription();
 
     String uploadContentInvalid();
 
