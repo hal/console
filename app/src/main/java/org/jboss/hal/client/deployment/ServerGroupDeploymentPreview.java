@@ -33,7 +33,7 @@ import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.*;
 
 import static java.util.Arrays.asList;
-import static org.jboss.hal.client.deployment.ServerGroupDeploymentColumn.SERVER_GROUP_DEPLOYMENT_TEMPLATE;
+import static org.jboss.hal.client.deployment.AbstractDeploymentColumn.SELECTED_SERVER_GROUP_DEPLOYMENT_TEMPLATE;
 import static org.jboss.hal.client.deployment.StandaloneDeploymentPreview.LAST_DISABLED_AT;
 import static org.jboss.hal.client.deployment.StandaloneDeploymentPreview.LAST_ENABLED_AT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
@@ -56,28 +56,28 @@ class ServerGroupDeploymentPreview extends DeploymentPreview<ServerGroupDeployme
                 previewBuilder().add(new Alert(Icons.STOPPED, resources.messages().deploymentStopped(sgd.getName()),
                         referenceServerMsg,
                         resources.constants().enable(), event -> column.enable(sgd),
-                        Constraint.executable(SERVER_GROUP_DEPLOYMENT_TEMPLATE, DEPLOY)));
+                        Constraint.executable(SELECTED_SERVER_GROUP_DEPLOYMENT_TEMPLATE, DEPLOY)));
             } else if (deployment.getStatus() == Status.OK) {
                 previewBuilder().add(
                         new Alert(Icons.OK, resources.messages().deploymentActive(sgd.getName()), referenceServerMsg,
                                 resources.constants().disable(), event -> column.disable(sgd),
-                                Constraint.executable(SERVER_GROUP_DEPLOYMENT_TEMPLATE, UNDEPLOY)));
+                                Constraint.executable(SELECTED_SERVER_GROUP_DEPLOYMENT_TEMPLATE, UNDEPLOY)));
             } else {
                 previewBuilder()
                         .add(new Alert(Icons.UNKNOWN, resources.messages().deploymentUnknownState(sgd.getName()),
                                 referenceServerMsg, resources.constants().disable(), event -> column.disable(sgd),
-                                Constraint.executable(SERVER_GROUP_DEPLOYMENT_TEMPLATE, UNDEPLOY)));
+                                Constraint.executable(SELECTED_SERVER_GROUP_DEPLOYMENT_TEMPLATE, UNDEPLOY)));
             }
         } else {
             if (sgd.isEnabled()) {
                 previewBuilder().add(new Alert(Icons.OK, resources.messages().deploymentEnabled(sgd.getName()),
                         resources.constants().disable(), event -> column.disable(sgd),
-                        Constraint.executable(SERVER_GROUP_DEPLOYMENT_TEMPLATE, UNDEPLOY)));
+                        Constraint.executable(SELECTED_SERVER_GROUP_DEPLOYMENT_TEMPLATE, UNDEPLOY)));
             } else {
                 previewBuilder()
                         .add(new Alert(Icons.DISABLED, resources.messages().deploymentDisabled(sgd.getName()),
                                 resources.constants().enable(), event -> column.enable(sgd),
-                                Constraint.executable(SERVER_GROUP_DEPLOYMENT_TEMPLATE, DEPLOY)));
+                                Constraint.executable(SELECTED_SERVER_GROUP_DEPLOYMENT_TEMPLATE, DEPLOY)));
             }
         }
 

@@ -24,10 +24,6 @@ import java.util.Set;
 
 import javax.inject.Provider;
 
-import com.google.common.collect.Lists;
-import com.google.web.bindery.event.shared.EventBus;
-import elemental2.dom.File;
-import elemental2.dom.FileList;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.deployment.Content;
 import org.jboss.hal.core.deployment.Deployment;
@@ -51,6 +47,12 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
+import com.google.web.bindery.event.shared.EventBus;
+
+import elemental2.dom.File;
+import elemental2.dom.FileList;
 import rx.Completable;
 
 import static java.util.function.Function.identity;
@@ -58,7 +60,23 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADDRESS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CONTENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ENABLED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.FULL_REPLACE_DEPLOYMENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INPUT_STREAM_INDEX;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE_DEPTH;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNTIME_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 import static org.jboss.hal.flow.Flow.series;
 
 /** Deployment related functions */
@@ -68,11 +86,15 @@ class DeploymentTasks {
     private static final String UPLOAD_STATISTICS = "deploymentsFunctions.uploadStatistics";
     private static final Logger logger = LoggerFactory.getLogger(DeploymentTasks.class);
 
-    /** Uploads or updates one or multiple deployment in standalone mode resp. content in domain mode. */
+    /**
+     * Uploads or updates one or multiple deployment in standalone mode resp. content in domain mode. If available deploys it to
+     * a server group.
+     */
     static <T> void upload(FinderColumn<T> column, Environment environment, Dispatcher dispatcher,
             EventBus eventBus, Provider<Progress> progress, FileList files,
-            Resources resources) {
+            String serverGroup, Resources resources) {
         if (files.getLength() > 0) {
+            boolean hasServerGroup = serverGroup != null;
 
             StringBuilder builder = new StringBuilder();
             List<Task<FlowContext>> tasks = new ArrayList<>();
@@ -81,34 +103,13 @@ class DeploymentTasks {
                 String filename = files.item(i).name;
                 builder.append(filename).append(" ");
                 tasks.add(new CheckDeployment(dispatcher, filename));
-                tasks.add(new UploadOrReplace(environment, dispatcher, filename, filename, files.item(i), true));
+                tasks.add(new UploadOrReplace(environment, dispatcher, filename, filename, files.item(i), !hasServerGroup));
+                if (hasServerGroup) {
+                    tasks.add(new AddServerGroupDeployment(environment, dispatcher, filename, filename, serverGroup));
+                }
             }
 
             logger.debug("About to upload / update {} file(s): {}", files.getLength(), builder);
-            series(new FlowContext(progress.get()), tasks)
-                    .subscribe(new UploadOutcome<>(column, eventBus, files, resources));
-        }
-    }
-
-    /** Uploads a content and deploys it to a server group. */
-    static <T> void uploadAndDeploy(FinderColumn<T> column, Environment environment,
-            Dispatcher dispatcher, EventBus eventBus, Provider<Progress> progress,
-            FileList files, String serverGroup, Resources resources) {
-        if (files.getLength() > 0) {
-
-            StringBuilder builder = new StringBuilder();
-            List<Task<FlowContext>> tasks = new ArrayList<>();
-
-            for (int i = 0; i < files.getLength(); i++) {
-                String filename = files.item(i).name;
-                builder.append(filename).append(" ");
-                tasks.add(new CheckDeployment(dispatcher, filename));
-                tasks.add(new UploadOrReplace(environment, dispatcher, filename, filename, files.item(i), false));
-                tasks.add(new AddServerGroupDeployment(environment, dispatcher, filename, filename, serverGroup));
-            }
-
-            logger.debug("About to upload and deploy {} file(s): {} to server group {}",
-                    files.getLength(), builder, serverGroup);
             series(new FlowContext(progress.get()), tasks)
                     .subscribe(new UploadOutcome<>(column, eventBus, files, resources));
         }
@@ -191,7 +192,7 @@ class DeploymentTasks {
         }
 
         ReadServerGroupDeployments(Environment environment, Dispatcher dispatcher, String serverGroup,
-                String deployment) {
+                                   String deployment) {
             this.environment = environment;
             this.dispatcher = dispatcher;
             this.serverGroup = serverGroup;
@@ -251,7 +252,7 @@ class DeploymentTasks {
         private final String serverGroup;
 
         AddServerGroupDeployment(Environment environment, Dispatcher dispatcher, String name, String runtimeName,
-                String serverGroup) {
+                                 String serverGroup) {
             this.environment = environment;
             this.dispatcher = dispatcher;
             this.name = name;
@@ -377,7 +378,7 @@ class DeploymentTasks {
         private final boolean enabled;
 
         UploadOrReplace(Environment environment, Dispatcher dispatcher, String name, String runtimeName, File file,
-                boolean enabled) {
+                        boolean enabled) {
             this.environment = environment;
             this.dispatcher = dispatcher;
             this.name = name;
