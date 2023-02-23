@@ -24,6 +24,7 @@ import java.util.Set;
 
 import javax.inject.Provider;
 
+import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.deployment.Content;
 import org.jboss.hal.core.deployment.Deployment;
@@ -49,16 +50,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
 
 import elemental2.dom.File;
 import elemental2.dom.FileList;
 import rx.Completable;
+import rx.Single;
 
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
+import static org.jboss.gwt.elemento.core.Elements.p;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADDRESS;
@@ -103,6 +107,8 @@ class DeploymentTasks {
                 String filename = files.item(i).name;
                 builder.append(filename).append(" ");
                 tasks.add(new CheckDeployment(dispatcher, filename));
+                tasks.add(new ConfirmReplacement(resources.constants().replaceDeployment(), resources.constants().replace(),
+                        resources.messages().deploymentReplaceConfirmation(filename)));
                 tasks.add(new UploadOrReplace(environment, dispatcher, filename, filename, files.item(i), !hasServerGroup));
                 if (hasServerGroup) {
                     tasks.add(new AddServerGroupDeployment(environment, dispatcher, filename, filename, serverGroup));
@@ -117,7 +123,6 @@ class DeploymentTasks {
 
     private DeploymentTasks() {
     }
-
 
     /** Loads the contents form the content repository and pushes a {@code List<Content>} onto the context stack. */
     static class LoadContent implements Task<FlowContext> {
@@ -262,6 +267,9 @@ class DeploymentTasks {
 
         @Override
         public Completable call(FlowContext context) {
+            if (!context.emptyStack() && (Integer) context.pop() != 404) {
+                return Completable.complete(); // deployment was replaced, skip deploy
+            }
             if (environment.isStandalone()) {
                 List<ServerGroupDeployment> serverGroupDeployments = Collections.emptyList();
                 context.set(SERVER_GROUP_DEPLOYMENTS, serverGroupDeployments);
@@ -279,7 +287,6 @@ class DeploymentTasks {
             }
         }
     }
-
 
     /**
      * Loads the deployments of the first running server from the list of running servers in the context under the key
@@ -359,14 +366,57 @@ class DeploymentTasks {
         }
     }
 
+    /**
+     * Check if {@code 404} is on the stack, if not asks the user for confirmation, if user confirms {@code 200} is kept on the
+     * stack otherwise {@code 403} is pushed on the stack.
+     */
+    static class ConfirmReplacement implements Task<FlowContext> {
+
+        private final String title;
+        private final String okButton;
+        private final SafeHtml message;
+
+        ConfirmReplacement(String title, String okButton, SafeHtml message) {
+            this.title = title;
+            this.okButton = okButton;
+            this.message = message;
+        }
+
+        @Override
+        public Completable call(FlowContext context) {
+            Integer result = context.peek();
+
+            if (result == 404) {
+                return Completable.complete();
+            }
+
+            return Single.create(sub -> {
+                Dialog confirmDialog = new Dialog.Builder(title)
+                        .primary(okButton, () -> {
+                            sub.onSuccess(context);
+                            return true;
+                        })
+                        .secondary(() -> {
+                            context.pop();
+                            context.push(403);
+                            sub.onSuccess(context);
+                            return true;
+                        })
+                        .size(Dialog.Size.MEDIUM)
+                        .add(p().innerHtml(message).element())
+                        .build();
+
+                confirmDialog.show();
+            }).toCompletable();
+        }
+    }
 
     /**
-     * Creates a new deployment or replaces an existing deployment. The function looks for a status code in the context.
-     * If no status context or {@code 404} is found, a new deployment is created, if {@code 200} is found the deployment
-     * is replaced.
+     * Creates a new deployment or replaces an existing deployment. The function looks for a status code in the context. If no
+     * status context or {@code 404} is found, a new deployment is created, if {@code 200} is found the deployment is replaced.
+     * If {@code 403} is found the task does nothing.
      * <p>
-     * The function puts an {@link UploadStatistics} under the key {@link DeploymentTasks#UPLOAD_STATISTICS} into the
-     * context.
+     * The function puts an {@link UploadStatistics} under the key {@link DeploymentTasks#UPLOAD_STATISTICS} into the context.
      */
     static class UploadOrReplace implements Task<FlowContext> {
 
@@ -389,14 +439,25 @@ class DeploymentTasks {
 
         @Override
         public Completable call(FlowContext context) {
+            boolean skip = false;
             boolean replace;
             Operation.Builder builder;
 
             if (context.emptyStack()) {
                 replace = false;
             } else {
-                Integer status = context.pop();
+                Integer status = context.peek();
                 replace = status == 200;
+                skip = status == 403;
+            }
+
+            if (skip) {
+                UploadStatistics statistics = context.get(UPLOAD_STATISTICS);
+                if (statistics == null) {
+                    statistics = new UploadStatistics(environment);
+                    context.set(UPLOAD_STATISTICS, statistics);
+                }
+                return Completable.complete();
             }
 
             if (replace) {
@@ -437,7 +498,6 @@ class DeploymentTasks {
                     .toCompletable();
         }
     }
-
 
     /** Adds an unmanaged deployment. */
     static class AddUnmanagedDeployment implements Task<FlowContext> {
