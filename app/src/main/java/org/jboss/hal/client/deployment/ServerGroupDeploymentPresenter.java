@@ -54,8 +54,8 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
-import static org.jboss.hal.client.deployment.ContentColumn.CONTENT_ADDRESS;
-import static org.jboss.hal.client.deployment.ServerGroupDeploymentColumn.SERVER_GROUP_DEPLOYMENT_ADDRESS;
+import static org.jboss.hal.client.deployment.AbstractDeploymentColumn.DEPLOYMENT_ADDRESS;
+import static org.jboss.hal.client.deployment.AbstractDeploymentColumn.SELECTED_SERVER_GROUP_DEPLOYMENT_ADDRESS;
 import static org.jboss.hal.core.runtime.TopologyTasks.runningServers;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
@@ -167,7 +167,7 @@ public class ServerGroupDeploymentPresenter extends
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(NameTokens.SERVER_GROUP_DEPLOYMENT)
-    @Requires(value = { CONTENT_ADDRESS, SERVER_GROUP_DEPLOYMENT_ADDRESS }, recursive = false)
+    @Requires(value = { DEPLOYMENT_ADDRESS, SELECTED_SERVER_GROUP_DEPLOYMENT_ADDRESS }, recursive = false)
     public interface MyProxy extends ProxyPlace<ServerGroupDeploymentPresenter> {
     }
 

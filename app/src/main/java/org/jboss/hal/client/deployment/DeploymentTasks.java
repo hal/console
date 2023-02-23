@@ -83,11 +83,15 @@ class DeploymentTasks {
     private static final String UPLOAD_STATISTICS = "deploymentsFunctions.uploadStatistics";
     private static final Logger logger = LoggerFactory.getLogger(DeploymentTasks.class);
 
-    /** Uploads or updates one or multiple deployment in standalone mode resp. content in domain mode. */
+    /**
+     * Uploads or updates one or multiple deployment in standalone mode resp. content in domain mode. If available deploys it to
+     * a server group.
+     */
     static <T> void upload(FinderColumn<T> column, Environment environment, Dispatcher dispatcher,
             EventBus eventBus, Provider<Progress> progress, FileList files,
-            Resources resources) {
+            String serverGroup, Resources resources) {
         if (files.getLength() > 0) {
+            boolean hasServerGroup = serverGroup != null;
 
             StringBuilder builder = new StringBuilder();
             List<Task<FlowContext>> tasks = new ArrayList<>();
@@ -96,48 +100,13 @@ class DeploymentTasks {
                 String filename = files.item(i).name;
                 builder.append(filename).append(" ");
                 tasks.add(new CheckDeployment(dispatcher, filename));
-                tasks.add(new UploadOrReplace(environment, dispatcher, filename, filename, files.item(i), true));
+                tasks.add(new UploadOrReplace(environment, dispatcher, filename, filename, files.item(i), !hasServerGroup));
+                if (hasServerGroup) {
+                    tasks.add(new AddServerGroupDeployment(environment, dispatcher, filename, filename, serverGroup));
+                }
             }
 
             logger.debug("About to upload / update {} file(s): {}", files.getLength(), builder);
-            sequential(new FlowContext(progress.get()), tasks)
-                    .then(context -> {
-                        UploadStatistics statistics = context.get(UPLOAD_STATISTICS);
-                        if (statistics != null) {
-                            eventBus.fireEvent(new MessageEvent(statistics.getMessage()));
-                        } else {
-                            logger.error("Unable to find upload statistics in the context using key '{}'", UPLOAD_STATISTICS);
-                        }
-                        column.refresh(FinderColumn.RefreshMode.RESTORE_SELECTION);
-                        return null;
-                    })
-                    .catch_(error -> {
-                        MessageEvent.fire(eventBus,
-                                Message.error(resources.messages().deploymentOpFailed(files.getLength())));
-                        return null;
-                    });
-        }
-    }
-
-    /** Uploads a content and deploys it to a server group. */
-    static <T> void uploadAndDeploy(FinderColumn<T> column, Environment environment,
-            Dispatcher dispatcher, EventBus eventBus, Provider<Progress> progress,
-            FileList files, String serverGroup, Resources resources) {
-        if (files.getLength() > 0) {
-
-            StringBuilder builder = new StringBuilder();
-            List<Task<FlowContext>> tasks = new ArrayList<>();
-
-            for (int i = 0; i < files.getLength(); i++) {
-                String filename = files.item(i).name;
-                builder.append(filename).append(" ");
-                tasks.add(new CheckDeployment(dispatcher, filename));
-                tasks.add(new UploadOrReplace(environment, dispatcher, filename, filename, files.item(i), false));
-                tasks.add(new AddServerGroupDeployment(environment, dispatcher, filename, filename, serverGroup));
-            }
-
-            logger.debug("About to upload and deploy {} file(s): {} to server group {}",
-                    files.getLength(), builder, serverGroup);
             sequential(new FlowContext(progress.get()), tasks)
                     .then(context -> {
                         UploadStatistics statistics = context.get(UPLOAD_STATISTICS);
@@ -295,6 +264,9 @@ class DeploymentTasks {
 
         @Override
         public Promise<FlowContext> apply(final FlowContext context) {
+            if (!context.emptyStack() && (Integer) context.pop() != 404) {
+                return Promise.resolve(context); // deployment was replaced, skip deploy
+            }
             if (environment.isStandalone()) {
                 List<ServerGroupDeployment> serverGroupDeployments = Collections.emptyList();
                 context.set(SERVER_GROUP_DEPLOYMENTS, serverGroupDeployments);
@@ -423,7 +395,7 @@ class DeploymentTasks {
             if (context.emptyStack()) {
                 replace = false;
             } else {
-                Integer status = context.pop();
+                Integer status = context.peek();
                 replace = status == 200;
             }
 

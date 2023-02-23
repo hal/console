@@ -15,32 +15,23 @@
  */
 package org.jboss.hal.core.deployment;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.annotation.Nullable;
 
 import org.jboss.hal.core.deployment.Deployment.Status;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.NamedNode;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DISABLED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ENABLED;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.EXPLODED;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.MANAGED;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNTIME_NAME;
 
 /** A deployed content used in domain mode. */
-public class ServerGroupDeployment extends NamedNode {
+public class ServerGroupDeployment extends Content {
 
     private final String serverGroup;
     private Deployment deployment; // might be null if there's no reference server available
-    private final List<ServerGroupDeployment> serverGroupDeployments;
 
     public ServerGroupDeployment(String serverGroup, ModelNode node) {
         super(node);
         this.serverGroup = serverGroup;
-        this.serverGroupDeployments = new ArrayList<>();
     }
 
     @Override
@@ -69,36 +60,6 @@ public class ServerGroupDeployment extends NamedNode {
         result = 31 * result + serverGroup.hashCode();
         result = 31 * result + getName().hashCode();
         return result;
-    }
-
-    public String getRuntimeName() {
-        ModelNode runtimeName = get(RUNTIME_NAME);
-        return runtimeName.isDefined() ? runtimeName.asString() : null;
-    }
-
-    public void addDeployment(ServerGroupDeployment serverGroupDeployment) {
-        serverGroupDeployments.add(serverGroupDeployment);
-    }
-
-    public List<ServerGroupDeployment> getServerGroupDeployments() {
-        return serverGroupDeployments;
-    }
-
-    public boolean isDeployedTo(String serverGroup) {
-        return serverGroupDeployments.stream()
-                .anyMatch(sgd -> serverGroup.equals(sgd.getServerGroup()));
-    }
-
-    public boolean isExploded() {
-        return get(EXPLODED).asBoolean(false);
-    }
-
-    public boolean isManaged() {
-        return get(MANAGED).asBoolean(true);
-    }
-
-    public boolean isEnabled() {
-        return hasDefined(ENABLED) && get(ENABLED).asBoolean(false);
     }
 
     public String getServerGroup() {
