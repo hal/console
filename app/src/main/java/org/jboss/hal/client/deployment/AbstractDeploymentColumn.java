@@ -473,17 +473,32 @@ public abstract class AbstractDeploymentColumn<T extends Content> extends Finder
                 .addStep(UPLOAD, new UploadDeploymentStep(resources))
                 .addStep(NAMES, new NamesStep(environment, metadata, resources))
 
-                .onBack((context, currentState) -> currentState == NAMES ? UPLOAD : null)
+                .onBack((context, currentState) -> currentState == NAMES ? (context.name != null ? NAMES : UPLOAD) : null)
                 .onNext((context, currentState) -> currentState == UPLOAD ? NAMES : null)
 
                 .stayOpenAfterFinish()
                 .onFinish((wzd, wzdContext) -> {
                     String name = wzdContext.name;
                     wzd.showProgress(columnProps.deploymentProgressTitle, columnProps.getDeploymentProgressText.apply(name));
+
+                    Task<FlowContext> confirmReplacement = context -> new Promise<>((resolve, reject) -> {
+                        int result = context.peek();
+
+                        if (result == 404) {
+                            resolve.onInvoke(context);
+                            return;
+                        }
+
+                        wzd.showWarning(columnProps.replaceDeploymentTitle,
+                                resources.messages().deploymentReplaceConfirmation(name), resources.constants().replace(),
+                                __ -> resolve.onInvoke(context), false);
+                    });
+
                     List<Task<FlowContext>> tasks = new ArrayList<>();
                     tasks.add(new DeploymentTasks.CheckDeployment(dispatcher, name));
+                    tasks.add(confirmReplacement);
                     tasks.add(new DeploymentTasks.UploadOrReplace(environment, dispatcher, name, wzdContext.runtimeName,
-                            wzdContext.file, wzdContext.enabled));
+                                    wzdContext.file, wzdContext.enabled));
                     if (columnProps.columnType == ColumnType.SERVER_GROUP) {
                         tasks.add(getServerGroupDeploymentTask(name, wzdContext.runtimeName));
                     }
