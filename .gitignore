@@ -6,6 +6,7 @@
 .idea
 .project
 .settings
+.sdkmanrc
 .vscode
 .wakatime-project
 dependency-reduced-pom.xml

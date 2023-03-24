@@ -498,7 +498,7 @@ public abstract class AbstractDeploymentColumn<T extends Content> extends Finder
                     tasks.add(new DeploymentTasks.CheckDeployment(dispatcher, name));
                     tasks.add(confirmReplacement);
                     tasks.add(new DeploymentTasks.UploadOrReplace(environment, dispatcher, name, wzdContext.runtimeName,
-                                    wzdContext.file, wzdContext.enabled));
+                            wzdContext.file, wzdContext.enabled));
                     if (columnProps.columnType == ColumnType.SERVER_GROUP) {
                         tasks.add(getServerGroupDeploymentTask(name, wzdContext.runtimeName));
                     }
