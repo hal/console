@@ -120,12 +120,6 @@ public class Deployment extends Content {
         return referenceServer;
     }
 
-    public boolean isEnabled() {
-        ModelNode enabled = get(ENABLED);
-        //noinspection SimplifiableConditionalExpression
-        return enabled.isDefined() ? enabled.asBoolean(false) : false;
-    }
-
     public Status getStatus() {
         return ModelNodeHelper.asEnumValue(this, STATUS, Status::valueOf, Status.UNDEFINED);
     }

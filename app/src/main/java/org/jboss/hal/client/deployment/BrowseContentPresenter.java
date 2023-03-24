@@ -91,7 +91,7 @@ public class BrowseContentPresenter
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(NameTokens.BROWSE_CONTENT)
-    @Requires(value = ContentColumn.CONTENT_ADDRESS, recursive = false)
+    @Requires(value = AbstractDeploymentColumn.DEPLOYMENT_ADDRESS, recursive = false)
     public interface MyProxy extends ProxyPlace<BrowseContentPresenter> {
     }
 

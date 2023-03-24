@@ -54,8 +54,8 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
-import static org.jboss.hal.client.deployment.ContentColumn.CONTENT_ADDRESS;
-import static org.jboss.hal.client.deployment.ServerGroupDeploymentColumn.SERVER_GROUP_DEPLOYMENT_ADDRESS;
+import static org.jboss.hal.client.deployment.AbstractDeploymentColumn.DEPLOYMENT_ADDRESS;
+import static org.jboss.hal.client.deployment.AbstractDeploymentColumn.SELECTED_SERVER_GROUP_DEPLOYMENT_ADDRESS;
 import static org.jboss.hal.core.runtime.TopologyTasks.runningServers;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
@@ -78,16 +78,16 @@ public class ServerGroupDeploymentPresenter extends
 
     @Inject
     public ServerGroupDeploymentPresenter(EventBus eventBus,
-            MyView view,
-            MyProxy proxy,
-            Environment environment,
-            Finder finder,
-            FinderPathFactory finderPathFactory,
-            Dispatcher dispatcher,
-            PlaceManager placeManager,
-            Places places,
-            @Footer Provider<Progress> progress,
-            Resources resources) {
+                                          MyView view,
+                                          MyProxy proxy,
+                                          Environment environment,
+                                          Finder finder,
+                                          FinderPathFactory finderPathFactory,
+                                          Dispatcher dispatcher,
+                                          PlaceManager placeManager,
+                                          Places places,
+                                          @Footer Provider<Progress> progress,
+                                          Resources resources) {
         super(eventBus, view, proxy, finder);
         this.environment = environment;
         this.finderPathFactory = finderPathFactory;
@@ -148,8 +148,8 @@ public class ServerGroupDeploymentPresenter extends
 
     void goToServerGroup() {
         PlaceRequest serverGroupPlaceRequest = places.finderPlace(NameTokens.RUNTIME, new FinderPath()
-                .append(Ids.DOMAIN_BROWSE_BY, Ids.asId(Names.SERVER_GROUPS))
-                .append(Ids.SERVER_GROUP, Ids.serverGroup(serverGroup)))
+                        .append(Ids.DOMAIN_BROWSE_BY, Ids.asId(Names.SERVER_GROUPS))
+                        .append(Ids.SERVER_GROUP, Ids.serverGroup(serverGroup)))
                 .build();
         placeManager.revealPlace(serverGroupPlaceRequest);
     }
@@ -171,7 +171,7 @@ public class ServerGroupDeploymentPresenter extends
     // @formatter:off
     @ProxyCodeSplit
     @NameToken(NameTokens.SERVER_GROUP_DEPLOYMENT)
-    @Requires(value = {CONTENT_ADDRESS, SERVER_GROUP_DEPLOYMENT_ADDRESS}, recursive = false)
+    @Requires(value = {DEPLOYMENT_ADDRESS, SELECTED_SERVER_GROUP_DEPLOYMENT_ADDRESS}, recursive = false)
     public interface MyProxy extends ProxyPlace<ServerGroupDeploymentPresenter> {
     }
 

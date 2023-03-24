@@ -58,6 +58,17 @@ public class FlowContext {
     }
 
     /**
+     * Returns the object at the top of the stack and keeps it on the stack.
+     *
+     * @return The object at the top of the stack.
+     * @throws EmptyStackException if this stack is empty.
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T peek() {
+        return (T) stack.peek();
+    }
+
+    /**
      * @return {@code true} if the context stack is empty, {@code false} otherwise.
      */
     public boolean emptyStack() {
