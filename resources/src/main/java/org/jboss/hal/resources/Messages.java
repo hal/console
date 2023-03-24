@@ -204,6 +204,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     SafeHtml deploymentReadError(String deployment);
 
+    SafeHtml deploymentReplaceConfirmation(String name);
+
     SafeHtml deploymentReplaced(@PluralCount int count);
 
     SafeHtml deploymentStopped(String name);

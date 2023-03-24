@@ -477,6 +477,7 @@ public interface CSS {
     String wizardPfSteps = "wizard-pf-steps";
     String wizardPfStepsIndicator = "wizard-pf-steps-indicator";
     String wizardPfSuccessIcon = "wizard-pf-success-icon";
+    String wizardPfWarningIcon = "wizard-pf-warning-icon";
     String wrap = "wrap";
 
     String DASH = "-";

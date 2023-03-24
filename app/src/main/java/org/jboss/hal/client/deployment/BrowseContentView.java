@@ -34,7 +34,7 @@ public class BrowseContentView extends HalViewImpl implements BrowseContentPrese
     @Inject
     public BrowseContentView(Dispatcher dispatcher, EventBus eventBus, Environment environment,
             MetadataRegistry metadataRegistry, Resources resources) {
-        Metadata metadata = metadataRegistry.lookup(ContentColumn.CONTENT_TEMPLATE);
+        Metadata metadata = metadataRegistry.lookup(AbstractDeploymentColumn.DEPLOYMENT_TEMPLATE);
         browseContent = new BrowseContentElement(dispatcher, environment, eventBus, metadata, resources);
         registerAttachable(browseContent);
         initElement(browseContent);
