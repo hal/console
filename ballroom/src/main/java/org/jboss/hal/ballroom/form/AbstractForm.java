@@ -82,7 +82,6 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
 
     private final String id;
     private final StateMachine stateMachine;
-    private final DataMapping<T> dataMapping;
     private final LinkedHashMap<State, HTMLElement> panels;
     // Contains *all* form items. Do not use this field directly.
     // Instead use getFormItems() or getBoundFormItems()
@@ -103,6 +102,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
     private HandlerRegistration escRegistration;
 
     // accessible in subclasses
+    protected final DataMapping<T> dataMapping;
     protected SaveCallback<T> saveCallback;
     protected CancelCallback<T> cancelCallback;
     protected PrepareReset<T> prepareReset;

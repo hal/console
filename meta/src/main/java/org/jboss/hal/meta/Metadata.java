@@ -15,9 +15,9 @@
  */
 package org.jboss.hal.meta;
 
+import java.util.List;
 import java.util.function.Supplier;
 
-import com.google.gwt.resources.client.TextResource;
 import jsinterop.annotations.JsIgnore;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
@@ -31,7 +31,19 @@ import org.jboss.hal.meta.security.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import com.google.common.base.Splitter;
+import com.google.gwt.resources.client.TextResource;
+
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HAL_LABEL;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NILLABLE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.OPERATIONS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUEST_PROPERTIES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUIRED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.WRITE;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.meta.AddressTemplate.ROOT;
 import static org.jboss.hal.meta.security.SecurityContext.RWX;
@@ -130,12 +142,25 @@ public class Metadata {
      */
     @JsIgnore
     public Metadata forComplexAttribute(String name, boolean prefixLabel) {
-        ModelNode payload = new ModelNode();
-        payload.get(DESCRIPTION).set(failSafeGet(description, ATTRIBUTES + "/" + name + "/" + DESCRIPTION));
-        payload.get(REQUIRED).set(failSafeGet(description, ATTRIBUTES + "/" + name + "/" + REQUIRED));
-        payload.get(NILLABLE).set(failSafeGet(description, ATTRIBUTES + "/" + name + "/" + NILLABLE));
+        if (name.indexOf('.') != -1) {
+            Metadata metadata = this;
+            List<String> parts = Splitter.on('.').trimResults().omitEmptyStrings().splitToList(name);
+            for (String part : parts) {
+                metadata = metadata.nested(metadata, part, prefixLabel);
+            }
+            return metadata;
+        } else {
+            return nested(this, name, prefixLabel);
+        }
+    }
 
-        Property complexAttribute = description.findAttribute(ATTRIBUTES, name);
+    private Metadata nested(Metadata metadata, String name, boolean prefixLabel) {
+        ModelNode payload = new ModelNode();
+        payload.get(DESCRIPTION).set(failSafeGet(metadata.description, ATTRIBUTES + "/" + name + "/" + DESCRIPTION));
+        payload.get(REQUIRED).set(failSafeGet(metadata.description, ATTRIBUTES + "/" + name + "/" + REQUIRED));
+        payload.get(NILLABLE).set(failSafeGet(metadata.description, ATTRIBUTES + "/" + name + "/" + NILLABLE));
+
+        Property complexAttribute = metadata.description.findAttribute(ATTRIBUTES, name);
         if (complexAttribute != null && complexAttribute.getValue().hasDefined(VALUE_TYPE)) {
             complexAttribute.getValue().get(VALUE_TYPE).asPropertyList().forEach(nestedProperty -> {
                 // The nested name is *always* just the nested property name,
@@ -152,7 +177,7 @@ public class Metadata {
             });
         }
 
-        SecurityContext parentContext = this.securityContext.get();
+        SecurityContext parentContext = metadata.securityContext.get();
         SecurityContext attributeContext = new SecurityContext(new ModelNode()) {
             @Override
             public boolean isReadable() {
@@ -179,7 +204,7 @@ public class Metadata {
                 return parentContext.isExecutable(operation);
             }
         };
-        return new Metadata(template, () -> attributeContext, new ResourceDescription(payload), capabilities);
+        return new Metadata(metadata.template, () -> attributeContext, new ResourceDescription(payload), metadata.capabilities);
     }
 
     @JsIgnore

@@ -20,6 +20,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class ModelNodeHelperTest {
@@ -31,16 +32,16 @@ public class ModelNodeHelperTest {
     /**
      * Creates the model node
      * <pre>
-     *     ("foo" => ("bar" => 42))
+     *     {"foo" : {"bar" : 42}}
      * </pre>
      */
     @Before
     public void setUp() {
         modelNode = new ModelNode();
-        foo = new ModelNode();
         bar = new ModelNode().set(42);
-        foo.set("bar", bar);
-        modelNode.set("foo", foo);
+        foo = new ModelNode();
+        foo.get("bar").set(bar);
+        modelNode.get("foo").set(foo);
     }
 
     @Test
@@ -77,5 +78,39 @@ public class ModelNodeHelperTest {
         ModelNode node = ModelNodeHelper.failSafeGet(modelNode, "foo/bar");
         assertTrue(node.isDefined());
         assertEquals(bar, node);
+    }
+
+    @Test
+    public void flatToNestedNull() {
+        assertNull(ModelNodeHelper.flatToNested(null));
+    }
+
+    @Test
+    public void flatToNestedUndefined() {
+        assertFalse(ModelNodeHelper.flatToNested(new ModelNode()).isDefined());
+    }
+
+    @Test
+    public void flatToNestedFlat() {
+        assertEquals(modelNode, ModelNodeHelper.flatToNested(modelNode));
+    }
+
+    @Test
+    public void flatToNested() {
+        ModelNode flat = new ModelNode();
+        flat.get("foo.bar").set(42);
+        assertEquals(modelNode, ModelNodeHelper.flatToNested(flat));
+    }
+
+    @Test
+    public void flatToNestedWithOverlay() {
+        ModelNode flat = new ModelNode();
+        flat.get("a.b").set("ab");
+        flat.get("a.b.c").set("abc");
+
+        ModelNode nested = new ModelNode();
+        nested.get("a").get("b").get("c").set("abc");
+
+        assertEquals(nested, ModelNodeHelper.flatToNested(flat));
     }
 }

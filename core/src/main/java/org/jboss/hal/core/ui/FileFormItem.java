@@ -54,6 +54,7 @@ public class FileFormItem extends CompositeFormItem {
         path = new TextBoxItem(PATH, new LabelBuilder().label(PATH));
         path.setRequired(pathRequired);
         path.setId(Ids.uniqueId());
+        path.setExpressionAllowed(true);
         relativeTo = new TextBoxItem(RELATIVE_TO, new LabelBuilder().label(RELATIVE_TO));
         relativeTo.setId(Ids.uniqueId());
         relativeTo.registerSuggestHandler(new PathsAutoComplete());
