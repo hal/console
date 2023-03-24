@@ -21,37 +21,38 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.NamedNode;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.KIND;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HASH;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TIMESTAMP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
 
 public class HistoryItem extends NamedNode {
 
-    public enum Kind {
+    public enum HistoryType {
         INSTALL, UPDATE, ROLLBACK, UNDEFINED
     }
 
-    public HistoryItem(final String name, final ModelNode node) {
-        super(name, node);
+    public HistoryItem(final ModelNode node) {
+        super(node.get(HASH).asString(), node);
     }
 
-    public Date getDate() {
-        return ModelNodeHelper.failSafeDate(this, DATE);
+    public Date getTimestamp() {
+        return ModelNodeHelper.failSafeDate(this, TIMESTAMP);
     }
 
-    public Kind getKind() {
-        return ModelNodeHelper.asEnumValue(this, KIND, value -> Kind.valueOf(value.toUpperCase()),
-                Kind.UNDEFINED);
+    public HistoryType getHistoryKind() {
+        return ModelNodeHelper.asEnumValue(this, TYPE, value -> HistoryType.valueOf(value.toUpperCase()),
+                HistoryType.UNDEFINED);
     }
 
     public boolean isInstall() {
-        return getKind() == Kind.INSTALL;
+        return getHistoryKind() == HistoryType.INSTALL;
     }
 
     public boolean isUpdate() {
-        return getKind() == Kind.UPDATE;
+        return getHistoryKind() == HistoryType.UPDATE;
     }
 
     public boolean isRollback() {
-        return getKind() == Kind.ROLLBACK;
+        return getHistoryKind() == HistoryType.ROLLBACK;
     }
 }

@@ -111,7 +111,7 @@ public class ChannelColumn extends FinderColumn<Channel> {
                 List<ItemAction<Channel>> actions = new ArrayList<>();
                 actions.add(new ItemAction.Builder<Channel>()
                         .title(resources.constants().remove())
-                        .handler(item1 -> remove(item1))
+                        .handler(itm -> remove(itm))
                         .constraint(Constraint.executable(INSTALLER_TEMPLATE, WRITE_ATTRIBUTE_OPERATION))
                         .build());
                 return actions;

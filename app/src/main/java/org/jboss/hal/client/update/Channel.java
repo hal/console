@@ -34,12 +34,12 @@ public class Channel extends NamedNode {
     }
 
     public String getManifest() {
-        ModelNode modelNode = get(MANIFEST);
-        if (modelNode.isDefined()) {
-            if (modelNode.hasDefined(GAV)) {
-                return modelNode.get(GAV).asString();
-            } else if (modelNode.hasDefined(URL)) {
-                return modelNode.get(URL).asString();
+        ModelNode manifest = get(MANIFEST);
+        if (manifest.isDefined()) {
+            if (manifest.hasDefined(GAV)) {
+                return manifest.get(GAV).asString();
+            } else if (manifest.hasDefined(URL)) {
+                return manifest.get(URL).asString();
             } else {
                 return Names.NOT_AVAILABLE;
             }

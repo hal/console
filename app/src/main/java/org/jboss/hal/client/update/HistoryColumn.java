@@ -56,14 +56,13 @@ import elemental2.promise.Promise;
 
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.update.AddressTemplates.INSTALLER_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HISTORY;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.KIND;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.LIST_UPDATES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PREPARE_REVERT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PREPARE_UPDATES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RETURN_CODE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.REVISION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TIMESTAMP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UPDATES;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
@@ -104,21 +103,9 @@ public class HistoryColumn extends FinderColumn<HistoryItem> {
             Operation operation = new Operation.Builder(address, HISTORY).build();
             return dispatcher.execute(operation).then(result -> {
                 List<HistoryItem> nodes = result.asList().stream()
-                        .map(ModelNode::asString)
-                        .map(HISTORY_REGEX::exec)
-                        .filter(matchResult -> matchResult.getGroupCount() == 4)
-                        .map(matchResult -> {
-                            String revision = matchResult.getGroup(1);
-                            String date = matchResult.getGroup(2);
-                            String kind = matchResult.getGroup(3);
-                            ModelNode payload = new ModelNode();
-                            payload.get(REVISION).set(revision);
-                            payload.get(DATE).set(date);
-                            payload.get(KIND).set(kind);
-                            return new HistoryItem(revision, payload);
-                        })
+                        .map(HistoryItem::new)
                         .sorted(Comparator.comparing((HistoryItem node) -> {
-                            Date date = ModelNodeHelper.failSafeDate(node, DATE);
+                            Date date = ModelNodeHelper.failSafeDate(node, TIMESTAMP);
                             return date == null ? new Date() : date;
                         }).reversed())
                         .collect(toList());
@@ -134,17 +121,17 @@ public class HistoryColumn extends FinderColumn<HistoryItem> {
 
             @Override
             public String getFilterData() {
-                return getTitle() + " " + item.get(KIND).asString();
+                return getTitle() + " " + item.get(TYPE).asString();
             }
 
             @Override
             public String getTooltip() {
-                return item.get(KIND).asString();
+                return item.get(TYPE).asString();
             }
 
             @Override
             public HTMLElement getIcon() {
-                switch (item.getKind()) {
+                switch (item.getHistoryKind()) {
                     case INSTALL:
                         return Icons.custom(pfIcon("bundle"));
                     case UPDATE:
@@ -159,13 +146,14 @@ public class HistoryColumn extends FinderColumn<HistoryItem> {
 
             @Override
             public HTMLElement element() {
-                return ItemDisplay.withSubtitle(item.getName(), Format.mediumDateTime(item.getDate()));
+                return ItemDisplay.withSubtitle(item.getName(), Format.mediumDateTime(item.getTimestamp()));
             }
 
             @Override
             public List<ItemAction<HistoryItem>> actions() {
                 List<ItemAction<HistoryItem>> actions = new ArrayList<>();
-                if (item.getKind() == HistoryItem.Kind.UPDATE || item.getKind() == HistoryItem.Kind.ROLLBACK) {
+                if (item.getHistoryKind() == HistoryItem.HistoryType.UPDATE
+                        || item.getHistoryKind() == HistoryItem.HistoryType.ROLLBACK) {
                     actions.add(new ItemAction.Builder<HistoryItem>()
                             .title(resources.constants().revert())
                             .handler(item1 -> revert(item1))

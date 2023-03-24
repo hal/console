@@ -76,6 +76,7 @@ public interface ModelDescriptionConstants {
     String APPLICATION_SECURITY_DOMAIN = "application-security-domain";
     String APPLIED_AT = "applied-at";
     String ARCHIVE = "archive";
+    String ARTIFACT_CHANGES = "artifact-changes";
     String ASYNC_HANDLER = "async-handler";
     String ASYNC_OPERATIONS = "async-operations";
     String ATTRIBUTE_GROUP = "attribute-group";
@@ -235,7 +236,6 @@ public interface ModelDescriptionConstants {
     String DATASOURCE_CLASS = "datasource-class";
     String DATASOURCE_CLASS_INFO = "datasource-class-info";
     String DATASOURCES = "datasources";
-    String DATE = "date";
     String DEACTIVATE_ACCOUNT = "deactivate-account";
     String DEAD_LETTER_ADDRESS = "dead-letter-address";
     String DEFAULT = "default";
@@ -500,7 +500,6 @@ public interface ModelDescriptionConstants {
     String KEYCLOAK = "keycloak";
     String KEYCLOAK_SERVER_URL = "keycloak-server-url";
     String KILL = "kill";
-    String KIND = "kind";
     String KILL_SERVERS = "kill-servers";
     String LARGEST_THREAD_COUNT = "largest-thread-count";
     String LAST_ACCESSED_TIME = "last-accessed-time";

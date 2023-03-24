@@ -32,10 +32,10 @@ import elemental2.dom.HTMLPreElement;
 import static java.util.stream.Collectors.joining;
 import static org.jboss.elemento.Elements.h;
 import static org.jboss.elemento.Elements.pre;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HISTORY;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.KIND;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REVISION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TIMESTAMP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
 
 public class HistoryPreview extends PreviewContent<HistoryItem> {
 
@@ -51,8 +51,9 @@ public class HistoryPreview extends PreviewContent<HistoryItem> {
 
         PreviewAttributes<HistoryItem> attributes = new PreviewAttributes<>(history);
         attributes.append(
-                model -> new PreviewAttribute(new LabelBuilder().label(DATE), Format.mediumDateTime(history.getDate())));
-        attributes.append(KIND);
+                model -> new PreviewAttribute(new LabelBuilder().label(TIMESTAMP),
+                        Format.mediumDateTime(history.getTimestamp())));
+        attributes.append(TYPE);
         previewBuilder().addAll(attributes);
         previewBuilder()
                 .add(h(2).textContent(resources.constants().content()))

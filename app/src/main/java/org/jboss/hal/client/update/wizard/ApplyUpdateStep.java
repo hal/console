@@ -70,6 +70,8 @@ class ApplyUpdateStep extends WizardStep<UpdateContext, UpdateState> {
                         .fromSafeConstant("The server is being restarted to apply the update. This operation might take up to "
                                 + Timeouts.APPLY_UPDATE + " seconds."));
 
+        // TODO Replace with something based on
+        // org.jboss.hal.core.runtime.TimeoutHandler.repeatOperationUntil()
         Operation operation = new Operation.Builder(ROOT_TEMPLATE.resolve(statementContext), SHUTDOWN)
                 .param(PERFORM_INSTALLATION, true)
                 .build();
