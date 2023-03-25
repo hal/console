@@ -41,14 +41,29 @@ import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
 import static java.util.stream.Collectors.toMap;
-import static org.jboss.hal.client.configuration.subsystem.resourceadapter.AddressTemplates.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.client.configuration.subsystem.resourceadapter.AddressTemplates.ADMIN_OBJECTS_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.resourceadapter.AddressTemplates.CONNECTION_DEFINITIONS_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.resourceadapter.AddressTemplates.RESOURCE_ADAPTER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.resourceadapter.AddressTemplates.SELECTED_ADMIN_OBJECTS_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.resourceadapter.AddressTemplates.SELECTED_CONNECTION_DEFINITIONS_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.resourceadapter.AddressTemplates.SELECTED_RESOURCE_ADAPTER_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ADMIN_OBJECTS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CONFIG_PROPERTIES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CONNECTION_DEFINITIONS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.FROM;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TO;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEFINE_ATTRIBUTE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.WM_SECURITY_MAPPING_GROUPS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.WM_SECURITY_MAPPING_USERS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 
 @MbuiView
-@SuppressWarnings({"WeakerAccess", "HardCodedStringLiteral", "UnusedParameters", "DuplicateStringLiteralInspection",
-        "unused"})
+@SuppressWarnings({ "WeakerAccess", "HardCodedStringLiteral", "UnusedParameters", "DuplicateStringLiteralInspection",
+        "unused" })
 public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPresenter>
         implements ResourceAdapterPresenter.MyView {
 
@@ -143,10 +158,10 @@ public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPr
         Metadata metadata = mbuiContext.metadataRegistry().lookup(CONNECTION_DEFINITIONS_TEMPLATE);
         AddResourceDialog dialog = new AddResourceDialog(Ids.RESOURCE_ADAPTER_CONNECTION_DEFINITION_ADD,
                 Names.CONNECTION_DEFINITION, metadata, (name, modelNode) -> {
-            ResourceAddress address = SELECTED_CONNECTION_DEFINITIONS_TEMPLATE
-                    .resolve(selectionAwareStatementContext, name);
-            mbuiContext.crud().add(Names.CONNECTION_DEFINITION, name, address, modelNode, (n, a) -> presenter.reload());
-        });
+                    ResourceAddress address = SELECTED_CONNECTION_DEFINITIONS_TEMPLATE
+                            .resolve(selectionAwareStatementContext, name);
+                    mbuiContext.crud().add(Names.CONNECTION_DEFINITION, name, address, modelNode, (n, a) -> presenter.reload());
+                });
         dialog.show();
     }
 
@@ -155,11 +170,17 @@ public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPr
         ResourceAddress address = SELECTED_CONNECTION_DEFINITIONS_TEMPLATE.resolve(selectionAwareStatementContext,
                 name);
         Metadata metadata = mbuiContext.metadataRegistry().lookup(CONNECTION_DEFINITIONS_TEMPLATE);
-        Map<String, String> properties = form.getFormItem(CONFIG_PROPERTIES) != null
-                ? form.<Map<String, String>>getFormItem(CONFIG_PROPERTIES).getValue()
-                : Collections.emptyMap();
-        mbuiContext.po().saveWithProperties(Names.CONNECTION_DEFINITION, name, address, changedValues, metadata,
-                CONFIG_PROPERTIES, properties, () -> presenter.reload());
+        if (form.getFormItem(CONFIG_PROPERTIES) != null) {
+            Map<String, String> properties = form.<Map<String, String>>getFormItem(CONFIG_PROPERTIES).getValue();
+            if (properties == null) {
+                properties = Collections.emptyMap();
+            }
+            mbuiContext.po().saveWithProperties(Names.CONNECTION_DEFINITION, name, address, changedValues, metadata,
+                    CONFIG_PROPERTIES, properties, () -> presenter.reload());
+        } else {
+            mbuiContext.crud().save(Names.CONNECTION_DEFINITION, name, address, changedValues, metadata,
+                    () -> presenter.reload());
+        }
     }
 
     void resetConnectionDefinition(Form<NamedNode> form) {
@@ -177,7 +198,7 @@ public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPr
     }
 
     void removeConnectionDefinition(Table<NamedNode> table) {
-        //noinspection ConstantConditions
+        // noinspection ConstantConditions
         String name = table.selectedRow().getName();
         mbuiContext.crud().remove(Names.CONNECTION_DEFINITION, name,
                 SELECTED_CONNECTION_DEFINITIONS_TEMPLATE.resolve(selectionAwareStatementContext, name),
@@ -188,9 +209,9 @@ public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPr
         Metadata metadata = mbuiContext.metadataRegistry().lookup(ADMIN_OBJECTS_TEMPLATE);
         AddResourceDialog dialog = new AddResourceDialog(Ids.RESOURCE_ADAPTER_ADMIN_OBJECT_ADD,
                 Names.ADMIN_OBJECT, metadata, (name, modelNode) -> {
-            ResourceAddress address = SELECTED_ADMIN_OBJECTS_TEMPLATE.resolve(selectionAwareStatementContext, name);
-            mbuiContext.crud().add(Names.ADMIN_OBJECT, name, address, modelNode, (n, a) -> presenter.reload());
-        });
+                    ResourceAddress address = SELECTED_ADMIN_OBJECTS_TEMPLATE.resolve(selectionAwareStatementContext, name);
+                    mbuiContext.crud().add(Names.ADMIN_OBJECT, name, address, modelNode, (n, a) -> presenter.reload());
+                });
         dialog.show();
     }
 
@@ -217,7 +238,7 @@ public abstract class ResourceAdapterView extends MbuiViewImpl<ResourceAdapterPr
     }
 
     void removeAdminObject(Table<NamedNode> table) {
-        //noinspection ConstantConditions
+        // noinspection ConstantConditions
         String name = table.selectedRow().getName();
         mbuiContext.crud().remove(Names.ADMIN_OBJECT, name,
                 SELECTED_ADMIN_OBJECTS_TEMPLATE.resolve(selectionAwareStatementContext, name),
