@@ -29,13 +29,13 @@ public class ModifyResourceDialog {
 
     /**
      * Uses an existing form for the dialog. If the form has a save callback it's overridden with
-     * {@link Callback#onModify(Form, Map)}.
+     * {@link Promise#onModify(Form, Map)}.
      */
-    public ModifyResourceDialog(String title, Form<ModelNode> form, Callback callback) {
+    public ModifyResourceDialog(String title, Form<ModelNode> form, Promise callback) {
         this(title, form, callback, null);
     }
 
-    public ModifyResourceDialog(String title, Form<ModelNode> form, Callback callback,
+    public ModifyResourceDialog(String title, Form<ModelNode> form, Promise callback,
             org.jboss.hal.spi.Callback closed) {
         form.setSaveCallback((f, changedValues) -> saveForm(callback, f, changedValues));
         init(title, form, closed);
@@ -52,7 +52,7 @@ public class ModifyResourceDialog {
         this.dialog.registerAttachable(form);
     }
 
-    private void saveForm(Callback callback, Form<ModelNode> form, Map<String, Object> changedValues) {
+    private void saveForm(Promise callback, Form<ModelNode> form, Map<String, Object> changedValues) {
         callback.onModify(form, changedValues);
     }
 
@@ -67,7 +67,7 @@ public class ModifyResourceDialog {
     }
 
     @FunctionalInterface
-    public interface Callback {
+    public interface Promise {
 
         /**
          * Called after the dialog was closed using the primary button.
