@@ -15,13 +15,14 @@
  */
 package org.jboss.hal.core.finder;
 
-import javax.inject.Inject;
-
 import org.jboss.hal.spi.Callback;
 
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.proxy.NavigationEvent;
 import com.gwtplatform.mvp.client.proxy.NavigationHandler;
+
+import elemental2.promise.Promise;
+import javax.inject.Inject;
 
 import static elemental2.dom.DomGlobal.document;
 import static org.jboss.hal.resources.CSS.withProgress;
@@ -70,6 +71,16 @@ public class ItemMonitor implements NavigationHandler {
             callback.execute();
             startMonitor(itemId, nameToken);
         };
+    }
+
+    /**
+     * Wraps and monitors an item action which triggers a place request.
+     */
+    public <T> Promise<T> monitorPlaceRequestWithPromise(final String itemId, final String nameToken) {
+        return new Promise<>((resolve, reject) -> {
+            startMonitor(itemId, nameToken);
+            resolve.onInvoke((T) null);
+        });
     }
 
     private void startMonitor(final String itemId, final String nameToken) {

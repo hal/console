@@ -18,9 +18,6 @@ package org.jboss.hal.client.accesscontrol;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
-
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
@@ -72,6 +69,8 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import elemental2.dom.HTMLElement;
 import elemental2.promise.Promise;
+import javax.inject.Inject;
+import javax.inject.Provider;
 
 import static java.util.Arrays.asList;
 import static java.util.Comparator.comparing;
@@ -345,6 +344,8 @@ public class RoleColumn extends FinderColumn<Role> {
 
         ModelNode modelNode = new ModelNode();
         modelNode.get(INCLUDE_ALL).set(role.isIncludeAll());
+/*
+        Callback code:
         new ModifyResourceDialog(resources.messages().modifyResourceTitle(resources.constants().role()),
                 form, (frm, changedValues) -> {
                     List<Task<FlowContext>> tasks = asList(new CheckRoleMapping(dispatcher, role),
@@ -362,6 +363,31 @@ public class RoleColumn extends FinderColumn<Role> {
                             });
                 }).show(modelNode);
         form.getFormItem(NAME).setValue(role.getName());
+*/
+
+        // Promise code:
+        form.getFormItem(NAME).setValue(role.getName());
+        new ModifyResourceDialog(resources.messages().modifyResourceTitle(resources.constants().role()), form)
+                .showWithPromise(modelNode).then(changedValues -> {
+                    List<Task<FlowContext>> tasks = asList(new CheckRoleMapping(dispatcher, role),
+                            new AddRoleMapping(dispatcher, role, status -> status == 404),
+                            new ModifyIncludeAll(dispatcher, role, form.getModel().get(INCLUDE_ALL).asBoolean()));
+                    sequential(new FlowContext(progress.get()), tasks)
+                            .then(__ -> {
+                                MessageEvent.fire(eventBus, Message.success(resources.messages()
+                                        .modifyResourceSuccess(resources.constants().role(), role.getName())));
+                                accessControl.reload(() -> {
+                                    refresh(role.getId());
+                                    eventBus.fireEvent(new RolesChangedEvent());
+                                });
+                                // Promise callbacks have to return something, even if there's no real result
+                                // That's why we return null here
+                                return null;
+                            });
+                    // Promise callbacks have to return something, even if there's no real result
+                    // That's why we return null here
+                    return null;
+                });
     }
 
     private void editScopedRole(Role role, String type, AddressTemplate template, AddressTemplate typeaheadTemplate,

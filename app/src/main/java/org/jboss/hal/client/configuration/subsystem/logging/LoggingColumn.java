@@ -15,8 +15,6 @@
  */
 package org.jboss.hal.client.configuration.subsystem.logging;
 
-import javax.inject.Inject;
-
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.ItemMonitor;
 import org.jboss.hal.core.finder.PreviewContent;
@@ -34,6 +32,8 @@ import org.jboss.hal.spi.AsyncColumn;
 
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+
+import javax.inject.Inject;
 
 import static java.util.Arrays.asList;
 import static org.jboss.hal.client.configuration.subsystem.logging.AddressTemplates.ROOT_LOGGER_TEMPLATE;
@@ -56,12 +56,23 @@ public class LoggingColumn extends StaticItemColumn {
                 new StaticItem.Builder(Names.CONFIGURATION)
                         .id(Ids.LOGGING_CONFIGURATION)
                         .action(resources.constants().view(),
+                                item -> itemMonitor.monitorPlaceRequestWithPromise(item.getId(), NameTokens.LOGGING_CONFIGURATION)
+                                        .then(__ -> {
+                                            PlaceRequest placeRequest = places
+                                                    .selectedProfile(NameTokens.LOGGING_CONFIGURATION)
+                                                    .build();
+                                            placeManager.revealPlace(placeRequest);
+                                            return null;
+                                        }))
+/*
+                        .action(resources.constants().view(),
                                 item -> itemMonitor.monitorPlaceRequest(item.getId(), NameTokens.LOGGING_CONFIGURATION, () -> {
                                     PlaceRequest placeRequest = places
                                             .selectedProfile(NameTokens.LOGGING_CONFIGURATION)
                                             .build();
                                     placeManager.revealPlace(placeRequest);
                                 }).execute(item))
+*/
                         .onPreview(new LoggingPreview<>(dispatcher, resources, Names.CONFIGURATION,
                                 resources.previews().configurationLoggingConfiguration(),
                                 () -> new Operation.Builder(ROOT_LOGGER_TEMPLATE.resolve(statementContext),

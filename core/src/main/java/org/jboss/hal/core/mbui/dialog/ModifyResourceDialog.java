@@ -22,10 +22,16 @@ import org.jboss.hal.ballroom.dialog.Dialog.Size;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.dmr.ModelNode;
 
+import elemental2.promise.Promise;
+
 public class ModifyResourceDialog {
 
     private Form<ModelNode> form;
     private Dialog dialog;
+
+    public ModifyResourceDialog(String title, Form<ModelNode> form) {
+        this(title, form, null, null);
+    }
 
     /**
      * Uses an existing form for the dialog. If the form has a save callback it's overridden with
@@ -37,7 +43,9 @@ public class ModifyResourceDialog {
 
     public ModifyResourceDialog(String title, Form<ModelNode> form, Callback callback,
             org.jboss.hal.spi.Callback closed) {
-        form.setSaveCallback((f, changedValues) -> saveForm(callback, f, changedValues));
+        if (callback != null) {
+            form.setSaveCallback((f, changedValues) -> saveForm(callback, f, changedValues));
+        }
         init(title, form, closed);
     }
 
@@ -64,6 +72,13 @@ public class ModifyResourceDialog {
         // First call dialog.show() (which attaches everything), then call form.edit()
         dialog.show();
         form.edit(modelNode);
+    }
+
+    public Promise<Map<String, Object>> showWithPromise(ModelNode modelNode) {
+        dialog.show();
+        form.edit(modelNode);
+        return new Promise<Map<String, Object>>(
+                (resolve, reject) -> form.setSaveCallback((f, changedValues) -> resolve.onInvoke(changedValues)));
     }
 
     @FunctionalInterface
