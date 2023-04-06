@@ -63,6 +63,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RELOAD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESTART;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STATISTICS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.STATISTICS_ENABLED;
 import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_HOST;
 import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_SERVER;
@@ -246,7 +247,9 @@ class DataSourcePreview extends PreviewContent<DataSource> {
                     dataSource.update(result.step(1).get(RESULT));
                 }
 
-                boolean statisticsEnabled = dataSource.isStatisticsEnabled();
+                // if the statistics are not available (ds is disabled or enabled but not reloaded)
+                // treat it as if statistics are enabled so that we display warnings
+                boolean statisticsEnabled = !dataSource.hasDefined(STATISTICS) || dataSource.isStatisticsEnabled();
                 setVisible(noStatistics.element(), !statisticsEnabled);
                 setVisible(refresh, statisticsEnabled);
                 setVisible(poolHeader, statisticsEnabled);
