@@ -262,10 +262,10 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             public HTMLElement getIcon() {
                 if (dataSource.fromDeployment()) {
                     return span().css(fontAwesome("archive")).element();
-                } else if (!dataSource.isStatisticsEnabled()) {
-                    return Icons.unknown();
                 } else if (!dataSource.isEnabled()) {
                     return Icons.disabled();
+                } else if (!dataSource.isStatisticsEnabled()) {
+                    return Icons.unknown();
                 } else {
                     return Icons.ok();
                 }
@@ -275,7 +275,7 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             public String getTooltip() {
                 if (dataSource.fromDeployment()) {
                     return resources.constants().fromDeployment();
-                } else if (!dataSource.isStatisticsEnabled()) {
+                } else if (dataSource.isEnabled() && !dataSource.isStatisticsEnabled()) {
                     return resources.constants().statisticsDisabled();
                 } else {
                     return dataSource.isEnabled() ? resources.constants().enabled() : resources.constants().disabled();
@@ -295,14 +295,14 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
             @SuppressWarnings("HardCodedStringLiteral")
             public List<ItemAction<DataSource>> actions() {
                 List<ItemAction<DataSource>> actions = new ArrayList<>();
-                if (!dataSource.fromDeployment() && dataSource.isStatisticsEnabled()) {
-                    PlaceRequest placeRequest = places.selectedServer(NameTokens.DATA_SOURCE_RUNTIME)
-                            .with(NAME, dataSource.getName())
-                            .with(XA_PARAM, String.valueOf(dataSource.isXa()))
-                            .build();
-                    actions.add(itemActionFactory.view(placeRequest));
-                }
                 if (dataSource.isEnabled()) {
+                    if (!dataSource.fromDeployment() && dataSource.isStatisticsEnabled()) {
+                        PlaceRequest placeRequest = places.selectedServer(NameTokens.DATA_SOURCE_RUNTIME)
+                                .with(NAME, dataSource.getName())
+                                .with(XA_PARAM, String.valueOf(dataSource.isXa()))
+                                .build();
+                        actions.add(itemActionFactory.view(placeRequest));
+                    }
                     actions.add(new ItemAction.Builder<DataSource>().title(resources.constants().test())
                             .handler(item -> testConnection(item))
                             .constraint(Constraint.executable(
