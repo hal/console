@@ -134,18 +134,18 @@ if [[ "${DEVELOPMENT}" == "true" ]]; then
     cd "${WILDFLY_CODEBASE}"
     WILDFLY_VERSION=$(mvn org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression=project.version -q -DforceStdout)
     mvn \
-      -Dcheckstyle.skip \
-      -Denforcer.skip \
-      -Dfindbugs.skip \
-      -Dformatter.skip \
-      -Dgmaven.execute.skip \
-      -Dimpsort.skip \
-      -Dlicense.skip \
-      -Dmaven.javadoc.skip \
-      -Dpmd.skip \
-      -DskipITs \
-      -DskipTests \
-      install -P release
+  -Dcheckstyle.skip \
+  -Denforcer.skip \
+  -Dfindbugs.skip \
+  -Dformatter.skip \
+  -Dgmaven.execute.skip \
+  -Dimpsort.skip \
+  -Dlicense.skip \
+  -Dmaven.javadoc.skip \
+  -Dpmd.skip \
+  -DskipITs \
+  -DskipTests \
+  install
     cp "dist/target/wildfly-${WILDFLY_VERSION}.tar.gz" "${script_dir}"
     cd "${script_dir}"
   fi
