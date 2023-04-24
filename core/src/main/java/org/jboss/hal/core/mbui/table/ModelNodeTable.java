@@ -40,6 +40,7 @@ import com.google.common.collect.Lists;
 import static org.jboss.hal.ballroom.table.RefreshMode.RESET;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.resources.UIConstants.HASH;
 import static org.jboss.hal.resources.UIConstants.data;
 
 public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
@@ -115,7 +116,12 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
     private void applySecurity() {
         AuthorisationDecision ad = AuthorisationDecision.from(Core.INSTANCE.environment(),
                 metadata.getSecurityContext());
-        ElementGuard.processElements(ad, element());
+        if (element() == null) {
+            ElementGuard.processElements(ad, HASH + id() + " [" + data(UIConstants.CONSTRAINT + "]"));
+
+        } else {
+            ElementGuard.processElements(ad, element());
+        }
     }
 
     /** Builder to create tables based on resource metadata. By default the table has no columns and no actions. */

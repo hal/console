@@ -60,7 +60,17 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String applicationRollback();
 
+    String applyUpdate();
+
+    String applyUpdateStepDescription();
+
+    String applyUpdateSuccess();
+
+    String applyingUpdate();
+
     String archived();
+
+    String artifactChanges();
 
     String assignment();
 
@@ -104,6 +114,10 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String changePriority();
 
+    String channelChanges();
+
+    String channelChangesNone();
+
     String chooseConnectionsToClose();
 
     String chooseFile();
@@ -117,6 +131,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String chooseStrategy();
 
     String chooseTemplate();
+
+    String clean();
 
     String clear();
 
@@ -662,6 +678,14 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     String lastPage();
 
+    String listUpdates();
+
+    String listUpdatesAvailable();
+
+    String listUpdatesSteps();
+
+    String listUpdatesStepsSummary();
+
     String load();
 
     String loading();
@@ -861,6 +885,14 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String platform();
 
     String play();
+
+    String prepareServer();
+
+    String prepareServerSuccess();
+
+    String preparingServer();
+
+    String prepareServerDescription();
 
     String preparedStatementCache();
 

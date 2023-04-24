@@ -13,12 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.jboss.hal.client.update.wizard;
+package org.jboss.hal.client.installer;
 
 import java.util.List;
 
+import org.jboss.hal.ballroom.wizard.AsyncStep;
 import org.jboss.hal.ballroom.wizard.WizardStep;
-import org.jboss.hal.client.update.Timeouts;
+import org.jboss.hal.ballroom.wizard.WorkflowCallback;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.Flow;
@@ -27,8 +28,9 @@ import org.jboss.hal.flow.Progress;
 import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.web.bindery.event.shared.EventBus;
 
 import elemental2.dom.HTMLElement;
@@ -36,11 +38,11 @@ import elemental2.promise.Promise;
 
 import static java.util.Collections.singletonList;
 import static org.jboss.elemento.Elements.div;
-import static org.jboss.hal.client.update.AddressTemplates.ROOT_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.PERFORM_INSTALLATION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.SHUTDOWN;
+import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CLEAN;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PREPARE_UPDATES;
 
-class ApplyUpdateStep extends WizardStep<UpdateContext, UpdateState> {
+class PrepareUpdatesStep extends WizardStep<UpdateContext, UpdateState> implements AsyncStep<UpdateContext> {
 
     private final EventBus eventBus;
     private final Dispatcher dispatcher;
@@ -48,9 +50,9 @@ class ApplyUpdateStep extends WizardStep<UpdateContext, UpdateState> {
     private final Resources resources;
     private final HTMLElement root;
 
-    public ApplyUpdateStep(final EventBus eventBus, final Dispatcher dispatcher, final StatementContext statementContext,
+    PrepareUpdatesStep(final EventBus eventBus, final Dispatcher dispatcher, final StatementContext statementContext,
             final Resources resources) {
-        super("Apply Update", true);
+        super(resources.constants().prepareServer(), true);
         this.eventBus = eventBus;
         this.statementContext = statementContext;
         this.dispatcher = dispatcher;
@@ -65,34 +67,45 @@ class ApplyUpdateStep extends WizardStep<UpdateContext, UpdateState> {
 
     @Override
     protected Promise<UpdateContext> onShowAndWait(final UpdateContext updateContext) {
-        wizard().showProgress("Applying Update",
-                SafeHtmlUtils
-                        .fromSafeConstant("The server is being restarted to apply the update. This operation might take up to "
-                                + Timeouts.APPLY_UPDATE + " seconds."));
+        wizard().showProgress(resources.constants().preparingServer(),
+                resources.messages().preparingServerDescription(Timeouts.PREPARE_UPDATES));
 
-        // TODO Replace with something based on
-        // org.jboss.hal.core.runtime.TimeoutHandler.repeatOperationUntil()
-        Operation operation = new Operation.Builder(ROOT_TEMPLATE.resolve(statementContext), SHUTDOWN)
-                .param(PERFORM_INSTALLATION, true)
-                .build();
+        Operation operation = new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext), PREPARE_UPDATES).build();
         List<Task<FlowContext>> tasks = singletonList(
                 flowContext -> dispatcher.execute(operation).then(ignore -> Promise.resolve(flowContext)));
         return Flow.sequential(new FlowContext(Progress.NOOP), tasks)
-                .timeout(Timeouts.APPLY_UPDATE * 1_000)
+                .timeout(Timeouts.PREPARE_UPDATES * 1_000)
                 .then(ignore -> {
-                    wizard().showSuccess("Update Applied",
-                            SafeHtmlUtils.fromSafeConstant("The update has been successfully applied."));
+                    updateContext.prepared = true;
+                    wizard().showSuccess(resources.constants().prepareServerSuccess(),
+                            resources.messages().prepareServerSuccessDescription(),
+                            false);
                     return Promise.resolve(updateContext);
                 })
                 .catch_(failure -> {
                     if (FlowContext.timeout(failure)) {
-                        wizard().showError("Timeout",
-                                SafeHtmlUtils.fromSafeConstant("The operation ran into a timeout"), false);
+                        wizard().showError(resources.constants().timeout(), resources.messages().operationTimeout(), false);
                     } else {
-                        wizard().showError("Failure",
-                                SafeHtmlUtils.fromSafeConstant("Unable to apply the update."), String.valueOf(failure), false);
+                        wizard().showError(resources.constants().error(), resources.messages().prepareServerError(), false);
                     }
                     return Promise.reject(failure);
                 });
+    }
+
+    @Override
+    public void onCancel(final UpdateContext context, final WorkflowCallback callback) {
+        if (context.prepared) {
+            Operation operation = new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext), CLEAN).build();
+            dispatcher.execute(operation,
+                    modelNode -> {
+                        callback.proceed();
+                        MessageEvent.fire(eventBus, Message.info(resources.messages().prepareServerCleanupSuccess()));
+                    }, (op, error) -> {
+                        callback.proceed();
+                        MessageEvent.fire(eventBus, Message.error(resources.messages().prepareServerCleanupError()));
+                    });
+        } else {
+            callback.proceed();
+        }
     }
 }

@@ -13,11 +13,12 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.jboss.hal.client.update.wizard;
+package org.jboss.hal.client.installer;
 
 import java.util.List;
 
 import org.jboss.hal.ballroom.wizard.Wizard;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Resources;
@@ -33,7 +34,7 @@ public class UpdateWizard {
     private final UpdateContext wizardContext;
 
     public UpdateWizard(EventBus eventBus, Dispatcher dispatcher, StatementContext statementContext, Resources resources,
-            List<String> updates) {
+            List<ModelNode> updates) {
         this.eventBus = eventBus;
         this.statementContext = statementContext;
         this.dispatcher = dispatcher;
@@ -47,7 +48,7 @@ public class UpdateWizard {
 
         builder.addStep(UpdateState.LIST_UPDATES, new ListUpdatesStep(resources))
                 .addStep(UpdateState.PREPARE_SERVER, new PrepareUpdatesStep(eventBus, dispatcher, statementContext, resources))
-                .addStep(UpdateState.APPLY_UPDATE, new ApplyUpdateStep(eventBus, dispatcher, statementContext, resources))
+                .addStep(UpdateState.APPLY_UPDATE, new ApplyUpdateStep(dispatcher, statementContext, resources))
                 .stayOpenAfterFinish();
 
         builder.onBack((ctx, currentState) -> {

@@ -13,11 +13,19 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.jboss.hal.client.update;
+package org.jboss.hal.client.installer;
 
-public interface Timeouts {
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.TextResource;
 
-    // all values in seconds
-    int PREPARE_UPDATES = 120;
-    int APPLY_UPDATE = 60;
+public interface InstallerResources extends ClientBundle {
+
+    InstallerResources INSTANCE = GWT.create(InstallerResources.class);
+
+    @Source("artifactChange.base64")
+    TextResource artifactChange();
+
+    @Source("channelChange.base64")
+    TextResource channelChange();
 }

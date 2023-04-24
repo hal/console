@@ -54,6 +54,12 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     SafeHtml alternativesHelp(String alternatives);
 
+    SafeHtml applyUpdateDescription(int timeout);
+
+    SafeHtml applyUpdateErrorDescription();
+
+    SafeHtml applyUpdateSuccessDescription();
+
     SafeHtml assignmentExcludeSuccess(String type, String name);
 
     SafeHtml assignmentIncludeSuccess(String type, String name);
@@ -541,6 +547,8 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
 
     SafeHtml operationServer(String name);
 
+    SafeHtml operationTimeout();
+
     SafeHtml pageNotFound(String invalidHistoryToken);
 
     SafeHtml patchAddError(String patchId, String error);
@@ -564,6 +572,16 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml patchSucessfullyApplied(String patchId);
 
     SafeHtml pauseQueueSuccess(String name);
+
+    SafeHtml preparingServerDescription(int timeout);
+
+    SafeHtml prepareServerCleanupError();
+
+    SafeHtml prepareServerCleanupSuccess();
+
+    SafeHtml prepareServerError();
+
+    SafeHtml prepareServerSuccessDescription();
 
     SafeHtml profileNotUsedInServerGroups();
 
@@ -1232,8 +1250,6 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String testConnectionErrorDomain();
 
     String undertowListenerProcessingDisabled(String listener, String server);
-
-    SafeHtml unknownReturnCode(int returnCode);
 
     String unknownResourceDetails(String address, String reason);
 

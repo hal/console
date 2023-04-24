@@ -1,0 +1,26 @@
+{
+    "comment" => "This file is not used! It's just here to generate the base64 encoded version using https://github.com/hal/dmr.cmd",
+    "description" => "Artifact change.",
+    "attributes" => {
+        "status" => {
+            "type" => STRING,
+            "description" => "The status of the change (updated, removed, added).",
+            "nillable" => true
+        },
+        "name" => {
+            "type" => STRING,
+            "description" => "The artifact name.",
+            "nillable" => true
+        },
+        "old-version" => {
+            "type" => STRING,
+            "description" => "The old version.",
+            "nillable" => true
+        },
+        "new-version" => {
+            "type" => STRING,
+            "description" => "The new version.",
+            "nillable" => true
+        }
+    }
+}

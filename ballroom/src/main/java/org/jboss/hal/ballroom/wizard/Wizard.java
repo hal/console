@@ -527,9 +527,9 @@ public class Wizard<C, S extends Enum<S>> {
             stepsNames.appendChild(li);
 
             HTMLDivElement wrapper = div().css(wizardPfContents).add(step).element();
-            step.attachables.forEach(Attachable::attach);
             Elements.setVisible(wrapper, false);
             mainContainer.appendChild(wrapper);
+            step.attachables.forEach(Attachable::attach); // attach *after* elements have been appended!
             stepElements.put(status, wrapper);
 
             index++;

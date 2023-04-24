@@ -135,9 +135,17 @@ public class DataTable<T> implements Table<T> {
         this.options.language.zeroRecords = CONSTANTS.dataTablesZeroRecords();
     }
 
+    protected String id() {
+        return id;
+    }
+
     @Override
     public HTMLElement element() {
-        return api == null ? tableElement : (HTMLElement) document.getElementById(id + WRAPPER_SUFFIX);
+        if (api == null) {
+            return tableElement;
+        }
+        HTMLElement element = (HTMLElement) document.getElementById(id + WRAPPER_SUFFIX);
+        return element == null ? tableElement : element;
     }
 
     /**

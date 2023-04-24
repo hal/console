@@ -13,9 +13,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.jboss.hal.client.update;
+package org.jboss.hal.client.installer;
 
 import org.jboss.hal.core.mvp.FinderViewImpl;
 
-public class UpdateFinderView extends FinderViewImpl implements UpdateFinderPresenter.MyView {
+public class InstallerFinderView extends FinderViewImpl implements InstallerFinderPresenter.MyView {
 }

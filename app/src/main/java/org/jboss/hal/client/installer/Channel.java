@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.jboss.hal.client.update;
+package org.jboss.hal.client.installer;
 
 import java.util.List;
 
@@ -27,13 +27,13 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.MANIFEST;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REPOSITORIES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.URL;
 
-public class Channel extends NamedNode {
+class Channel extends NamedNode {
 
-    public Channel(final ModelNode node) {
+    Channel(final ModelNode node) {
         super(node);
     }
 
-    public String getManifest() {
+    String getManifest() {
         ModelNode manifest = get(MANIFEST);
         if (manifest.isDefined()) {
             if (manifest.hasDefined(GAV)) {
@@ -48,7 +48,7 @@ public class Channel extends NamedNode {
         }
     }
 
-    public String getManifestType() {
+    String getManifestType() {
         if (isGAV()) {
             return Names.GAV;
         } else if (isURL()) {
@@ -58,16 +58,16 @@ public class Channel extends NamedNode {
         }
     }
 
-    public List<String> getRepositories() {
+    List<String> getRepositories() {
         return get(REPOSITORIES).asList().stream().map(repo -> repo.get(URL).asString()).collect(toList());
     }
 
-    public boolean isGAV() {
+    boolean isGAV() {
         ModelNode modelNode = get(MANIFEST);
         return modelNode.isDefined() && modelNode.hasDefined(GAV);
     }
 
-    public boolean isURL() {
+    boolean isURL() {
         ModelNode modelNode = get(MANIFEST);
         return modelNode.isDefined() && modelNode.hasDefined(URL);
     }

@@ -13,17 +13,15 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.jboss.hal.client.update;
+package org.jboss.hal.client.installer;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import org.jboss.hal.ballroom.Format;
-import org.jboss.hal.client.update.wizard.UpdateWizard;
 import org.jboss.hal.core.finder.ColumnAction;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
@@ -47,30 +45,26 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
-import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.web.bindery.event.shared.EventBus;
 
 import elemental2.dom.HTMLElement;
 import elemental2.promise.Promise;
 
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.client.update.AddressTemplates.INSTALLER_TEMPLATE;
+import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HISTORY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.LIST_UPDATES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PREPARE_REVERT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PREPARE_UPDATES;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RETURN_CODE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TIMESTAMP;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UPDATES;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
-@Column(Ids.UPDATE_HISTORY)
-public class HistoryColumn extends FinderColumn<HistoryItem> {
-
-    private static final RegExp HISTORY_REGEX = RegExp
-            .compile("^\\[([a-z0-9]+)\\]\\s+([0-9-T:Z]+)\\s+-\\s+(install|update|rollback)$"); // NON-NLS
+@Column(Ids.INSTALLER_UPDATE)
+public class UpdateColumn extends FinderColumn<UpdateItem> {
 
     private final EventBus eventBus;
     private final Dispatcher dispatcher;
@@ -79,7 +73,7 @@ public class HistoryColumn extends FinderColumn<HistoryItem> {
     private final Progress progress;
 
     @Inject
-    public HistoryColumn(final Finder finder,
+    public UpdateColumn(final Finder finder,
             final EventBus eventBus,
             final Dispatcher dispatcher,
             final StatementContext statementContext,
@@ -87,8 +81,8 @@ public class HistoryColumn extends FinderColumn<HistoryItem> {
             final Resources resources,
             @Footer final Progress progress) {
 
-        super(new Builder<HistoryItem>(finder, Ids.UPDATE_HISTORY, Names.HISTORY)
-                .onPreview(item -> new HistoryPreview(item, dispatcher, statementContext, resources))
+        super(new Builder<UpdateItem>(finder, Ids.INSTALLER_UPDATE, Names.UPDATES)
+                .onPreview(item -> new UpdatePreview(item, dispatcher, statementContext, resources))
                 .showCount()
                 .withFilter());
 
@@ -102,9 +96,9 @@ public class HistoryColumn extends FinderColumn<HistoryItem> {
             ResourceAddress address = INSTALLER_TEMPLATE.resolve(statementContext);
             Operation operation = new Operation.Builder(address, HISTORY).build();
             return dispatcher.execute(operation).then(result -> {
-                List<HistoryItem> nodes = result.asList().stream()
-                        .map(HistoryItem::new)
-                        .sorted(Comparator.comparing((HistoryItem node) -> {
+                List<UpdateItem> nodes = result.asList().stream()
+                        .map(UpdateItem::new)
+                        .sorted(comparing((UpdateItem node) -> {
                             Date date = ModelNodeHelper.failSafeDate(node, TIMESTAMP);
                             return date == null ? new Date() : date;
                         }).reversed())
@@ -113,7 +107,7 @@ public class HistoryColumn extends FinderColumn<HistoryItem> {
             });
         });
 
-        setItemRenderer(item -> new ItemDisplay<HistoryItem>() {
+        setItemRenderer(item -> new ItemDisplay<UpdateItem>() {
             @Override
             public String getTitle() {
                 return item.getName();
@@ -131,7 +125,7 @@ public class HistoryColumn extends FinderColumn<HistoryItem> {
 
             @Override
             public HTMLElement getIcon() {
-                switch (item.getHistoryKind()) {
+                switch (item.getUpdateKind()) {
                     case INSTALL:
                         return Icons.custom(pfIcon("bundle"));
                     case UPDATE:
@@ -150,11 +144,11 @@ public class HistoryColumn extends FinderColumn<HistoryItem> {
             }
 
             @Override
-            public List<ItemAction<HistoryItem>> actions() {
-                List<ItemAction<HistoryItem>> actions = new ArrayList<>();
-                if (item.getHistoryKind() == HistoryItem.HistoryType.UPDATE
-                        || item.getHistoryKind() == HistoryItem.HistoryType.ROLLBACK) {
-                    actions.add(new ItemAction.Builder<HistoryItem>()
+            public List<ItemAction<UpdateItem>> actions() {
+                List<ItemAction<UpdateItem>> actions = new ArrayList<>();
+                if (item.getUpdateKind() == UpdateItem.UpdateType.UPDATE
+                        || item.getUpdateKind() == UpdateItem.UpdateType.ROLLBACK) {
+                    actions.add(new ItemAction.Builder<UpdateItem>()
                             .title(resources.constants().revert())
                             .handler(item1 -> revert(item1))
                             .constraint(Constraint.executable(INSTALLER_TEMPLATE, PREPARE_REVERT))
@@ -164,22 +158,22 @@ public class HistoryColumn extends FinderColumn<HistoryItem> {
             }
         });
 
-        List<ColumnAction<HistoryItem>> addActions = new ArrayList<>();
-        addActions.add(new ColumnAction.Builder<HistoryItem>(Ids.UPDATE_HISTORY_ADD_ONLINE)
+        List<ColumnAction<UpdateItem>> addActions = new ArrayList<>();
+        addActions.add(new ColumnAction.Builder<UpdateItem>(Ids.INSTALLER_UPDATE_SERVER)
                 .title(resources.constants().updateServer())
                 .handler(column -> update())
                 .constraint(Constraint.executable(INSTALLER_TEMPLATE, PREPARE_UPDATES))
                 .build());
-        addActions.add(new ColumnAction.Builder<HistoryItem>(Ids.UPDATE_HISTORY_ADD_OFFLINE)
+        addActions.add(new ColumnAction.Builder<UpdateItem>(Ids.INSTALLER_UPDATE_ZIP)
                 .title(resources.constants().uploadZip())
                 .handler(column -> upload())
                 .constraint(Constraint.executable(INSTALLER_TEMPLATE, PREPARE_UPDATES))
                 .build());
-        addColumnActions(Ids.UPDATE_HISTORY_ADD_ACTIONS, pfIcon("maintenance"), resources.constants().updateServer(),
+        addColumnActions(Ids.INSTALLER_UPDATE_ADD_ACTIONS, pfIcon("maintenance"), resources.constants().updateServer(),
                 addActions);
-        addColumnAction(columnActionFactory.refresh(Ids.UPDATE_HISTORY_REFRESH));
-        addColumnAction(new ColumnAction.Builder<HistoryItem>(Ids.UPDATE_HISTORY_CLEAN)
-                .element(columnActionFactory.addButton("Clean", "fa fa-eraser"))
+        addColumnAction(columnActionFactory.refresh(Ids.INSTALLER_UPDATE_REFRESH));
+        addColumnAction(new ColumnAction.Builder<UpdateItem>(Ids.INSTALLER_CLEAN)
+                .element(columnActionFactory.addButton(resources.constants().clean(), "fa fa-eraser"))
                 .handler(column -> clean())
                 .constraint(Constraint.executable(INSTALLER_TEMPLATE, "clean"))
                 .build());
@@ -190,20 +184,20 @@ public class HistoryColumn extends FinderColumn<HistoryItem> {
         Operation operation = new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext), LIST_UPDATES).build();
         dispatcher.execute(operation,
                 result -> {
-                    progress.finish();
-                    int returnCode = result.get(RETURN_CODE).asInt();
-                    if (returnCode == ReturnCodes.LIST_UPDATES_NO_UPDATES) {
+                    List<ModelNode> updates = result.get(UPDATES).asList();
+                    if (updates.isEmpty()) {
                         MessageEvent.fire(eventBus, Message.info(resources.messages().noUpdates()));
-                    } else if (returnCode == ReturnCodes.LIST_UPDATES_UPDATES) {
-                        List<String> updates = result.get(UPDATES).asList().stream().map(ModelNode::asString).collect(toList());
-                        startUpdate(updates);
                     } else {
-                        MessageEvent.fire(eventBus, Message.error(resources.messages().unknownReturnCode(returnCode)));
+                        startUpdate(updates);
                     }
-                }, (op, error) -> progress.finish());
+                    progress.finish();
+                }, (op, error) -> {
+                    progress.finish();
+                    MessageEvent.fire(eventBus, Message.error(resources.messages().lastOperationFailed()));
+                });
     }
 
-    private void startUpdate(final List<String> updates) {
+    private void startUpdate(final List<ModelNode> updates) {
         new UpdateWizard(eventBus, dispatcher, statementContext, resources, updates).show();
     }
 
@@ -215,7 +209,7 @@ public class HistoryColumn extends FinderColumn<HistoryItem> {
         MessageEvent.fire(eventBus, Message.error(SafeHtmlUtils.fromSafeConstant(Names.NYI)));
     }
 
-    private void revert(HistoryItem history) {
+    private void revert(UpdateItem updateItem) {
         MessageEvent.fire(eventBus, Message.error(SafeHtmlUtils.fromSafeConstant(Names.NYI)));
     }
 }

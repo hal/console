@@ -137,6 +137,8 @@ public interface ModelDescriptionConstants {
     String CHANGE_MESSAGE_PRIORITY = "change-message-priority";
     String CHANGE_MESSAGES_PRIORITY = "change-messages-priority";
     String CHANNEL = "channel";
+    String CHANNEL_CHANGES = "channel-changes";
+    String CHANNEL_NAME = "channel-name";
     String CHANNELS = "channels";
     String CHECK = "check";
     String CHECKS = "checks";
@@ -616,7 +618,10 @@ public interface ModelDescriptionConstants {
     String NEW_ITEM_PATH = "new-item-path";
     String NEW_ITEM_RDN = "new-item-rdn";
     String NEW_ITEM_TEMPLATE = "new-item-template";
+    String NEW_MANIFEST = "new-manifest";
     String NEW_PRIORITY = "new-priority";
+    String NEW_REPOSITORY = "new-repository";
+    String NEW_VERSION = "new-version";
     String NEXT_TIMEOUT = "next-timeout";
     String NILLABLE = "nillable";
     String NO_TX_SEPARATE_POOL = "no-tx-separate-pool";
@@ -638,6 +643,9 @@ public interface ModelDescriptionConstants {
     String OBJECT = "object";
     String OBTAIN_CERTIFICATE = "obtain-certificate";
     String OFF_HEAP = "off-heap";
+    String OLD_MANIFEST = "old-manifest";
+    String OLD_REPOSITORY = "old-repository";
+    String OLD_VERSION = "old-version";
     String OOB = "oob";
     String OP = "operation";
     String OPERATION = "operation";

@@ -58,6 +58,7 @@ public interface NameTokens {
     String HOMEPAGE = "home";
     String HOST_CONFIGURATION = "host-configuration";
     String IIOP = ModelDescriptionConstants.IIOP_OPENJDK;
+    String INSTALLER = "installer";
     String INTERFACE = "interface";
     String INVALIDATION_CACHE = ModelDescriptionConstants.INVALIDATION_CACHE;
     String IO = ModelDescriptionConstants.IO;
@@ -127,7 +128,6 @@ public interface NameTokens {
     String UNDERTOW_RUNTIME_DEPLOYMENT_VIEW = "undertow-runtime-deployment";
     String UNDERTOW_SERVER = "undertow-server";
     String UNDERTOW_SERVLET_CONTAINER = "undertow-servlet-container";
-    String UPDATE = "update";
     String WEBSERVICES = ModelDescriptionConstants.WEBSERVICES;
     String WEBSERVICES_RUNTIME = "webservices-runtime";
 

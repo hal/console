@@ -13,16 +13,11 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.jboss.hal.client.update;
+package org.jboss.hal.client.installer;
 
-import org.jboss.hal.meta.AddressTemplate;
+public interface Timeouts {
 
-import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_HOST;
-
-public interface AddressTemplates {
-
-    String INSTALLER_ADDRESS = "/core-service=installer";
-
-    AddressTemplate ROOT_TEMPLATE = AddressTemplate.of(SELECTED_HOST);
-    AddressTemplate INSTALLER_TEMPLATE = AddressTemplate.of(SELECTED_HOST, INSTALLER_ADDRESS);
+    // all values in seconds
+    int PREPARE_UPDATES = 120;
+    int APPLY_UPDATE = 60;
 }

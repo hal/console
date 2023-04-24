@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.jboss.hal.client.update;
+package org.jboss.hal.client.installer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,14 +46,14 @@ import elemental2.dom.HTMLElement;
 import elemental2.promise.Promise;
 
 import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.client.update.AddressTemplates.INSTALLER_TEMPLATE;
+import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHANNELS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
-@Column(Ids.UPDATE_CHANNEL)
+@Column(Ids.INSTALLER_CHANNEL)
 public class ChannelColumn extends FinderColumn<Channel> {
 
     private final EventBus eventBus;
@@ -65,7 +65,7 @@ public class ChannelColumn extends FinderColumn<Channel> {
             final StatementContext statementContext,
             final Dispatcher dispatcher,
             final Resources resources) {
-        super(new Builder<Channel>(finder, Ids.UPDATE_CHANNEL, Names.CHANNELS)
+        super(new Builder<Channel>(finder, Ids.INSTALLER_CHANNEL, Names.CHANNELS)
                 .onPreview(ChannelPreview::new)
                 .showCount()
                 .withFilter());
@@ -118,12 +118,12 @@ public class ChannelColumn extends FinderColumn<Channel> {
             }
         });
 
-        addColumnAction(new ColumnAction.Builder<Channel>(Ids.UPDATE_CHANNEL_ADD)
+        addColumnAction(new ColumnAction.Builder<Channel>(Ids.INSTALLER_CHANNEL_ADD)
                 .element(columnActionFactory.addButton(Names.CHANNEL))
                 .handler(column -> add())
                 .constraint(Constraint.executable(INSTALLER_TEMPLATE, WRITE_ATTRIBUTE_OPERATION))
                 .build());
-        addColumnAction(columnActionFactory.refresh(Ids.UPDATE_CHANNEL_REFRESH));
+        addColumnAction(columnActionFactory.refresh(Ids.INSTALLER_CHANNEL_REFRESH));
     }
 
     private void add() {

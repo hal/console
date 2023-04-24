@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.jboss.hal.client.update;
+package org.jboss.hal.client.installer;
 
 import java.util.Date;
 
@@ -25,13 +25,13 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.HASH;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TIMESTAMP;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
 
-public class HistoryItem extends NamedNode {
+public class UpdateItem extends NamedNode {
 
-    public enum HistoryType {
+    public enum UpdateType {
         INSTALL, UPDATE, ROLLBACK, UNDEFINED
     }
 
-    public HistoryItem(final ModelNode node) {
+    public UpdateItem(final ModelNode node) {
         super(node.get(HASH).asString(), node);
     }
 
@@ -39,20 +39,20 @@ public class HistoryItem extends NamedNode {
         return ModelNodeHelper.failSafeDate(this, TIMESTAMP);
     }
 
-    public HistoryType getHistoryKind() {
-        return ModelNodeHelper.asEnumValue(this, TYPE, value -> HistoryType.valueOf(value.toUpperCase()),
-                HistoryType.UNDEFINED);
+    public UpdateType getUpdateKind() {
+        return ModelNodeHelper.asEnumValue(this, TYPE, value -> UpdateType.valueOf(value.toUpperCase()),
+                UpdateType.UNDEFINED);
     }
 
     public boolean isInstall() {
-        return getHistoryKind() == HistoryType.INSTALL;
+        return getUpdateKind() == UpdateType.INSTALL;
     }
 
     public boolean isUpdate() {
-        return getHistoryKind() == HistoryType.UPDATE;
+        return getUpdateKind() == UpdateType.UPDATE;
     }
 
     public boolean isRollback() {
-        return getHistoryKind() == HistoryType.ROLLBACK;
+        return getUpdateKind() == UpdateType.ROLLBACK;
     }
 }

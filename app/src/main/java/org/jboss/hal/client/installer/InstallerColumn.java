@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.jboss.hal.client.update;
+package org.jboss.hal.client.installer;
 
 import javax.inject.Inject;
 
@@ -28,24 +28,24 @@ import org.jboss.hal.spi.Column;
 
 import static java.util.Arrays.asList;
 
-@Column(Ids.UPDATE)
-public class UpdateColumn extends StaticItemColumn {
+@Column(Ids.INSTALLER)
+public class InstallerColumn extends StaticItemColumn {
 
     @Inject
-    public UpdateColumn(Finder finder, Resources resources) {
+    public InstallerColumn(Finder finder, Resources resources) {
 
-        super(finder, Ids.UPDATE, Names.UPDATE, asList(
-                new StaticItem.Builder(Names.HISTORY)
-                        .nextColumn(Ids.UPDATE_HISTORY)
+        super(finder, Ids.INSTALLER, Names.INSTALLER, asList(
+                new StaticItem.Builder(Names.UPDATES)
+                        .nextColumn(Ids.INSTALLER_UPDATE)
                         .onPreview(
-                                new PreviewContent<>(Names.HISTORY,
-                                        resources.previews().updateHistory()))
+                                new PreviewContent<>(Names.UPDATES,
+                                        resources.previews().installerUpdates()))
                         .build(),
                 new StaticItem.Builder(Names.CHANNELS)
-                        .nextColumn(Ids.UPDATE_CHANNEL)
+                        .nextColumn(Ids.INSTALLER_CHANNEL)
                         .onPreview(
                                 new PreviewContent<>(Names.CHANNELS,
-                                        resources.previews().updateChannels()))
+                                        resources.previews().installerChannels()))
                         .build()));
     }
 }

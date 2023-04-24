@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.jboss.hal.client.update;
+package org.jboss.hal.client.installer;
 
 import javax.inject.Inject;
 
@@ -32,15 +32,16 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
-public class UpdateFinderPresenter extends FinderPresenter<UpdateFinderPresenter.MyView, UpdateFinderPresenter.MyProxy> {
+public class InstallerFinderPresenter
+        extends FinderPresenter<InstallerFinderPresenter.MyView, InstallerFinderPresenter.MyProxy> {
 
     private final Environment environment;
 
     @Inject
-    public UpdateFinderPresenter(
+    public InstallerFinderPresenter(
             EventBus eventBus,
-            UpdateFinderPresenter.MyView view,
-            UpdateFinderPresenter.MyProxy proxy,
+            InstallerFinderPresenter.MyView view,
+            InstallerFinderPresenter.MyProxy proxy,
             Finder finder,
             Resources resources,
             Environment environment) {
@@ -50,18 +51,18 @@ public class UpdateFinderPresenter extends FinderPresenter<UpdateFinderPresenter
 
     @Override
     protected String initialColumn() {
-        return Ids.UPDATE;
+        return Ids.INSTALLER;
     }
 
     @Override
     protected PreviewContent<Void> initialPreview() {
-        return new PreviewContent<>(Names.UPDATE, resources.previews().update());
+        return new PreviewContent<>(Names.INSTALLER, resources.previews().installer());
     }
 
     // @formatter:off
     @ProxyStandard
-    @NameToken(NameTokens.UPDATE)
-    public interface MyProxy extends ProxyPlace<UpdateFinderPresenter> {
+    @NameToken(NameTokens.INSTALLER)
+    public interface MyProxy extends ProxyPlace<InstallerFinderPresenter> {
     }
 
     public interface MyView extends FinderView {

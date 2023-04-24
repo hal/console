@@ -232,32 +232,36 @@
                     <artifactId>license-maven-plugin</artifactId>
                     <version>${version.license.plugin}</version>
                     <configuration>
-                        <header>build-config/src/main/resources/etc/license.txt</header>
-                        <strictCheck>true</strictCheck>
                         <aggregate>true</aggregate>
+                        <strictCheck>true</strictCheck>
                         <useDefaultExcludes>true</useDefaultExcludes>
                         <mapping>
                             <parcelrc>DOUBLESLASH_STYLE</parcelrc>
                             <less>SLASHSTAR_STYLE</less>
                             <rng>XML_STYLE</rng>
                         </mapping>
-                        <excludes>
-                            <exclude>.sdkmanrc</exclude>
-                            <exclude>version.txt</exclude>
-                            <exclude>LICENSE</exclude>
-                            <exclude>README.md</exclude>
-                            <exclude>**/.parcel-cache/**</exclude>
-                            <exclude>**/banner.txt</exclude>
-                            <exclude>**/Dockerfile.*</exclude>
-                            <exclude>**/Constants*.properties</exclude>
-                            <exclude>**/Messages*.properties</exclude>
-                            <exclude>**/previews/**/*.html</exclude>
-                            <exclude>**/public/css/**</exclude>
-                            <exclude>**/public/js/**</exclude>
-                            <exclude>**/*license*.txt</exclude>
-                            <exclude>**/*.base64</exclude>
-                            <exclude>**/*.dmr</exclude>
-                        </excludes>
+                        <licenseSets>
+                            <licenseSet>
+                                <header>build-config/src/main/resources/etc/license.txt</header>
+                                <excludes>
+                                    <exclude>.sdkmanrc</exclude>
+                                    <exclude>version.txt</exclude>
+                                    <exclude>LICENSE</exclude>
+                                    <exclude>README.md</exclude>
+                                    <exclude>**/.parcel-cache/**</exclude>
+                                    <exclude>**/banner.txt</exclude>
+                                    <exclude>**/Dockerfile.*</exclude>
+                                    <exclude>**/Constants*.properties</exclude>
+                                    <exclude>**/Messages*.properties</exclude>
+                                    <exclude>**/previews/**/*.html</exclude>
+                                    <exclude>**/public/css/**</exclude>
+                                    <exclude>**/public/js/**</exclude>
+                                    <exclude>**/*license*.txt</exclude>
+                                    <exclude>**/*.base64</exclude>
+                                    <exclude>**/*.dmr</exclude>
+                                </excludes>
+                            </licenseSet>
+                        </licenseSets>
                     </configuration>
                 </plugin>
                 <!-- Not used, but declared to dismiss warnings -->
@@ -408,6 +412,19 @@
     </build>
 
     <profiles>
+        <profile>
+            <id>fast</id>
+            <properties>
+                <skip.gwt>true</skip.gwt>
+                <checkstyle.skip>true</checkstyle.skip>
+                <enforcer.skip>true</enforcer.skip>
+                <formatter.skip>true</formatter.skip>
+                <impsort.skip>true</impsort.skip>
+                <license.skip>true</license.skip>
+                <skipITs>true</skipITs>
+                <skipTests>true</skipTests>
+            </properties>
+        </profile>
         <profile>
             <id>i18n</id>
             <properties>

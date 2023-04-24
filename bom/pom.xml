@@ -171,7 +171,11 @@
                     <groupId>com.mycila</groupId>
                     <artifactId>license-maven-plugin</artifactId>
                     <configuration>
-                        <header>../build-config/src/main/resources/etc/license.txt</header>
+                        <licenseSets>
+                            <licenseSet>
+                                <header>../build-config/src/main/resources/etc/license.txt</header>
+                            </licenseSet>
+                        </licenseSets>
                     </configuration>
                 </plugin>
             </plugins>

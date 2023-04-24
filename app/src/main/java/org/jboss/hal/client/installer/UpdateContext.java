@@ -13,17 +13,19 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.jboss.hal.client.update.wizard;
+package org.jboss.hal.client.installer;
 
 import java.util.List;
 
+import org.jboss.hal.dmr.ModelNode;
+
 public class UpdateContext {
 
-    public final List<String> updates;
+    public final List<ModelNode> updates;
     public boolean offline;
     public boolean prepared;
 
-    public UpdateContext(final List<String> updates) {
+    public UpdateContext(final List<ModelNode> updates) {
         this.updates = updates;
         this.offline = false;
         this.prepared = false;

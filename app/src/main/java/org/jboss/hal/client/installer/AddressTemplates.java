@@ -13,10 +13,16 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.jboss.hal.client.update;
+package org.jboss.hal.client.installer;
 
-interface ReturnCodes {
+import org.jboss.hal.meta.AddressTemplate;
 
-    int LIST_UPDATES_UPDATES = 1;
-    int LIST_UPDATES_NO_UPDATES = 2;
+import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_HOST;
+
+public interface AddressTemplates {
+
+    String INSTALLER_ADDRESS = "/core-service=installer";
+
+    AddressTemplate ROOT_TEMPLATE = AddressTemplate.of(SELECTED_HOST);
+    AddressTemplate INSTALLER_TEMPLATE = AddressTemplate.of(SELECTED_HOST, INSTALLER_ADDRESS);
 }
