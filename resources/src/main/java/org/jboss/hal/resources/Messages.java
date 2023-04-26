@@ -116,6 +116,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml deploymentOpFailed(@PluralCount int count);
     SafeHtml deploymentPreview();
     SafeHtml deploymentReadError(String deployment);
+    SafeHtml deploymentReplaceConfirmation(String name);
     SafeHtml deploymentReplaced(@PluralCount int count);
     SafeHtml deploymentStopped(String name);
     SafeHtml deploymentSubAlreadyExploded();
