@@ -33,6 +33,7 @@ import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
+import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.runtime.TopologyTasks;
 import org.jboss.hal.dmr.ModelNode;
@@ -69,9 +70,9 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_CLASS_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_DATASOURCE_CLASS_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_MODULE_NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_XA_DATASOURCE_CLASS_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MODULE_SLOT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE_NAME;
 import static org.jboss.hal.dmr.ModelNodeHelper.properties;
 import static org.jboss.hal.flow.Flow.sequential;
@@ -114,33 +115,33 @@ public class JdbcDriverColumn extends FinderColumn<JdbcDriver> {
                     Metadata metadata = metadataRegistry.lookup(JDBC_DRIVER_TEMPLATE);
                     Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.JDBC_DRIVER_ADD_FORM, metadata)
                             .fromRequestProperties()
-                            .include(DRIVER_NAME, DRIVER_MODULE_NAME, MODULE_SLOT, DRIVER_CLASS_NAME,
+                            .unboundFormItem(new NameItem(), 0)
+                            .include(DRIVER_MODULE_NAME, MODULE_SLOT, DRIVER_CLASS_NAME,
                                     DRIVER_DATASOURCE_CLASS_NAME,
                                     DRIVER_XA_DATASOURCE_CLASS_NAME)
                             .unsorted()
                             .build();
 
-                    FormItem<String> driverNameItem = form.getFormItem(DRIVER_NAME);
+                    FormItem<String> driverNameItem = form.getFormItem(NAME);
                     driverNameItem.addValidationHandler(createUniqueValidation());
 
                     AddResourceDialog dialog = new AddResourceDialog(
                             resources.messages().addResourceTitle(Names.JDBC_DRIVER), form,
                             (name, modelNode) -> {
                                 if (modelNode != null) {
-                                    // name is null - the form does not have a name field!
-                                    String driverName = modelNode.get(DRIVER_NAME).asString();
                                     ResourceAddress address = JDBC_DRIVER_TEMPLATE
-                                            .resolve(statementContext, driverName);
+                                            .resolve(statementContext, name);
                                     Operation operation = new Operation.Builder(address, ADD)
                                             .payload(modelNode)
                                             .build();
                                     dispatcher.execute(operation, result -> {
                                         MessageEvent.fire(eventBus,
                                                 Message.success(resources.messages()
-                                                        .addResourceSuccess(Names.JDBC_DRIVER,
-                                                                modelNode.get(DRIVER_NAME).asString())));
-                                        column.refresh(driverName);
-                                    });
+                                                        .addResourceSuccess(Names.JDBC_DRIVER, name)));
+                                        column.refresh(name);
+                                    }, (__, failure) -> MessageEvent.fire(eventBus,
+                                            Message.error(resources.messages()
+                                                    .addResourceError(name, failure))));
                                 }
                             });
                     dialog.show();

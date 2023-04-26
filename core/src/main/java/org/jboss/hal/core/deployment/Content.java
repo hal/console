@@ -76,6 +76,10 @@ public class Content extends NamedNode {
         return get(MANAGED).asBoolean(true);
     }
 
+    public boolean isEnabled() {
+        return hasDefined(ENABLED) && get(ENABLED).asBoolean(false);
+    }
+
     @Override
     public String toString() {
         return "Content(" + getName() + ", " +

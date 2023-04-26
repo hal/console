@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.jboss.hal.ballroom.autocomplete.StaticAutoComplete;
 import org.jboss.hal.ballroom.form.FormItem;
+import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.ballroom.form.ValidationResult;
 import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.client.configuration.subsystem.datasource.DataSourceTemplate;
@@ -58,8 +59,11 @@ class DriverStep extends WizardStep<Context, State> {
 
         super(Names.JDBC_DRIVER);
         driversByName = Maps.uniqueIndex(drivers, JdbcDriver::getName);
+        FormItem<String> driverNameItem = new TextBoxItem(DRIVER_NAME);
+        driverNameItem.setRequired(true);
         this.form = new ModelNodeForm.Builder<JdbcDriver>(Ids.DATA_SOURCE_DRIVER_FORM, adjustMetadata(metadata))
-                .include(DRIVER_NAME, DRIVER_MODULE_NAME, xa ? DRIVER_XA_DATASOURCE_CLASS_NAME : DRIVER_CLASS_NAME)
+                .include(DRIVER_MODULE_NAME, xa ? DRIVER_XA_DATASOURCE_CLASS_NAME : DRIVER_CLASS_NAME)
+                .unboundFormItem(driverNameItem, 0)
                 .unsorted()
                 .onSave((form, changedValues) -> wizard().getContext().driver = form.getModel())
                 .build();
@@ -87,8 +91,7 @@ class DriverStep extends WizardStep<Context, State> {
         for (Property property : metadata.getDescription().get(ATTRIBUTES).asPropertyList()) {
             ModelNode value = property.getValue().clone();
             value.get(ACCESS_TYPE).set(READ_WRITE);
-            value.get(NILLABLE).set(
-                    !DRIVER_NAME.equals(property.getName()) && !DRIVER_XA_DATASOURCE_CLASS_NAME.equals(property.getName()));
+            value.get(NILLABLE).set(!DRIVER_XA_DATASOURCE_CLASS_NAME.equals(property.getName()));
             newAttributes.get(property.getName()).set(value);
         }
 
@@ -127,6 +130,9 @@ class DriverStep extends WizardStep<Context, State> {
     @Override
     protected void onShow(Context context) {
         form.edit(context.driver);
+        if (context.driver.has(DRIVER_NAME)) {
+            form.getFormItem(DRIVER_NAME).setValue(context.driver.get(DRIVER_NAME).asString());
+        }
         if (firstTime) {
             firstTime = false;
             assignFromJdbcDriverOrTemplate(context.driver.getName(), DRIVER_XA_DATASOURCE_CLASS_NAME);

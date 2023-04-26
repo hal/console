@@ -340,6 +340,37 @@ public class Wizard<C, S extends Enum<S>> {
         finishCanClose = lastStep;
     }
 
+    public void showWarning(String title, SafeHtml text, String okButton, SuccessAction<C> okAction, boolean lastStep) {
+        blankSlate.classList.remove(wizardPfProcess);
+        blankSlate.classList.add(wizardPfComplete);
+        Elements.removeChildrenFrom(blankSlate);
+
+        blankSlate.appendChild(div().css(wizardPfWarningIcon)
+                .add(span().css(glyphicon("exclamation-sign"))).element());
+        blankSlate.appendChild(h(3).css(blankSlatePfMainAction).textContent(title).element());
+        blankSlate.appendChild(p().css(blankSlatePfSecondaryAction).innerHtml(text).element());
+
+        if (okButton != null && okAction != null) {
+            blankSlate.appendChild(button().css(btn, btnLg, btnPrimary)
+                    .textContent(okButton)
+                    .on(click, event -> okAction.execute(context))
+                    .element());
+        }
+
+        stepElements.values().forEach(element -> Elements.setVisible(element, false));
+        Elements.setVisible(blankSlate, true);
+
+        cancelButton.disabled = lastStep;
+        backButton.disabled = lastStep;
+        nextButton.disabled = false;
+        if (lastStep) {
+            nextText.textContent = CONSTANTS.close();
+            Elements.setVisible(nextIcon, false);
+        }
+        nextButton.onclick = null;
+        finishCanClose = lastStep;
+    }
+
     public void showError(String title, SafeHtml text) {
         showError(title, text, null, true);
     }
