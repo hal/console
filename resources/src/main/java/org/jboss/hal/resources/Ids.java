@@ -340,8 +340,8 @@ public interface Ids {
     String HOMEPAGE_CONFIGURATION_SECTION = "homepage-configuration-section";
     String HOMEPAGE_DEPLOYMENTS_MODULE = "homepage-deployments-module";
     String HOMEPAGE_DEPLOYMENTS_SECTION = "homepage-deployments-section";
-    String HOMEPAGE_PATCHING_MODULE = "homepage-patching-module";
-    String HOMEPAGE_PATCHING_SECTION = "homepage-patching-section";
+    String HOMEPAGE_INSTALLER_MODULE = "homepage-installer-module";
+    String HOMEPAGE_INSTALLER_SECTION = "homepage-installer-section";
     String HOMEPAGE_RUNTIME_MONITOR_SECTION = "homepage-runtime-monitor-section";
     String HOMEPAGE_RUNTIME_MODULE = "homepage-runtime-module";
     String HOMEPAGE_RUNTIME_SECTION = "homepage-runtime-section";
@@ -362,6 +362,7 @@ public interface Ids {
     String INSTALLER_CHANNEL_CHANGES = "installer-channel-changes";
     String INSTALLER_CHANNEL_REFRESH = "installer-channel-refresh";
     String INSTALLER_CLEAN = "installer-clean";
+    String INSTALLER_REVERT = "installer-revert";
     String INSTALLER_UPDATE = "installer-update";
     String INSTALLER_UPDATE_ADD_ACTIONS = "installer-update-add-actions";
     String INSTALLER_UPDATE_REFRESH = "installer-update-refresh";

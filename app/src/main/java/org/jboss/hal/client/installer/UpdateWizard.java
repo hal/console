@@ -19,11 +19,20 @@ import java.util.List;
 
 import org.jboss.hal.ballroom.wizard.Wizard;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.StatementContext;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
 import com.google.web.bindery.event.shared.EventBus;
+
+import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE;
+import static org.jboss.hal.client.installer.UpdateState.APPLY_UPDATE;
+import static org.jboss.hal.client.installer.UpdateState.LIST_UPDATES;
+import static org.jboss.hal.client.installer.UpdateState.PREPARE_SERVER;
+import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PREPARE_UPDATES;
 
 public class UpdateWizard {
 
@@ -31,7 +40,7 @@ public class UpdateWizard {
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
     private final Resources resources;
-    private final UpdateContext wizardContext;
+    private final InstallerContext context;
 
     public UpdateWizard(EventBus eventBus, Dispatcher dispatcher, StatementContext statementContext, Resources resources,
             List<ModelNode> updates) {
@@ -39,17 +48,32 @@ public class UpdateWizard {
         this.statementContext = statementContext;
         this.dispatcher = dispatcher;
         this.resources = resources;
-        this.wizardContext = new UpdateContext(updates);
+        this.context = new InstallerContext(updates);
     }
 
-    public void show() {
-        Wizard.Builder<UpdateContext, UpdateState> builder = new Wizard.Builder<>(
-                resources.constants().updateServer(), wizardContext);
+    public void show(UpdateColumn column) {
+        Wizard.Builder<InstallerContext, UpdateState> builder = new Wizard.Builder<>(
+                resources.constants().updateServer(), context);
 
-        builder.addStep(UpdateState.LIST_UPDATES, new ListUpdatesStep(resources))
-                .addStep(UpdateState.PREPARE_SERVER, new PrepareUpdatesStep(eventBus, dispatcher, statementContext, resources))
-                .addStep(UpdateState.APPLY_UPDATE, new ApplyUpdateStep(dispatcher, statementContext, resources))
-                .stayOpenAfterFinish();
+        builder.stayOpenAfterFinish()
+                .addStep(LIST_UPDATES, new InitStep<UpdateState>(
+                        Ids.INSTALLER_UPDATE,
+                        resources.constants().listUpdates(),
+                        resources.messages().listUpdatesTable(),
+                        resources.messages().listUpdatesDescription()))
+                .addStep(PREPARE_SERVER, new PrepareStep<UpdateState>(
+                        resources.constants().prepareUpdate(),
+                        resources.messages().prepareUpdatePending(),
+                        resources.messages().prepareUpdateSuccess(),
+                        resources.messages().prepareUpdateError(),
+                        (__) -> new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext), PREPARE_UPDATES).build(),
+                        eventBus, dispatcher, statementContext, resources))
+                .addStep(APPLY_UPDATE, new ApplyStep<UpdateState>(
+                        resources.constants().applyUpdate(),
+                        resources.messages().applyUpdatePending(),
+                        resources.messages().applyUpdateSuccess(),
+                        resources.messages().applyUpdateError(),
+                        dispatcher, statementContext, resources));
 
         builder.onBack((ctx, currentState) -> {
             UpdateState previous = null;
@@ -57,10 +81,10 @@ public class UpdateWizard {
                 case LIST_UPDATES:
                     break;
                 case PREPARE_SERVER:
-                    previous = UpdateState.LIST_UPDATES;
+                    previous = LIST_UPDATES;
                     break;
                 case APPLY_UPDATE:
-                    previous = ctx.prepared ? UpdateState.LIST_UPDATES : UpdateState.PREPARE_SERVER;
+                    previous = ctx.prepared ? LIST_UPDATES : PREPARE_SERVER;
                     break;
             }
             return previous;
@@ -70,16 +94,18 @@ public class UpdateWizard {
             UpdateState next = null;
             switch (currentState) {
                 case LIST_UPDATES:
-                    next = ctx.prepared ? UpdateState.APPLY_UPDATE : UpdateState.PREPARE_SERVER;
+                    next = ctx.prepared ? APPLY_UPDATE : PREPARE_SERVER;
                     break;
                 case PREPARE_SERVER:
-                    next = UpdateState.APPLY_UPDATE;
+                    next = APPLY_UPDATE;
                     break;
                 case APPLY_UPDATE:
                     break;
             }
             return next;
         });
+
+        builder.onFinish((wizard, ctx) -> column.refresh(RESTORE_SELECTION));
 
         builder.build().show();
     }

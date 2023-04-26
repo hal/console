@@ -21,43 +21,38 @@ import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
-import org.jboss.hal.resources.Resources;
+
+import com.google.gwt.safehtml.shared.SafeHtml;
 
 import elemental2.dom.HTMLElement;
 
 import static org.jboss.elemento.Elements.div;
-import static org.jboss.elemento.Elements.h;
-import static org.jboss.elemento.Elements.p;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NEW_VERSION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.OLD_VERSION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.STATUS;
-import static org.jboss.hal.resources.CSS.marginTopLarge;
 
-class ListUpdatesStep extends WizardStep<UpdateContext, UpdateState> {
+class InitStep<S extends Enum<S>> extends WizardStep<InstallerContext, S> {
 
     private final HTMLElement root;
     private final Table<ModelNode> table;
 
-    ListUpdatesStep(Resources resources) {
-        super(resources.constants().listUpdates());
+    InitStep(final String baseId,
+            final String title,
+            final SafeHtml tableDescription,
+            final SafeHtml stepsDescription) {
+        super(title);
 
-        table = new ModelNodeTable.Builder<ModelNode>(Ids.build(Ids.INSTALLER_UPDATE, Ids.TABLE),
+        table = new ModelNodeTable.Builder<ModelNode>(Ids.build(baseId, Ids.TABLE),
                 Metadata.staticDescription(InstallerResources.INSTANCE.artifactChange()))
                 .columns(NAME, STATUS, OLD_VERSION, NEW_VERSION)
                 .build();
         registerAttachable(table);
 
         root = div()
-                .add(p().textContent(resources.constants().listUpdatesAvailable()))
+                .add(div().innerHtml(tableDescription))
                 .add(table)
-                .add(p().css(marginTopLarge)
-                        .textContent(resources.constants().listUpdatesSteps()))
-                .add(h(4).textContent(resources.constants().prepareServer()))
-                .add(p().textContent(resources.constants().prepareServerDescription()))
-                .add(h(4).textContent(resources.constants().applyUpdate()))
-                .add(p().textContent(resources.constants().applyUpdateStepDescription()))
-                .add(p().css(marginTopLarge).textContent(resources.constants().listUpdatesStepsSummary()))
+                .add(div().innerHtml(stepsDescription))
                 .element();
     }
 
@@ -67,7 +62,7 @@ class ListUpdatesStep extends WizardStep<UpdateContext, UpdateState> {
     }
 
     @Override
-    protected void onShow(final UpdateContext context) {
+    protected void onShow(final InstallerContext context) {
         table.update(context.updates);
     }
 }

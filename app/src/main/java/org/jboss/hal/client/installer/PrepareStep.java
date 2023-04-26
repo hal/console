@@ -16,6 +16,7 @@
 package org.jboss.hal.client.installer;
 
 import java.util.List;
+import java.util.function.Function;
 
 import org.jboss.hal.ballroom.wizard.AsyncStep;
 import org.jboss.hal.ballroom.wizard.WizardStep;
@@ -31,6 +32,7 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
 
 import elemental2.dom.HTMLElement;
@@ -40,19 +42,33 @@ import static java.util.Collections.singletonList;
 import static org.jboss.elemento.Elements.div;
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CLEAN;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.PREPARE_UPDATES;
 
-class PrepareUpdatesStep extends WizardStep<UpdateContext, UpdateState> implements AsyncStep<UpdateContext> {
+class PrepareStep<S extends Enum<S>> extends WizardStep<InstallerContext, S> implements AsyncStep<InstallerContext> {
 
+    private final SafeHtml progressMessage;
+    private final SafeHtml successMessage;
+    private final SafeHtml errorMessage;
+    private final Function<InstallerContext, Operation> operation;
     private final EventBus eventBus;
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
     private final Resources resources;
     private final HTMLElement root;
 
-    PrepareUpdatesStep(final EventBus eventBus, final Dispatcher dispatcher, final StatementContext statementContext,
+    PrepareStep(final String title,
+            final SafeHtml progressMessage,
+            final SafeHtml successMessage,
+            final SafeHtml errorMessage,
+            final Function<InstallerContext, Operation> operation,
+            final EventBus eventBus,
+            final Dispatcher dispatcher,
+            final StatementContext statementContext,
             final Resources resources) {
-        super(resources.constants().prepareServer(), true);
+        super(title, true);
+        this.progressMessage = progressMessage;
+        this.successMessage = successMessage;
+        this.errorMessage = errorMessage;
+        this.operation = operation;
         this.eventBus = eventBus;
         this.statementContext = statementContext;
         this.dispatcher = dispatcher;
@@ -66,43 +82,39 @@ class PrepareUpdatesStep extends WizardStep<UpdateContext, UpdateState> implemen
     }
 
     @Override
-    protected Promise<UpdateContext> onShowAndWait(final UpdateContext updateContext) {
-        wizard().showProgress(resources.constants().preparingServer(),
-                resources.messages().preparingServerDescription(Timeouts.PREPARE_UPDATES));
+    protected Promise<InstallerContext> onShowAndWait(final InstallerContext context) {
+        wizard().showProgress(title, progressMessage);
 
-        Operation operation = new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext), PREPARE_UPDATES).build();
         List<Task<FlowContext>> tasks = singletonList(
-                flowContext -> dispatcher.execute(operation).then(ignore -> Promise.resolve(flowContext)));
+                flowContext -> dispatcher.execute(operation.apply(context)).then(ignore -> Promise.resolve(flowContext)));
         return Flow.sequential(new FlowContext(Progress.NOOP), tasks)
-                .timeout(Timeouts.PREPARE_UPDATES * 1_000)
+                .timeout(Timeouts.PREPARE * 1_000)
                 .then(ignore -> {
-                    updateContext.prepared = true;
-                    wizard().showSuccess(resources.constants().prepareServerSuccess(),
-                            resources.messages().prepareServerSuccessDescription(),
-                            false);
-                    return Promise.resolve(updateContext);
+                    context.prepared = true;
+                    wizard().showSuccess(resources.constants().success(), successMessage, false);
+                    return Promise.resolve(context);
                 })
                 .catch_(failure -> {
                     if (FlowContext.timeout(failure)) {
                         wizard().showError(resources.constants().timeout(), resources.messages().operationTimeout(), false);
                     } else {
-                        wizard().showError(resources.constants().error(), resources.messages().prepareServerError(), false);
+                        wizard().showError(resources.constants().error(), errorMessage, false);
                     }
                     return Promise.reject(failure);
                 });
     }
 
     @Override
-    public void onCancel(final UpdateContext context, final WorkflowCallback callback) {
+    public void onCancel(final InstallerContext context, final WorkflowCallback callback) {
         if (context.prepared) {
             Operation operation = new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext), CLEAN).build();
             dispatcher.execute(operation,
                     modelNode -> {
                         callback.proceed();
-                        MessageEvent.fire(eventBus, Message.info(resources.messages().prepareServerCleanupSuccess()));
+                        MessageEvent.fire(eventBus, Message.info(resources.messages().prepareCleanupSuccess()));
                     }, (op, error) -> {
                         callback.proceed();
-                        MessageEvent.fire(eventBus, Message.error(resources.messages().prepareServerCleanupError()));
+                        MessageEvent.fire(eventBus, Message.error(resources.messages().prepareCleanupError()));
                     });
         } else {
             callback.proceed();

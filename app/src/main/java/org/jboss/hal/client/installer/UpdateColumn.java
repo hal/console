@@ -19,8 +19,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.core.finder.ColumnAction;
 import org.jboss.hal.core.finder.ColumnActionFactory;
@@ -50,14 +48,17 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import elemental2.dom.HTMLElement;
 import elemental2.promise.Promise;
+import javax.inject.Inject;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ARTIFACT_CHANGES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HISTORY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.LIST_UPDATES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PREPARE_REVERT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PREPARE_UPDATES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REVISION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TIMESTAMP;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UPDATES;
@@ -84,7 +85,8 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
         super(new Builder<UpdateItem>(finder, Ids.INSTALLER_UPDATE, Names.UPDATES)
                 .onPreview(item -> new UpdatePreview(item, dispatcher, statementContext, resources))
                 .showCount()
-                .withFilter());
+                .withFilter()
+                .filterDescription(resources.messages().updatesFilterDescription()));
 
         this.eventBus = eventBus;
         this.dispatcher = dispatcher;
@@ -146,8 +148,7 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
             @Override
             public List<ItemAction<UpdateItem>> actions() {
                 List<ItemAction<UpdateItem>> actions = new ArrayList<>();
-                if (item.getUpdateKind() == UpdateItem.UpdateType.UPDATE
-                        || item.getUpdateKind() == UpdateItem.UpdateType.ROLLBACK) {
+                if (item.getUpdateKind() == UpdateItem.UpdateType.UPDATE) {
                     actions.add(new ItemAction.Builder<UpdateItem>()
                             .title(resources.constants().revert())
                             .handler(item1 -> revert(item1))
@@ -198,7 +199,7 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
     }
 
     private void startUpdate(final List<ModelNode> updates) {
-        new UpdateWizard(eventBus, dispatcher, statementContext, resources, updates).show();
+        new UpdateWizard(eventBus, dispatcher, statementContext, resources, updates).show(this);
     }
 
     private void upload() {
@@ -210,6 +211,21 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
     }
 
     private void revert(UpdateItem updateItem) {
-        MessageEvent.fire(eventBus, Message.error(SafeHtmlUtils.fromSafeConstant(Names.NYI)));
+        Operation operation = new Operation.Builder(AddressTemplates.INSTALLER_TEMPLATE.resolve(statementContext), HISTORY)
+                .param(REVISION, updateItem.getName())
+                .build();
+        dispatcher.execute(operation,
+                result -> {
+                    List<ModelNode> updates = result.get(ARTIFACT_CHANGES).asList();
+                    if (updates.isEmpty()) {
+                        MessageEvent.fire(eventBus, Message.warning(resources.messages().noUpdates()));
+                    } else {
+                        startRevert(updateItem, updates);
+                    }
+                }, (op, error) -> MessageEvent.fire(eventBus, Message.error(resources.messages().lastOperationFailed())));
+    }
+
+    private void startRevert(UpdateItem updateItem, List<ModelNode> updates) {
+        new RevertWizard(eventBus, dispatcher, statementContext, resources, updateItem, updates).show(this);
     }
 }

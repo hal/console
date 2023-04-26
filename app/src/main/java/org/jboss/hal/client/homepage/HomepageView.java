@@ -32,7 +32,11 @@ import org.jboss.hal.resources.Resources;
 
 import elemental2.dom.HTMLElement;
 
-import static org.jboss.elemento.Elements.*;
+import static org.jboss.elemento.Elements.a;
+import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.h;
+import static org.jboss.elemento.Elements.p;
+import static org.jboss.elemento.Elements.span;
 import static org.jboss.elemento.EventType.click;
 import static org.jboss.hal.resources.CSS.clickable;
 import static org.jboss.hal.resources.CSS.eapHomeRow;
@@ -49,7 +53,6 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
         boolean ssoEnabled = environment.isSingleSignOn();
         boolean community = environment.getHalBuild() == Build.COMMUNITY;
         boolean su = ac.isSuperUserOrAdministrator();
-        boolean patchable = environment.isPatchingEnabled();
         String name = environment.getInstanceInfo().productName();
 
         Iterable<HomepageSection> sections;
@@ -58,7 +61,7 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
         HTMLElement configuration;
         HTMLElement runtime;
         HTMLElement accessControl = div().element(); // to get rid of warning "might not be initialized"
-        HTMLElement patching = div().element();
+        HTMLElement installer = div().element();
         HTMLElement help;
 
         if (community) {
@@ -181,6 +184,21 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
         }
 
         if (su) {
+            sections = Collections.singleton(new HomepageSection(places, resources,
+                    Ids.HOMEPAGE_INSTALLER_SECTION, NameTokens.INSTALLER,
+                    resources.constants().homepageInstallerSection(),
+                    resources.constants().homepageInstallerStepIntro(),
+                    Arrays.asList(
+                            resources.constants().homepageInstallerStep1(),
+                            resources.constants().homepageInstallerStep2(),
+                            resources.constants().homepageInstallerStep3()),
+                    true));
+            installer = new HomepageModule(places,
+                    Ids.HOMEPAGE_INSTALLER_MODULE, NameTokens.INSTALLER, Names.INSTALLER,
+                    resources.constants().homepageInstallerSubHeader(),
+                    resources.images().patching(),
+                    sections).element();
+
             if (ssoEnabled) {
                 accessControl = new HomepageModule(places,
                         Ids.HOMEPAGE_ACCESS_CONTROL_MODULE, NameTokens.ACCESS_CONTROL_SSO, Names.ACCESS_CONTROL,
@@ -201,34 +219,6 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
                         resources.images().accessControl(),
                         sections).element();
             }
-
-            if (standalone) {
-                sections = Collections.singleton(new HomepageSection(places, resources,
-                        Ids.HOMEPAGE_PATCHING_SECTION, NameTokens.PATCHING,
-                        resources.constants().homepagePatchingSection(),
-                        resources.messages().homepagePatchingStandaloneStepIntro(name),
-                        Arrays.asList(
-                                resources.constants().homepagePatchingStep1(),
-                                resources.constants().homepagePatchingStepApply()),
-                        true));
-            } else {
-                sections = Collections.singleton(new HomepageSection(places, resources,
-                        Ids.HOMEPAGE_PATCHING_SECTION, NameTokens.PATCHING,
-                        resources.constants().homepagePatchingSection(),
-                        resources.messages().homepagePatchingDomainStepIntro(name),
-                        Arrays.asList(
-                                resources.constants().homepagePatchingStep1(),
-                                resources.constants().homepagePatchingDomainStep2(),
-                                resources.constants().homepagePatchingStepApply()),
-                        true));
-            }
-            if (patchable) {
-                patching = new HomepageModule(places,
-                        Ids.HOMEPAGE_PATCHING_MODULE, NameTokens.PATCHING, Names.PATCHING,
-                        resources.messages().homepagePatchingSubHeader(name),
-                        resources.images().patching(),
-                        sections).element();
-            }
         }
 
         help = new HomepageHelp(environment, resources).element();
@@ -242,13 +232,12 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
         if (su) {
             root.appendChild(div().css(eapHomeRow)
                     .add(runtime)
-                    .add(accessControl).element());
-            if (patchable) {
-                root.appendChild(div().css(eapHomeRow)
-                        .add(patching).element());
-            }
+                    .add(installer)
+                    .element());
             root.appendChild(div().css(eapHomeRow)
-                    .add(help).element());
+                    .add(accessControl)
+                    .add(help)
+                    .element());
         } else {
             root.appendChild(div().css(eapHomeRow)
                     .add(runtime)

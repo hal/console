@@ -178,7 +178,7 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
     private HandlerRegistration refreshHandler;
 
     @Inject
-    public HeaderView(Environment environment, Places places, AccessControl ac, Resources resources) {
+    public HeaderView(Places places, AccessControl ac, Resources resources) {
         this.places = places;
         this.resources = resources;
 
@@ -186,7 +186,6 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
         HTMLElement nonProgressingOperationLink;
         HTMLElement logout;
         HTMLElement reconnect;
-        HTMLElement patching;
         HTMLElement installer;
         HTMLElement accessControl;
         HTMLElement backLink;
@@ -290,11 +289,6 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
                                         .add(a().css(clickable)
                                                 .id(Ids.TLC_RUNTIME)
                                                 .textContent(Names.RUNTIME)))
-                                .add(patching = li()
-                                        .add(a().css(clickable)
-                                                .id(Ids.TLC_PATCHING)
-                                                .textContent(Names.PATCHING))
-                                        .element())
                                 .add(installer = li()
                                         .add(a().css(clickable)
                                                 .id(Ids.TLC_INSTALLER)
@@ -343,20 +337,8 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
 
         boolean su = ac.isSuperUserOrAdministrator();
         if (!su) {
-            topLevelCategories.removeChild(patching);
             topLevelCategories.removeChild(installer);
             topLevelCategories.removeChild(accessControl);
-        }
-
-        if (!environment.isPatchingEnabled() && topLevelCategories.contains(patching)) {
-            topLevelCategories.removeChild(patching);
-        }
-        if (!environment.isUpdateEnabled() && topLevelCategories.contains(installer)) {
-            topLevelCategories.removeChild(installer);
-        }
-        if (environment.isPatchingEnabled() && environment.isUpdateEnabled()) {
-            // show update over patching
-            topLevelCategories.removeChild(patching);
         }
 
         String accessControlNameToken = ac.isSingleSignOn() ? NameTokens.ACCESS_CONTROL_SSO : NameTokens.ACCESS_CONTROL;
@@ -367,7 +349,6 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
         tlcPlaceRequests.put(NameTokens.DEPLOYMENTS, new PlaceRequest.Builder().nameToken(NameTokens.DEPLOYMENTS).build());
         tlcPlaceRequests.put(NameTokens.CONFIGURATION, new PlaceRequest.Builder().nameToken(NameTokens.CONFIGURATION).build());
         tlcPlaceRequests.put(NameTokens.RUNTIME, new PlaceRequest.Builder().nameToken(NameTokens.RUNTIME).build());
-        tlcPlaceRequests.put(NameTokens.PATCHING, new PlaceRequest.Builder().nameToken(NameTokens.PATCHING).build());
         tlcPlaceRequests.put(NameTokens.INSTALLER, new PlaceRequest.Builder().nameToken(NameTokens.INSTALLER).build());
         tlcPlaceRequests.put(accessControlNameToken, new PlaceRequest.Builder().nameToken(accessControlNameToken).build());
         // @formatter:on
@@ -379,7 +360,6 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
                         NameTokens.DEPLOYMENTS,
                         NameTokens.CONFIGURATION,
                         NameTokens.RUNTIME,
-                        NameTokens.PATCHING,
                         NameTokens.INSTALLER,
                         accessControlNameToken,
                 },
@@ -388,7 +368,6 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
                         Ids.TLC_DEPLOYMENTS,
                         Ids.TLC_CONFIGURATION,
                         Ids.TLC_RUNTIME,
-                        Ids.TLC_PATCHING,
                         Ids.TLC_INSTALLER,
                         Ids.TLC_ACCESS_CONTROL,
                 });

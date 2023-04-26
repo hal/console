@@ -42,20 +42,14 @@ import org.slf4j.LoggerFactory;
 import elemental2.promise.Promise;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES_ONLY;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.CORE_SERVICE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DOMAIN_ORGANIZATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.INSTALLER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.LAUNCH_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ORGANIZATION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.PATCHING;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PRODUCT_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PRODUCT_VERSION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RELEASE_CODENAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RELEASE_VERSION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
@@ -100,10 +94,6 @@ public final class ReadEnvironment implements Task<FlowContext> {
                 .param(INCLUDE_RUNTIME, true)
                 .build());
         ops.add(new Operation.Builder(ResourceAddress.root(), WHOAMI).param(VERBOSE, true).build());
-        ops.add(new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_RESOURCES_OPERATION)
-                .param(CHILD_TYPE, CORE_SERVICE)
-                .param(RECURSIVE, false)
-                .build());
 
         return dispatcher.execute(new Composite(ops))
                 .then(result -> {
@@ -165,9 +155,6 @@ public final class ReadEnvironment implements Task<FlowContext> {
                     user.setAuthenticated(true);
                     logger.debug("User info: {} {}", user.getName(), user.getRoles());
 
-                    ModelNode step = result.step(2).get(RESULT);
-                    environment.setPatchingEnabled(!environment.isStandalone() || step.get(PATCHING).isDefined());
-                    environment.setUpdateEnabled(step.get(INSTALLER).isDefined());
                     return Promise.resolve(context);
                 });
     }

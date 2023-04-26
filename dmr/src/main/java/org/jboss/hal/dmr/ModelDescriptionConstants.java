@@ -702,8 +702,8 @@ public interface ModelDescriptionConstants {
     String POSSIBLE_CAUSES = "possible-causes";
     String POST_HANDLER_CHAIN = "post-handler-chain";
     String PRE_HANDLER_CHAIN = "pre-handler-chain";
-    String PREPARE_UPDATES = "prepare-updates";
     String PREPARE_REVERT = "prepare-revert";
+    String PREPARE_UPDATES = "prepare-updates";
     String PREDEFINED_FILTER = "predefined-filter";
     String PREFIX = "prefix";
     String PRESERVE = "preserve";

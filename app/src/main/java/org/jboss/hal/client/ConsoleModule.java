@@ -139,8 +139,6 @@ import org.jboss.hal.client.homepage.HomepagePresenter;
 import org.jboss.hal.client.homepage.HomepageView;
 import org.jboss.hal.client.installer.InstallerFinderPresenter;
 import org.jboss.hal.client.installer.InstallerFinderView;
-import org.jboss.hal.client.patching.PatchingFinderPresenter;
-import org.jboss.hal.client.patching.PatchingFinderView;
 import org.jboss.hal.client.rhcp.RhcpPresenter;
 import org.jboss.hal.client.rhcp.RhcpView;
 import org.jboss.hal.client.rhcp.UnderTheBridgePresenter;
@@ -558,11 +556,6 @@ public class ConsoleModule extends AbstractPresenterModule {
                 OtherSettingsPresenter.MyView.class,
                 OtherSettingsView.class,
                 OtherSettingsPresenter.MyProxy.class);
-
-        bindPresenter(PatchingFinderPresenter.class,
-                PatchingFinderPresenter.MyView.class,
-                PatchingFinderView.class,
-                PatchingFinderPresenter.MyProxy.class);
 
         bindPresenter(PathsPresenter.class,
                 PathsPresenter.MyView.class,

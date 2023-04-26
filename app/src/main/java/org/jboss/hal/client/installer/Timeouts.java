@@ -18,6 +18,6 @@ package org.jboss.hal.client.installer;
 public interface Timeouts {
 
     // all values in seconds
-    int PREPARE_UPDATES = 120;
-    int APPLY_UPDATE = 60;
+    int PREPARE = 120;
+    int APPLY = 60;
 }

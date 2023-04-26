@@ -83,12 +83,4 @@ public interface Environment {
 
     /** @return whether HAL is run in production mode */
     boolean isProductionMode();
-
-    void setPatchingEnabled(boolean enabled);
-
-    boolean isPatchingEnabled();
-
-    void setUpdateEnabled(boolean enabled);
-
-    boolean isUpdateEnabled();
 }

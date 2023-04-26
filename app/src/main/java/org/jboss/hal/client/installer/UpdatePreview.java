@@ -20,7 +20,6 @@ import java.util.List;
 import org.jboss.elemento.ElementsBag;
 import org.jboss.elemento.HtmlContentBuilder;
 import org.jboss.elemento.IsElement;
-import org.jboss.hal.ballroom.EmptyState;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.Tabs;
@@ -34,7 +33,6 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.StatementContext;
-import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
@@ -77,9 +75,9 @@ public class UpdatePreview extends PreviewContent<UpdateItem> {
 
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
+    private final Tabs tabs;
     private final Table<ModelNode> artifactChanges;
     private final ChannelChangesElement channelChangesElement;
-    private final EmptyState noChannelChanges;
 
     public UpdatePreview(final UpdateItem updateItem, final Dispatcher dispatcher, final StatementContext statementContext,
             final Resources resources) {
@@ -87,11 +85,6 @@ public class UpdatePreview extends PreviewContent<UpdateItem> {
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
 
-        noChannelChanges = new EmptyState.Builder(Ids.build(Ids.INSTALLER_CHANNEL_CHANGES, Ids.EMPTY),
-                resources.constants().channelChanges())
-                .icon(Icons.DISABLED)
-                .description(resources.constants().channelChangesNone())
-                .build();
         channelChangesElement = new ChannelChangesElement();
         artifactChanges = new ModelNodeTable.Builder<ModelNode>(Ids.build(Ids.INSTALLER_ARTIFACT_CHANGES, Ids.TABLE),
                 Metadata.staticDescription(InstallerResources.INSTANCE.artifactChange()))
@@ -100,12 +93,11 @@ public class UpdatePreview extends PreviewContent<UpdateItem> {
                 .build();
         registerAttachable(artifactChanges);
 
-        Tabs tabs = new Tabs(Ids.build(HISTORY, Ids.build(Ids.INSTALLER_UPDATE, Ids.TAB_CONTAINER)));
+        tabs = new Tabs(Ids.build(HISTORY, Ids.build(Ids.INSTALLER_UPDATE, Ids.TAB_CONTAINER)));
         tabs.add(Ids.build(Ids.build(Ids.INSTALLER_ARTIFACT_CHANGES, Ids.TAB)), resources.constants().artifactChanges(),
                 div().css(marginTopLarge, marginBottomLarge).add(artifactChanges).element());
         tabs.add(Ids.build(Ids.build(Ids.INSTALLER_CHANNEL_CHANGES, Ids.TAB)), resources.constants().channelChanges(),
                 div().css(marginTopLarge, marginBottomLarge)
-                        .add(noChannelChanges)
                         .add(channelChangesElement)
                         .element());
 
@@ -116,6 +108,7 @@ public class UpdatePreview extends PreviewContent<UpdateItem> {
         attributes.append(TYPE);
         previewBuilder().addAll(attributes);
         previewBuilder().add(tabs);
+        setVisible(tabs, false);
     }
 
     @Override
@@ -124,10 +117,15 @@ public class UpdatePreview extends PreviewContent<UpdateItem> {
                 .param(REVISION, item.getName())
                 .build();
         dispatcher.execute(operation, result -> {
-            artifactChanges.update(result.get(ARTIFACT_CHANGES).asList());
             boolean hasChannelChanges = result.get(CHANNEL_CHANGES).isDefined();
-            setVisible(channelChangesElement, hasChannelChanges);
-            setVisible(noChannelChanges, !hasChannelChanges);
+            boolean hasArtifactChanges = result.get(ARTIFACT_CHANGES).isDefined();
+
+            setVisible(tabs, hasArtifactChanges || hasChannelChanges);
+            setVisible(tabs.tabElement(Ids.build(Ids.INSTALLER_CHANNEL_CHANGES, Ids.TAB)), hasChannelChanges);
+
+            if (hasArtifactChanges) {
+                artifactChanges.update(result.get(ARTIFACT_CHANGES).asList());
+            }
             if (hasChannelChanges) {
                 channelChangesElement.update(result.get(CHANNEL_CHANGES).asList());
             }

@@ -13,9 +13,25 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.jboss.hal.client.patching;
+package org.jboss.hal.client.installer;
 
-import org.jboss.hal.core.mvp.FinderViewImpl;
+import java.util.List;
 
-public class PatchingFinderView extends FinderViewImpl implements PatchingFinderPresenter.MyView {
+import org.jboss.hal.dmr.ModelNode;
+
+/** Common context used by all installer wizards */
+public class InstallerContext {
+
+    public boolean prepared;
+    public final UpdateItem updateItem;
+    public final List<ModelNode> updates;
+
+    public InstallerContext(final List<ModelNode> updates) {
+        this(updates, null);
+    }
+
+    public InstallerContext(final List<ModelNode> updates, final UpdateItem updateItem) {
+        this.updateItem = updateItem;
+        this.updates = updates;
+    }
 }

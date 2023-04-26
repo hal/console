@@ -15,19 +15,7 @@
  */
 package org.jboss.hal.client.installer;
 
-import java.util.List;
+public enum RevertState {
 
-import org.jboss.hal.dmr.ModelNode;
-
-public class UpdateContext {
-
-    public final List<ModelNode> updates;
-    public boolean offline;
-    public boolean prepared;
-
-    public UpdateContext(final List<ModelNode> updates) {
-        this.updates = updates;
-        this.offline = false;
-        this.prepared = false;
-    }
+    REVIEW_REVERT, PREPARE_SERVER, APPLY_REVERT
 }
