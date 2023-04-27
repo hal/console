@@ -63,7 +63,6 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
 
         Supplier<JdbcDriver> h2Driver = () -> {
             JdbcDriver driver = new JdbcDriver(H2);
-            driver.get(DRIVER_MODULE_NAME).set("com.h2database.h2");
             driver.get(DRIVER_CLASS_NAME).set("org.h2.Driver");
             driver.get(DRIVER_XA_DATASOURCE_CLASS_NAME);
             return driver;
@@ -97,7 +96,6 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
 
         Supplier<JdbcDriver> postgresDriver = () -> {
             JdbcDriver driver = new JdbcDriver(POSTGRESQL);
-            driver.get(DRIVER_MODULE_NAME).set("org.postgresql");
             driver.get(DRIVER_CLASS_NAME).set("org.postgresql.Driver");
             driver.get(DRIVER_XA_DATASOURCE_CLASS_NAME);
             return driver;
@@ -139,7 +137,6 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
 
         Supplier<JdbcDriver> mySqlDriver = () -> {
             JdbcDriver driver = new JdbcDriver(MYSQL);
-            driver.get(DRIVER_MODULE_NAME).set("com.mysql");
             driver.get(DRIVER_CLASS_NAME).set("com.mysql.cj.jdbc.Driver");
             driver.get(DRIVER_XA_DATASOURCE_CLASS_NAME);
             return driver;
@@ -181,7 +178,6 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
 
         Supplier<JdbcDriver> mariaDBDriver = () -> {
             JdbcDriver driver = new JdbcDriver(MARIADB);
-            driver.get(DRIVER_MODULE_NAME).set("org.mariadb");
             driver.get(DRIVER_CLASS_NAME).set("org.mariadb.jdbc.Driver");
             driver.get(DRIVER_XA_DATASOURCE_CLASS_NAME);
             return driver;
@@ -223,7 +219,6 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
 
         Supplier<JdbcDriver> oracleDriver = () -> {
             JdbcDriver driver = new JdbcDriver(ORACLE);
-            driver.get(DRIVER_MODULE_NAME).set("com.oracle");
             driver.get(DRIVER_CLASS_NAME).set("oracle.jdbc.driver.OracleDriver");
             driver.get(DRIVER_XA_DATASOURCE_CLASS_NAME);
             return driver;
@@ -269,7 +264,6 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
 
         Supplier<JdbcDriver> msSqlDriver = () -> {
             JdbcDriver driver = new JdbcDriver(SQLSERVER);
-            driver.get(DRIVER_MODULE_NAME).set("com.microsoft");
             driver.get(DRIVER_CLASS_NAME).set("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             driver.get(DRIVER_XA_DATASOURCE_CLASS_NAME);
             return driver;
@@ -309,7 +303,6 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
 
         Supplier<JdbcDriver> db2Driver = () -> {
             JdbcDriver driver = new JdbcDriver("ibmdb2");
-            driver.get(DRIVER_MODULE_NAME).set("com.ibm");
             driver.get(DRIVER_CLASS_NAME).set("com.ibm.db2.jcc.DB2Driver");
             driver.get(DRIVER_XA_DATASOURCE_CLASS_NAME);
             return driver;
@@ -358,7 +351,6 @@ public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
 
         Supplier<JdbcDriver> sybaseDriver = () -> {
             JdbcDriver driver = new JdbcDriver(SYBASE);
-            driver.get(DRIVER_MODULE_NAME).set("com.sybase");
             driver.get(DRIVER_CLASS_NAME).set("com.sybase.jdbc.SybDriver");
             driver.get(DRIVER_XA_DATASOURCE_CLASS_NAME);
             return driver;
