@@ -15,11 +15,11 @@
  */
 package org.jboss.hal.standalone;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Observes;
-
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.StaticHandler;
+
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.Observes;
 
 @ApplicationScoped
 public class Main {
