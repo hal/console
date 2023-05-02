@@ -83,8 +83,8 @@ public class Content extends NamedNode {
     @Override
     public String toString() {
         return "Content(" + getName() + ", " +
-                (isExploded() ? "exploded" : "archived") + ", " +
-                (isManaged() ? "managed" : "unmanaged") + ", deployed to " +
+                (isExploded() ? EXPLODED : ARCHIVED) + ", " +
+                (isManaged() ? MANAGED : UN_MANAGED) + ", deployed to " +
                 serverGroupDeployments + ")";
     }
 }

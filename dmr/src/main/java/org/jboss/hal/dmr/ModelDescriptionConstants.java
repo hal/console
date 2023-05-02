@@ -90,6 +90,7 @@ public interface ModelDescriptionConstants {
     String AUTO_START = "auto-start";
     String AVERAGE_COMMIT_TIME = "average-commit-time";
     String AVERAGE_PROCESSING_TIME = "average-processing-time";
+    String ARCHIVED = "archived";
     String BACKGROUND_VALIDATION = "background-validation";
     String BACKUP = "backup";
     String BACKUPS = "backups";
@@ -1003,6 +1004,7 @@ public interface ModelDescriptionConstants {
     String TRUST_MANAGER = "trust-manager";
     String TRUST_MODULE = "trust-module";
     String TYPE = "type";
+    String UN_MANAGED = "unmanaged";
     String UNDEFINE_ATTRIBUTE_OPERATION = "undefine-attribute";
     String UNDEFINED = "undefined";
     String UNDEPLOY = "undeploy";
