@@ -32,7 +32,7 @@ import static org.jboss.elemento.Elements.p;
 public class EncryptionDialog {
 
     private static final ExpressionResources RESOURCES = GWT.create(ExpressionResources.class);
-
+    private String RESOLVER = "resolver";
     private final ExpressionEncryptor expressionEncryptor;
 
     private final Form<ModelNode> form;
@@ -59,11 +59,11 @@ public class EncryptionDialog {
         if (!empty) {
 
             StaticAutoComplete resolverAutoComplete = new StaticAutoComplete(resolverNames);
-            form.getFormItem("resolver").registerSuggestHandler(resolverAutoComplete);
+            form.getFormItem(RESOLVER).registerSuggestHandler(resolverAutoComplete);
 
             if (!hasDefaultResolver) {
                 // make resolver explicitly required if default-resolver is not set in the encryption model
-                form.getFormItem("resolver").setRequired(true);
+                form.getFormItem(RESOLVER).setRequired(true);
             }
 
             dialogBuilder.add(form.element())
