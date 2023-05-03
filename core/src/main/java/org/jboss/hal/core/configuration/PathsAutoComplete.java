@@ -41,6 +41,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PATH;
 import static org.jboss.hal.dmr.ModelNodeHelper.properties;
 import static org.jboss.hal.flow.Flow.sequential;
 
@@ -76,7 +77,7 @@ public class PathsAutoComplete extends AutoComplete {
                                         .needsRestart());
                         if (readPathsFromServer) {
                             operation = new Operation.Builder(servers.get(0).getServerAddress(),
-                                    READ_CHILDREN_NAMES_OPERATION).param(CHILD_TYPE, "path").build();
+                                    READ_CHILDREN_NAMES_OPERATION).param(CHILD_TYPE, PATH).build();
                         } else {
                             operation = defaultOperation();
                         }
@@ -92,7 +93,7 @@ public class PathsAutoComplete extends AutoComplete {
 
     private static Operation defaultOperation() {
         return new Operation.Builder(ResourceAddress.root(), READ_CHILDREN_NAMES_OPERATION)
-                .param(CHILD_TYPE, "path").build();
+                .param(CHILD_TYPE, PATH).build();
     }
 
     public PathsAutoComplete() {
