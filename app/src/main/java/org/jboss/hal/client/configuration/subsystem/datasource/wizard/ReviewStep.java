@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.jboss.hal.ballroom.form.FormItem;
+import org.jboss.hal.ballroom.form.PropertiesItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.core.datasource.DataSource;
@@ -43,18 +44,28 @@ class ReviewStep extends WizardStep<Context, State> {
 
         List<String> attributes = new ArrayList<>();
         attributes.add(JNDI_NAME);
+        attributes.add(DRIVER_NAME);
+        if (!xa) {
+            attributes.add(DRIVER_CLASS);
+        } else {
+            attributes.add(XA_DATASOURCE_CLASS);
+        }
         if (!xa) {
             attributes.add(CONNECTION_URL);
         }
-        attributes.addAll(Arrays.asList(DRIVER_NAME, USER_NAME, PASSWORD)); // NON-NLS
+        attributes.addAll(Arrays.asList(USER_NAME, PASSWORD, AUTHENTICATION_CONTEXT)); // NON-NLS
 
-        form = new ModelNodeForm.Builder<DataSource>(Ids.DATA_SOURCE_REVIEW_FORM, metadata)
+        ModelNodeForm.Builder builder = new ModelNodeForm.Builder<DataSource>(Ids.DATA_SOURCE_REVIEW_FORM, metadata)
                 .unboundFormItem(new NameItem(), 0)
                 .unboundFormItem(new TextBoxItem(CREDENTIAL_REFERENCE))
                 .include(attributes)
                 .unsorted()
-                .readOnly()
-                .build();
+                .readOnly();
+        if (xa) {
+            builder.unboundFormItem(new PropertiesItem(XA_DATASOURCE_PROPERTIES));
+        }
+
+        form = builder.build();
     }
 
     @Override
@@ -66,8 +77,12 @@ class ReviewStep extends WizardStep<Context, State> {
     protected void onShow(Context context) {
         FormItem<String> nameItem = form.getFormItem(NAME);
         nameItem.setValue(context.dataSource.getName());
-        ModelNode credRef = context.dataSource.get(CREDENTIAL_REFERENCE);
+        ModelNode credRef = context.dataSource.has(CREDENTIAL_REFERENCE) ? context.dataSource.get(CREDENTIAL_REFERENCE)
+                : new ModelNode();
         form.<String> getFormItem(CREDENTIAL_REFERENCE).setValue(credRef.isDefined() ? credRef.asString() : "");
+        if (context.isXa()) {
+            form.getFormItem(XA_DATASOURCE_PROPERTIES).setValue(context.xaProperties);
+        }
         form.view(context.dataSource);
     }
 }

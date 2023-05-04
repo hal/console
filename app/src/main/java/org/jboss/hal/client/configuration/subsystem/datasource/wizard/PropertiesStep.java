@@ -16,7 +16,9 @@
 package org.jboss.hal.client.configuration.subsystem.datasource.wizard;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import javax.inject.Provider;
@@ -91,7 +93,8 @@ class PropertiesStep extends WizardStep<Context, State> {
 
     @Override
     protected void onShow(Context context) {
-        propertiesItem.setValue(context.xaProperties);
+        Map<String, String> xaProperties = new HashMap<>(context.xaProperties);
+        propertiesItem.setValue(xaProperties);
         propertiesItem.setUndefined(false);
         propertiesItem.setEnabled(!context.isCreated()); // can only be changed if DS was not already created
         String dsClassname = context.dataSource.hasDefined(XA_DATASOURCE_CLASS)

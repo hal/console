@@ -59,8 +59,6 @@ import static org.jboss.hal.client.configuration.subsystem.datasource.wizard.Sta
 import static org.jboss.hal.client.configuration.subsystem.datasource.wizard.State.XA_PROPERTIES;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DATASOURCE_CLASS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_CLASS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
@@ -76,11 +74,7 @@ public class DataSourceWizard {
 
         List<Operation> operations = new ArrayList<>();
         if (context.isXa()) {
-
-            // remove unsupported attributes
-            payload.remove(DRIVER_CLASS);
-            payload.remove(DATASOURCE_CLASS);
-            operations.add(new Operation.Builder(address, ADD).payload(context.dataSource).build());
+            operations.add(new Operation.Builder(address, ADD).payload(payload).build());
 
             // add an operation for each property
             context.xaProperties.forEach((key, value) -> {
@@ -89,7 +83,7 @@ public class DataSourceWizard {
                 operations.add(new Operation.Builder(propertyAddress, ADD).param(VALUE, value).build());
             });
         } else {
-            operations.add(new Operation.Builder(address, ADD).payload(context.dataSource).build());
+            operations.add(new Operation.Builder(address, ADD).payload(payload).build());
         }
         return new Composite(operations);
     }

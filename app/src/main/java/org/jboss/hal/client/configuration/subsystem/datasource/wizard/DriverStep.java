@@ -42,7 +42,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.ACCESS_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_CLASS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_CLASS_NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_MODULE_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_XA_DATASOURCE_CLASS_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NILLABLE;
@@ -62,10 +61,9 @@ class DriverStep extends WizardStep<Context, State> {
         FormItem<String> driverNameItem = new TextBoxItem(DRIVER_NAME);
         driverNameItem.setRequired(true);
         this.form = new ModelNodeForm.Builder<JdbcDriver>(Ids.DATA_SOURCE_DRIVER_FORM, adjustMetadata(metadata))
-                .include(DRIVER_MODULE_NAME, xa ? DRIVER_XA_DATASOURCE_CLASS_NAME : DRIVER_CLASS_NAME)
+                .include(xa ? DRIVER_XA_DATASOURCE_CLASS_NAME : DRIVER_CLASS_NAME)
                 .unboundFormItem(driverNameItem, 0)
                 .unsorted()
-                .onSave((form, changedValues) -> wizard().getContext().driver = form.getModel())
                 .build();
 
         if (!driversByName.isEmpty()) {
@@ -144,6 +142,7 @@ class DriverStep extends WizardStep<Context, State> {
         boolean valid = form.save();
         if (valid) {
             JdbcDriver driver = form.getModel();
+            driver.get(DRIVER_NAME).set(form.getFormItem(DRIVER_NAME).getValue().toString());
             context.dataSource.setDriver(driver);
             if (context.isCreated()) {
                 context.recordChange(DRIVER_NAME, driver.getName());
