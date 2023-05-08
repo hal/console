@@ -97,6 +97,7 @@ import static org.jboss.hal.resources.CSS.wizardPfStepTitle;
 import static org.jboss.hal.resources.CSS.wizardPfSteps;
 import static org.jboss.hal.resources.CSS.wizardPfStepsIndicator;
 import static org.jboss.hal.resources.CSS.wizardPfSuccessIcon;
+import static org.jboss.hal.resources.CSS.wizardPfWarningIcon;
 import static org.jboss.hal.resources.UIConstants.COLLAPSE;
 import static org.jboss.hal.resources.UIConstants.CONTROLS;
 import static org.jboss.hal.resources.UIConstants.EXPANDED;
