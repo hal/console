@@ -166,7 +166,6 @@ public interface Names {
     String INBOUND = "Inbound";
     String INCLUDES_ATTRIBUTE = "Includes";
     String INFINISPAN = "Infinispan";
-    String INSTALLER = "Installer";
     String INSTANCE_ID = "Instance ID";
     String INTERFACE = "Interface";
     String INTERFACES = "Interfaces";
@@ -391,6 +390,7 @@ public interface Names {
     String UNKNOWN = "unknown";
     String UNMANAGED_DEPLOYMENT = "Unmanaged Deployment";
     String UNDERTOW = "Undertow";
+    String UPDATE_MANAGER = "Update Manager";
     String UPDATES = "Updates";
     String URL = "URL";
     String USER_PASSWORD_MAPPER = "User Password Mapper";

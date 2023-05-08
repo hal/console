@@ -111,6 +111,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String creationTime();
     String current();
     String currentPage();
+    String custom();
+    String customPatches();
     String data();
     String dataTablesDecimal();
     String dataTablesEmptyTable();
@@ -285,12 +287,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String homepageHelpWildFlyHomeText();
     String homepageHelpWildflyIssuesText();
     String homepageHelpWilfdflyDocumentationText();
-    String homepageInstallerSection();
-    String homepageInstallerStep1();
-    String homepageInstallerStep2();
-    String homepageInstallerStep3();
-    String homepageInstallerStepIntro();
-    String homepageInstallerSubHeader();
     String homepageNewToEap();
     String homepagePatchingDomainStep2();
     String homepagePatchingSection();
@@ -314,6 +310,12 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String homepageRuntimeStandaloneSubHeader();
     String homepageRuntimeStepIntro();
     String homepageTakeATour();
+    String homepageUpdateManagerSection();
+    String homepageUpdateManagerStep1();
+    String homepageUpdateManagerStep2();
+    String homepageUpdateManagerStep3();
+    String homepageUpdateManagerStepIntro();
+    String homepageUpdateManagerSubHeader();
     String hostNameChanged();
     String hostScopedRole();
     String hostsUsingThisFilter();

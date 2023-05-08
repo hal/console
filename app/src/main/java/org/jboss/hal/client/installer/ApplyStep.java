@@ -34,7 +34,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.PERFORM_INSTALLATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SHUTDOWN;
 
-class ApplyStep<S extends Enum<S>> extends WizardStep<InstallerContext, S> {
+class ApplyStep<S extends Enum<S>> extends WizardStep<UpdateManagerContext, S> {
 
     private final SafeHtml progressMessage;
     private final SafeHtml successMessage;
@@ -67,7 +67,7 @@ class ApplyStep<S extends Enum<S>> extends WizardStep<InstallerContext, S> {
     }
 
     @Override
-    protected Promise<InstallerContext> onShowAndWait(final InstallerContext context) {
+    protected Promise<UpdateManagerContext> onShowAndWait(final UpdateManagerContext context) {
         wizard().showProgress(title, progressMessage);
 
         ResourceAddress root = ROOT_TEMPLATE.resolve(statementContext);

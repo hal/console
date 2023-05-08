@@ -19,18 +19,18 @@ import java.util.List;
 
 import org.jboss.hal.dmr.ModelNode;
 
-/** Common context used by all installer wizards */
-public class InstallerContext {
+/** Common context used by all update manager wizards */
+public class UpdateManagerContext {
 
     public boolean prepared;
     public final UpdateItem updateItem;
     public final List<ModelNode> updates;
 
-    public InstallerContext(final List<ModelNode> updates) {
+    public UpdateManagerContext(final List<ModelNode> updates) {
         this(updates, null);
     }
 
-    public InstallerContext(final List<ModelNode> updates, final UpdateItem updateItem) {
+    public UpdateManagerContext(final List<ModelNode> updates, final UpdateItem updateItem) {
         this.updateItem = updateItem;
         this.updates = updates;
     }

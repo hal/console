@@ -28,24 +28,24 @@ import org.jboss.hal.spi.Column;
 
 import static java.util.Arrays.asList;
 
-@Column(Ids.INSTALLER)
-public class InstallerColumn extends StaticItemColumn {
+@Column(Ids.UPDATE_MANAGER)
+public class UpdateManagerColumn extends StaticItemColumn {
 
     @Inject
-    public InstallerColumn(Finder finder, Resources resources) {
+    public UpdateManagerColumn(Finder finder, Resources resources) {
 
-        super(finder, Ids.INSTALLER, Names.INSTALLER, asList(
+        super(finder, Ids.UPDATE_MANAGER, Names.UPDATE_MANAGER, asList(
                 new StaticItem.Builder(Names.UPDATES)
-                        .nextColumn(Ids.INSTALLER_UPDATE)
+                        .nextColumn(Ids.UPDATE_MANAGER_UPDATE)
                         .onPreview(
                                 new PreviewContent<>(Names.UPDATES,
-                                        resources.previews().installerUpdates()))
+                                        resources.previews().updateManagerUpdates()))
                         .build(),
                 new StaticItem.Builder(Names.CHANNELS)
-                        .nextColumn(Ids.INSTALLER_CHANNEL)
+                        .nextColumn(Ids.UPDATE_MANAGER_CHANNEL)
                         .onPreview(
                                 new PreviewContent<>(Names.CHANNELS,
-                                        resources.previews().installerChannels()))
+                                        resources.previews().updateManagerChannels()))
                         .build()));
     }
 }

@@ -17,7 +17,6 @@ package org.jboss.hal.client.installer;
 
 import javax.inject.Inject;
 
-import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.mvp.FinderPresenter;
@@ -32,37 +31,33 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
-public class InstallerFinderPresenter
-        extends FinderPresenter<InstallerFinderPresenter.MyView, InstallerFinderPresenter.MyProxy> {
-
-    private final Environment environment;
+public class UpdateManagerFinderPresenter
+        extends FinderPresenter<UpdateManagerFinderPresenter.MyView, UpdateManagerFinderPresenter.MyProxy> {
 
     @Inject
-    public InstallerFinderPresenter(
+    public UpdateManagerFinderPresenter(
             EventBus eventBus,
-            InstallerFinderPresenter.MyView view,
-            InstallerFinderPresenter.MyProxy proxy,
+            UpdateManagerFinderPresenter.MyView view,
+            UpdateManagerFinderPresenter.MyProxy proxy,
             Finder finder,
-            Resources resources,
-            Environment environment) {
+            Resources resources) {
         super(eventBus, view, proxy, finder, resources);
-        this.environment = environment;
     }
 
     @Override
     protected String initialColumn() {
-        return Ids.INSTALLER;
+        return Ids.UPDATE_MANAGER;
     }
 
     @Override
     protected PreviewContent<Void> initialPreview() {
-        return new PreviewContent<>(Names.INSTALLER, resources.previews().installer());
+        return new PreviewContent<>(Names.UPDATE_MANAGER, resources.previews().updateManager());
     }
 
     // @formatter:off
     @ProxyStandard
-    @NameToken(NameTokens.INSTALLER)
-    public interface MyProxy extends ProxyPlace<InstallerFinderPresenter> {
+    @NameToken(NameTokens.UPDATE_MANAGER)
+    public interface MyProxy extends ProxyPlace<UpdateManagerFinderPresenter> {
     }
 
     public interface MyView extends FinderView {

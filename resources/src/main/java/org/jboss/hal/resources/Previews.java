@@ -273,17 +273,6 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/deployments/standalone.html")
     ExternalTextResource deploymentsStandalone();
 
-    // ------------------------------------------------------ installer
-
-    @Source("previews/installer/installer.html")
-    ExternalTextResource installer();
-
-    @Source("previews/installer/channels.html")
-    ExternalTextResource installerChannels();
-
-    @Source("previews/installer/updates.html")
-    ExternalTextResource installerUpdates();
-
     // ------------------------------------------------------ management
 
     @Source("previews/management/overview.html")
@@ -370,6 +359,17 @@ public interface Previews extends ClientBundleWithLookup {
 
     @Source("previews/runtime/web.html")
     ExternalTextResource runtimeWeb();
+
+    // ------------------------------------------------------ update manager
+
+    @Source("previews/update-manager/update-manager.html")
+    ExternalTextResource updateManager();
+
+    @Source("previews/update-manager/channels.html")
+    ExternalTextResource updateManagerChannels();
+
+    @Source("previews/update-manager/updates.html")
+    ExternalTextResource updateManagerUpdates();
 
     // ------------------------------------------------------ helper methods
 

@@ -400,6 +400,7 @@ public interface ModelDescriptionConstants {
     String HEADER_NAME = "header-name";
     String HEAP = "heap";
     String HISTORY = "history";
+    String HISTORY_FROM_REVISION = "history-from-revision";
     String HIBERNATE_PERSISTENCE_UNIT = "hibernate-persistence-unit";
     String HOMEPAGE = "homepage";
     String HOST = "host";

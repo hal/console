@@ -41,7 +41,7 @@ public class RevertWizard {
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
     private final Resources resources;
-    private final InstallerContext context;
+    private final UpdateManagerContext context;
 
     public RevertWizard(EventBus eventBus, Dispatcher dispatcher, StatementContext statementContext, Resources resources,
             UpdateItem updateItem, List<ModelNode> updates) {
@@ -49,16 +49,16 @@ public class RevertWizard {
         this.statementContext = statementContext;
         this.dispatcher = dispatcher;
         this.resources = resources;
-        this.context = new InstallerContext(updates, updateItem);
+        this.context = new UpdateManagerContext(updates, updateItem);
     }
 
     public void show(UpdateColumn column) {
-        Wizard.Builder<InstallerContext, RevertState> builder = new Wizard.Builder<>(
+        Wizard.Builder<UpdateManagerContext, RevertState> builder = new Wizard.Builder<>(
                 resources.constants().revertUpdate(), context);
 
         builder.stayOpenAfterFinish()
                 .addStep(REVIEW_REVERT, new InitStep<RevertState>(
-                        Ids.INSTALLER_REVERT,
+                        Ids.UPDATE_MANAGER_REVERT,
                         resources.constants().reviewRevert(),
                         resources.messages().reviewRevertTable(),
                         resources.messages().reviewRevertDescription()))

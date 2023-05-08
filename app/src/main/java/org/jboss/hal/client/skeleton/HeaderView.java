@@ -292,7 +292,7 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
                                 .add(installer = li()
                                         .add(a().css(clickable)
                                                 .id(Ids.TLC_INSTALLER)
-                                                .textContent(Names.INSTALLER))
+                                                .textContent(Names.UPDATE_MANAGER))
                                         .element())
                                 .add(accessControl = li()
                                         .add(a().css(clickable)
@@ -349,7 +349,7 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
         tlcPlaceRequests.put(NameTokens.DEPLOYMENTS, new PlaceRequest.Builder().nameToken(NameTokens.DEPLOYMENTS).build());
         tlcPlaceRequests.put(NameTokens.CONFIGURATION, new PlaceRequest.Builder().nameToken(NameTokens.CONFIGURATION).build());
         tlcPlaceRequests.put(NameTokens.RUNTIME, new PlaceRequest.Builder().nameToken(NameTokens.RUNTIME).build());
-        tlcPlaceRequests.put(NameTokens.INSTALLER, new PlaceRequest.Builder().nameToken(NameTokens.INSTALLER).build());
+        tlcPlaceRequests.put(NameTokens.UPDATE_MANAGER, new PlaceRequest.Builder().nameToken(NameTokens.UPDATE_MANAGER).build());
         tlcPlaceRequests.put(accessControlNameToken, new PlaceRequest.Builder().nameToken(accessControlNameToken).build());
         // @formatter:on
 
@@ -360,7 +360,7 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
                         NameTokens.DEPLOYMENTS,
                         NameTokens.CONFIGURATION,
                         NameTokens.RUNTIME,
-                        NameTokens.INSTALLER,
+                        NameTokens.UPDATE_MANAGER,
                         accessControlNameToken,
                 },
                 new String[] {

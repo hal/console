@@ -58,7 +58,7 @@ public interface NameTokens {
     String HOMEPAGE = "home";
     String HOST_CONFIGURATION = "host-configuration";
     String IIOP = ModelDescriptionConstants.IIOP_OPENJDK;
-    String INSTALLER = "installer";
+    String UPDATE_MANAGER = "update-manager";
     String INTERFACE = "interface";
     String INVALIDATION_CACHE = ModelDescriptionConstants.INVALIDATION_CACHE;
     String IO = ModelDescriptionConstants.IO;

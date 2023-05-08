@@ -40,7 +40,7 @@ public class UpdateWizard {
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
     private final Resources resources;
-    private final InstallerContext context;
+    private final UpdateManagerContext context;
 
     public UpdateWizard(EventBus eventBus, Dispatcher dispatcher, StatementContext statementContext, Resources resources,
             List<ModelNode> updates) {
@@ -48,16 +48,16 @@ public class UpdateWizard {
         this.statementContext = statementContext;
         this.dispatcher = dispatcher;
         this.resources = resources;
-        this.context = new InstallerContext(updates);
+        this.context = new UpdateManagerContext(updates);
     }
 
     public void show(UpdateColumn column) {
-        Wizard.Builder<InstallerContext, UpdateState> builder = new Wizard.Builder<>(
+        Wizard.Builder<UpdateManagerContext, UpdateState> builder = new Wizard.Builder<>(
                 resources.constants().updateServer(), context);
 
         builder.stayOpenAfterFinish()
                 .addStep(LIST_UPDATES, new InitStep<UpdateState>(
-                        Ids.INSTALLER_UPDATE,
+                        Ids.UPDATE_MANAGER_UPDATE,
                         resources.constants().listUpdates(),
                         resources.messages().listUpdatesTable(),
                         resources.messages().listUpdatesDescription()))

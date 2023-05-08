@@ -137,8 +137,8 @@ import org.jboss.hal.client.deployment.StandaloneDeploymentPresenter;
 import org.jboss.hal.client.deployment.StandaloneDeploymentView;
 import org.jboss.hal.client.homepage.HomepagePresenter;
 import org.jboss.hal.client.homepage.HomepageView;
-import org.jboss.hal.client.installer.InstallerFinderPresenter;
-import org.jboss.hal.client.installer.InstallerFinderView;
+import org.jboss.hal.client.installer.UpdateManagerFinderPresenter;
+import org.jboss.hal.client.installer.UpdateManagerFinderView;
 import org.jboss.hal.client.rhcp.RhcpPresenter;
 import org.jboss.hal.client.rhcp.RhcpView;
 import org.jboss.hal.client.rhcp.UnderTheBridgePresenter;
@@ -712,10 +712,10 @@ public class ConsoleModule extends AbstractPresenterModule {
                 org.jboss.hal.client.runtime.subsystem.transaction.TransactionsView.class,
                 org.jboss.hal.client.runtime.subsystem.transaction.TransactionsPresenter.MyProxy.class);
 
-        bindPresenter(InstallerFinderPresenter.class,
-                InstallerFinderPresenter.MyView.class,
-                InstallerFinderView.class,
-                InstallerFinderPresenter.MyProxy.class);
+        bindPresenter(UpdateManagerFinderPresenter.class,
+                UpdateManagerFinderPresenter.MyView.class,
+                UpdateManagerFinderView.class,
+                UpdateManagerFinderPresenter.MyProxy.class);
 
         bindPresenter(UnderTheBridgePresenter.class,
                 UnderTheBridgePresenter.MyView.class,

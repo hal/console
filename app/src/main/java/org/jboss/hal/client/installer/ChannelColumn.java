@@ -53,7 +53,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATIO
 import static org.jboss.hal.dmr.ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
-@Column(Ids.INSTALLER_CHANNEL)
+@Column(Ids.UPDATE_MANAGER_CHANNEL)
 public class ChannelColumn extends FinderColumn<Channel> {
 
     private final EventBus eventBus;
@@ -65,7 +65,7 @@ public class ChannelColumn extends FinderColumn<Channel> {
             final StatementContext statementContext,
             final Dispatcher dispatcher,
             final Resources resources) {
-        super(new Builder<Channel>(finder, Ids.INSTALLER_CHANNEL, Names.CHANNELS)
+        super(new Builder<Channel>(finder, Ids.UPDATE_MANAGER_CHANNEL, Names.CHANNELS)
                 .onPreview(ChannelPreview::new)
                 .showCount()
                 .withFilter());
@@ -118,12 +118,12 @@ public class ChannelColumn extends FinderColumn<Channel> {
             }
         });
 
-        addColumnAction(new ColumnAction.Builder<Channel>(Ids.INSTALLER_CHANNEL_ADD)
+        addColumnAction(new ColumnAction.Builder<Channel>(Ids.UPDATE_MANAGER_CHANNEL_ADD)
                 .element(columnActionFactory.addButton(Names.CHANNEL))
                 .handler(column -> add())
                 .constraint(Constraint.executable(INSTALLER_TEMPLATE, WRITE_ATTRIBUTE_OPERATION))
                 .build());
-        addColumnAction(columnActionFactory.refresh(Ids.INSTALLER_CHANNEL_REFRESH));
+        addColumnAction(columnActionFactory.refresh(Ids.UPDATE_MANAGER_CHANNEL_REFRESH));
     }
 
     private void add() {

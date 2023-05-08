@@ -31,8 +31,10 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NEW_VERSION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.OLD_VERSION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.STATUS;
+import static org.jboss.hal.resources.CSS.marginBottomLarge;
+import static org.jboss.hal.resources.CSS.marginTopLarge;
 
-class InitStep<S extends Enum<S>> extends WizardStep<InstallerContext, S> {
+class InitStep<S extends Enum<S>> extends WizardStep<UpdateManagerContext, S> {
 
     private final HTMLElement root;
     private final Table<ModelNode> table;
@@ -44,15 +46,15 @@ class InitStep<S extends Enum<S>> extends WizardStep<InstallerContext, S> {
         super(title);
 
         table = new ModelNodeTable.Builder<ModelNode>(Ids.build(baseId, Ids.TABLE),
-                Metadata.staticDescription(InstallerResources.INSTANCE.artifactChange()))
+                Metadata.staticDescription(UpdateManagerResources.INSTANCE.artifactChange()))
                 .columns(NAME, STATUS, OLD_VERSION, NEW_VERSION)
                 .build();
         registerAttachable(table);
 
         root = div()
-                .add(div().innerHtml(tableDescription))
+                .add(div().css(marginBottomLarge).innerHtml(tableDescription))
                 .add(table)
-                .add(div().innerHtml(stepsDescription))
+                .add(div().css(marginTopLarge).innerHtml(stepsDescription))
                 .element();
     }
 
@@ -62,7 +64,7 @@ class InitStep<S extends Enum<S>> extends WizardStep<InstallerContext, S> {
     }
 
     @Override
-    protected void onShow(final InstallerContext context) {
+    protected void onShow(final UpdateManagerContext context) {
         table.update(context.updates);
     }
 }

@@ -15,17 +15,7 @@
  */
 package org.jboss.hal.client.installer;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.resources.client.ClientBundle;
-import com.google.gwt.resources.client.TextResource;
+import org.jboss.hal.core.mvp.FinderViewImpl;
 
-public interface InstallerResources extends ClientBundle {
-
-    InstallerResources INSTANCE = GWT.create(InstallerResources.class);
-
-    @Source("artifactChange.base64")
-    TextResource artifactChange();
-
-    @Source("channelChange.base64")
-    TextResource channelChange();
+public class UpdateManagerFinderView extends FinderViewImpl implements UpdateManagerFinderPresenter.MyView {
 }

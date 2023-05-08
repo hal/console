@@ -51,6 +51,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.ARTIFACT_CHANGES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHANNEL_CHANGES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHANNEL_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HISTORY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HISTORY_FROM_REVISION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MANIFEST;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NEW_MANIFEST;
@@ -86,17 +87,17 @@ public class UpdatePreview extends PreviewContent<UpdateItem> {
         this.statementContext = statementContext;
 
         channelChangesElement = new ChannelChangesElement();
-        artifactChanges = new ModelNodeTable.Builder<ModelNode>(Ids.build(Ids.INSTALLER_ARTIFACT_CHANGES, Ids.TABLE),
-                Metadata.staticDescription(InstallerResources.INSTANCE.artifactChange()))
+        artifactChanges = new ModelNodeTable.Builder<ModelNode>(Ids.build(Ids.UPDATE_MANAGER_ARTIFACT_CHANGES, Ids.TABLE),
+                Metadata.staticDescription(UpdateManagerResources.INSTANCE.artifactChange()))
                 .columns(NAME, STATUS, OLD_VERSION, NEW_VERSION)
                 .paging(false)
                 .build();
         registerAttachable(artifactChanges);
 
-        tabs = new Tabs(Ids.build(HISTORY, Ids.build(Ids.INSTALLER_UPDATE, Ids.TAB_CONTAINER)));
-        tabs.add(Ids.build(Ids.build(Ids.INSTALLER_ARTIFACT_CHANGES, Ids.TAB)), resources.constants().artifactChanges(),
+        tabs = new Tabs(Ids.build(HISTORY, Ids.build(Ids.UPDATE_MANAGER_UPDATE, Ids.TAB_CONTAINER)));
+        tabs.add(Ids.build(Ids.build(Ids.UPDATE_MANAGER_ARTIFACT_CHANGES, Ids.TAB)), resources.constants().artifactChanges(),
                 div().css(marginTopLarge, marginBottomLarge).add(artifactChanges).element());
-        tabs.add(Ids.build(Ids.build(Ids.INSTALLER_CHANNEL_CHANGES, Ids.TAB)), resources.constants().channelChanges(),
+        tabs.add(Ids.build(Ids.build(Ids.UPDATE_MANAGER_CHANNEL_CHANGES, Ids.TAB)), resources.constants().channelChanges(),
                 div().css(marginTopLarge, marginBottomLarge)
                         .add(channelChangesElement)
                         .element());
@@ -113,7 +114,8 @@ public class UpdatePreview extends PreviewContent<UpdateItem> {
 
     @Override
     public void update(final UpdateItem item) {
-        Operation operation = new Operation.Builder(AddressTemplates.INSTALLER_TEMPLATE.resolve(statementContext), HISTORY)
+        Operation operation = new Operation.Builder(AddressTemplates.INSTALLER_TEMPLATE.resolve(statementContext),
+                HISTORY_FROM_REVISION)
                 .param(REVISION, item.getName())
                 .build();
         dispatcher.execute(operation, result -> {
@@ -121,7 +123,7 @@ public class UpdatePreview extends PreviewContent<UpdateItem> {
             boolean hasArtifactChanges = result.get(ARTIFACT_CHANGES).isDefined();
 
             setVisible(tabs, hasArtifactChanges || hasChannelChanges);
-            setVisible(tabs.tabElement(Ids.build(Ids.INSTALLER_CHANNEL_CHANGES, Ids.TAB)), hasChannelChanges);
+            setVisible(tabs.tabElement(Ids.build(Ids.UPDATE_MANAGER_CHANNEL_CHANGES, Ids.TAB)), hasChannelChanges);
 
             if (hasArtifactChanges) {
                 artifactChanges.update(result.get(ARTIFACT_CHANGES).asList());

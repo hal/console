@@ -19,8 +19,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.core.finder.ColumnAction;
 import org.jboss.hal.core.finder.ColumnActionFactory;
@@ -50,6 +48,7 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import elemental2.dom.HTMLElement;
 import elemental2.promise.Promise;
+import javax.inject.Inject;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
@@ -63,9 +62,10 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.REVISION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TIMESTAMP;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UPDATES;
+import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
-@Column(Ids.INSTALLER_UPDATE)
+@Column(Ids.UPDATE_MANAGER_UPDATE)
 public class UpdateColumn extends FinderColumn<UpdateItem> {
 
     private final EventBus eventBus;
@@ -83,7 +83,7 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
             final Resources resources,
             @Footer final Progress progress) {
 
-        super(new Builder<UpdateItem>(finder, Ids.INSTALLER_UPDATE, Names.UPDATES)
+        super(new Builder<UpdateItem>(finder, Ids.UPDATE_MANAGER_UPDATE, Names.UPDATES)
                 .onPreview(item -> new UpdatePreview(item, dispatcher, statementContext, resources))
                 .showCount()
                 .withFilter()
@@ -161,20 +161,25 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
         });
 
         List<ColumnAction<UpdateItem>> addActions = new ArrayList<>();
-        addActions.add(new ColumnAction.Builder<UpdateItem>(Ids.INSTALLER_UPDATE_SERVER)
+        addActions.add(new ColumnAction.Builder<UpdateItem>(Ids.UPDATE_MANAGER_UPDATE_SERVER)
                 .title(resources.constants().updateServer())
                 .handler(column -> update())
                 .constraint(Constraint.executable(INSTALLER_TEMPLATE, PREPARE_UPDATES))
                 .build());
-        addActions.add(new ColumnAction.Builder<UpdateItem>(Ids.INSTALLER_UPDATE_ZIP)
+        addActions.add(new ColumnAction.Builder<UpdateItem>(Ids.UPDATE_MANAGER_UPDATE_ZIP)
                 .title(resources.constants().uploadZip())
                 .handler(column -> upload())
                 .constraint(Constraint.executable(INSTALLER_TEMPLATE, PREPARE_UPDATES))
                 .build());
-        addColumnActions(Ids.INSTALLER_UPDATE_ADD_ACTIONS, pfIcon("maintenance"), resources.constants().updateServer(),
+        addActions.add(new ColumnAction.Builder<UpdateItem>(Ids.UPDATE_MANAGER_CUSTOM_PATCHES)
+                .title(resources.constants().customPatches())
+                .handler(column -> patches())
+                .constraint(Constraint.executable(INSTALLER_TEMPLATE, PREPARE_UPDATES))
+                .build());
+        addColumnActions(Ids.UPDATE_MANAGER_UPDATE_ADD_ACTIONS, fontAwesome("download"), resources.constants().updateServer(),
                 addActions);
-        addColumnAction(columnActionFactory.refresh(Ids.INSTALLER_UPDATE_REFRESH));
-        addColumnAction(new ColumnAction.Builder<UpdateItem>(Ids.INSTALLER_CLEAN)
+        addColumnAction(columnActionFactory.refresh(Ids.UPDATE_MANAGER_UPDATE_REFRESH));
+        addColumnAction(new ColumnAction.Builder<UpdateItem>(Ids.UPDATE_MANAGER_CLEAN)
                 .element(columnActionFactory.addButton(resources.constants().clean(), "fa fa-eraser"))
                 .handler(column -> clean())
                 .constraint(Constraint.executable(INSTALLER_TEMPLATE, "clean"))
@@ -204,6 +209,10 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
     }
 
     private void upload() {
+        MessageEvent.fire(eventBus, Message.error(SafeHtmlUtils.fromSafeConstant(Names.NYI)));
+    }
+
+    private void patches() {
         MessageEvent.fire(eventBus, Message.error(SafeHtmlUtils.fromSafeConstant(Names.NYI)));
     }
 

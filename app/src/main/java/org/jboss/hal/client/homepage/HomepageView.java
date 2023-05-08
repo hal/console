@@ -61,7 +61,7 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
         HTMLElement configuration;
         HTMLElement runtime;
         HTMLElement accessControl = div().element(); // to get rid of warning "might not be initialized"
-        HTMLElement installer = div().element();
+        HTMLElement updateManager = div().element();
         HTMLElement help;
 
         if (community) {
@@ -185,18 +185,18 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
 
         if (su) {
             sections = Collections.singleton(new HomepageSection(places, resources,
-                    Ids.HOMEPAGE_INSTALLER_SECTION, NameTokens.INSTALLER,
-                    resources.constants().homepageInstallerSection(),
-                    resources.constants().homepageInstallerStepIntro(),
+                    Ids.HOMEPAGE_UPDATE_MANAGER_SECTION, NameTokens.UPDATE_MANAGER,
+                    resources.constants().homepageUpdateManagerSection(),
+                    resources.constants().homepageUpdateManagerStepIntro(),
                     Arrays.asList(
-                            resources.constants().homepageInstallerStep1(),
-                            resources.constants().homepageInstallerStep2(),
-                            resources.constants().homepageInstallerStep3()),
+                            resources.constants().homepageUpdateManagerStep1(),
+                            resources.constants().homepageUpdateManagerStep2(),
+                            resources.constants().homepageUpdateManagerStep3()),
                     true));
-            installer = new HomepageModule(places,
-                    Ids.HOMEPAGE_INSTALLER_MODULE, NameTokens.INSTALLER, Names.INSTALLER,
-                    resources.constants().homepageInstallerSubHeader(),
-                    resources.images().patching(),
+            updateManager = new HomepageModule(places,
+                    Ids.HOMEPAGE_UPDATE_MANAGER_MODULE, NameTokens.UPDATE_MANAGER, Names.UPDATE_MANAGER,
+                    resources.constants().homepageUpdateManagerSubHeader(),
+                    resources.images().updateManager(),
                     sections).element();
 
             if (ssoEnabled) {
@@ -232,7 +232,7 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
         if (su) {
             root.appendChild(div().css(eapHomeRow)
                     .add(runtime)
-                    .add(installer)
+                    .add(updateManager)
                     .element());
             root.appendChild(div().css(eapHomeRow)
                     .add(accessControl)

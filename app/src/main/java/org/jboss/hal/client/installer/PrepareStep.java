@@ -43,12 +43,12 @@ import static org.jboss.elemento.Elements.div;
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CLEAN;
 
-class PrepareStep<S extends Enum<S>> extends WizardStep<InstallerContext, S> implements AsyncStep<InstallerContext> {
+class PrepareStep<S extends Enum<S>> extends WizardStep<UpdateManagerContext, S> implements AsyncStep<UpdateManagerContext> {
 
     private final SafeHtml progressMessage;
     private final SafeHtml successMessage;
     private final SafeHtml errorMessage;
-    private final Function<InstallerContext, Operation> operation;
+    private final Function<UpdateManagerContext, Operation> operation;
     private final EventBus eventBus;
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
@@ -59,7 +59,7 @@ class PrepareStep<S extends Enum<S>> extends WizardStep<InstallerContext, S> imp
             final SafeHtml progressMessage,
             final SafeHtml successMessage,
             final SafeHtml errorMessage,
-            final Function<InstallerContext, Operation> operation,
+            final Function<UpdateManagerContext, Operation> operation,
             final EventBus eventBus,
             final Dispatcher dispatcher,
             final StatementContext statementContext,
@@ -82,7 +82,7 @@ class PrepareStep<S extends Enum<S>> extends WizardStep<InstallerContext, S> imp
     }
 
     @Override
-    protected Promise<InstallerContext> onShowAndWait(final InstallerContext context) {
+    protected Promise<UpdateManagerContext> onShowAndWait(final UpdateManagerContext context) {
         wizard().showProgress(title, progressMessage);
 
         List<Task<FlowContext>> tasks = singletonList(
@@ -105,7 +105,7 @@ class PrepareStep<S extends Enum<S>> extends WizardStep<InstallerContext, S> imp
     }
 
     @Override
-    public void onCancel(final InstallerContext context, final WorkflowCallback callback) {
+    public void onCancel(final UpdateManagerContext context, final WorkflowCallback callback) {
         if (context.prepared) {
             Operation operation = new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext), CLEAN).build();
             dispatcher.execute(operation,
