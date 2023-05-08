@@ -48,7 +48,7 @@ git pull --rebase upstream main
 ## Discuss your planned changes (if you want feedback)
 
  * HAL Issue Tracker - https://issues.jboss.org/browse/HAL
- * Gitter - https://gitter.im/hal/console
+ * Zulip - https://wildfly.zulipchat.com/#narrow/stream/174373-hal
 
 ## Create a simple topic branch to isolate your work (recommended)
 

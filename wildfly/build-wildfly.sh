@@ -145,7 +145,8 @@ if [[ "${DEVELOPMENT}" == "true" ]]; then
       -Dpmd.skip \
       -DskipITs \
       -DskipTests \
-      install -P release
+      -P release \
+      install
     cp "dist/target/wildfly-${WILDFLY_VERSION}.tar.gz" "${script_dir}"
     cd "${script_dir}"
   fi
