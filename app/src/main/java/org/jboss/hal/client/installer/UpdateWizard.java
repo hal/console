@@ -31,7 +31,7 @@ import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE
 import static org.jboss.hal.client.installer.UpdateState.APPLY_UPDATE;
 import static org.jboss.hal.client.installer.UpdateState.LIST_UPDATES;
 import static org.jboss.hal.client.installer.UpdateState.PREPARE_SERVER;
-import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
+import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PREPARE_UPDATES;
 
 public class UpdateWizard {
@@ -105,7 +105,7 @@ public class UpdateWizard {
             return next;
         });
 
-        builder.onFinish((wizard, ctx) -> column.refresh(RESTORE_SELECTION));
+        builder.onFinish((wizard, ctx) -> column.refresh(CLEAR_SELECTION));
 
         builder.build().show();
     }

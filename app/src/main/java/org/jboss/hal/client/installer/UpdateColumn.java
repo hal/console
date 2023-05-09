@@ -56,6 +56,7 @@ import static java.util.stream.Collectors.toList;
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ARTIFACT_CHANGES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HISTORY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HISTORY_FROM_REVISION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.LIST_UPDATES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PREPARE_REVERT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PREPARE_UPDATES;
@@ -153,7 +154,7 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
                 if (item.getUpdateKind() == UpdateItem.UpdateType.UPDATE) {
                     actions.add(new ItemAction.Builder<UpdateItem>()
                             .title(resources.constants().revert())
-                            .handler(item1 -> revert(item1))
+                            .handler(itm -> revert(itm))
                             .constraint(Constraint.executable(INSTALLER_TEMPLATE, PREPARE_REVERT))
                             .build());
                 }
@@ -222,7 +223,8 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
     }
 
     private void revert(UpdateItem updateItem) {
-        Operation operation = new Operation.Builder(AddressTemplates.INSTALLER_TEMPLATE.resolve(statementContext), HISTORY)
+        Operation operation = new Operation.Builder(AddressTemplates.INSTALLER_TEMPLATE.resolve(statementContext),
+                HISTORY_FROM_REVISION)
                 .param(REVISION, updateItem.getName())
                 .build();
         dispatcher.execute(operation,

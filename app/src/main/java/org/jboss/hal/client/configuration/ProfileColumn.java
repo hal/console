@@ -18,6 +18,8 @@ package org.jboss.hal.client.configuration;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.configuration.ProfileSelectionEvent;
 import org.jboss.hal.core.finder.ColumnActionFactory;
@@ -55,7 +57,6 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import elemental2.dom.HTMLElement;
 import elemental2.promise.Promise;
-import javax.inject.Inject;
 
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.joining;
