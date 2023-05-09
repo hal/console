@@ -80,7 +80,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String clearRunAsTitle();
     String clearSelection();
     String cli();
-    String clone();
+    String clone_();
     String cloneProfile();
     String close();
     String closed();
