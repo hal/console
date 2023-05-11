@@ -72,7 +72,7 @@ import static org.jboss.hal.resources.CSS.marginBottomLarge;
 import static org.jboss.hal.resources.CSS.marginTopLarge;
 import static org.jboss.hal.resources.CSS.value;
 
-public class UpdatePreview extends PreviewContent<UpdateItem> {
+class UpdatePreview extends PreviewContent<UpdateItem> {
 
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
@@ -80,7 +80,7 @@ public class UpdatePreview extends PreviewContent<UpdateItem> {
     private final Table<ModelNode> artifactChanges;
     private final ChannelChangesElement channelChangesElement;
 
-    public UpdatePreview(final UpdateItem updateItem, final Dispatcher dispatcher, final StatementContext statementContext,
+    UpdatePreview(final UpdateItem updateItem, final Dispatcher dispatcher, final StatementContext statementContext,
             final Resources resources) {
         super(updateItem.getName());
         this.dispatcher = dispatcher;

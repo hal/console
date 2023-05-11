@@ -25,34 +25,34 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.HASH;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TIMESTAMP;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
 
-public class UpdateItem extends NamedNode {
+class UpdateItem extends NamedNode {
 
-    public enum UpdateType {
+    enum UpdateType {
         INSTALL, UPDATE, ROLLBACK, UNDEFINED
     }
 
-    public UpdateItem(final ModelNode node) {
+    UpdateItem(final ModelNode node) {
         super(node.get(HASH).asString(), node);
     }
 
-    public Date getTimestamp() {
+    Date getTimestamp() {
         return ModelNodeHelper.failSafeDate(this, TIMESTAMP);
     }
 
-    public UpdateType getUpdateKind() {
+    UpdateType getUpdateKind() {
         return ModelNodeHelper.asEnumValue(this, TYPE, value -> UpdateType.valueOf(value.toUpperCase()),
                 UpdateType.UNDEFINED);
     }
 
-    public boolean isInstall() {
+    boolean isInstall() {
         return getUpdateKind() == UpdateType.INSTALL;
     }
 
-    public boolean isUpdate() {
+    boolean isUpdate() {
         return getUpdateKind() == UpdateType.UPDATE;
     }
 
-    public boolean isRollback() {
+    boolean isRollback() {
         return getUpdateKind() == UpdateType.ROLLBACK;
     }
 }

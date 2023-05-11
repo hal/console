@@ -34,12 +34,12 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.STATUS;
 import static org.jboss.hal.resources.CSS.marginBottomLarge;
 import static org.jboss.hal.resources.CSS.marginTopLarge;
 
-class InitStep<S extends Enum<S>> extends WizardStep<UpdateManagerContext, S> {
+class ListUpdatesStep<S extends Enum<S>> extends WizardStep<UpdateManagerContext, S> {
 
     private final HTMLElement root;
     private final Table<ModelNode> table;
 
-    InitStep(final String baseId,
+    ListUpdatesStep(final String baseId,
             final String title,
             final SafeHtml tableDescription,
             final SafeHtml stepsDescription) {

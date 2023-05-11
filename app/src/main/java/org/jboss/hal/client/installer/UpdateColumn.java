@@ -163,19 +163,19 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
         });
 
         List<ColumnAction<UpdateItem>> addActions = new ArrayList<>();
-        addActions.add(new ColumnAction.Builder<UpdateItem>(Ids.UPDATE_MANAGER_UPDATE_SERVER)
-                .title(resources.constants().updateServer())
-                .handler(column -> update())
+        addActions.add(new ColumnAction.Builder<UpdateItem>(Ids.UPDATE_MANAGER_UPDATE_ONLINE)
+                .title(resources.constants().onlineUpdates())
+                .handler(column -> updateOnline())
                 .constraint(Constraint.executable(INSTALLER_TEMPLATE, PREPARE_UPDATES))
                 .build());
-        addActions.add(new ColumnAction.Builder<UpdateItem>(Ids.UPDATE_MANAGER_UPDATE_ZIP)
-                .title(resources.constants().uploadZip())
-                .handler(column -> upload())
+        addActions.add(new ColumnAction.Builder<UpdateItem>(Ids.UPDATE_MANAGER_UPDATE_OFFLINE)
+                .title(resources.constants().offlineUsingArchive())
+                .handler(column -> updateOffline())
                 .constraint(Constraint.executable(INSTALLER_TEMPLATE, PREPARE_UPDATES))
                 .build());
-        addActions.add(new ColumnAction.Builder<UpdateItem>(Ids.UPDATE_MANAGER_CUSTOM_PATCHES)
+        addActions.add(new ColumnAction.Builder<UpdateItem>(Ids.UPDATE_MANAGER_UPDATE_PATCH)
                 .title(resources.constants().customPatches())
-                .handler(column -> patches())
+                .handler(column -> updatePatch())
                 .constraint(Constraint.executable(INSTALLER_TEMPLATE, PREPARE_UPDATES))
                 .build());
         addColumnActions(Ids.UPDATE_MANAGER_UPDATE_ADD_ACTIONS, fontAwesome("download"), resources.constants().updateServer(),
@@ -188,7 +188,7 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
                 .build());
     }
 
-    private void update() {
+    private void updateOnline() {
         progress.reset();
         Operation operation = new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext), LIST_UPDATES).build();
         dispatcher.execute(operation,
@@ -197,7 +197,7 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
                     if (updates.isEmpty()) {
                         MessageEvent.fire(eventBus, Message.info(resources.messages().noUpdates()));
                     } else {
-                        startUpdate(updates);
+                        new UpdateOnlineWizard(eventBus, dispatcher, statementContext, resources, updates).show(this);
                     }
                     progress.finish();
                 }, (op, error) -> {
@@ -206,15 +206,11 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
                 });
     }
 
-    private void startUpdate(final List<ModelNode> updates) {
-        new UpdateWizard(eventBus, dispatcher, statementContext, resources, updates).show(this);
+    private void updateOffline() {
+        new UpdateOfflineWizard(eventBus, dispatcher, statementContext, resources).show(this);
     }
 
-    private void upload() {
-        MessageEvent.fire(eventBus, Message.error(SafeHtmlUtils.fromSafeConstant(Names.NYI)));
-    }
-
-    private void patches() {
+    private void updatePatch() {
         MessageEvent.fire(eventBus, Message.error(SafeHtmlUtils.fromSafeConstant(Names.NYI)));
     }
 
@@ -233,12 +229,8 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
                     if (updates.isEmpty()) {
                         MessageEvent.fire(eventBus, Message.warning(resources.messages().noUpdates()));
                     } else {
-                        startRevert(updateItem, updates);
+                        new RevertWizard(eventBus, dispatcher, statementContext, resources, updateItem, updates).show(this);
                     }
                 }, (op, error) -> MessageEvent.fire(eventBus, Message.error(resources.messages().lastOperationFailed())));
-    }
-
-    private void startRevert(UpdateItem updateItem, List<ModelNode> updates) {
-        new RevertWizard(eventBus, dispatcher, statementContext, resources, updateItem, updates).show(this);
     }
 }

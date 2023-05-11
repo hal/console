@@ -699,7 +699,7 @@ public abstract class AbstractDeploymentColumn<T extends Content> extends Finder
 
     /* replace */
     protected void replace(T item) {
-        UploadElement uploadElement = new UploadElement(columnProps.noDeploymentText);
+        UploadElement uploadElement = new UploadElement(true, columnProps.noDeploymentText);
         Dialog dialog = new Dialog.Builder(columnProps.replaceDeploymentTitle)
                 .add(uploadElement.element())
                 .cancel()

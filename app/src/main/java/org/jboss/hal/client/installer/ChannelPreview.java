@@ -23,9 +23,9 @@ import org.jboss.hal.core.finder.PreviewContent;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MANIFEST;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REPOSITORIES;
 
-public class ChannelPreview extends PreviewContent<Channel> {
+class ChannelPreview extends PreviewContent<Channel> {
 
-    public ChannelPreview(Channel channel) {
+    ChannelPreview(Channel channel) {
         super(channel.getName());
 
         LabelBuilder labelBuilder = new LabelBuilder();

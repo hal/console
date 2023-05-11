@@ -108,7 +108,7 @@ public class SSLView extends HalViewImpl implements SSLPresenter.MyView {
                         table -> presenter.deactivateAccount(table.selectedRow().getName()),
                         Constraint.executable(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE, DEACTIVATE_ACCOUNT)))
 
-                .button(new Button<>(cons.updateServer(), updateAccDesc,
+                .button(new Button<>(cons.onlineUpdates(), updateAccDesc,
                         table -> presenter.updateAccount(table.selectedRow().getName()),
                         Constraint.executable(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE, UPDATE_ACCOUNT)))
 

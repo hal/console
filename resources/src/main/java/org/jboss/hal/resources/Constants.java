@@ -67,6 +67,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String chooseConnectionsToClose();
     String chooseFile();
     String chooseIdentityPasswordTitle();
+    String chooseOrDragFile();
+    String chooseOrDragFiles();
     String choosePolicy();
     String chooseSingleton();
     String chooseStrategy();
@@ -609,6 +611,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String unpin();
     String unsupportedFileType();
     String updateAccount();
+    String offlineUsingArchive();
+    String onlineUpdates();
     String updateServer();
     String upload();
     String uploadContent();
@@ -618,7 +622,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String uploadNewDeployment();
     String uploadPatch();
     String uploadSuccessful();
-    String uploadZip();
     String used();
     String user();
     String users();

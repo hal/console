@@ -35,7 +35,7 @@ import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTI
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PREPARE_REVERT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REVISION;
 
-public class RevertWizard {
+class RevertWizard {
 
     private final EventBus eventBus;
     private final Dispatcher dispatcher;
@@ -43,7 +43,7 @@ public class RevertWizard {
     private final Resources resources;
     private final UpdateManagerContext context;
 
-    public RevertWizard(EventBus eventBus, Dispatcher dispatcher, StatementContext statementContext, Resources resources,
+    RevertWizard(EventBus eventBus, Dispatcher dispatcher, StatementContext statementContext, Resources resources,
             UpdateItem updateItem, List<ModelNode> updates) {
         this.eventBus = eventBus;
         this.statementContext = statementContext;
@@ -52,12 +52,12 @@ public class RevertWizard {
         this.context = new UpdateManagerContext(updates, updateItem);
     }
 
-    public void show(UpdateColumn column) {
+    void show(UpdateColumn column) {
         Wizard.Builder<UpdateManagerContext, RevertState> builder = new Wizard.Builder<>(
                 resources.constants().revertUpdate(), context);
 
         builder.stayOpenAfterFinish()
-                .addStep(REVIEW_REVERT, new InitStep<RevertState>(
+                .addStep(REVIEW_REVERT, new ListUpdatesStep<RevertState>(
                         Ids.UPDATE_MANAGER_REVERT,
                         resources.constants().reviewRevert(),
                         resources.messages().reviewRevertTable(),

@@ -572,6 +572,7 @@ public interface ModelDescriptionConstants {
     String MAPPING_MODULE = "mapping-module";
     String MASTER = "master";
     String MATCH_ALL = "match-all";
+    String MAVEN_REPO_FILES = "maven-repo-files";
     String MAX = "max";
     String MAX_ACTIVE_SESSIONS = "max-active-sessions";
     String MAX_POOL_SIZE = "max-pool-size";

@@ -15,26 +15,25 @@
  */
 package org.jboss.hal.client.installer;
 
-import java.util.List;
-
 import org.jboss.hal.ballroom.wizard.Wizard;
-import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.web.bindery.event.shared.EventBus;
 
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE;
-import static org.jboss.hal.client.installer.UpdateState.APPLY_UPDATE;
-import static org.jboss.hal.client.installer.UpdateState.LIST_UPDATES;
-import static org.jboss.hal.client.installer.UpdateState.PREPARE_SERVER;
+import static org.jboss.hal.client.installer.UpdateOfflineState.APPLY_UPDATE;
+import static org.jboss.hal.client.installer.UpdateOfflineState.LIST_UPDATES;
+import static org.jboss.hal.client.installer.UpdateOfflineState.PREPARE_SERVER;
+import static org.jboss.hal.client.installer.UpdateOfflineState.UPLOAD_ARCHIVES;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PREPARE_UPDATES;
 
-public class UpdateWizard {
+class UpdateOfflineWizard {
 
     private final EventBus eventBus;
     private final Dispatcher dispatcher;
@@ -42,43 +41,59 @@ public class UpdateWizard {
     private final Resources resources;
     private final UpdateManagerContext context;
 
-    public UpdateWizard(EventBus eventBus, Dispatcher dispatcher, StatementContext statementContext, Resources resources,
-            List<ModelNode> updates) {
+    UpdateOfflineWizard(final EventBus eventBus,
+            final Dispatcher dispatcher,
+            final StatementContext statementContext,
+            final Resources resources) {
         this.eventBus = eventBus;
-        this.statementContext = statementContext;
         this.dispatcher = dispatcher;
+        this.statementContext = statementContext;
         this.resources = resources;
-        this.context = new UpdateManagerContext(updates);
+        this.context = new UpdateManagerContext();
     }
 
-    public void show(UpdateColumn column) {
-        Wizard.Builder<UpdateManagerContext, UpdateState> builder = new Wizard.Builder<>(
-                resources.constants().updateServer(), context);
+    void show(UpdateColumn column) {
+        Wizard.Builder<UpdateManagerContext, UpdateOfflineState> builder = new Wizard.Builder<>(
+                resources.constants().offlineUsingArchive(), context);
 
         builder.stayOpenAfterFinish()
-                .addStep(LIST_UPDATES, new InitStep<UpdateState>(
-                        Ids.UPDATE_MANAGER_UPDATE,
+                .addStep(UPLOAD_ARCHIVES, new UploadArchivesStep<UpdateOfflineState>("Upload Archives",
+                        resources.messages().noContent(),
+                        new SafeHtmlBuilder().appendEscaped(
+                                "The archives are being uploaded. Depending on you internet connection, this operation might take several minutes.")
+                                .toSafeHtml(),
+                        new SafeHtmlBuilder().appendEscaped("Unable to upload the archives").toSafeHtml(),
+                        dispatcher,
+                        statementContext,
+                        resources))
+                .addStep(LIST_UPDATES, new ListUpdatesStep<UpdateOfflineState>(
+                        Ids.UPDATE_MANAGER_UPDATE_OFFLINE,
                         resources.constants().listUpdates(),
                         resources.messages().listUpdatesTable(),
                         resources.messages().listUpdatesDescription()))
-                .addStep(PREPARE_SERVER, new PrepareStep<UpdateState>(
+                .addStep(PREPARE_SERVER, new PrepareStep<UpdateOfflineState>(
                         resources.constants().prepareUpdate(),
                         resources.messages().prepareUpdatePending(),
                         resources.messages().prepareUpdateSuccess(),
                         resources.messages().prepareUpdateError(),
                         (__) -> new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext), PREPARE_UPDATES).build(),
                         eventBus, dispatcher, statementContext, resources))
-                .addStep(APPLY_UPDATE, new ApplyStep<UpdateState>(
+                .addStep(APPLY_UPDATE, new ApplyStep<UpdateOfflineState>(
                         resources.constants().applyUpdate(),
                         resources.messages().applyUpdatePending(),
                         resources.messages().applyUpdateSuccess(),
                         resources.messages().applyUpdateError(),
-                        dispatcher, statementContext, resources));
+                        dispatcher,
+                        statementContext,
+                        resources));
 
         builder.onBack((ctx, currentState) -> {
-            UpdateState previous = null;
+            UpdateOfflineState previous = null;
             switch (currentState) {
+                case UPLOAD_ARCHIVES:
+                    break;
                 case LIST_UPDATES:
+                    previous = UPLOAD_ARCHIVES;
                     break;
                 case PREPARE_SERVER:
                     previous = LIST_UPDATES;
@@ -91,8 +106,11 @@ public class UpdateWizard {
         });
 
         builder.onNext((ctx, currentState) -> {
-            UpdateState next = null;
+            UpdateOfflineState next = null;
             switch (currentState) {
+                case UPLOAD_ARCHIVES:
+                    next = LIST_UPDATES;
+                    break;
                 case LIST_UPDATES:
                     next = ctx.prepared ? APPLY_UPDATE : PREPARE_SERVER;
                     break;

@@ -452,6 +452,7 @@ public interface CSS {
     String uploadAdvanced = "upload-advanced";
     String uploadIcon = "upload-icon";
     String uploadFile = "upload-file";
+    String uploadFileList = "upload-file-list";
     String userDropdown = "user-dropdown";
 
     String value = "value";

@@ -15,10 +15,7 @@
  */
 package org.jboss.hal.client.installer;
 
-interface Timeouts {
+enum UpdateOfflineState {
 
-    // all values in seconds
-    int UPLOAD = 300;
-    int PREPARE = 180;
-    int APPLY = 60;
+    UPLOAD_ARCHIVES, LIST_UPDATES, PREPARE_SERVER, APPLY_UPDATE
 }

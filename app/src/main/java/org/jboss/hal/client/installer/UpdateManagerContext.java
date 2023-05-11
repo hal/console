@@ -19,18 +19,24 @@ import java.util.List;
 
 import org.jboss.hal.dmr.ModelNode;
 
+import static java.util.Collections.emptyList;
+
 /** Common context used by all update manager wizards */
-public class UpdateManagerContext {
+class UpdateManagerContext {
 
-    public boolean prepared;
-    public final UpdateItem updateItem;
-    public final List<ModelNode> updates;
+    boolean prepared;
+    UpdateItem updateItem;
+    List<ModelNode> updates;
 
-    public UpdateManagerContext(final List<ModelNode> updates) {
+    UpdateManagerContext() {
+        this(emptyList(), null);
+    }
+
+    UpdateManagerContext(final List<ModelNode> updates) {
         this(updates, null);
     }
 
-    public UpdateManagerContext(final List<ModelNode> updates, final UpdateItem updateItem) {
+    UpdateManagerContext(final List<ModelNode> updates, final UpdateItem updateItem) {
         this.updateItem = updateItem;
         this.updates = updates;
     }

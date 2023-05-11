@@ -881,6 +881,9 @@ public interface Ids {
     String UPDATE_MANAGER_CUSTOM_PATCHES = "update-manager-custom-patches";
     String UPDATE_MANAGER_REVERT = "update-manager-revert";
     String UPDATE_MANAGER_UPDATE = "update-manager-update";
+    String UPDATE_MANAGER_UPDATE_OFFLINE = "update-manager-update-offline";
+    String UPDATE_MANAGER_UPDATE_ONLINE = "update-manager-update-online";
+    String UPDATE_MANAGER_UPDATE_PATCH = "update-manager-update-patch";
     String UPDATE_MANAGER_UPDATE_ADD_ACTIONS = "update-manager-update-add-actions";
     String UPDATE_MANAGER_UPDATE_REFRESH = "update-manager-update-refresh";
     String UPDATE_MANAGER_UPDATE_SERVER = "update-update-server";

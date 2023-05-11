@@ -44,7 +44,7 @@ class ApplyStep<S extends Enum<S>> extends WizardStep<UpdateManagerContext, S> {
     private final Resources resources;
     private final HTMLElement root;
 
-    public ApplyStep(final String title,
+    ApplyStep(final String title,
             final SafeHtml progressMessage,
             final SafeHtml successMessage,
             final SafeHtml errorMessage,
