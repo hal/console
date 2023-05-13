@@ -15,30 +15,7 @@
  */
 package org.jboss.hal.client.installer;
 
-import java.util.List;
+enum UpdatePatchState {
 
-import org.jboss.hal.dmr.ModelNode;
-
-import static java.util.Collections.emptyList;
-
-/** Common context used by all update manager wizards */
-class UpdateManagerContext {
-
-    boolean prepared;
-    UpdateItem updateItem;
-    List<ModelNode> updates;
-    String workDir;
-
-    UpdateManagerContext() {
-        this(emptyList(), null);
-    }
-
-    UpdateManagerContext(final List<ModelNode> updates) {
-        this(updates, null);
-    }
-
-    UpdateManagerContext(final List<ModelNode> updates, final UpdateItem updateItem) {
-        this.updateItem = updateItem;
-        this.updates = updates;
-    }
+    UPLOAD_PATCHES, LIST_UPDATES, PREPARE_SERVER, APPLY_UPDATE
 }

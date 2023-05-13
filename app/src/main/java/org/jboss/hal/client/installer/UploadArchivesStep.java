@@ -42,6 +42,7 @@ import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE
 import static org.jboss.hal.dmr.ModelDescriptionConstants.LIST_UPDATES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MAVEN_REPO_FILES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UPDATES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.WORK_DIR;
 
 class UploadArchivesStep<S extends Enum<S>> extends WizardStep<UpdateManagerContext, S>
         implements AsyncStep<UpdateManagerContext> {
@@ -96,14 +97,15 @@ class UploadArchivesStep<S extends Enum<S>> extends WizardStep<UpdateManagerCont
                 .build();
         List<Task<FlowContext>> tasks = singletonList(
                 flowContext -> dispatcher.upload(uploadElement.getFiles(), operation).then(result -> {
-                    List<ModelNode> updates = result.get(UPDATES).asList();
-                    flowContext.push(updates);
+                    context.updates = result.get(UPDATES).asList();
+                    if (result.hasDefined(WORK_DIR)) {
+                        context.workDir = result.get(WORK_DIR).asString();
+                    }
                     return Promise.resolve(flowContext);
                 }));
         Flow.sequential(new FlowContext(Progress.NOOP), tasks)
                 .timeout(Timeouts.UPLOAD * 1_000)
                 .then(flowContext -> {
-                    context.updates = flowContext.pop();
                     callback.proceed();
                     return Promise.resolve(context);
                 })

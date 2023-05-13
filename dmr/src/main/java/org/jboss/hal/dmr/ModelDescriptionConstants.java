@@ -1067,6 +1067,7 @@ public interface ModelDescriptionConstants {
     String WHOAMI = "whoami";
     String WM_SECURITY_MAPPING_GROUPS = "wm-security-mapping-groups";
     String WM_SECURITY_MAPPING_USERS = "wm-security-mapping-users";
+    String WORK_DIR = "work-dir";
     String WORKER = "worker";
     String WORKMANAGER = "workmanager";
     String WRITE = "write";
