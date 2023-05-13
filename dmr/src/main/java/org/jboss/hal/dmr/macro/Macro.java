@@ -28,14 +28,14 @@ public class Macro {
 
     private String name;
     private String description;
-    private List<Operation> operations;
-    private boolean sealed;
+    private final List<Operation> operations;
+    private boolean _sealed;
 
     public Macro(String name, String description) {
         this.name = name;
         this.description = description;
         this.operations = new ArrayList<>();
-        this.sealed = false;
+        this._sealed = false;
     }
 
     @Override
@@ -59,7 +59,7 @@ public class Macro {
 
     @Override
     public String toString() {
-        return "Macro(" + name + ", " + (sealed ? "sealed" : "recording") + ")";
+        return "Macro(" + name + ", " + (_sealed ? "sealed" : "recording") + ")";
     }
 
     String getId() {
@@ -83,7 +83,7 @@ public class Macro {
     }
 
     public void addOperation(Operation operation) {
-        if (sealed) {
+        if (_sealed) {
             throw new IllegalStateException("Macro is sealed");
         }
         this.operations.add(operation);
@@ -106,10 +106,10 @@ public class Macro {
     }
 
     public void seal() {
-        this.sealed = true;
+        this._sealed = true;
     }
 
     public boolean isSealed() {
-        return sealed;
+        return _sealed;
     }
 }
