@@ -47,6 +47,7 @@ import static org.jboss.hal.flow.Flow.sequential;
 class UploadArchivesStep<S extends Enum<S>> extends WizardStep<UpdateManagerContext, S>
         implements AsyncStep<UpdateManagerContext> {
 
+    private final String uploadProgressTitle;
     private final SafeHtml uploadProgressMessage;
     private final SafeHtml uploadErrorMessage;
     private final Dispatcher dispatcher;
@@ -57,12 +58,14 @@ class UploadArchivesStep<S extends Enum<S>> extends WizardStep<UpdateManagerCont
 
     UploadArchivesStep(final String title,
             SafeHtml noContent,
+            final String uploadProgressTitle,
             final SafeHtml uploadProgressMessage,
             final SafeHtml uploadErrorMessage,
             final Dispatcher dispatcher,
             final StatementContext statementContext,
             final Resources resources) {
         super(title);
+        this.uploadProgressTitle = uploadProgressTitle;
         this.uploadProgressMessage = uploadProgressMessage;
         this.uploadErrorMessage = uploadErrorMessage;
         this.statementContext = statementContext;
@@ -86,7 +89,7 @@ class UploadArchivesStep<S extends Enum<S>> extends WizardStep<UpdateManagerCont
 
     @Override
     public void onNext(final UpdateManagerContext context, final WorkflowCallback callback) {
-        wizard().showProgress(title, uploadProgressMessage);
+        wizard().showProgress(uploadProgressTitle, uploadProgressMessage);
         ModelNode mavenRepoFiles = new ModelNode();
         for (int i = 0; i < uploadElement.getFiles().length; i++) {
             mavenRepoFiles.add(i);

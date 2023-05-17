@@ -220,7 +220,7 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
     }
 
     private void updatePatch() {
-        MessageEvent.fire(eventBus, Message.error(SafeHtmlUtils.fromSafeConstant(Names.NYI)));
+        new UpdatePatchWizard(eventBus, dispatcher, statementContext, resources).show(this);
     }
 
     private void clean() {

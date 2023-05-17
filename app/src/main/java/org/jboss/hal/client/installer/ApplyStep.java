@@ -36,7 +36,9 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SHUTDOWN;
 
 class ApplyStep<S extends Enum<S>> extends WizardStep<UpdateManagerContext, S> {
 
+    private final String progressTitle;
     private final SafeHtml progressMessage;
+    private final String successTitle;
     private final SafeHtml successMessage;
     private final SafeHtml errorMessage;
     private final Dispatcher dispatcher;
@@ -45,14 +47,18 @@ class ApplyStep<S extends Enum<S>> extends WizardStep<UpdateManagerContext, S> {
     private final HTMLElement root;
 
     ApplyStep(final String title,
+            final String progressTitle,
             final SafeHtml progressMessage,
+            final String successTitle,
             final SafeHtml successMessage,
             final SafeHtml errorMessage,
             final Dispatcher dispatcher,
             final StatementContext statementContext,
             final Resources resources) {
         super(title, true);
+        this.progressTitle = progressTitle;
         this.progressMessage = progressMessage;
+        this.successTitle = successTitle;
         this.successMessage = successMessage;
         this.errorMessage = errorMessage;
         this.statementContext = statementContext;
@@ -68,7 +74,7 @@ class ApplyStep<S extends Enum<S>> extends WizardStep<UpdateManagerContext, S> {
 
     @Override
     protected Promise<UpdateManagerContext> onShowAndWait(final UpdateManagerContext context) {
-        wizard().showProgress(title, progressMessage);
+        wizard().showProgress(progressTitle, progressMessage);
 
         ResourceAddress root = ROOT_TEMPLATE.resolve(statementContext);
         Operation shutdown = new Operation.Builder(root, SHUTDOWN)
@@ -78,7 +84,7 @@ class ApplyStep<S extends Enum<S>> extends WizardStep<UpdateManagerContext, S> {
         return dispatcher.execute(shutdown)
                 .then(___ -> repeatUntilTimeout(dispatcher, ping, Timeouts.APPLY * 1_000))
                 .then(status -> {
-                    wizard().showSuccess(resources.constants().success(), successMessage);
+                    wizard().showSuccess(successTitle, successMessage);
                     return Promise.resolve(context);
                 })
                 .catch_(error -> {

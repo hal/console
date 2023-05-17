@@ -25,6 +25,7 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.web.bindery.event.shared.EventBus;
 
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE;
@@ -54,28 +55,49 @@ class RevertWizard {
 
     void show(UpdateColumn column) {
         Wizard.Builder<UpdateManagerContext, RevertState> builder = new Wizard.Builder<>(
-                resources.constants().revertUpdate(), context);
+                "Revert update to previous state", context);
 
         builder.stayOpenAfterFinish()
                 .addStep(REVIEW_REVERT, new ListUpdatesStep<RevertState>(
                         Ids.UPDATE_MANAGER_REVERT,
-                        resources.constants().reviewRevert(),
-                        resources.messages().reviewRevertTable(),
-                        resources.messages().reviewRevertDescription()))
+                        "Review reversion",
+                        new SafeHtmlBuilder().appendEscaped("The following updates will be reverted:").toSafeHtml(),
+                        new SafeHtmlBuilder().appendEscaped(
+                                        "<p>The wizard guides you through the steps of reverting an update.</p>" +
+                                        "<h4>Review reversion</h4>" +
+                                        "<p>This step lists all the components that will be reverted.</p>" +
+                                        "<h4>Prepare server candidate</h4>" +
+                                        "<p>This step provisions a server candidate with the reverted updates. If you want to discard this server candidate or do not want to proceed, you can cancel the reversion after this step is complete.</p>"
+                                        +
+                                        "<h4>Apply reversion</h4>" +
+                                        "<p>This step will restart the base server and apply the reversion from the server candidate to the base server.</p>"
+                                        +
+                                        "<p>If a step times out it does not necessarily mean that the reversion has failed. In such cases, check the log files to see if the reversion was successful.</p>")
+                                .toSafeHtml()))
                 .addStep(PREPARE_SERVER, new PrepareStep<RevertState>(
-                        resources.constants().prepareRevert(),
-                        resources.messages().prepareRevertPending(),
-                        resources.messages().prepareRevertSuccess(),
-                        resources.messages().prepareRevertError(),
+                        "Prepare server candidate",
+                        "Preparing server candidate",
+                        new SafeHtmlBuilder().appendEscaped(
+                                        "The server candidate is being prepared with the reversion. The time taken for this operation depends on the speed of the internet connection.")
+                                .toSafeHtml(),
+                        "Server candidate prepared",
+                        new SafeHtmlBuilder().appendEscaped(
+                                        "The server candidate with the updates has been successfully provisioned. Click next to apply the updates to the base server.")
+                                .toSafeHtml(),
+                        new SafeHtmlBuilder().appendEscaped("Unable to prepare the server candidate.").toSafeHtml(),
                         context -> new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext), PREPARE_REVERT)
                                 .param(REVISION, context.updateItem.getName())
                                 .build(),
                         eventBus, dispatcher, statementContext, resources))
                 .addStep(APPLY_REVERT, new ApplyStep<RevertState>(
-                        resources.constants().applyRevert(),
-                        resources.messages().applyRevertPending(),
-                        resources.messages().applyRevertSuccess(),
-                        resources.messages().applyRevertError(),
+                        "Apply reversion",
+                        "Applying reversion",
+                        new SafeHtmlBuilder().appendEscaped(
+                                        "The reversion from the prepared candidate server is applied to the base server. To apply the reversion, the base server is restarted.")
+                                .toSafeHtml(),
+                        "Update reverted",
+                        new SafeHtmlBuilder().appendEscaped("The update has been successfully reverted.").toSafeHtml(),
+                        new SafeHtmlBuilder().appendEscaped("Unable to revert the updates.").toSafeHtml(),
                         dispatcher, statementContext, resources));
 
         builder.onBack((ctx, currentState) -> {

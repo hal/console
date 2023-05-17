@@ -32,6 +32,7 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.web.bindery.event.shared.EventBus;
 
 import elemental2.dom.HTMLElement;
@@ -45,7 +46,9 @@ import static org.jboss.hal.flow.Flow.sequential;
 
 class PrepareStep<S extends Enum<S>> extends WizardStep<UpdateManagerContext, S> implements AsyncStep<UpdateManagerContext> {
 
+    private final String progressTitle;
     private final SafeHtml progressMessage;
+    private final String successTitle;
     private final SafeHtml successMessage;
     private final SafeHtml errorMessage;
     private final Function<UpdateManagerContext, Operation> operation;
@@ -56,7 +59,9 @@ class PrepareStep<S extends Enum<S>> extends WizardStep<UpdateManagerContext, S>
     private final HTMLElement root;
 
     PrepareStep(final String title,
+            final String progressTitle,
             final SafeHtml progressMessage,
+            final String successTitle,
             final SafeHtml successMessage,
             final SafeHtml errorMessage,
             final Function<UpdateManagerContext, Operation> operation,
@@ -65,7 +70,9 @@ class PrepareStep<S extends Enum<S>> extends WizardStep<UpdateManagerContext, S>
             final StatementContext statementContext,
             final Resources resources) {
         super(title, true);
+        this.progressTitle = progressTitle;
         this.progressMessage = progressMessage;
+        this.successTitle = successTitle;
         this.successMessage = successMessage;
         this.errorMessage = errorMessage;
         this.operation = operation;
@@ -83,7 +90,7 @@ class PrepareStep<S extends Enum<S>> extends WizardStep<UpdateManagerContext, S>
 
     @Override
     protected Promise<UpdateManagerContext> onShowAndWait(final UpdateManagerContext context) {
-        wizard().showProgress(title, progressMessage);
+        wizard().showProgress(progressTitle, progressMessage);
 
         List<Task<FlowContext>> tasks = singletonList(
                 flowContext -> dispatcher.execute(operation.apply(context)).then(ignore -> Promise.resolve(flowContext)));
@@ -91,7 +98,7 @@ class PrepareStep<S extends Enum<S>> extends WizardStep<UpdateManagerContext, S>
                 .timeout(Timeouts.PREPARE * 1_000)
                 .then(ignore -> {
                     context.prepared = true;
-                    wizard().showSuccess(resources.constants().success(), successMessage, false);
+                    wizard().showSuccess(successTitle, successMessage, false);
                     return Promise.resolve(context);
                 })
                 .catch_(failure -> {
@@ -111,10 +118,12 @@ class PrepareStep<S extends Enum<S>> extends WizardStep<UpdateManagerContext, S>
             dispatcher.execute(operation,
                     modelNode -> {
                         callback.proceed();
-                        MessageEvent.fire(eventBus, Message.info(resources.messages().prepareCleanupSuccess()));
+                        MessageEvent.fire(eventBus, Message.info(
+                                new SafeHtmlBuilder().appendEscaped("Server candidate successfully cleaned up.").toSafeHtml()));
                     }, (op, error) -> {
                         callback.proceed();
-                        MessageEvent.fire(eventBus, Message.error(resources.messages().prepareCleanupError()));
+                        MessageEvent.fire(eventBus, Message.error(
+                                new SafeHtmlBuilder().appendEscaped("Unable to clean up server candidate.").toSafeHtml()));
                     });
         } else {
             callback.proceed();
