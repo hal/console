@@ -38,7 +38,7 @@ public class UpdateManagerColumn extends StaticItemColumn {
                 new StaticItem.Builder(Names.UPDATES)
                         .nextColumn(Ids.UPDATE_MANAGER_UPDATE)
                         .onPreview(
-                                new PreviewContent<>(Names.UPDATES,
+                                new PreviewContent<>("Updating your installation",
                                         resources.previews().updateManagerUpdates()))
                         .build(),
                 new StaticItem.Builder(Names.CHANNELS)

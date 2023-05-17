@@ -19,9 +19,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.jboss.hal.ballroom.Format;
+import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.core.finder.ColumnAction;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
@@ -50,9 +49,11 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import elemental2.dom.HTMLElement;
 import elemental2.promise.Promise;
+import javax.inject.Inject;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
+import static org.jboss.elemento.Elements.p;
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ARTIFACT_CHANGES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HISTORY;
@@ -178,7 +179,7 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
                 .handler(column -> updatePatch())
                 .constraint(Constraint.executable(INSTALLER_TEMPLATE, PREPARE_UPDATES))
                 .build());
-        addColumnActions(Ids.UPDATE_MANAGER_UPDATE_ADD_ACTIONS, fontAwesome("download"), resources.constants().updateServer(),
+        addColumnActions(Ids.UPDATE_MANAGER_UPDATE_ADD_ACTIONS, fontAwesome("download"), "Installation update methods",
                 addActions);
         addColumnAction(columnActionFactory.refresh(Ids.UPDATE_MANAGER_UPDATE_REFRESH));
         addColumnAction(new ColumnAction.Builder<UpdateItem>(Ids.UPDATE_MANAGER_CLEAN)
@@ -195,7 +196,15 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
                 result -> {
                     List<ModelNode> updates = result.get(UPDATES).asList();
                     if (updates.isEmpty()) {
-                        MessageEvent.fire(eventBus, Message.info(resources.messages().noUpdates()));
+                        Dialog dialog = new Dialog.Builder("No updates")
+                                .add(p().innerHtml(resources.messages().noUpdates()).element())
+                                .closeOnEsc(true)
+                                .closeOnly()
+                                .size(Dialog.Size.SMALL)
+                                // .primary(resources.constants().ok(), () -> true)
+                                .build();
+                        dialog.show();
+                        // MessageEvent.fire(eventBus, Message.info(resources.messages().noUpdates()));
                     } else {
                         new UpdateOnlineWizard(eventBus, dispatcher, statementContext, resources, updates).show(this);
                     }

@@ -23,7 +23,6 @@ import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.ballroom.wizard.WorkflowCallback;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.flow.Flow;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.flow.Task;
@@ -42,6 +41,7 @@ import static java.util.Collections.singletonList;
 import static org.jboss.elemento.Elements.div;
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CLEAN;
+import static org.jboss.hal.flow.Flow.sequential;
 
 class PrepareStep<S extends Enum<S>> extends WizardStep<UpdateManagerContext, S> implements AsyncStep<UpdateManagerContext> {
 
@@ -87,7 +87,7 @@ class PrepareStep<S extends Enum<S>> extends WizardStep<UpdateManagerContext, S>
 
         List<Task<FlowContext>> tasks = singletonList(
                 flowContext -> dispatcher.execute(operation.apply(context)).then(ignore -> Promise.resolve(flowContext)));
-        return Flow.sequential(new FlowContext(Progress.NOOP), tasks)
+        return sequential(new FlowContext(Progress.NOOP), tasks)
                 .timeout(Timeouts.PREPARE * 1_000)
                 .then(ignore -> {
                     context.prepared = true;

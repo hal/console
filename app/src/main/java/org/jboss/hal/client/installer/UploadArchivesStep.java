@@ -24,7 +24,6 @@ import org.jboss.hal.client.shared.uploadwizard.UploadElement;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.flow.Flow;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Progress;
 import org.jboss.hal.flow.Task;
@@ -43,6 +42,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.LIST_UPDATES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MAVEN_REPO_FILES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UPDATES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.WORK_DIR;
+import static org.jboss.hal.flow.Flow.sequential;
 
 class UploadArchivesStep<S extends Enum<S>> extends WizardStep<UpdateManagerContext, S>
         implements AsyncStep<UpdateManagerContext> {
@@ -103,7 +103,7 @@ class UploadArchivesStep<S extends Enum<S>> extends WizardStep<UpdateManagerCont
                     }
                     return Promise.resolve(flowContext);
                 }));
-        Flow.sequential(new FlowContext(Progress.NOOP), tasks)
+        sequential(new FlowContext(Progress.NOOP), tasks)
                 .timeout(Timeouts.UPLOAD * 1_000)
                 .then(flowContext -> {
                     callback.proceed();
