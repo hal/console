@@ -15,10 +15,12 @@
  */
 package org.jboss.hal.client.installer;
 
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.web.bindery.event.shared.EventBus;
-import elemental2.dom.HTMLElement;
-import elemental2.promise.Promise;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.inject.Inject;
+
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.core.finder.*;
@@ -39,10 +41,11 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.web.bindery.event.shared.EventBus;
+
+import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;

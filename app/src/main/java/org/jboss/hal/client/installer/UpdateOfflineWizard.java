@@ -15,13 +15,14 @@
  */
 package org.jboss.hal.client.installer;
 
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.hal.ballroom.wizard.Wizard;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Resources;
+
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.web.bindery.event.shared.EventBus;
 
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE;
 import static org.jboss.hal.client.installer.UpdateOfflineState.*;
@@ -57,7 +58,7 @@ class UpdateOfflineWizard {
                         resources.messages().noContent(),
                         "Uploading archives",
                         new SafeHtmlBuilder().appendEscaped(
-                                        "The archives are being uploaded. The time taken for this operation depends on the speed of the internet connection.")
+                                "The archives are being uploaded. The time taken for this operation depends on the speed of the internet connection.")
                                 .toSafeHtml(),
                         new SafeHtmlBuilder().appendEscaped("Unable to upload the archives").toSafeHtml(),
                         dispatcher,
@@ -70,13 +71,13 @@ class UpdateOfflineWizard {
                                         "The following components are available for the existing JBoss EAP installation:")
                                 .toSafeHtml(),
                         new SafeHtmlBuilder().appendHtmlConstant(
-                                        "<p>The wizard guides you through the process of updating your existing installation.</p>" +
-                                                "<h4>List components</h4>" +
+                                "<p>The wizard guides you through the process of updating your existing installation.</p>" +
+                                        "<h4>List components</h4>" +
                                         "<p>This step lists all the components that will be updated.</p>" +
                                         "<h4>Prepare server candidate</h4>" +
                                         "<p>This step provisions a server candidate with the latest available patches. If you want to discard this server candidate or do not want to proceed, you can cancel the update after this step is complete.</p>"
                                         +
-                                                "<h4>Apply updates</h4>" +
+                                        "<h4>Apply updates</h4>" +
                                         "<p>This step will restart the base server and apply the updates from the server candidate to the base server.</p>"
                                         +
                                         "<p>If a step times out it does not necessarily mean that the update has failed. In such cases, check the log files to see if the update was successful.</p>")
@@ -85,11 +86,11 @@ class UpdateOfflineWizard {
                         "Prepare server candidate",
                         "Preparing server candidate",
                         new SafeHtmlBuilder().appendEscaped(
-                                        "The server candidate is being prepared with the updates. The time taken for this operation depends on the speed of the internet connection.")
+                                "The server candidate is being prepared with the updates. The time taken for this operation depends on the speed of the internet connection.")
                                 .toSafeHtml(),
                         "Server candidate prepared",
                         new SafeHtmlBuilder().appendEscaped(
-                                        "The server candidate with the updates has been successfully provisioned. Click next to apply the updates to the base server.")
+                                "The server candidate with the updates has been successfully provisioned. Click next to apply the updates to the base server.")
                                 .toSafeHtml(),
                         new SafeHtmlBuilder().appendEscaped("Unable to prepare the server candidate.").toSafeHtml(),
                         updateManagerContext -> new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext),
@@ -102,7 +103,7 @@ class UpdateOfflineWizard {
                         "Apply updates",
                         "Applying updates",
                         new SafeHtmlBuilder().appendEscaped(
-                                        "The updates from the prepared candidate server are applied to the base server. To apply the updates, the base server is restarted.")
+                                "The updates from the prepared candidate server are applied to the base server. To apply the updates, the base server is restarted.")
                                 .toSafeHtml(),
                         "Updates applied",
                         new SafeHtmlBuilder().appendEscaped("The updates have been successfully applied.").toSafeHtml(),

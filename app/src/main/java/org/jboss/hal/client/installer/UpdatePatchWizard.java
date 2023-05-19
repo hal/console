@@ -15,13 +15,14 @@
  */
 package org.jboss.hal.client.installer;
 
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.hal.ballroom.wizard.Wizard;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Resources;
+
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.web.bindery.event.shared.EventBus;
 
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE;
 import static org.jboss.hal.client.installer.UpdatePatchState.*;
@@ -65,7 +66,8 @@ class UpdatePatchWizard {
                 .addStep(LIST_UPDATES, new ListUpdatesStep<UpdatePatchState>(
                         "List components",
                         new SafeHtmlBuilder()
-                                .appendEscaped("The following components are available for the existing JBoss EAP installation:")
+                                .appendEscaped(
+                                        "The following components are available for the existing JBoss EAP installation:")
                                 .toSafeHtml(),
                         new SafeHtmlBuilder().appendEscaped(
                                 "<p>The wizard guides you through the process of updating your existing installation.</p>" +
