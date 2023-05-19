@@ -61,7 +61,7 @@ class UpdatePatchWizard {
                         resources.messages().noContent(),
                         "Uploading patches",
                         new SafeHtmlBuilder().appendEscaped(
-                                        "The patches are being uploaded. The time taken for this operation depends on the speed of the internet connection.")
+                                "The patches are being uploaded. The time taken for this operation depends on the speed of the internet connection.")
                                 .toSafeHtml(),
                         new SafeHtmlBuilder().appendEscaped("Unable to upload the archives").toSafeHtml(),
                         dispatcher,
@@ -74,7 +74,7 @@ class UpdatePatchWizard {
                                 .appendEscaped("The following updates are available for the existing JBoss EAP installation:")
                                 .toSafeHtml(),
                         new SafeHtmlBuilder().appendEscaped(
-                                        "<p>The wizard guides you through the process of updating your existing installation.</p>" +
+                                "<p>The wizard guides you through the process of updating your existing installation.</p>" +
                                         "<h4>List updates</h4>" +
                                         "<p>This step lists all the components that will be updated.</p>" +
                                         "<h4>Prepare server candidate</h4>" +
@@ -89,11 +89,11 @@ class UpdatePatchWizard {
                         "Prepare server candidate",
                         "Preparing server candidate",
                         new SafeHtmlBuilder().appendEscaped(
-                                        "The server candidate is being prepared with the updates. The time taken for this operation depends on the speed of the internet connection.")
+                                "The server candidate is being prepared with the updates. The time taken for this operation depends on the speed of the internet connection.")
                                 .toSafeHtml(),
                         "Server candidate prepared",
                         new SafeHtmlBuilder().appendEscaped(
-                                        "The server candidate with the updates has been successfully provisioned. Click next to apply the updates to the base server.")
+                                "The server candidate with the updates has been successfully provisioned. Click next to apply the updates to the base server.")
                                 .toSafeHtml(),
                         new SafeHtmlBuilder().appendEscaped("Unable to prepare the server candidate.").toSafeHtml(),
                         (__) -> new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext), PREPARE_UPDATES).build(),
@@ -102,7 +102,7 @@ class UpdatePatchWizard {
                         "Apply update",
                         "Applying update",
                         new SafeHtmlBuilder().appendEscaped(
-                                        "The updates from the prepared candidate server are applied to the base server. To apply the updates, the base server is restarted.")
+                                "The updates from the prepared candidate server are applied to the base server. To apply the updates, the base server is restarted.")
                                 .toSafeHtml(),
                         "Update applied",
                         new SafeHtmlBuilder().appendEscaped("The updates have been successfully applied.").toSafeHtml(),

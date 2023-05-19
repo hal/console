@@ -15,8 +15,8 @@
  */
 package org.jboss.hal.client.installer;
 
-import java.util.List;
-
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.hal.ballroom.wizard.Wizard;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
@@ -25,13 +25,10 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.web.bindery.event.shared.EventBus;
+import java.util.List;
 
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE;
-import static org.jboss.hal.client.installer.RevertState.APPLY_REVERT;
-import static org.jboss.hal.client.installer.RevertState.PREPARE_SERVER;
-import static org.jboss.hal.client.installer.RevertState.REVIEW_REVERT;
+import static org.jboss.hal.client.installer.RevertState.*;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PREPARE_REVERT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REVISION;
@@ -62,7 +59,7 @@ class RevertWizard {
                         Ids.UPDATE_MANAGER_REVERT,
                         "Review reversion",
                         new SafeHtmlBuilder().appendEscaped("The following updates will be reverted:").toSafeHtml(),
-                        new SafeHtmlBuilder().appendEscaped(
+                        new SafeHtmlBuilder().appendHtmlConstant(
                                         "<p>The wizard guides you through the steps of reverting an update.</p>" +
                                         "<h4>Review reversion</h4>" +
                                         "<p>This step lists all the components that will be reverted.</p>" +
