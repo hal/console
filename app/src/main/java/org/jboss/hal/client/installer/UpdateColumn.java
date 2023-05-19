@@ -15,20 +15,13 @@
  */
 package org.jboss.hal.client.installer;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.inject.Inject;
-
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.web.bindery.event.shared.EventBus;
+import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.dialog.Dialog;
-import org.jboss.hal.core.finder.ColumnAction;
-import org.jboss.hal.core.finder.ColumnActionFactory;
-import org.jboss.hal.core.finder.Finder;
-import org.jboss.hal.core.finder.FinderColumn;
-import org.jboss.hal.core.finder.ItemAction;
-import org.jboss.hal.core.finder.ItemDisplay;
+import org.jboss.hal.core.finder.*;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Operation;
@@ -46,26 +39,16 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.web.bindery.event.shared.EventBus;
-
-import elemental2.dom.HTMLElement;
-import elemental2.promise.Promise;
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.elemento.Elements.p;
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ARTIFACT_CHANGES;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.HISTORY;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.HISTORY_FROM_REVISION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.LIST_UPDATES;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.PREPARE_REVERT;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.PREPARE_UPDATES;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.REVISION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.TIMESTAMP;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.UPDATES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
@@ -166,17 +149,17 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
 
         List<ColumnAction<UpdateItem>> addActions = new ArrayList<>();
         addActions.add(new ColumnAction.Builder<UpdateItem>(Ids.UPDATE_MANAGER_UPDATE_ONLINE)
-                .title(resources.constants().onlineUpdates())
+                .title("Online updates")
                 .handler(column -> updateOnline())
                 .constraint(Constraint.executable(INSTALLER_TEMPLATE, PREPARE_UPDATES))
                 .build());
         addActions.add(new ColumnAction.Builder<UpdateItem>(Ids.UPDATE_MANAGER_UPDATE_OFFLINE)
-                .title(resources.constants().offlineUsingArchive())
+                .title("Offline using archives")
                 .handler(column -> updateOffline())
                 .constraint(Constraint.executable(INSTALLER_TEMPLATE, PREPARE_UPDATES))
                 .build());
         addActions.add(new ColumnAction.Builder<UpdateItem>(Ids.UPDATE_MANAGER_UPDATE_PATCH)
-                .title(resources.constants().customPatches())
+                .title("Custom patches")
                 .handler(column -> updatePatch())
                 .constraint(Constraint.executable(INSTALLER_TEMPLATE, PREPARE_UPDATES))
                 .build());

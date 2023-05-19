@@ -15,21 +15,16 @@
  */
 package org.jboss.hal.client.installer;
 
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.web.bindery.event.shared.EventBus;
 import org.jboss.hal.ballroom.wizard.Wizard;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.StatementContext;
-import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.web.bindery.event.shared.EventBus;
-
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE;
-import static org.jboss.hal.client.installer.UpdatePatchState.APPLY_UPDATE;
-import static org.jboss.hal.client.installer.UpdatePatchState.LIST_UPDATES;
-import static org.jboss.hal.client.installer.UpdatePatchState.PREPARE_SERVER;
-import static org.jboss.hal.client.installer.UpdatePatchState.UPLOAD_PATCHES;
+import static org.jboss.hal.client.installer.UpdatePatchState.*;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PREPARE_UPDATES;
 
@@ -68,19 +63,18 @@ class UpdatePatchWizard {
                         statementContext,
                         resources))
                 .addStep(LIST_UPDATES, new ListUpdatesStep<UpdatePatchState>(
-                        Ids.UPDATE_MANAGER_UPDATE_OFFLINE,
-                        "List updates",
+                        "List components",
                         new SafeHtmlBuilder()
-                                .appendEscaped("The following updates are available for the existing JBoss EAP installation:")
+                                .appendEscaped("The following components are available for the existing JBoss EAP installation:")
                                 .toSafeHtml(),
                         new SafeHtmlBuilder().appendEscaped(
                                 "<p>The wizard guides you through the process of updating your existing installation.</p>" +
-                                        "<h4>List updates</h4>" +
+                                        "<h4>List components</h4>" +
                                         "<p>This step lists all the components that will be updated.</p>" +
                                         "<h4>Prepare server candidate</h4>" +
                                         "<p>This step provisions a server candidate with the latest available patches. If you want to discard this server candidate or do not want to proceed, you can cancel the update after this step is complete.</p>"
                                         +
-                                        "<h4>Apply update</h4>" +
+                                        "<h4>Apply updates</h4>" +
                                         "<p>This step will restart the base server and apply the updates from the server candidate to the base server.</p>"
                                         +
                                         "<p>If a step times out it does not necessarily mean that the update has failed. In such cases, check the log files to see if the update was successful.</p>")
@@ -99,12 +93,12 @@ class UpdatePatchWizard {
                         (__) -> new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext), PREPARE_UPDATES).build(),
                         eventBus, dispatcher, statementContext, resources))
                 .addStep(APPLY_UPDATE, new ApplyStep<UpdatePatchState>(
-                        "Apply update",
-                        "Applying update",
+                        "Apply updates",
+                        "Applying updates",
                         new SafeHtmlBuilder().appendEscaped(
                                 "The updates from the prepared candidate server are applied to the base server. To apply the updates, the base server is restarted.")
                                 .toSafeHtml(),
-                        "Update applied",
+                        "Updates applied",
                         new SafeHtmlBuilder().appendEscaped("The updates have been successfully applied.").toSafeHtml(),
                         new SafeHtmlBuilder().appendEscaped("Unable to apply the updates.").toSafeHtml(),
                         dispatcher,

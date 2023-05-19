@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.client.installer;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
@@ -22,15 +24,8 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 
-import com.google.gwt.safehtml.shared.SafeHtml;
-
-import elemental2.dom.HTMLElement;
-
 import static org.jboss.elemento.Elements.div;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NEW_VERSION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.OLD_VERSION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.STATUS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.marginBottomLarge;
 import static org.jboss.hal.resources.CSS.marginTopLarge;
 
@@ -39,13 +34,12 @@ class ListUpdatesStep<S extends Enum<S>> extends WizardStep<UpdateManagerContext
     private final HTMLElement root;
     private final Table<ModelNode> table;
 
-    ListUpdatesStep(final String baseId,
-            final String title,
-            final SafeHtml tableDescription,
-            final SafeHtml stepsDescription) {
+    ListUpdatesStep(final String title,
+                    final SafeHtml tableDescription,
+                    final SafeHtml stepsDescription) {
         super(title);
 
-        table = new ModelNodeTable.Builder<ModelNode>(Ids.build(baseId, Ids.TABLE),
+        table = new ModelNodeTable.Builder<ModelNode>(Ids.build(Ids.UPDATE_MANAGER_LIST_UPDATES),
                 Metadata.staticDescription(UpdateManagerResources.INSTANCE.artifactChange()))
                 .columns(NAME, STATUS, OLD_VERSION, NEW_VERSION)
                 .build();

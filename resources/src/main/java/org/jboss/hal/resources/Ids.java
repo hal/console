@@ -15,10 +15,10 @@
  */
 package org.jboss.hal.resources;
 
+import com.google.common.collect.Lists;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 import static com.google.common.base.Strings.emptyToNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -872,6 +872,7 @@ public interface Ids {
     String UNDERTOW_STATISTICS_DISABLED = "undertow-statistics-disabled";
     String UNMANAGED_FORM = "unmanaged-form";
     String UPDATE_MANAGER = "update-manager";
+    String UPDATE_MANAGER_LIST_UPDATES = "update-manager-list-updates";
     String UPDATE_MANAGER_ARTIFACT_CHANGES = "update-manager-artifact-changes";
     String UPDATE_MANAGER_CHANNEL = "update-manager-channel";
     String UPDATE_MANAGER_CHANNEL_ADD = "update-manager-channel-add";

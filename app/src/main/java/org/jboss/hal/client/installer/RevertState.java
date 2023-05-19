@@ -17,5 +17,5 @@ package org.jboss.hal.client.installer;
 
 enum RevertState {
 
-    REVIEW_REVERT, PREPARE_SERVER, APPLY_REVERT
+    LIST_UPDATES, PREPARE_SERVER, APPLY_REVERT
 }
