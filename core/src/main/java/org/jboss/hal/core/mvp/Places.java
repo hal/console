@@ -31,6 +31,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
 
 import static java.util.Collections.singletonList;
+
 import static org.jboss.hal.core.finder.FinderContext.PATH_PARAM;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;

@@ -48,6 +48,7 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+
 import static org.jboss.hal.client.configuration.subsystem.securitymanager.AddressTemplates.DEPLOYMENT_PERMISSIONS_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.securitymanager.AddressTemplates.SECURITY_MANAGER_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.securitymanager.AddressTemplates.SECURITY_MANAGER_TEMPLATE;

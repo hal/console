@@ -41,6 +41,7 @@ import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
 import static java.util.stream.Collectors.toMap;
+
 import static org.jboss.hal.client.configuration.subsystem.resourceadapter.AddressTemplates.ADMIN_OBJECTS_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.resourceadapter.AddressTemplates.CONNECTION_DEFINITIONS_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.resourceadapter.AddressTemplates.RESOURCE_ADAPTER_TEMPLATE;

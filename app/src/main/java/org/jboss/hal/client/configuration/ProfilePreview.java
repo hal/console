@@ -37,6 +37,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental2.dom.HTMLElement;
 
 import static java.util.stream.Collectors.joining;
+
 import static org.jboss.elemento.Elements.p;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDES;

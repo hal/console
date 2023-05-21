@@ -53,6 +53,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import elemental2.promise.Promise;
 
 import static java.util.stream.Collectors.toList;
+
 import static org.jboss.hal.client.patching.PatchTasks.patches;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CORE_SERVICE;

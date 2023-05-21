@@ -21,8 +21,9 @@ import java.util.Set;
 
 import org.jboss.hal.spi.EsReturn;
 
-import static com.google.common.collect.Sets.newHashSet;
 import static java.util.stream.Collectors.toSet;
+
+import static com.google.common.collect.Sets.newHashSet;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.OP;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.OPERATION_HEADERS;

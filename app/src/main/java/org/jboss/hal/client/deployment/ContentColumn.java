@@ -52,6 +52,7 @@ import elemental2.promise.Promise;
 
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.joining;
+
 import static org.jboss.elemento.Elements.span;
 import static org.jboss.hal.client.deployment.AbstractDeploymentColumn.DEPLOYMENT_ADDRESS;
 import static org.jboss.hal.client.deployment.ContentColumn.ROOT_ADDRESS;

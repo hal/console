@@ -64,6 +64,7 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import static java.util.Collections.emptyList;
+
 import static org.jboss.hal.client.configuration.SocketBinding.INBOUND;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CLIENT_MAPPINGS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DESTINATION_ADDRESS;

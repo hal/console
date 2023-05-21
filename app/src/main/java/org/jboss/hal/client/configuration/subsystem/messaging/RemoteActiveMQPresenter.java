@@ -52,6 +52,7 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
 import static java.util.Arrays.asList;
+
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.CONNECTION_FACTORY_REMOTE_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.CONNECTOR_REMOTE_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.CONNECTOR_REMOTE_TEMPLATE;

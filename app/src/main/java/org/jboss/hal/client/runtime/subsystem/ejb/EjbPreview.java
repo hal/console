@@ -50,11 +50,12 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental2.dom.CSSProperties.MarginBottomUnionType;
 import elemental2.dom.HTMLElement;
 
+import static java.lang.Math.round;
+import static java.util.Arrays.asList;
+
 import static elemental2.dom.DomGlobal.clearInterval;
 import static elemental2.dom.DomGlobal.document;
 import static elemental2.dom.DomGlobal.setInterval;
-import static java.lang.Math.round;
-import static java.util.Arrays.asList;
 import static org.jboss.elemento.Elements.a;
 import static org.jboss.elemento.Elements.h;
 import static org.jboss.elemento.Elements.section;

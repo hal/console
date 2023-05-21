@@ -30,10 +30,11 @@ import org.mockito.ArgumentMatcher;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
 
-import static com.google.common.primitives.Ints.asList;
 import static java.lang.Integer.parseInt;
 import static java.lang.System.arraycopy;
 import static java.util.Comparator.naturalOrder;
+
+import static com.google.common.primitives.Ints.asList;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;

@@ -29,8 +29,9 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
-import static elemental2.dom.DomGlobal.setTimeout;
 import static java.util.Comparator.comparing;
+
+import static elemental2.dom.DomGlobal.setTimeout;
 import static org.jboss.hal.client.runtime.subsystem.batch.AddressTemplates.EXECUTION_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.UIConstants.POLLING_INTERVAL;

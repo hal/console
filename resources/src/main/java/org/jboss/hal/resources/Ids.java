@@ -15,14 +15,15 @@
  */
 package org.jboss.hal.resources;
 
-import com.google.common.collect.Lists;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
+import static java.util.stream.Collectors.joining;
+
 import static com.google.common.base.Strings.emptyToNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.resources.Strings.substringAfterLast;
 
 /**

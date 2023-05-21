@@ -15,8 +15,9 @@
  */
 package org.jboss.hal.resources;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.lang.Math.max;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 /** Collection of string helper methods. */
 public final class Strings {

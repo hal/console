@@ -40,6 +40,7 @@ import elemental2.dom.HTMLInputElement;
 
 import static java.util.Comparator.naturalOrder;
 import static java.util.stream.Collectors.toList;
+
 import static org.jboss.elemento.Elements.bag;
 import static org.jboss.elemento.Elements.div;
 import static org.jboss.elemento.Elements.input;

@@ -20,6 +20,7 @@ import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.dmr.NamedNode;
 
 import static java.util.Arrays.asList;
+
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 class ServerPreview extends PreviewContent<NamedNode> {

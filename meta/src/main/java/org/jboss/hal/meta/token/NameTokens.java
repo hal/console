@@ -15,9 +15,9 @@
  */
 package org.jboss.hal.meta.token;
 
-import org.jboss.hal.dmr.ModelDescriptionConstants;
-
 import java.util.Set;
+
+import org.jboss.hal.dmr.ModelDescriptionConstants;
 
 /** HAL name tokens. */
 @SuppressWarnings("DuplicateStringLiteralInspection")

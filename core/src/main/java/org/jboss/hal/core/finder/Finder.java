@@ -52,6 +52,7 @@ import elemental2.promise.Promise;
 import static java.lang.Math.min;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
+
 import static org.jboss.elemento.Elements.div;
 import static org.jboss.hal.ballroom.Skeleton.applicationOffset;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;

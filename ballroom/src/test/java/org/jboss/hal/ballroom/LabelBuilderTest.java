@@ -22,6 +22,7 @@ import com.google.gwt.junit.GWTMockUtilities;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+
 import static org.junit.Assert.assertEquals;
 
 @SuppressWarnings({ "HardCodedStringLiteral", "DuplicateStringLiteralInspection" })

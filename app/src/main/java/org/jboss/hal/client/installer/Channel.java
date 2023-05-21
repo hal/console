@@ -22,6 +22,7 @@ import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.resources.Names;
 
 import static java.util.stream.Collectors.toList;
+
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 public class Channel extends NamedNode {

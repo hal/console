@@ -37,6 +37,7 @@ import org.jboss.hal.spi.Callback;
 import elemental2.promise.Promise;
 
 import static java.util.Collections.singletonList;
+
 import static org.jboss.hal.client.patching.PatchesColumn.PATCHING_TEMPLATE;
 import static org.jboss.hal.client.patching.wizard.PatchState.CHECK_SERVERS;
 import static org.jboss.hal.client.patching.wizard.PatchState.ROLLBACK;

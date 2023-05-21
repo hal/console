@@ -21,9 +21,10 @@ import java.util.Set;
 
 import com.google.common.base.Splitter;
 
-import static com.google.common.base.Strings.emptyToNull;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
+
+import static com.google.common.base.Strings.emptyToNull;
 import static org.jboss.hal.meta.security.Constraints.Operator.AND;
 import static org.jboss.hal.meta.security.Constraints.Operator.OR;
 

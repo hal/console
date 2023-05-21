@@ -50,6 +50,7 @@ import elemental2.dom.HTMLElement;
 import elemental2.promise.Promise;
 
 import static java.util.stream.Collectors.toList;
+
 import static org.jboss.hal.client.configuration.subsystem.modcluster.AddressTemplates.MODCLUSTER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.modcluster.AddressTemplates.PROXY_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.modcluster.AddressTemplates.PROXY_TEMPLATE;

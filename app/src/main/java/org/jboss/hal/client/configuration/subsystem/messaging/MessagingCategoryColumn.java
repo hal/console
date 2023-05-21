@@ -33,6 +33,7 @@ import org.jboss.hal.spi.AsyncColumn;
 import elemental2.promise.Promise;
 
 import static java.util.Arrays.asList;
+
 import static org.jboss.hal.resources.Ids.JMS_BRIDGE_ITEM;
 
 @AsyncColumn(Ids.MESSAGING_CATEGORY)

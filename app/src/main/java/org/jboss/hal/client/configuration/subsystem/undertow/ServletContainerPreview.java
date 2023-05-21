@@ -30,6 +30,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
+
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MIME_MAPPING;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.WELCOME_FILE;

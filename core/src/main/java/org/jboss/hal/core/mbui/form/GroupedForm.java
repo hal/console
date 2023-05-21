@@ -42,8 +42,9 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 
 import elemental2.dom.HTMLElement;
 
-import static com.google.common.collect.Lists.asList;
 import static java.util.stream.Collectors.toList;
+
+import static com.google.common.collect.Lists.asList;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 
 /**

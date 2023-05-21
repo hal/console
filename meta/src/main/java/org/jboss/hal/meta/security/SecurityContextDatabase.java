@@ -33,6 +33,7 @@ import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 
 import static java.util.stream.Collectors.joining;
+
 import static org.jboss.hal.config.AccessControlProvider.RBAC;
 
 public class SecurityContextDatabase extends AbstractDatabase<SecurityContext> {

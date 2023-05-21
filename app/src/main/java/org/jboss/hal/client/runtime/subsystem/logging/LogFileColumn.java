@@ -48,6 +48,7 @@ import elemental2.promise.Promise;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
+
 import static org.jboss.hal.client.runtime.subsystem.logging.AddressTemplates.LOGGING_SUBSYSTEM_ADDRESS;
 import static org.jboss.hal.client.runtime.subsystem.logging.AddressTemplates.LOG_FILE_ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;

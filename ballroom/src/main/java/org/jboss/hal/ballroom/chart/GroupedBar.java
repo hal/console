@@ -34,8 +34,9 @@ import elemental2.core.JsArray;
 import elemental2.dom.HTMLElement;
 import jsinterop.base.JsPropertyMap;
 
-import static elemental2.dom.DomGlobal.window;
 import static java.util.Arrays.asList;
+
+import static elemental2.dom.DomGlobal.window;
 import static org.jboss.elemento.Elements.div;
 import static org.jboss.hal.ballroom.JQuery.$;
 import static org.jboss.hal.resources.UIConstants.HASH;

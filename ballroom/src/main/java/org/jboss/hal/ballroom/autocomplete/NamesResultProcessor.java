@@ -22,8 +22,9 @@ import org.jboss.hal.ballroom.form.SuggestHandler;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.stream.Collectors.toList;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
  * Processes the result of a single READ_CHILDREN_NAMES operation.

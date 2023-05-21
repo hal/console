@@ -30,6 +30,7 @@ import org.jboss.hal.resources.Resources;
 import elemental2.dom.HTMLElement;
 
 import static java.util.Arrays.asList;
+
 import static org.jboss.elemento.Elements.a;
 import static org.jboss.elemento.Elements.div;
 import static org.jboss.elemento.Elements.span;

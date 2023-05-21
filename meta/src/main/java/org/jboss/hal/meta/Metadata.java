@@ -15,8 +15,9 @@
  */
 package org.jboss.hal.meta;
 
-import com.google.common.base.Splitter;
-import com.google.gwt.resources.client.TextResource;
+import java.util.List;
+import java.util.function.Supplier;
+
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
@@ -27,8 +28,8 @@ import org.jboss.hal.meta.security.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.function.Supplier;
+import com.google.common.base.Splitter;
+import com.google.gwt.resources.client.TextResource;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;

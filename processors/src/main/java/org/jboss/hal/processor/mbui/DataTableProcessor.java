@@ -28,6 +28,7 @@ import org.jdom2.Element;
 import org.jdom2.xpath.XPathFactory;
 
 import static java.util.stream.Collectors.joining;
+
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
 import static org.jboss.hal.processor.mbui.XmlHelper.xmlAsString;

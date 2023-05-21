@@ -40,6 +40,7 @@ import elemental2.promise.Promise;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INET_ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INTERFACE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;

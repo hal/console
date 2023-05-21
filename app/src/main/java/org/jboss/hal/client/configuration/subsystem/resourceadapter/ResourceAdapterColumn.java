@@ -52,6 +52,7 @@ import elemental2.promise.Promise;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
+
 import static org.jboss.elemento.Elements.span;
 import static org.jboss.hal.client.configuration.subsystem.resourceadapter.AddressTemplates.RESOURCE_ADAPTER_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.resourceadapter.AddressTemplates.RESOURCE_ADAPTER_SUBSYSTEM_TEMPLATE;

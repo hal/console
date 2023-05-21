@@ -23,7 +23,12 @@ import javax.inject.Inject;
 
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.dialog.Dialog;
-import org.jboss.hal.core.finder.*;
+import org.jboss.hal.core.finder.ColumnAction;
+import org.jboss.hal.core.finder.ColumnActionFactory;
+import org.jboss.hal.core.finder.Finder;
+import org.jboss.hal.core.finder.FinderColumn;
+import org.jboss.hal.core.finder.ItemAction;
+import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Operation;
@@ -49,9 +54,19 @@ import elemental2.promise.Promise;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
+
 import static org.jboss.elemento.Elements.p;
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ARTIFACT_CHANGES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HISTORY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HISTORY_FROM_REVISION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LIST_UPDATES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PREPARE_REVERT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PREPARE_UPDATES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REVISION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TIMESTAMP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.UPDATES;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
 

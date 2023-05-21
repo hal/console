@@ -42,6 +42,7 @@ import org.jboss.hal.resources.Resources;
 import elemental2.dom.HTMLElement;
 
 import static java.util.Arrays.asList;
+
 import static org.jboss.elemento.Elements.h;
 import static org.jboss.elemento.Elements.section;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;

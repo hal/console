@@ -73,6 +73,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental2.promise.Promise;
 
 import static java.util.Collections.singletonList;
+
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.ELYTRON_SUBSYSTEM_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.FILTER_REF_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.FILTER_SUGGESTIONS;

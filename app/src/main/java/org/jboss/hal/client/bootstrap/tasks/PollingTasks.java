@@ -30,8 +30,9 @@ import org.slf4j.LoggerFactory;
 
 import com.google.web.bindery.event.shared.EventBus;
 
-import static elemental2.dom.DomGlobal.setTimeout;
 import static java.util.Collections.singletonList;
+
+import static elemental2.dom.DomGlobal.setTimeout;
 import static org.jboss.hal.config.Settings.DEFAULT_POLL_TIME;
 import static org.jboss.hal.config.Settings.Key.POLL;
 import static org.jboss.hal.config.Settings.Key.POLL_TIME;

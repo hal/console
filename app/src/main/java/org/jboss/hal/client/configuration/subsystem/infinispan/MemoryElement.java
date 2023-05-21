@@ -40,6 +40,7 @@ import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLSelectElement;
 
 import static java.util.stream.Collectors.toList;
+
 import static org.jboss.elemento.Elements.*;
 import static org.jboss.hal.ballroom.JQuery.$;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HASH;

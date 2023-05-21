@@ -32,6 +32,7 @@ import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.ManagementModel;
 
 import static java.util.Comparator.comparing;
+
 import static org.jboss.hal.core.runtime.RunningMode.ADMIN_ONLY;
 import static org.jboss.hal.core.runtime.RunningState.RELOAD_REQUIRED;
 import static org.jboss.hal.core.runtime.RunningState.RESTART_REQUIRED;

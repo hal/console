@@ -43,6 +43,7 @@ import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLElement;
 
 import static java.util.stream.Collectors.toList;
+
 import static org.jboss.elemento.Elements.*;
 import static org.jboss.elemento.EventType.bind;
 import static org.jboss.elemento.EventType.click;

@@ -15,7 +15,10 @@
  */
 package org.jboss.hal.core.mbui.form;
 
-import com.google.common.collect.Iterables;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
@@ -25,9 +28,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Messages;
 
-import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import com.google.common.collect.Iterables;
 
 import static java.util.stream.Collectors.toList;
 

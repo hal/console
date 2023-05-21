@@ -26,6 +26,7 @@ import org.jboss.hal.dmr.ResourceAddress;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.groupingBy;
+
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
 

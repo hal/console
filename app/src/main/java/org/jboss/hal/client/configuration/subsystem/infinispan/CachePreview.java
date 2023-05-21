@@ -27,6 +27,7 @@ import org.jboss.hal.resources.Strings;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.sort;
+
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 

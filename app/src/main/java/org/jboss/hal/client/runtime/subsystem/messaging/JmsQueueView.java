@@ -33,6 +33,7 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
 import static java.util.Comparator.comparing;
+
 import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_CORE_QUEUE_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 

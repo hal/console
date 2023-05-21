@@ -37,6 +37,7 @@ import elemental2.dom.HTMLLIElement;
 import elemental2.dom.HTMLUListElement;
 
 import static java.util.stream.Collectors.toList;
+
 import static org.jboss.elemento.Elements.a;
 import static org.jboss.elemento.Elements.button;
 import static org.jboss.elemento.Elements.div;

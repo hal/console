@@ -34,6 +34,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.groupingBy;
+
 import static org.jboss.elemento.Elements.a;
 import static org.jboss.elemento.Elements.setVisible;
 import static org.jboss.hal.client.runtime.subsystem.batch.ExecutionNode.BatchStatus.ABANDONED;

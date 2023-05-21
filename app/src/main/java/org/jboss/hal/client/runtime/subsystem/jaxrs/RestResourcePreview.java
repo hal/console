@@ -54,12 +54,13 @@ import elemental2.core.RegExpResult;
 import elemental2.dom.CSSProperties.MarginBottomUnionType;
 import elemental2.dom.HTMLElement;
 
-import static com.google.gwt.safehtml.shared.SafeHtmlUtils.fromSafeConstant;
-import static elemental2.dom.DomGlobal.document;
-import static elemental2.dom.DomGlobal.window;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
+
+import static com.google.gwt.safehtml.shared.SafeHtmlUtils.fromSafeConstant;
+import static elemental2.dom.DomGlobal.document;
+import static elemental2.dom.DomGlobal.window;
 import static org.jboss.elemento.Elements.a;
 import static org.jboss.elemento.Elements.asHtmlElement;
 import static org.jboss.elemento.Elements.br;

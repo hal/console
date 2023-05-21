@@ -57,11 +57,12 @@ import elemental2.dom.HTMLTableSectionElement;
 import elemental2.dom.MouseEvent;
 import elemental2.dom.NodeList;
 
+import static java.util.stream.Collectors.toList;
+
 import static com.google.common.collect.Lists.asList;
 import static elemental2.dom.DomGlobal.clearTimeout;
 import static elemental2.dom.DomGlobal.document;
 import static elemental2.dom.DomGlobal.setTimeout;
-import static java.util.stream.Collectors.toList;
 import static org.jboss.elemento.Elements.a;
 import static org.jboss.elemento.Elements.col;
 import static org.jboss.elemento.Elements.colgroup;

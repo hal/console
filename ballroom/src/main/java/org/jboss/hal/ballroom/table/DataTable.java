@@ -37,8 +37,9 @@ import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLTableElement;
 import elemental2.dom.NodeList;
 
-import static elemental2.dom.DomGlobal.document;
 import static java.util.Arrays.asList;
+
+import static elemental2.dom.DomGlobal.document;
 import static org.jboss.elemento.Elements.asHtmlElement;
 import static org.jboss.elemento.Elements.htmlElements;
 import static org.jboss.elemento.Elements.table;

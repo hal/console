@@ -27,6 +27,7 @@ import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Resources;
 
 import static java.util.Arrays.asList;
+
 import static org.jboss.hal.client.deployment.StandaloneDeploymentColumn.DEPLOYMENT_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;

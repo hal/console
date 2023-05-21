@@ -45,8 +45,9 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import elemental2.dom.HTMLElement;
 
-import static elemental2.dom.DomGlobal.document;
 import static java.util.stream.Collectors.joining;
+
+import static elemental2.dom.DomGlobal.document;
 import static org.jboss.elemento.Elements.a;
 import static org.jboss.elemento.Elements.bag;
 import static org.jboss.elemento.Elements.section;

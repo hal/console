@@ -23,6 +23,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static java.util.stream.Collectors.toList;
+
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertTrue;
 

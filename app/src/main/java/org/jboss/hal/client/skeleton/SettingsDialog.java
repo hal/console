@@ -37,8 +37,9 @@ import org.jboss.hal.resources.Resources;
 import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
 
-import static elemental2.dom.DomGlobal.window;
 import static java.util.Comparator.naturalOrder;
+
+import static elemental2.dom.DomGlobal.window;
 import static org.jboss.hal.config.Settings.Key.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ALLOWED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;

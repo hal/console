@@ -47,8 +47,9 @@ import org.jboss.hal.spi.MessageEvent;
 
 import elemental2.dom.HTMLElement;
 
-import static elemental2.dom.DomGlobal.document;
 import static java.util.Arrays.asList;
+
+import static elemental2.dom.DomGlobal.document;
 import static org.jboss.elemento.Elements.h;
 import static org.jboss.elemento.Elements.p;
 import static org.jboss.elemento.Elements.section;

@@ -56,6 +56,7 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
 import static java.util.Arrays.asList;
+
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.ADD_PREFIX_ROLE_MAPPER_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.ADD_SUFFIX_ROLE_MAPPER_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.AGGREGATE_EVIDENCE_DECODER_ADDRESS;

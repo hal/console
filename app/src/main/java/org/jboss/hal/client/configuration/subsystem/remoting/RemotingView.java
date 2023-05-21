@@ -40,6 +40,7 @@ import org.jboss.hal.spi.MbuiElement;
 import org.jboss.hal.spi.MbuiView;
 
 import static java.util.stream.Collectors.toMap;
+
 import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.CONNECTOR_SECURITY_POLICY_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.CONNECTOR_SECURITY_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.remoting.AddressTemplates.CONNECTOR_TEMPLATE;

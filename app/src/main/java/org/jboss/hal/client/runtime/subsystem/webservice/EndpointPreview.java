@@ -50,6 +50,7 @@ import elemental2.dom.HTMLElement;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+
 import static org.jboss.elemento.Elements.a;
 import static org.jboss.elemento.Elements.h;
 import static org.jboss.elemento.Elements.section;

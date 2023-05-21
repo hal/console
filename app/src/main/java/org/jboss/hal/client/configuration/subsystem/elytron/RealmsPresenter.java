@@ -58,6 +58,7 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
 import static java.util.Arrays.asList;
+
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.AGGREGATE_REALM_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.CACHING_REALM_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.CONSTANT_REALM_MAPPER_ADDRESS;

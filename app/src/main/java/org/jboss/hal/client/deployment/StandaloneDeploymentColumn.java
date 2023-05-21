@@ -52,6 +52,7 @@ import elemental2.dom.HTMLElement;
 import elemental2.promise.Promise;
 
 import static java.util.stream.Collectors.toList;
+
 import static org.jboss.elemento.Elements.span;
 import static org.jboss.hal.client.deployment.AbstractDeploymentColumn.DEPLOYMENT_ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;

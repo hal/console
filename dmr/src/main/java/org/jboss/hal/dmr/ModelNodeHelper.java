@@ -30,10 +30,11 @@ import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.shared.DateTimeFormat;
 
-import static com.google.common.base.CaseFormat.LOWER_HYPHEN;
-import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
+
+import static com.google.common.base.CaseFormat.LOWER_HYPHEN;
+import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HAL_INDEX;
 
 /**

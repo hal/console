@@ -47,6 +47,7 @@ import org.jboss.hal.spi.Requires;
 import elemental2.promise.Promise;
 
 import static java.util.Collections.singletonList;
+
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.HOST_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SELECTED_HOST_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SELECTED_SERVER_TEMPLATE;

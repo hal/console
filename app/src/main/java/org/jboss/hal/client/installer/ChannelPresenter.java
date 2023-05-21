@@ -15,11 +15,11 @@
  */
 package org.jboss.hal.client.installer;
 
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
 import org.jboss.hal.core.ComplexAttributeOperations;
 import org.jboss.hal.core.mvp.ApplicationPresenter;
 import org.jboss.hal.core.mvp.HalView;
@@ -37,9 +37,11 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
-import javax.inject.Inject;
-import java.util.List;
-import java.util.Map;
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.annotations.NameToken;
+import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_ADDRESS;
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE;
@@ -56,13 +58,13 @@ public class ChannelPresenter extends ApplicationPresenter<ChannelPresenter.MyVi
 
     @Inject
     public ChannelPresenter(EventBus eventBus,
-                            ChannelPresenter.MyView view,
-                            ChannelPresenter.MyProxy proxy,
-                            ComplexAttributeOperations ca,
-                            Dispatcher dispatcher,
-                            MetadataRegistry metadataRegistry,
-                            StatementContext statementContext,
-                            Resources resources) {
+            ChannelPresenter.MyView view,
+            ChannelPresenter.MyProxy proxy,
+            ComplexAttributeOperations ca,
+            Dispatcher dispatcher,
+            MetadataRegistry metadataRegistry,
+            StatementContext statementContext,
+            Resources resources) {
         super(eventBus, view, proxy);
         this.ca = ca;
         this.dispatcher = dispatcher;

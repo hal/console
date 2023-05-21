@@ -31,6 +31,7 @@ import org.jboss.hal.resources.Ids;
 import com.google.gwt.core.client.GWT;
 
 import static java.util.Collections.singletonList;
+
 import static org.jboss.hal.config.Settings.Key.PAGE_SIZE;
 import static org.jboss.hal.resources.CSS.*;
 

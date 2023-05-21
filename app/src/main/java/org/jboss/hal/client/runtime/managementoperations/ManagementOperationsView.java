@@ -33,6 +33,7 @@ import org.jboss.hal.resources.Messages;
 import org.jboss.hal.resources.Resources;
 
 import static java.util.Comparator.comparing;
+
 import static org.jboss.hal.client.runtime.managementoperations.ManagementOperationsPresenter.ACTIVE_OPERATIONS_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.Ids.ACTIVE_OPERATION;

@@ -35,6 +35,7 @@ import static java.lang.Math.min;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
+
 import static org.jboss.hal.config.Settings.DEFAULT_PAGE_SIZE;
 import static org.jboss.hal.config.Settings.Key.PAGE_SIZE;
 

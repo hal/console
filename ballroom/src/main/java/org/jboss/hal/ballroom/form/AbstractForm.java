@@ -49,8 +49,9 @@ import elemental2.dom.HTMLLegendElement;
 import elemental2.dom.HTMLUListElement;
 import elemental2.dom.KeyboardEvent;
 
-import static elemental2.dom.DomGlobal.setTimeout;
 import static java.util.stream.Collectors.toList;
+
+import static elemental2.dom.DomGlobal.setTimeout;
 import static org.jboss.elemento.Elements.a;
 import static org.jboss.elemento.Elements.button;
 import static org.jboss.elemento.Elements.div;

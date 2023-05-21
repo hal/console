@@ -23,9 +23,10 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 import elemental2.dom.HTMLElement;
 
-import static elemental2.dom.DomGlobal.setTimeout;
 import static java.lang.Math.min;
 import static java.lang.Math.round;
+
+import static elemental2.dom.DomGlobal.setTimeout;
 import static org.jboss.elemento.Elements.div;
 import static org.jboss.elemento.Elements.span;
 import static org.jboss.hal.resources.CSS.*;

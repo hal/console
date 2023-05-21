@@ -65,6 +65,7 @@ import elemental2.dom.HTMLLIElement;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.StreamSupport.stream;
+
 import static org.jboss.elemento.Elements.a;
 import static org.jboss.elemento.Elements.b;
 import static org.jboss.elemento.Elements.button;

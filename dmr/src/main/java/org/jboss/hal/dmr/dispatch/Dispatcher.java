@@ -23,6 +23,8 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+import javax.inject.Inject;
+
 import org.jboss.hal.config.AccessControlProvider;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
@@ -61,13 +63,13 @@ import elemental2.dom.Response;
 import elemental2.promise.IThenable.ThenOnFulfilledCallbackFn;
 import elemental2.promise.Promise;
 import elemental2.promise.Promise.CatchOnRejectedCallbackFn;
-import javax.inject.Inject;
+
+import static java.util.stream.Collectors.joining;
 
 import static com.google.common.collect.Sets.difference;
 import static elemental2.core.Global.encodeURIComponent;
 import static elemental2.dom.DomGlobal.fetch;
 import static elemental2.dom.DomGlobal.navigator;
-import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.config.Settings.Key.RUN_AS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.FIND_NON_PROGRESSING_OPERATION;

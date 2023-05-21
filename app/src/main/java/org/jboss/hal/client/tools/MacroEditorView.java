@@ -42,10 +42,11 @@ import org.jboss.hal.resources.UIConstants;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLElement;
 
-import static elemental2.dom.DomGlobal.setTimeout;
-import static elemental2.dom.DomGlobal.window;
 import static java.lang.Math.max;
 import static java.util.Arrays.asList;
+
+import static elemental2.dom.DomGlobal.setTimeout;
+import static elemental2.dom.DomGlobal.window;
 import static org.jboss.elemento.Elements.bag;
 import static org.jboss.elemento.Elements.button;
 import static org.jboss.elemento.Elements.div;

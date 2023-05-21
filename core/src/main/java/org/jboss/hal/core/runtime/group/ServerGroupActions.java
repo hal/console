@@ -67,6 +67,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import elemental2.promise.Promise;
 
 import static java.util.stream.Collectors.toList;
+
 import static org.jboss.hal.core.runtime.Action.RESUME;
 import static org.jboss.hal.core.runtime.SuspendState.RUNNING;
 import static org.jboss.hal.core.runtime.SuspendState.SUSPENDED;
