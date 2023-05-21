@@ -874,6 +874,7 @@ public interface Ids {
     String UNDERTOW_STATISTICS_DISABLED = "undertow-statistics-disabled";
     String UNMANAGED_FORM = "unmanaged-form";
     String UPDATE_MANAGER = "update-manager";
+    String UPDATE_MANAGER_DOMAIN = "update-manager-domain";
     String UPDATE_MANAGER_LIST_UPDATES = "update-manager-list-updates";
     String UPDATE_MANAGER_ARTIFACT_CHANGES = "update-manager-artifact-changes";
     String UPDATE_MANAGER_CHANNEL = "update-manager-channel";

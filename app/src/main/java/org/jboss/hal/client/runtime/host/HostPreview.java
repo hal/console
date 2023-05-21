@@ -36,14 +36,27 @@ import static org.jboss.elemento.Elements.div;
 import static org.jboss.elemento.Elements.span;
 import static org.jboss.elemento.EventType.click;
 import static org.jboss.hal.client.runtime.host.HostColumn.hostTemplate;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DISCONNECTED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST_STATE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.LAST_CONNECTED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MANAGEMENT_MAJOR_VERSION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MANAGEMENT_MICRO_VERSION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MANAGEMENT_MINOR_VERSION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MANAGEMENT_VERSION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PRODUCT_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PRODUCT_VERSION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RELEASE_CODENAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RELEASE_VERSION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RELOAD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RESTART;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNNING_MODE;
 import static org.jboss.hal.meta.security.Constraint.executable;
 import static org.jboss.hal.resources.CSS.alertLink;
 import static org.jboss.hal.resources.CSS.clickable;
 import static org.jboss.hal.resources.CSS.hidden;
 import static org.jboss.hal.resources.UIConstants.CONSTRAINT;
 
-class HostPreview extends RuntimePreview<Host> {
+public class HostPreview extends RuntimePreview<Host> {
 
     private final HTMLElement reloadLink;
     private final HTMLElement restartLink;
@@ -52,8 +65,7 @@ class HostPreview extends RuntimePreview<Host> {
     private final Resources resources;
     private final LabelBuilder labelBuilder;
 
-    HostPreview(HostActions hostActions, Host host,
-            Resources resources) {
+    public HostPreview(HostActions hostActions, Host host, Resources resources) {
         super(host.getName(), host.isDomainController() ? Names.DOMAIN_CONTROLLER : Names.HOST_CONTROLLER, resources);
         this.hostActions = hostActions;
         this.resources = resources;

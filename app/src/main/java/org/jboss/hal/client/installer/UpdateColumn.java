@@ -46,7 +46,7 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.web.bindery.event.shared.EventBus;
 
 import elemental2.dom.HTMLElement;
@@ -58,6 +58,7 @@ import static java.util.stream.Collectors.toList;
 import static org.jboss.elemento.Elements.p;
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ARTIFACT_CHANGES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CLEAN;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HISTORY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HISTORY_FROM_REVISION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.LIST_UPDATES;
@@ -81,12 +82,12 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
 
     @Inject
     public UpdateColumn(final Finder finder,
-            final EventBus eventBus,
-            final Dispatcher dispatcher,
-            final StatementContext statementContext,
-            final ColumnActionFactory columnActionFactory,
-            final Resources resources,
-            @Footer final Progress progress) {
+                        final EventBus eventBus,
+                        final Dispatcher dispatcher,
+                        final StatementContext statementContext,
+                        final ColumnActionFactory columnActionFactory,
+                        final Resources resources,
+                        @Footer final Progress progress) {
 
         super(new Builder<UpdateItem>(finder, Ids.UPDATE_MANAGER_UPDATE, Names.UPDATES)
                 .onPreview(item -> new UpdatePreview(item, dispatcher, statementContext, resources))
@@ -228,7 +229,8 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
     }
 
     private void clean() {
-        MessageEvent.fire(eventBus, Message.error(SafeHtmlUtils.fromSafeConstant(Names.NYI)));
+        Operation operation = new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext), CLEAN).build();
+        dispatcher.execute(operation, result -> MessageEvent.fire(eventBus, Message.success(new SafeHtmlBuilder().appendEscaped("Update manager content successfully cleaned.").toSafeHtml())));
     }
 
     private void revert(UpdateItem updateItem) {

@@ -17,6 +17,7 @@ package org.jboss.hal.client.installer;
 
 import javax.inject.Inject;
 
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.mvp.FinderPresenter;
@@ -34,19 +35,23 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 public class UpdateManagerFinderPresenter
         extends FinderPresenter<UpdateManagerFinderPresenter.MyView, UpdateManagerFinderPresenter.MyProxy> {
 
+    private final Environment environment;
+
     @Inject
     public UpdateManagerFinderPresenter(
             EventBus eventBus,
             UpdateManagerFinderPresenter.MyView view,
             UpdateManagerFinderPresenter.MyProxy proxy,
             Finder finder,
+            Environment environment,
             Resources resources) {
         super(eventBus, view, proxy, finder, resources);
+        this.environment = environment;
     }
 
     @Override
     protected String initialColumn() {
-        return Ids.UPDATE_MANAGER;
+        return environment.isStandalone() ? Ids.UPDATE_MANAGER : Ids.UPDATE_MANAGER_DOMAIN;
     }
 
     @Override
