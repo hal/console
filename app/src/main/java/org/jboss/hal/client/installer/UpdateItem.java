@@ -21,14 +21,12 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.NamedNode;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.HASH;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.TIMESTAMP;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
 class UpdateItem extends NamedNode {
 
     enum UpdateType {
-        INSTALL, UPDATE, ROLLBACK, UNDEFINED
+        INSTALL, UPDATE, ROLLBACK, CONFIG_CHANGE, UNDEFINED
     }
 
     UpdateItem(final ModelNode node) {
@@ -42,17 +40,5 @@ class UpdateItem extends NamedNode {
     UpdateType getUpdateKind() {
         return ModelNodeHelper.asEnumValue(this, TYPE, value -> UpdateType.valueOf(value.toUpperCase()),
                 UpdateType.UNDEFINED);
-    }
-
-    boolean isInstall() {
-        return getUpdateKind() == UpdateType.INSTALL;
-    }
-
-    boolean isUpdate() {
-        return getUpdateKind() == UpdateType.UPDATE;
-    }
-
-    boolean isRollback() {
-        return getUpdateKind() == UpdateType.ROLLBACK;
     }
 }

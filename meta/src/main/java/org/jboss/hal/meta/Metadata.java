@@ -15,9 +15,8 @@
  */
 package org.jboss.hal.meta;
 
-import java.util.List;
-import java.util.function.Supplier;
-
+import com.google.common.base.Splitter;
+import com.google.gwt.resources.client.TextResource;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Property;
@@ -28,19 +27,10 @@ import org.jboss.hal.meta.security.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Splitter;
-import com.google.gwt.resources.client.TextResource;
+import java.util.List;
+import java.util.function.Supplier;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.HAL_LABEL;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NILLABLE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.OPERATIONS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUEST_PROPERTIES;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUIRED;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE_TYPE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.WRITE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.meta.AddressTemplate.ROOT;
 import static org.jboss.hal.meta.security.SecurityContext.RWX;

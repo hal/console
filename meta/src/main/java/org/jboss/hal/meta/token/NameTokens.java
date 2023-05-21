@@ -15,9 +15,9 @@
  */
 package org.jboss.hal.meta.token;
 
-import java.util.Set;
-
 import org.jboss.hal.dmr.ModelDescriptionConstants;
+
+import java.util.Set;
 
 /** HAL name tokens. */
 @SuppressWarnings("DuplicateStringLiteralInspection")
@@ -31,6 +31,7 @@ public interface NameTokens {
     String BATCH_CONFIGURATION = ModelDescriptionConstants.BATCH_JBERET + CONFIGURATION_SUFFIX;
     String BROWSE_CONTENT = "browse-content";
     String CACHE_CONTAINER = ModelDescriptionConstants.CACHE_CONTAINER;
+    String CHANNEL = ModelDescriptionConstants.CHANNEL;
     String CONFIGURATION = "configuration";
     String CONFIGURATION_CHANGES = "configuration-changes";
     String CORE_MANAGEMENT = "core-management";

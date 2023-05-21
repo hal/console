@@ -15,31 +15,26 @@
  */
 package org.jboss.hal.core.mbui.form;
 
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
+import com.google.common.collect.Iterables;
 import org.jboss.hal.ballroom.LabelBuilder;
-import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.form.FormItem;
-import org.jboss.hal.ballroom.form.FormValidation;
-import org.jboss.hal.ballroom.form.SwitchItem;
-import org.jboss.hal.ballroom.form.ValidationResult;
+import org.jboss.hal.ballroom.form.*;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Messages;
 
-import com.google.common.collect.Iterables;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import static java.util.stream.Collectors.toSet;
 
-class ExactlyOneAlternativeValidation<T extends ModelNode> implements FormValidation<T> {
+public class ExactlyOneAlternativeValidation<T extends ModelNode> implements FormValidation<T> {
 
     private final SortedSet<String> requiredAlternatives;
     private final Constants constants;
     private final Messages messages;
 
-    ExactlyOneAlternativeValidation(final Iterable<String> requiredAlternatives, final Constants constants,
+    public ExactlyOneAlternativeValidation(final Iterable<String> requiredAlternatives, final Constants constants,
             final Messages messages) {
         this.requiredAlternatives = new TreeSet<>();
         Iterables.addAll(this.requiredAlternatives, requiredAlternatives);

@@ -21,8 +21,8 @@ import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_HOST;
 
 interface AddressTemplates {
 
-    String INSTALLER_ADDRESS = "/core-service=installer";
+    String INSTALLER_ADDRESS = "/{selected.host}/core-service=installer";
 
     AddressTemplate ROOT_TEMPLATE = AddressTemplate.of(SELECTED_HOST);
-    AddressTemplate INSTALLER_TEMPLATE = AddressTemplate.of(SELECTED_HOST, INSTALLER_ADDRESS);
+    AddressTemplate INSTALLER_TEMPLATE = AddressTemplate.of(INSTALLER_ADDRESS);
 }

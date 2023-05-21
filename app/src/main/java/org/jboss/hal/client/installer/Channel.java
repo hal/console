@@ -22,12 +22,9 @@ import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.resources.Names;
 
 import static java.util.stream.Collectors.toList;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.GAV;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.MANIFEST;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.REPOSITORIES;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.URL;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 
-class Channel extends NamedNode {
+public class Channel extends NamedNode {
 
     Channel(final ModelNode node) {
         super(node);

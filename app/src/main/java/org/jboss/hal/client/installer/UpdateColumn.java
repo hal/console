@@ -125,6 +125,8 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
                         return Icons.custom(pfIcon("build"));
                     case ROLLBACK:
                         return Icons.custom(pfIcon("restart"));
+                    case CONFIG_CHANGE:
+                        return Icons.custom(fontAwesome("cogs"));
                     case UNDEFINED:
                     default:
                         return Icons.unknown();

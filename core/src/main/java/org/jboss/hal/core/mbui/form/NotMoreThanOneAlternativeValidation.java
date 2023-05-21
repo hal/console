@@ -15,10 +15,7 @@
  */
 package org.jboss.hal.core.mbui.form;
 
-import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
+import com.google.common.collect.Iterables;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.FormItem;
@@ -28,19 +25,21 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Messages;
 
-import com.google.common.collect.Iterables;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import static java.util.stream.Collectors.toList;
 
 /** Validates that only one of the alternatives is defined. */
-class NotMoreThanOneAlternativeValidation<T extends ModelNode> implements FormValidation<T> {
+public class NotMoreThanOneAlternativeValidation<T extends ModelNode> implements FormValidation<T> {
 
     private final SortedSet<String> alternatives;
     private final Constants constants;
     private final Messages messages;
     private final ModelNodeForm<T> form;
 
-    NotMoreThanOneAlternativeValidation(Iterable<String> alternatives, ModelNodeForm<T> form, Constants constants,
+    public NotMoreThanOneAlternativeValidation(Iterable<String> alternatives, ModelNodeForm<T> form, Constants constants,
             Messages messages) {
         this.alternatives = new TreeSet<>();
         Iterables.addAll(this.alternatives, alternatives);

@@ -101,6 +101,7 @@ public interface Ids {
     String CACHE_STORE_WRITE_BEHIND = "behind";
     String CACHE_STORE_WRITE_THROUGH = "write";
     String CANCEL_NON_PROGRESSING_OPERATION = "cancel-non-progressing-operation";
+    String CHANNEL_FORM = "channel-form";
     String CONFIGURATION = "configuration";
     String CONFIGURATION_CHANGES = "configuration-changes";
     String CONFIGURATION_CHANGES_EMPTY = "configuration-changes-empty";

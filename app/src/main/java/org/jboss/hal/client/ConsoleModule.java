@@ -15,23 +15,8 @@
  */
 package org.jboss.hal.client;
 
-import org.jboss.hal.client.accesscontrol.AccessControl;
-import org.jboss.hal.client.accesscontrol.AccessControlPresenter;
-import org.jboss.hal.client.accesscontrol.AccessControlSsoPresenter;
-import org.jboss.hal.client.accesscontrol.AccessControlSsoView;
-import org.jboss.hal.client.accesscontrol.AccessControlTokens;
-import org.jboss.hal.client.accesscontrol.AccessControlView;
-import org.jboss.hal.client.configuration.ConfigurationPresenter;
-import org.jboss.hal.client.configuration.ConfigurationView;
-import org.jboss.hal.client.configuration.InterfacePresenter;
-import org.jboss.hal.client.configuration.Mbui_InterfaceView;
-import org.jboss.hal.client.configuration.Mbui_PathsView;
-import org.jboss.hal.client.configuration.Mbui_SocketBindingGroupView;
-import org.jboss.hal.client.configuration.PathsPresenter;
-import org.jboss.hal.client.configuration.SocketBindingGroupPresenter;
-import org.jboss.hal.client.configuration.SystemPropertiesPresenter;
-import org.jboss.hal.client.configuration.SystemPropertiesView;
-import org.jboss.hal.client.configuration.UpdatePathAutoComplete;
+import org.jboss.hal.client.accesscontrol.*;
+import org.jboss.hal.client.configuration.*;
 import org.jboss.hal.client.configuration.subsystem.batch.BatchPresenter;
 import org.jboss.hal.client.configuration.subsystem.batch.Mbui_BatchView;
 import org.jboss.hal.client.configuration.subsystem.coremanagement.CoreManagementPresenter;
@@ -43,30 +28,10 @@ import org.jboss.hal.client.configuration.subsystem.distributableweb.Distributab
 import org.jboss.hal.client.configuration.subsystem.distributableweb.Mbui_DistributableWebView;
 import org.jboss.hal.client.configuration.subsystem.ee.EEPresenter;
 import org.jboss.hal.client.configuration.subsystem.ee.EEView;
-import org.jboss.hal.client.configuration.subsystem.elytron.ElytronSubsystemPresenter;
-import org.jboss.hal.client.configuration.subsystem.elytron.FactoriesPresenter;
-import org.jboss.hal.client.configuration.subsystem.elytron.FactoriesView;
-import org.jboss.hal.client.configuration.subsystem.elytron.MapperDecoderPresenter;
-import org.jboss.hal.client.configuration.subsystem.elytron.Mbui_ElytronSubsystemView;
-import org.jboss.hal.client.configuration.subsystem.elytron.Mbui_MapperDecoderView;
-import org.jboss.hal.client.configuration.subsystem.elytron.OtherSettingsPresenter;
-import org.jboss.hal.client.configuration.subsystem.elytron.OtherSettingsView;
+import org.jboss.hal.client.configuration.subsystem.elytron.*;
 import org.jboss.hal.client.configuration.subsystem.iiop.IiopPresenter;
 import org.jboss.hal.client.configuration.subsystem.iiop.Mbui_IiopView;
-import org.jboss.hal.client.configuration.subsystem.infinispan.CacheContainerPresenter;
-import org.jboss.hal.client.configuration.subsystem.infinispan.CacheContainerView;
-import org.jboss.hal.client.configuration.subsystem.infinispan.DistributedCachePresenter;
-import org.jboss.hal.client.configuration.subsystem.infinispan.DistributedCacheView;
-import org.jboss.hal.client.configuration.subsystem.infinispan.InvalidationCachePresenter;
-import org.jboss.hal.client.configuration.subsystem.infinispan.InvalidationCacheView;
-import org.jboss.hal.client.configuration.subsystem.infinispan.LocalCachePresenter;
-import org.jboss.hal.client.configuration.subsystem.infinispan.LocalCacheView;
-import org.jboss.hal.client.configuration.subsystem.infinispan.RemoteCacheContainerPresenter;
-import org.jboss.hal.client.configuration.subsystem.infinispan.RemoteCacheContainerView;
-import org.jboss.hal.client.configuration.subsystem.infinispan.ReplicatedCachePresenter;
-import org.jboss.hal.client.configuration.subsystem.infinispan.ReplicatedCacheView;
-import org.jboss.hal.client.configuration.subsystem.infinispan.ScatteredCachePresenter;
-import org.jboss.hal.client.configuration.subsystem.infinispan.ScatteredCacheView;
+import org.jboss.hal.client.configuration.subsystem.infinispan.*;
 import org.jboss.hal.client.configuration.subsystem.io.IOPresenter;
 import org.jboss.hal.client.configuration.subsystem.io.Mbui_IOView;
 import org.jboss.hal.client.configuration.subsystem.jca.JcaPresenter;
@@ -81,20 +46,7 @@ import org.jboss.hal.client.configuration.subsystem.logging.Mbui_LoggingProfileV
 import org.jboss.hal.client.configuration.subsystem.logging.Mbui_LoggingView;
 import org.jboss.hal.client.configuration.subsystem.mail.MailSessionPresenter;
 import org.jboss.hal.client.configuration.subsystem.mail.MailSessionView;
-import org.jboss.hal.client.configuration.subsystem.messaging.ClusteringPresenter;
-import org.jboss.hal.client.configuration.subsystem.messaging.ConnectionPresenter;
-import org.jboss.hal.client.configuration.subsystem.messaging.DestinationPresenter;
-import org.jboss.hal.client.configuration.subsystem.messaging.HaPolicyPresenter;
-import org.jboss.hal.client.configuration.subsystem.messaging.HaPolicyView;
-import org.jboss.hal.client.configuration.subsystem.messaging.JmsBridgePresenter;
-import org.jboss.hal.client.configuration.subsystem.messaging.JmsBridgeView;
-import org.jboss.hal.client.configuration.subsystem.messaging.Mbui_ClusteringView;
-import org.jboss.hal.client.configuration.subsystem.messaging.Mbui_ConnectionView;
-import org.jboss.hal.client.configuration.subsystem.messaging.Mbui_DestinationView;
-import org.jboss.hal.client.configuration.subsystem.messaging.Mbui_MessagingSubsystemView;
-import org.jboss.hal.client.configuration.subsystem.messaging.Mbui_RemoteActiveMQView;
-import org.jboss.hal.client.configuration.subsystem.messaging.MessagingSubsystemPresenter;
-import org.jboss.hal.client.configuration.subsystem.messaging.RemoteActiveMQPresenter;
+import org.jboss.hal.client.configuration.subsystem.messaging.*;
 import org.jboss.hal.client.configuration.subsystem.microprofile.Mbui_MicroProfileConfigView;
 import org.jboss.hal.client.configuration.subsystem.microprofile.MicroProfileConfigPresenter;
 import org.jboss.hal.client.configuration.subsystem.microprofile.MicroProfileMetricsPresenter;
@@ -113,30 +65,14 @@ import org.jboss.hal.client.configuration.subsystem.security.SecurityDomainPrese
 import org.jboss.hal.client.configuration.subsystem.security.SecurityPresenter;
 import org.jboss.hal.client.configuration.subsystem.securitymanager.SecurityManagerPresenter;
 import org.jboss.hal.client.configuration.subsystem.securitymanager.SecurityManagerView;
-import org.jboss.hal.client.configuration.subsystem.undertow.ApplicationSecurityDomainPresenter;
-import org.jboss.hal.client.configuration.subsystem.undertow.ApplicationSecurityDomainView;
-import org.jboss.hal.client.configuration.subsystem.undertow.BufferCachePresenter;
-import org.jboss.hal.client.configuration.subsystem.undertow.ByteBufferPoolPresenter;
-import org.jboss.hal.client.configuration.subsystem.undertow.FilterPresenter;
-import org.jboss.hal.client.configuration.subsystem.undertow.HandlerPresenter;
-import org.jboss.hal.client.configuration.subsystem.undertow.Mbui_BufferCacheView;
-import org.jboss.hal.client.configuration.subsystem.undertow.Mbui_ByteBufferPoolView;
-import org.jboss.hal.client.configuration.subsystem.undertow.Mbui_FilterView;
-import org.jboss.hal.client.configuration.subsystem.undertow.Mbui_HandlerView;
-import org.jboss.hal.client.configuration.subsystem.undertow.Mbui_UndertowSubsystemView;
-import org.jboss.hal.client.configuration.subsystem.undertow.ServletContainerPresenter;
-import org.jboss.hal.client.configuration.subsystem.undertow.ServletContainerView;
-import org.jboss.hal.client.configuration.subsystem.undertow.UndertowSubsystemPresenter;
+import org.jboss.hal.client.configuration.subsystem.undertow.*;
 import org.jboss.hal.client.configuration.subsystem.webservice.WebservicePresenter;
 import org.jboss.hal.client.configuration.subsystem.webservice.WebserviceView;
-import org.jboss.hal.client.deployment.BrowseContentPresenter;
-import org.jboss.hal.client.deployment.BrowseContentView;
-import org.jboss.hal.client.deployment.ServerGroupDeploymentPresenter;
-import org.jboss.hal.client.deployment.ServerGroupDeploymentView;
-import org.jboss.hal.client.deployment.StandaloneDeploymentPresenter;
-import org.jboss.hal.client.deployment.StandaloneDeploymentView;
+import org.jboss.hal.client.deployment.*;
 import org.jboss.hal.client.homepage.HomepagePresenter;
 import org.jboss.hal.client.homepage.HomepageView;
+import org.jboss.hal.client.installer.ChannelPresenter;
+import org.jboss.hal.client.installer.ChannelView;
 import org.jboss.hal.client.installer.UpdateManagerFinderPresenter;
 import org.jboss.hal.client.installer.UpdateManagerFinderView;
 import org.jboss.hal.client.rhcp.RhcpPresenter;
@@ -154,12 +90,7 @@ import org.jboss.hal.client.runtime.host.HostPresenter;
 import org.jboss.hal.client.runtime.host.Mbui_HostView;
 import org.jboss.hal.client.runtime.managementoperations.ManagementOperationsPresenter;
 import org.jboss.hal.client.runtime.managementoperations.ManagementOperationsView;
-import org.jboss.hal.client.runtime.server.ServerBootErrorsPresenter;
-import org.jboss.hal.client.runtime.server.ServerBootErrorsView;
-import org.jboss.hal.client.runtime.server.ServerRuntimePresenter;
-import org.jboss.hal.client.runtime.server.ServerRuntimeView;
-import org.jboss.hal.client.runtime.server.StandaloneServerPresenter;
-import org.jboss.hal.client.runtime.server.StandaloneServerView;
+import org.jboss.hal.client.runtime.server.*;
 import org.jboss.hal.client.runtime.subsystem.batch.JobPresenter;
 import org.jboss.hal.client.runtime.subsystem.batch.JobView;
 import org.jboss.hal.client.runtime.subsystem.elytron.SSLPresenter;
@@ -276,6 +207,11 @@ public class ConsoleModule extends AbstractPresenterModule {
                 CacheContainerPresenter.MyView.class,
                 CacheContainerView.class,
                 CacheContainerPresenter.MyProxy.class);
+
+        bindPresenter(ChannelPresenter.class,
+                ChannelPresenter.MyView.class,
+                ChannelView.class,
+                ChannelPresenter.MyProxy.class);
 
         bindPresenter(ClusteringPresenter.class,
                 ClusteringPresenter.MyView.class,
