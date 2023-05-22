@@ -15,20 +15,12 @@
  */
 package org.jboss.hal.client.installer;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-
+import com.google.web.bindery.event.shared.EventBus;
+import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.core.finder.ColumnAction;
-import org.jboss.hal.core.finder.ColumnActionFactory;
-import org.jboss.hal.core.finder.Finder;
-import org.jboss.hal.core.finder.FinderColumn;
-import org.jboss.hal.core.finder.ItemAction;
-import org.jboss.hal.core.finder.ItemActionFactory;
-import org.jboss.hal.core.finder.ItemDisplay;
+import org.jboss.hal.core.finder.*;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
@@ -47,24 +39,14 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.web.bindery.event.shared.EventBus;
-
-import elemental2.dom.HTMLElement;
-import elemental2.promise.Promise;
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 
 import static java.util.stream.Collectors.toList;
-
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_ADDRESS;
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.CHANNELS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.CHANNEL_REMOVE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.LIST_ADD_OPERATION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
 @Column(Ids.UPDATE_MANAGER_CHANNEL)
@@ -79,13 +61,13 @@ public class ChannelColumn extends FinderColumn<Channel> {
 
     @Inject
     public ChannelColumn(final Finder finder,
-            final EventBus eventBus,
-            final ColumnActionFactory columnActionFactory,
-            final ItemActionFactory itemActionFactory,
-            final StatementContext statementContext,
-            final MetadataRegistry metadataRegistry,
-            final Dispatcher dispatcher,
-            final Resources resources) {
+                         final EventBus eventBus,
+                         final ColumnActionFactory columnActionFactory,
+                         final ItemActionFactory itemActionFactory,
+                         final StatementContext statementContext,
+                         final MetadataRegistry metadataRegistry,
+                         final Dispatcher dispatcher,
+                         final Resources resources) {
         super(new Builder<Channel>(finder, Ids.UPDATE_MANAGER_CHANNEL, Names.CHANNELS)
                 .onPreview(ChannelPreview::new)
                 .showCount()
@@ -141,7 +123,7 @@ public class ChannelColumn extends FinderColumn<Channel> {
                 List<ItemAction<Channel>> actions = new ArrayList<>();
                 actions.add(itemActionFactory.view(NameTokens.CHANNEL, NAME, item.getName()));
                 actions.add(new ItemAction.Builder<Channel>()
-                        .title("Unsubscribe")
+                        .title(resources.constants().unsubscribe())
                         .handler(itm -> remove(itm))
                         .constraint(Constraint.executable(INSTALLER_TEMPLATE, WRITE_ATTRIBUTE_OPERATION))
                         .build());
@@ -159,7 +141,7 @@ public class ChannelColumn extends FinderColumn<Channel> {
 
     private void add() {
         Form<ModelNode> channelForm = ChannelFormFactory.channelForm(metadataRegistry, resources);
-        AddResourceDialog dialog = new AddResourceDialog("Add channel", channelForm, (name, modelNode) -> {
+        AddResourceDialog dialog = new AddResourceDialog(resources.constants().addChannel(), channelForm, (name, modelNode) -> {
             Operation operation = new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext), LIST_ADD_OPERATION)
                     .param(NAME, CHANNELS)
                     .param(VALUE, modelNode)
@@ -174,20 +156,16 @@ public class ChannelColumn extends FinderColumn<Channel> {
     }
 
     private void remove(Channel channel) {
-        DialogFactory.showConfirmation("Unsubscribe channel", new SafeHtmlBuilder()
-                .appendHtmlConstant("Are you sure you want to unsubscribe from channel <b>" + channel.getName() + "</b>?")
-                .toSafeHtml(), () -> {
-                    Operation operation = new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext), CHANNEL_REMOVE)
-                            .param(NAME, channel.getName())
-                            .build();
-                    dispatcher.execute(operation, result -> {
-                        MessageEvent
-                                .fire(eventBus,
-                                        Message.success(new SafeHtmlBuilder().appendHtmlConstant(
-                                                "Successfully unsubscribed from channel <b>" + channel.getName() + "</b>.")
-                                                .toSafeHtml()));
-                        refresh(RefreshMode.CLEAR_SELECTION);
-                    });
-                });
+        DialogFactory.showConfirmation(resources.constants().unsubscribeChannel(), resources.messages().unsubscribeChannelQuestion(channel.getName()), () -> {
+            Operation operation = new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext), CHANNEL_REMOVE)
+                    .param(NAME, channel.getName())
+                    .build();
+            dispatcher.execute(operation, result -> {
+                MessageEvent
+                        .fire(eventBus,
+                                Message.success(resources.messages().unsubscribeChannelSuccess(channel.getName())));
+                refresh(RefreshMode.CLEAR_SELECTION);
+            });
+        });
     }
 }

@@ -15,8 +15,6 @@
  */
 package org.jboss.hal.client.installer;
 
-import javax.inject.Inject;
-
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
@@ -25,6 +23,8 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
+
+import javax.inject.Inject;
 
 import static java.util.Arrays.asList;
 
@@ -37,15 +37,13 @@ public class UpdateManagerColumn extends StaticItemColumn {
         super(finder, Ids.UPDATE_MANAGER, Names.UPDATE_MANAGER, asList(
                 new StaticItem.Builder(Names.UPDATES)
                         .nextColumn(Ids.UPDATE_MANAGER_UPDATE)
-                        .onPreview(
-                                new PreviewContent<>("Updating your installation",
-                                        resources.previews().updateManagerUpdates()))
+                        .onPreview(new PreviewContent<>(resources.constants().updateManagerHeading(),
+                                resources.previews().updateManagerUpdates()))
                         .build(),
                 new StaticItem.Builder(Names.CHANNELS)
                         .nextColumn(Ids.UPDATE_MANAGER_CHANNEL)
-                        .onPreview(
-                                new PreviewContent<>("Channel details",
-                                        resources.previews().updateManagerChannels()))
+                        .onPreview(new PreviewContent<>(resources.constants().channelDetails(),
+                                resources.previews().updateManagerChannels()))
                         .build()));
     }
 }

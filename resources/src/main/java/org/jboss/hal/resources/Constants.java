@@ -114,7 +114,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String current();
     String currentPage();
     String custom();
-    String customPatches();
     String data();
     String dataTablesDecimal();
     String dataTablesEmptyTable();
@@ -612,7 +611,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String unsupportedFileType();
     String updateAccount();
     String offlineUsingArchive();
-    String onlineUpdates();
     String updateServer();
     String upload();
     String uploadContent();
@@ -633,4 +631,29 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String viewInEditor();
     String xaProperties();
     String yes();
+
+    String unsubscribe();
+    String unsubscribeChannel();
+    String addChannel();
+    String channelDescription();
+    String listComponents();
+    String revertUpdatePreviousState();
+    String prepareServerCandidate();
+    String prepareServerCandidateSuccess();
+    String preparingServerCandidate();
+    String applyUpdates();
+    String applyUpdatesSuccess();
+    String applyingUpdates();
+    String onlineUpdates();
+    String offlineUsingArchives();
+    String customPatches();
+    String installationUpdateMethods();
+    String noUpdates();
+    String updateManagerHeading();
+    String channelDetails();
+    String updateExistingInstallation();
+    String uploadArchives();
+    String uploadingArchives();
+    String uploadCustomPatches();
+    String uploadingCustomPatches();
 }

@@ -653,4 +653,26 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String uptime(String uptime);
     String used(double value);
     String view(String type);
+
+    SafeHtml unsubscribeChannelQuestion(String channel);
+    SafeHtml unsubscribeChannelSuccess(String channel);
+    SafeHtml serverCandidateCleanupSuccess();
+    SafeHtml serverCandidateCleanupError();
+    SafeHtml revertComponentsList();
+    SafeHtml revertComponentsDescription(String step1, String step2, String step3);
+    SafeHtml prepareServerCandidatePending();
+    SafeHtml prepareServerCandidateSuccessDescription();
+    SafeHtml prepareServerCandidateError();
+    SafeHtml applyUpdatesPending();
+    SafeHtml revertUpdatesSuccess();
+    SafeHtml revertUpdatesError();
+    SafeHtml noUpdatesFound();
+    SafeHtml uploadArchivesPending();
+    SafeHtml uploadArchivesError();
+    SafeHtml availableComponentsList();
+    SafeHtml updateOfflineDescription(String step1, String step2, String step3);
+    SafeHtml applyUpdatesSuccess();
+    SafeHtml applyUpdatesError();
+    SafeHtml uploadCustomPatchesPending();
+    SafeHtml uploadCustomPatchesError();
 }

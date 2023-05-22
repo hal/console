@@ -24,11 +24,12 @@ import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Resources;
 
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.web.bindery.event.shared.EventBus;
 
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE;
-import static org.jboss.hal.client.installer.UpdateOnlineState.*;
+import static org.jboss.hal.client.installer.UpdateOnlineState.APPLY_UPDATE;
+import static org.jboss.hal.client.installer.UpdateOnlineState.LIST_UPDATES;
+import static org.jboss.hal.client.installer.UpdateOnlineState.PREPARE_SERVER;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PREPARE_UPDATES;
 
@@ -51,49 +52,32 @@ class UpdateOnlineWizard {
 
     void show(UpdateColumn column) {
         Wizard.Builder<UpdateManagerContext, UpdateOnlineState> builder = new Wizard.Builder<>(
-                "Update existing installation", context);
+                resources.constants().updateExistingInstallation(), context);
 
         builder.stayOpenAfterFinish()
                 .addStep(LIST_UPDATES, new ListUpdatesStep<UpdateOnlineState>(
-                        "List components",
-                        new SafeHtmlBuilder()
-                                .appendEscaped(
-                                        "The following components are available for the existing JBoss EAP installation:")
-                                .toSafeHtml(),
-                        new SafeHtmlBuilder().appendHtmlConstant(
-                                "<p>The wizard guides you through the process of updating your existing installation.</p>" +
-                                        "<h4>List components</h4>" +
-                                        "<p>This step lists all the components that will be updated.</p>" +
-                                        "<h4>Prepare server candidate</h4>" +
-                                        "<p>This step provisions a server candidate with the latest available patches. If you want to discard this server candidate or do not want to proceed, you can cancel the update after this step is complete.</p>"
-                                        +
-                                        "<h4>Apply updates</h4>" +
-                                        "<p>This step will restart the base server and apply the updates from the server candidate to the base server.</p>"
-                                        +
-                                        "<p>If a step times out it does not necessarily mean that the update has failed. In such cases, check the log files to see if the update was successful.</p>")
-                                .toSafeHtml()))
+                        resources.constants().listUpdates(),
+                        resources.messages().availableComponentsList(),
+                        resources.messages().updateOfflineDescription(
+                                resources.constants().listComponents(),
+                                resources.constants().prepareServerCandidate(),
+                                resources.constants().applyUpdates())))
                 .addStep(PREPARE_SERVER, new PrepareStep<UpdateOnlineState>(
-                        "Prepare server candidate",
-                        "Preparing server candidate",
-                        new SafeHtmlBuilder().appendEscaped(
-                                "The server candidate is being prepared with the updates. The time taken for this operation depends on the speed of the internet connection.")
-                                .toSafeHtml(),
-                        "Server candidate prepared",
-                        new SafeHtmlBuilder().appendEscaped(
-                                "The server candidate with the updates has been successfully provisioned. Click next to apply the updates to the base server.")
-                                .toSafeHtml(),
-                        new SafeHtmlBuilder().appendEscaped("Unable to prepare the server candidate.").toSafeHtml(),
+                        resources.constants().prepareServerCandidate(),
+                        resources.constants().preparingServerCandidate(),
+                        resources.messages().prepareServerCandidatePending(),
+                        resources.constants().prepareServerCandidateSuccess(),
+                        resources.messages().prepareServerCandidateSuccessDescription(),
+                        resources.messages().prepareServerCandidateError(),
                         (__) -> new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext), PREPARE_UPDATES).build(),
                         eventBus, dispatcher, statementContext, resources))
                 .addStep(APPLY_UPDATE, new ApplyStep<UpdateOnlineState>(
-                        "Apply updates",
-                        "Applying updates",
-                        new SafeHtmlBuilder().appendEscaped(
-                                "The updates from the prepared candidate server are applied to the base server. To apply the updates, the base server is restarted.")
-                                .toSafeHtml(),
-                        "Updates applied",
-                        new SafeHtmlBuilder().appendEscaped("The updates have been successfully applied.").toSafeHtml(),
-                        new SafeHtmlBuilder().appendEscaped("Unable to apply the updates.").toSafeHtml(),
+                        resources.constants().applyUpdates(),
+                        resources.constants().applyingUpdates(),
+                        resources.messages().applyUpdatesPending(),
+                        resources.constants().applyUpdatesSuccess(),
+                        resources.messages().applyUpdatesSuccess(),
+                        resources.messages().applyUpdatesError(),
                         dispatcher,
                         statementContext,
                         resources));

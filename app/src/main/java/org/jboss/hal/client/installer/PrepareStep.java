@@ -32,14 +32,12 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.web.bindery.event.shared.EventBus;
 
 import elemental2.dom.HTMLElement;
 import elemental2.promise.Promise;
 
 import static java.util.Collections.singletonList;
-
 import static org.jboss.elemento.Elements.div;
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CLEAN;
@@ -119,12 +117,10 @@ class PrepareStep<S extends Enum<S>> extends WizardStep<UpdateManagerContext, S>
             dispatcher.execute(operation,
                     modelNode -> {
                         callback.proceed();
-                        MessageEvent.fire(eventBus, Message.info(
-                                new SafeHtmlBuilder().appendEscaped("Server candidate successfully cleaned up.").toSafeHtml()));
+                        MessageEvent.fire(eventBus, Message.info(resources.messages().serverCandidateCleanupSuccess()));
                     }, (op, error) -> {
                         callback.proceed();
-                        MessageEvent.fire(eventBus, Message.error(
-                                new SafeHtmlBuilder().appendEscaped("Unable to clean up server candidate.").toSafeHtml()));
+                        MessageEvent.fire(eventBus, Message.error(resources.messages().serverCandidateCleanupError()));
                     });
         } else {
             callback.proceed();

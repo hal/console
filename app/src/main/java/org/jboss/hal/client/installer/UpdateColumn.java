@@ -19,8 +19,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.core.finder.ColumnAction;
@@ -46,15 +44,14 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.web.bindery.event.shared.EventBus;
 
 import elemental2.dom.HTMLElement;
 import elemental2.promise.Promise;
+import javax.inject.Inject;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
-
 import static org.jboss.elemento.Elements.p;
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ARTIFACT_CHANGES;
@@ -82,12 +79,12 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
 
     @Inject
     public UpdateColumn(final Finder finder,
-                        final EventBus eventBus,
-                        final Dispatcher dispatcher,
-                        final StatementContext statementContext,
-                        final ColumnActionFactory columnActionFactory,
-                        final Resources resources,
-                        @Footer final Progress progress) {
+            final EventBus eventBus,
+            final Dispatcher dispatcher,
+            final StatementContext statementContext,
+            final ColumnActionFactory columnActionFactory,
+            final Resources resources,
+            @Footer final Progress progress) {
 
         super(new Builder<UpdateItem>(finder, Ids.UPDATE_MANAGER_UPDATE, Names.UPDATES)
                 .onPreview(item -> new UpdatePreview(item, dispatcher, statementContext, resources))
@@ -170,21 +167,22 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
 
         List<ColumnAction<UpdateItem>> addActions = new ArrayList<>();
         addActions.add(new ColumnAction.Builder<UpdateItem>(Ids.UPDATE_MANAGER_UPDATE_ONLINE)
-                .title("Online updates")
+                .title(resources.constants().onlineUpdates())
                 .handler(column -> updateOnline())
                 .constraint(Constraint.executable(INSTALLER_TEMPLATE, PREPARE_UPDATES))
                 .build());
         addActions.add(new ColumnAction.Builder<UpdateItem>(Ids.UPDATE_MANAGER_UPDATE_OFFLINE)
-                .title("Offline using archives")
+                .title(resources.constants().offlineUsingArchives())
                 .handler(column -> updateOffline())
                 .constraint(Constraint.executable(INSTALLER_TEMPLATE, PREPARE_UPDATES))
                 .build());
         addActions.add(new ColumnAction.Builder<UpdateItem>(Ids.UPDATE_MANAGER_UPDATE_PATCH)
-                .title("Custom patches")
+                .title(resources.constants().customPatches())
                 .handler(column -> updatePatch())
                 .constraint(Constraint.executable(INSTALLER_TEMPLATE, PREPARE_UPDATES))
                 .build());
-        addColumnActions(Ids.UPDATE_MANAGER_UPDATE_ADD_ACTIONS, fontAwesome("download"), "Installation update methods",
+        addColumnActions(Ids.UPDATE_MANAGER_UPDATE_ADD_ACTIONS, fontAwesome("download"),
+                resources.constants().installationUpdateMethods(),
                 addActions);
         addColumnAction(columnActionFactory.refresh(Ids.UPDATE_MANAGER_UPDATE_REFRESH));
         addColumnAction(new ColumnAction.Builder<UpdateItem>(Ids.UPDATE_MANAGER_CLEAN)
@@ -201,8 +199,8 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
                 result -> {
                     List<ModelNode> updates = result.get(UPDATES).asList();
                     if (updates.isEmpty()) {
-                        Dialog dialog = new Dialog.Builder("No updates")
-                                .add(p().innerHtml(resources.messages().noUpdates()).element())
+                        Dialog dialog = new Dialog.Builder(resources.constants().noUpdates())
+                                .add(p().innerHtml(resources.messages().noUpdatesFound()).element())
                                 .closeOnEsc(true)
                                 .closeOnly()
                                 .size(Dialog.Size.SMALL)
@@ -230,7 +228,8 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
 
     private void clean() {
         Operation operation = new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext), CLEAN).build();
-        dispatcher.execute(operation, result -> MessageEvent.fire(eventBus, Message.success(new SafeHtmlBuilder().appendEscaped("Update manager content successfully cleaned.").toSafeHtml())));
+        dispatcher.execute(operation,
+                result -> MessageEvent.fire(eventBus, Message.success(resources.messages().serverCandidateCleanupSuccess())));
     }
 
     private void revert(UpdateItem updateItem) {

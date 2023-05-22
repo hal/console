@@ -15,14 +15,14 @@
  */
 package org.jboss.hal.client.installer;
 
-import javax.inject.Inject;
-
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+
+import javax.inject.Inject;
 
 import static org.jboss.elemento.Elements.*;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
@@ -44,9 +44,7 @@ public class ChannelView extends HalViewImpl implements ChannelPresenter.MyView 
         initElement(row()
                 .add(column()
                         .add(h(1).textContent(Names.CHANNEL).element())
-                        .add(section()
-                                .add(p().textContent(
-                                        "A channel is a YAML file that specifies the versions of the JBoss EAP server artifacts.")))
+                        .add(section().add(p().textContent(resources.constants().channelDescription())))
                         .add(section().add(channelForm))
                         .element()));
     }

@@ -18,9 +18,6 @@ package org.jboss.hal.client.installer;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
-
 import org.jboss.hal.client.runtime.host.HostDisplay;
 import org.jboss.hal.client.runtime.host.HostPreview;
 import org.jboss.hal.config.Environment;
@@ -51,9 +48,10 @@ import org.jboss.hal.spi.Footer;
 import com.google.web.bindery.event.shared.EventBus;
 
 import elemental2.promise.Promise;
+import javax.inject.Inject;
+import javax.inject.Provider;
 
 import static java.util.stream.Collectors.toList;
-
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CORE_SERVICE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INSTALLER;
@@ -75,13 +73,13 @@ public class UpdateManagerHostColumn extends FinderColumn<Host> implements HostA
 
     @Inject
     public UpdateManagerHostColumn(Finder finder,
-                                   Dispatcher dispatcher,
-                                   Environment environment,
-                                   EventBus eventBus,
-                                   @Footer Provider<Progress> progress,
-                                   ColumnActionFactory columnActionFactory,
-                                   HostActions hostActions,
-                                   Resources resources) {
+            Dispatcher dispatcher,
+            Environment environment,
+            EventBus eventBus,
+            @Footer Provider<Progress> progress,
+            ColumnActionFactory columnActionFactory,
+            HostActions hostActions,
+            Resources resources) {
 
         super(new FinderColumn.Builder<Host>(finder, Ids.UPDATE_MANAGER_DOMAIN, Names.HOSTS)
                 .columnAction(columnActionFactory.refresh(Ids.HOST_REFRESH))
