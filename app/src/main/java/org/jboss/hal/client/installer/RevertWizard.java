@@ -64,12 +64,6 @@ class RevertWizard {
                                 resources.constants().prepareServerCandidate(),
                                 resources.constants().applyUpdates())))
                 .addStep(PREPARE_SERVER, new PrepareStep<RevertState>(
-                        resources.constants().prepareServerCandidate(),
-                        resources.constants().preparingServerCandidate(),
-                        resources.messages().prepareServerCandidatePending(),
-                        resources.constants().prepareServerCandidateSuccess(),
-                        resources.messages().prepareServerCandidateSuccessDescription(),
-                        resources.messages().prepareServerCandidateError(),
                         context -> new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext), PREPARE_REVERT)
                                 .param(REVISION, context.updateItem.getName())
                                 .build(),

@@ -72,12 +72,6 @@ class UpdateOfflineWizard {
                                 resources.constants().prepareServerCandidate(),
                                 resources.constants().applyUpdates())))
                 .addStep(PREPARE_SERVER, new PrepareStep<UpdateOfflineState>(
-                        resources.constants().prepareServerCandidate(),
-                        resources.constants().preparingServerCandidate(),
-                        resources.messages().prepareServerCandidatePending(),
-                        resources.constants().prepareServerCandidateSuccess(),
-                        resources.messages().prepareServerCandidateSuccessDescription(),
-                        resources.messages().prepareServerCandidateError(),
                         updateManagerContext -> new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext),
                                 PREPARE_UPDATES)
                                 .param(WORK_DIR, updateManagerContext.workDir)

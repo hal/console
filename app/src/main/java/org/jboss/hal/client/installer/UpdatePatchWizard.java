@@ -72,12 +72,6 @@ class UpdatePatchWizard {
                                 resources.constants().prepareServerCandidate(),
                                 resources.constants().applyUpdates())))
                 .addStep(PREPARE_SERVER, new PrepareStep<UpdatePatchState>(
-                        resources.constants().prepareServerCandidate(),
-                        resources.constants().preparingServerCandidate(),
-                        resources.messages().prepareServerCandidatePending(),
-                        resources.constants().prepareServerCandidateSuccess(),
-                        resources.messages().prepareServerCandidateSuccessDescription(),
-                        resources.messages().prepareServerCandidateError(),
                         (__) -> new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext), PREPARE_UPDATES).build(),
                         eventBus, dispatcher, statementContext, resources))
                 .addStep(APPLY_UPDATE, new ApplyStep<UpdatePatchState>(
