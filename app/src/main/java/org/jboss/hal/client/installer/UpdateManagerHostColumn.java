@@ -18,6 +18,9 @@ package org.jboss.hal.client.installer;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
+
 import org.jboss.hal.client.runtime.host.HostDisplay;
 import org.jboss.hal.client.runtime.host.HostPreview;
 import org.jboss.hal.config.Environment;
@@ -48,10 +51,9 @@ import org.jboss.hal.spi.Footer;
 import com.google.web.bindery.event.shared.EventBus;
 
 import elemental2.promise.Promise;
-import javax.inject.Inject;
-import javax.inject.Provider;
 
 import static java.util.stream.Collectors.toList;
+
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CORE_SERVICE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INSTALLER;

@@ -15,14 +15,14 @@
  */
 package org.jboss.hal.client.installer;
 
+import javax.inject.Inject;
+
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
-
-import javax.inject.Inject;
 
 import static org.jboss.elemento.Elements.*;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;

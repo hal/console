@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.core.finder.ColumnAction;
@@ -48,10 +50,10 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import elemental2.dom.HTMLElement;
 import elemental2.promise.Promise;
-import javax.inject.Inject;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
+
 import static org.jboss.elemento.Elements.p;
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ARTIFACT_CHANGES;
@@ -204,10 +206,8 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
                                 .closeOnEsc(true)
                                 .closeOnly()
                                 .size(Dialog.Size.SMALL)
-                                // .primary(resources.constants().ok(), () -> true)
                                 .build();
                         dialog.show();
-                        // MessageEvent.fire(eventBus, Message.info(resources.messages().noUpdates()));
                     } else {
                         new UpdateOnlineWizard(eventBus, dispatcher, statementContext, resources, updates).show(this);
                     }
@@ -241,7 +241,13 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
                 result -> {
                     List<ModelNode> updates = result.get(ARTIFACT_CHANGES).asList();
                     if (updates.isEmpty()) {
-                        MessageEvent.fire(eventBus, Message.warning(resources.messages().noUpdates()));
+                        Dialog dialog = new Dialog.Builder(resources.constants().noUpdates())
+                                .add(p().innerHtml(resources.messages().noUpdatesFound()).element())
+                                .closeOnEsc(true)
+                                .closeOnly()
+                                .size(Dialog.Size.SMALL)
+                                .build();
+                        dialog.show();
                     } else {
                         new RevertWizard(eventBus, dispatcher, statementContext, resources, updateItem, updates).show(this);
                     }
