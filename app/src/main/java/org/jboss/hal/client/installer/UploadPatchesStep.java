@@ -43,7 +43,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.UPDATES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.WORK_DIR;
 import static org.jboss.hal.flow.Flow.sequential;
 
-class UploadArchivesStep<S extends Enum<S>> extends WizardStep<UpdateManagerContext, S>
+class UploadPatchesStep<S extends Enum<S>> extends WizardStep<UpdateManagerContext, S>
         implements AsyncStep<UpdateManagerContext> {
 
     private final Dispatcher dispatcher;
@@ -52,10 +52,10 @@ class UploadArchivesStep<S extends Enum<S>> extends WizardStep<UpdateManagerCont
     private final HTMLElement root;
     private final UploadElement uploadElement;
 
-    UploadArchivesStep(final Dispatcher dispatcher,
+    UploadPatchesStep(final Dispatcher dispatcher,
             final StatementContext statementContext,
             final Resources resources) {
-        super(resources.constants().uploadArchives());
+        super(resources.constants().uploadCustomPatches());
         this.statementContext = statementContext;
         this.dispatcher = dispatcher;
         this.resources = resources;
@@ -77,7 +77,8 @@ class UploadArchivesStep<S extends Enum<S>> extends WizardStep<UpdateManagerCont
 
     @Override
     public void onNext(final UpdateManagerContext context, final WorkflowCallback callback) {
-        wizard().showProgress(resources.constants().uploadingArchives(), resources.messages().uploadArchivesPending());
+        wizard().showProgress(resources.constants().uploadingCustomPatches(),
+                resources.messages().uploadCustomPatchesPending());
         ModelNode mavenRepoFiles = new ModelNode();
         for (int i = 0; i < uploadElement.getFiles().length; i++) {
             mavenRepoFiles.add(i);
@@ -104,7 +105,7 @@ class UploadArchivesStep<S extends Enum<S>> extends WizardStep<UpdateManagerCont
                     if (FlowContext.timeout(failure)) {
                         wizard().showError(resources.constants().timeout(), resources.messages().operationTimeout(), false);
                     } else {
-                        wizard().showError(resources.constants().error(), resources.messages().uploadArchivesError(),
+                        wizard().showError(resources.constants().error(), resources.messages().uploadCustomPatchesError(),
                                 failure.toString(), false);
                     }
                     return Promise.reject(failure);

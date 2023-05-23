@@ -58,7 +58,7 @@ class UpdateOnlineWizard {
                 .addStep(LIST_UPDATES, new ListUpdatesStep<UpdateOnlineState>(
                         resources.constants().listUpdates(),
                         resources.messages().availableComponentsList(),
-                        resources.messages().updateOfflineDescription(
+                        resources.messages().updateInstallationDescription(
                                 resources.constants().listComponents(),
                                 resources.constants().prepareServerCandidate(),
                                 resources.constants().applyUpdates())))

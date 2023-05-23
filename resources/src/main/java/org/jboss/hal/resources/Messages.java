@@ -520,7 +520,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml unsupportedFileTypeDescription();
     SafeHtml updateAccountError(String name, String error);
     SafeHtml updateAccountSuccess(String name);
-    SafeHtml updateOfflineDescription(String step1, String step2, String step3);
+    SafeHtml updateInstallationDescription(String step1, String step2, String step3);
     SafeHtml uploadArchivesError();
     SafeHtml uploadArchivesPending();
     SafeHtml uploadContentDescription();

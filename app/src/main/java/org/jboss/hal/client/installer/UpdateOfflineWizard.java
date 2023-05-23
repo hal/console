@@ -29,6 +29,7 @@ import static org.jboss.hal.client.installer.UpdateOfflineState.LIST_UPDATES;
 import static org.jboss.hal.client.installer.UpdateOfflineState.PREPARE_SERVER;
 import static org.jboss.hal.client.installer.UpdateOfflineState.UPLOAD_ARCHIVES;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NO_RESOLVE_LOCAL_CACHE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PREPARE_UPDATES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.WORK_DIR;
 
@@ -56,18 +57,14 @@ class UpdateOfflineWizard {
                 resources.constants().updateExistingInstallation(), context);
 
         builder.stayOpenAfterFinish()
-                .addStep(UPLOAD_ARCHIVES, new UploadArchivesStep<UpdateOfflineState>(resources.constants().uploadArchives(),
-                        resources.messages().noContent(),
-                        resources.constants().uploadingArchives(),
-                        resources.messages().uploadArchivesPending(),
-                        resources.messages().uploadArchivesError(),
+                .addStep(UPLOAD_ARCHIVES, new UploadArchivesStep<UpdateOfflineState>(
                         dispatcher,
                         statementContext,
                         resources))
                 .addStep(LIST_UPDATES, new ListUpdatesStep<UpdateOfflineState>(
                         resources.constants().listComponents(),
                         resources.messages().availableComponentsList(),
-                        resources.messages().updateOfflineDescription(
+                        resources.messages().updateInstallationDescription(
                                 resources.constants().listComponents(),
                                 resources.constants().prepareServerCandidate(),
                                 resources.constants().applyUpdates())))
@@ -75,7 +72,7 @@ class UpdateOfflineWizard {
                         updateManagerContext -> new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext),
                                 PREPARE_UPDATES)
                                 .param(WORK_DIR, updateManagerContext.workDir)
-                                .param("no-resolve-local-cache", true)
+                                .param(NO_RESOLVE_LOCAL_CACHE, true)
                                 .build(),
                         eventBus, dispatcher, statementContext, resources))
                 .addStep(APPLY_UPDATE, new ApplyStep<UpdateOfflineState>(

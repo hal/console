@@ -55,19 +55,14 @@ class UpdatePatchWizard {
                 resources.constants().updateExistingInstallation(), context);
 
         builder.stayOpenAfterFinish()
-                .addStep(UPLOAD_PATCHES, new UploadArchivesStep<UpdatePatchState>(
-                        resources.constants().uploadCustomPatches(),
-                        resources.messages().noContent(),
-                        resources.constants().uploadingCustomPatches(),
-                        resources.messages().uploadCustomPatchesPending(),
-                        resources.messages().uploadCustomPatchesError(),
+                .addStep(UPLOAD_PATCHES, new UploadPatchesStep<>(
                         dispatcher,
                         statementContext,
                         resources))
                 .addStep(LIST_UPDATES, new ListUpdatesStep<UpdatePatchState>(
                         resources.constants().listComponents(),
                         resources.messages().availableComponentsList(),
-                        resources.messages().updateOfflineDescription(
+                        resources.messages().updateInstallationDescription(
                                 resources.constants().listComponents(),
                                 resources.constants().prepareServerCandidate(),
                                 resources.constants().applyUpdates())))
