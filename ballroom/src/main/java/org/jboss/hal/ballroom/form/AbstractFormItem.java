@@ -39,6 +39,7 @@ import com.google.gwt.event.shared.SimpleEventBus;
 import elemental2.dom.HTMLElement;
 
 import static java.util.Collections.singletonList;
+
 import static org.jboss.hal.ballroom.form.Decoration.*;
 import static org.jboss.hal.ballroom.form.FormItemValidation.ValidationRule.ALWAYS;
 

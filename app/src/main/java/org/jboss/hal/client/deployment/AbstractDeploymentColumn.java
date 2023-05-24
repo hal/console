@@ -87,6 +87,7 @@ import static java.util.Collections.singletonList;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
+
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.DATA_SOURCE_SUBSYSTEM_TEMPLATE;
 import static org.jboss.hal.client.deployment.wizard.DeploymentState.NAMES;
 import static org.jboss.hal.client.deployment.wizard.DeploymentState.UPLOAD;
@@ -699,7 +700,7 @@ public abstract class AbstractDeploymentColumn<T extends Content> extends Finder
 
     /* replace */
     protected void replace(T item) {
-        UploadElement uploadElement = new UploadElement(columnProps.noDeploymentText);
+        UploadElement uploadElement = new UploadElement(true, columnProps.noDeploymentText);
         Dialog dialog = new Dialog.Builder(columnProps.replaceDeploymentTitle)
                 .add(uploadElement.element())
                 .cancel()

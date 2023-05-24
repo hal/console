@@ -35,8 +35,9 @@ import elemental2.dom.HTMLElement;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 
-import static elemental2.dom.DomGlobal.document;
 import static java.util.stream.Collectors.toList;
+
+import static elemental2.dom.DomGlobal.document;
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.elemento.Elements.a;
 import static org.jboss.elemento.Elements.div;

@@ -69,6 +69,7 @@ import elemental2.promise.Promise;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
+
 import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.CONFIGURATION_CHANGES_ADDRESS;
 import static org.jboss.hal.client.runtime.host.AddressTemplates.HOST_CONNECTION_TEMPLATE;
 import static org.jboss.hal.client.runtime.managementoperations.ManagementOperationsPresenter.MANAGEMENT_OPERATIONS_ADDRESS;

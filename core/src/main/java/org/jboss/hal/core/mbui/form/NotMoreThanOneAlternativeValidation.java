@@ -33,14 +33,14 @@ import com.google.common.collect.Iterables;
 import static java.util.stream.Collectors.toList;
 
 /** Validates that only one of the alternatives is defined. */
-class NotMoreThanOneAlternativeValidation<T extends ModelNode> implements FormValidation<T> {
+public class NotMoreThanOneAlternativeValidation<T extends ModelNode> implements FormValidation<T> {
 
     private final SortedSet<String> alternatives;
     private final Constants constants;
     private final Messages messages;
     private final ModelNodeForm<T> form;
 
-    NotMoreThanOneAlternativeValidation(Iterable<String> alternatives, ModelNodeForm<T> form, Constants constants,
+    public NotMoreThanOneAlternativeValidation(Iterable<String> alternatives, ModelNodeForm<T> form, Constants constants,
             Messages messages) {
         this.alternatives = new TreeSet<>();
         Iterables.addAll(this.alternatives, alternatives);

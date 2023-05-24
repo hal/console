@@ -64,6 +64,7 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
 import static java.util.Arrays.asList;
+
 import static org.jboss.hal.client.configuration.subsystem.jca.AddressTemplates.DISTRIBUTED_WORKMANAGER_SRT_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.jca.AddressTemplates.DISTRIBUTED_WORKMANAGER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.jca.AddressTemplates.JCA_ADDRESS;

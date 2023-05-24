@@ -30,6 +30,7 @@ import org.jdom2.xpath.XPathFactory;
 import com.google.auto.common.MoreTypes;
 
 import static java.util.stream.Collectors.toList;
+
 import static org.jboss.hal.processor.mbui.XmlHelper.xmlAsString;
 
 abstract class AbstractMbuiElementProcessor implements MbuiElementProcessor {

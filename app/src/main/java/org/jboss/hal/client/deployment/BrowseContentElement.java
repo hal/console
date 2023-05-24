@@ -72,10 +72,11 @@ import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLImageElement;
 import elemental2.promise.Promise;
 
-import static com.google.common.base.Strings.nullToEmpty;
-import static elemental2.dom.DomGlobal.window;
 import static java.lang.Math.max;
 import static java.util.Collections.emptyList;
+
+import static com.google.common.base.Strings.nullToEmpty;
+import static elemental2.dom.DomGlobal.window;
 import static org.jboss.elemento.Elements.a;
 import static org.jboss.elemento.Elements.button;
 import static org.jboss.elemento.Elements.div;

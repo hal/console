@@ -31,8 +31,9 @@ import org.jboss.hal.resources.Ids;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
-import static elemental2.dom.DomGlobal.window;
 import static java.util.stream.Collectors.joining;
+
+import static elemental2.dom.DomGlobal.window;
 import static org.jboss.hal.client.runtime.subsystem.logging.AddressTemplates.LOG_FILE_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.logging.AddressTemplates.PROFILE_LOG_FILE_TEMPLATE;
 import static org.jboss.hal.core.mvp.Places.EXTERNAL_PARAM;

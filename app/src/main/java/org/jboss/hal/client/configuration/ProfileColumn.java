@@ -60,6 +60,7 @@ import elemental2.promise.Promise;
 
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.joining;
+
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CLONE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE;
@@ -145,7 +146,7 @@ public class ProfileColumn extends FinderColumn<NamedNode> {
             public List<ItemAction<NamedNode>> actions() {
                 List<ItemAction<NamedNode>> actions = new ArrayList<>();
                 actions.add(new ItemAction.Builder<NamedNode>()
-                        .title(resources.constants().clone())
+                        .title(resources.constants().clone_())
                         .handler(itm -> cloneProfile(itm.getName()))
                         .constraint(Constraint.executable(PROFILE_TEMPLATE, CLONE))
                         .build());

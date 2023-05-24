@@ -37,6 +37,7 @@ import org.jboss.hal.resources.Names;
 import elemental2.dom.HTMLElement;
 
 import static java.util.stream.Collectors.joining;
+
 import static org.jboss.elemento.Elements.h;
 import static org.jboss.elemento.Elements.p;
 import static org.jboss.elemento.Elements.section;

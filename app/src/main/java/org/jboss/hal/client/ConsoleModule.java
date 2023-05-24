@@ -137,8 +137,10 @@ import org.jboss.hal.client.deployment.StandaloneDeploymentPresenter;
 import org.jboss.hal.client.deployment.StandaloneDeploymentView;
 import org.jboss.hal.client.homepage.HomepagePresenter;
 import org.jboss.hal.client.homepage.HomepageView;
-import org.jboss.hal.client.patching.PatchingFinderPresenter;
-import org.jboss.hal.client.patching.PatchingFinderView;
+import org.jboss.hal.client.installer.ChannelPresenter;
+import org.jboss.hal.client.installer.ChannelView;
+import org.jboss.hal.client.installer.UpdateManagerFinderPresenter;
+import org.jboss.hal.client.installer.UpdateManagerFinderView;
 import org.jboss.hal.client.rhcp.RhcpPresenter;
 import org.jboss.hal.client.rhcp.RhcpView;
 import org.jboss.hal.client.rhcp.UnderTheBridgePresenter;
@@ -276,6 +278,11 @@ public class ConsoleModule extends AbstractPresenterModule {
                 CacheContainerPresenter.MyView.class,
                 CacheContainerView.class,
                 CacheContainerPresenter.MyProxy.class);
+
+        bindPresenter(ChannelPresenter.class,
+                ChannelPresenter.MyView.class,
+                ChannelView.class,
+                ChannelPresenter.MyProxy.class);
 
         bindPresenter(ClusteringPresenter.class,
                 ClusteringPresenter.MyView.class,
@@ -557,11 +564,6 @@ public class ConsoleModule extends AbstractPresenterModule {
                 OtherSettingsView.class,
                 OtherSettingsPresenter.MyProxy.class);
 
-        bindPresenter(PatchingFinderPresenter.class,
-                PatchingFinderPresenter.MyView.class,
-                PatchingFinderView.class,
-                PatchingFinderPresenter.MyProxy.class);
-
         bindPresenter(PathsPresenter.class,
                 PathsPresenter.MyView.class,
                 Mbui_PathsView.class,
@@ -716,6 +718,11 @@ public class ConsoleModule extends AbstractPresenterModule {
                 org.jboss.hal.client.runtime.subsystem.transaction.TransactionsPresenter.MyView.class,
                 org.jboss.hal.client.runtime.subsystem.transaction.TransactionsView.class,
                 org.jboss.hal.client.runtime.subsystem.transaction.TransactionsPresenter.MyProxy.class);
+
+        bindPresenter(UpdateManagerFinderPresenter.class,
+                UpdateManagerFinderPresenter.MyView.class,
+                UpdateManagerFinderView.class,
+                UpdateManagerFinderPresenter.MyProxy.class);
 
         bindPresenter(UnderTheBridgePresenter.class,
                 UnderTheBridgePresenter.MyView.class,

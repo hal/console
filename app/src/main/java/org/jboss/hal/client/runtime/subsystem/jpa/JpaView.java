@@ -44,6 +44,7 @@ import com.google.gwt.core.client.GWT;
 import elemental2.dom.HTMLElement;
 
 import static java.util.Arrays.asList;
+
 import static org.jboss.elemento.Elements.*;
 import static org.jboss.elemento.EventType.click;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;

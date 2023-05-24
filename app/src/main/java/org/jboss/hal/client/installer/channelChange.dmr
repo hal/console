@@ -1,0 +1,45 @@
+{
+    "comment" => "This file is not used! It's just here to generate the base64 encoded version using https://github.com/hal/dmr.cmd",
+    "description" => "Channel change.",
+    "attributes" => {
+        "status" => {
+            "type" => STRING,
+            "description" => "The status of the change (updated, removed, added).",
+            "nillable" => true
+        },
+        "channel-name" => {
+            "type" => STRING,
+            "description" => "The channel name.",
+            "nillable" => true
+        },
+        "manifest" => {
+            "old-manifest" => {
+                "type" => STRING,
+                "description" => "The old manifest.",
+                "nillable" => true
+            },
+            "new-manifest" => {
+                "type" => STRING,
+                "description" => "The new manifest.",
+                "nillable" => true
+            }
+        },
+        "repositories" => {
+            "type" => LIST,
+            "description" => "A collection of repositories that defines repositories associated with the channel.",
+            "nillable" => true,
+            "value-type" => {
+                "old-repository" => {
+                    "type" => STRING,
+                    "description" => "The old repository.",
+                    "nillable" => true
+                },
+                "new-repository" => {
+                    "type" => STRING,
+                    "description" => "The new repository.",
+                    "nillable" => true
+                }
+            }
+        }
+    }
+}

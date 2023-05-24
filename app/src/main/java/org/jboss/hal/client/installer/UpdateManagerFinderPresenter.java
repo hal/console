@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.jboss.hal.client.patching;
+package org.jboss.hal.client.installer;
 
 import javax.inject.Inject;
 
@@ -32,37 +32,37 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
-public class PatchingFinderPresenter
-        extends FinderPresenter<PatchingFinderPresenter.MyView, PatchingFinderPresenter.MyProxy> {
+public class UpdateManagerFinderPresenter
+        extends FinderPresenter<UpdateManagerFinderPresenter.MyView, UpdateManagerFinderPresenter.MyProxy> {
 
     private final Environment environment;
 
     @Inject
-    public PatchingFinderPresenter(
+    public UpdateManagerFinderPresenter(
             EventBus eventBus,
-            PatchingFinderPresenter.MyView view,
-            PatchingFinderPresenter.MyProxy proxy,
+            UpdateManagerFinderPresenter.MyView view,
+            UpdateManagerFinderPresenter.MyProxy proxy,
             Finder finder,
-            Resources resources,
-            Environment environment) {
+            Environment environment,
+            Resources resources) {
         super(eventBus, view, proxy, finder, resources);
         this.environment = environment;
     }
 
     @Override
     protected String initialColumn() {
-        return environment.isStandalone() ? Ids.PATCHING : Ids.PATCHING_DOMAIN;
+        return environment.isStandalone() ? Ids.UPDATE_MANAGER : Ids.UPDATE_MANAGER_DOMAIN;
     }
 
     @Override
     protected PreviewContent<Void> initialPreview() {
-        return new PreviewContent<>(Names.PATCHING, resources.previews().patching());
+        return new PreviewContent<>(Names.UPDATE_MANAGER, resources.previews().updateManager());
     }
 
     // @formatter:off
     @ProxyStandard
-    @NameToken(NameTokens.PATCHING)
-    public interface MyProxy extends ProxyPlace<PatchingFinderPresenter> {
+    @NameToken(NameTokens.UPDATE_MANAGER)
+    public interface MyProxy extends ProxyPlace<UpdateManagerFinderPresenter> {
     }
 
     public interface MyView extends FinderView {

@@ -58,6 +58,7 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
 import static java.util.stream.Collectors.toList;
+
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.FILTER_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.FILTER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.RESPONSE_HEADER_TEMPLATE;

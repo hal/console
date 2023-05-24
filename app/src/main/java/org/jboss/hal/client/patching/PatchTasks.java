@@ -31,6 +31,7 @@ import org.jboss.hal.flow.Task;
 import elemental2.promise.Promise;
 
 import static java.util.stream.Collectors.toList;
+
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CORE_SERVICE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CORE_SERVICE_PATCHING;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;

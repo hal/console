@@ -33,13 +33,13 @@ import com.google.common.collect.Iterables;
 
 import static java.util.stream.Collectors.toSet;
 
-class ExactlyOneAlternativeValidation<T extends ModelNode> implements FormValidation<T> {
+public class ExactlyOneAlternativeValidation<T extends ModelNode> implements FormValidation<T> {
 
     private final SortedSet<String> requiredAlternatives;
     private final Constants constants;
     private final Messages messages;
 
-    ExactlyOneAlternativeValidation(final Iterable<String> requiredAlternatives, final Constants constants,
+    public ExactlyOneAlternativeValidation(final Iterable<String> requiredAlternatives, final Constants constants,
             final Messages messages) {
         this.requiredAlternatives = new TreeSet<>();
         Iterables.addAll(this.requiredAlternatives, requiredAlternatives);

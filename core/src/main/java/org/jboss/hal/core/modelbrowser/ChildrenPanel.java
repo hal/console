@@ -52,6 +52,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import elemental2.dom.HTMLElement;
 
 import static java.util.stream.Collectors.toList;
+
 import static org.jboss.elemento.Elements.h;
 import static org.jboss.hal.core.modelbrowser.ModelBrowser.asGenericTemplate;
 import static org.jboss.hal.core.modelbrowser.ReadChildren.uniqueId;

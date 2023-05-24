@@ -51,6 +51,7 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import static java.util.Collections.emptyMap;
+
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SELECTED_SERVLET_CONTAINER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SERVLET_CONTAINER_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SERVLET_CONTAINER_TEMPLATE;

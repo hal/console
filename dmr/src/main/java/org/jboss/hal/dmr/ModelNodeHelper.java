@@ -30,10 +30,11 @@ import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.shared.DateTimeFormat;
 
-import static com.google.common.base.CaseFormat.LOWER_HYPHEN;
-import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
+
+import static com.google.common.base.CaseFormat.LOWER_HYPHEN;
+import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HAL_INDEX;
 
 /**
@@ -109,6 +110,16 @@ public class ModelNodeHelper {
                     // java.time.format.DateTimeFormatter.ISO_DATE_TIME
                     // see https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#ISO_ZONED_DATE_TIME
                     date = date.substring(0, date.indexOf('['));
+                }
+                if (date.indexOf('.') == -1) {
+                    // dates w/o millis throw IAEs
+                    // fix 2023-02-23T19:23:45Z --> 2023-02-23T19:23:45.000Z
+                    int lastColon = date.lastIndexOf(':');
+                    date = date.substring(0, lastColon) +
+                            ":" +
+                            date.substring(lastColon + 1, lastColon + 3) +
+                            ".000" +
+                            date.substring(lastColon + 3);
                 }
                 return ISO_8601.parse(date);
             } catch (IllegalArgumentException ignore) {

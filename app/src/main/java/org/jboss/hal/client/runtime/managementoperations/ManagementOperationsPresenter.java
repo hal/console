@@ -61,6 +61,7 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
+
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ACTIVE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CANCEL_NON_PROGRESSING_OPERATION;

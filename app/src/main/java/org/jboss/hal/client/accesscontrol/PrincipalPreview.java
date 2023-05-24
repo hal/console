@@ -27,6 +27,7 @@ import org.jboss.hal.resources.Resources;
 import elemental2.dom.HTMLElement;
 
 import static java.util.stream.Collectors.toList;
+
 import static org.jboss.elemento.Elements.*;
 
 class PrincipalPreview extends PreviewContent<Principal> {

@@ -26,6 +26,7 @@ import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
 
 import static java.util.Arrays.asList;
+
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEFINED;
 import static org.jboss.hal.resources.UIConstants.OBJECT;

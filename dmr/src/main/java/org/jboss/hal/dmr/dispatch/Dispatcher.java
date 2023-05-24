@@ -53,6 +53,7 @@ import elemental2.dom.Blob;
 import elemental2.dom.Blob.ConstructorBlobPartsArrayUnionType;
 import elemental2.dom.BlobPropertyBag;
 import elemental2.dom.File;
+import elemental2.dom.FileList;
 import elemental2.dom.FormData;
 import elemental2.dom.FormData.AppendValueUnionType;
 import elemental2.dom.Headers;
@@ -63,11 +64,12 @@ import elemental2.promise.IThenable.ThenOnFulfilledCallbackFn;
 import elemental2.promise.Promise;
 import elemental2.promise.Promise.CatchOnRejectedCallbackFn;
 
+import static java.util.stream.Collectors.joining;
+
 import static com.google.common.collect.Sets.difference;
 import static elemental2.core.Global.encodeURIComponent;
 import static elemental2.dom.DomGlobal.fetch;
 import static elemental2.dom.DomGlobal.navigator;
-import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.config.Settings.Key.RUN_AS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.FIND_NON_PROGRESSING_OPERATION;
@@ -211,16 +213,25 @@ public class Dispatcher implements RecordingHandler {
 
     // ------------------------------------------------------ upload
 
-    public void upload(File file, Operation operation, Consumer<ModelNode> success) {
-        upload(file, operation)
-                .then(payload -> {
-                    success.accept(payload);
-                    return null;
-                })
-                .catch_(error -> {
-                    errorCallback.onError(operation, String.valueOf(error));
-                    return null;
-                });
+    public Promise<ModelNode> upload(FileList files, Operation operation) {
+        Operation uploadOperation = runAs(operation);
+        ConstructorBlobPartsArrayUnionType blob = ConstructorBlobPartsArrayUnionType.of(
+                uploadOperation.toBase64String());
+        BlobPropertyBag options = BlobPropertyBag.create();
+        options.setType("application/dmr-encoded");
+
+        FormData formData = new FormData();
+        for (int i = 0; i < files.getLength(); i++) {
+            File file = files.item(i);
+            appendFile(formData, file);
+        }
+        formData.append(OPERATION, new Blob(new ConstructorBlobPartsArrayUnionType[] { blob }, options));
+
+        return fetch(uploadRequest(formData))
+                .then(processResponse())
+                .then(processText(operation, new UploadPayloadProcessor(), false))
+                .then(payload -> Promise.resolve(operationResult(payload)))
+                .catch_(rejectWithError());
     }
 
     public Promise<ModelNode> upload(File file, Operation operation) {
@@ -231,6 +242,23 @@ public class Dispatcher implements RecordingHandler {
         options.setType("application/dmr-encoded");
 
         FormData formData = new FormData();
+        appendFile(formData, file);
+        formData.append(OPERATION, new Blob(new ConstructorBlobPartsArrayUnionType[] { blob }, options));
+
+        return fetch(uploadRequest(formData))
+                .then(processResponse())
+                .then(processText(operation, new UploadPayloadProcessor(), false))
+                .then(payload -> Promise.resolve(operationResult(payload)))
+                .catch_(rejectWithError());
+    }
+
+    private Request uploadRequest(FormData formData) {
+        RequestInit init = requestInit(POST, false);
+        init.setBody(formData);
+        return new Request(endpoints.upload(), init);
+    }
+
+    private void appendFile(FormData formData, File file) {
         if (navigator.userAgent.contains("Safari") && !navigator.userAgent.contains("Chrome")) {
             // Safari does not support sending new files
             // https://bugs.webkit.org/show_bug.cgi?id=165081
@@ -239,16 +267,6 @@ public class Dispatcher implements RecordingHandler {
         } else {
             formData.append(file.name, AppendValueUnionType.of(file));
         }
-        formData.append(OPERATION, new Blob(new ConstructorBlobPartsArrayUnionType[] { blob }, options));
-
-        RequestInit init = requestInit(POST, false);
-        init.setBody(formData);
-        Request request = new Request(endpoints.upload(), init);
-
-        return fetch(request)
-                .then(processResponse())
-                .then(processText(operation, new UploadPayloadProcessor(), false))
-                .catch_(rejectWithError());
     }
 
     // ------------------------------------------------------ download

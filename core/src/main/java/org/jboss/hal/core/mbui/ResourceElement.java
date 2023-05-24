@@ -54,8 +54,9 @@ import com.google.common.collect.Iterables;
 
 import elemental2.dom.HTMLElement;
 
-import static elemental2.dom.DomGlobal.alert;
 import static java.util.Collections.singletonList;
+
+import static elemental2.dom.DomGlobal.alert;
 import static org.jboss.elemento.Elements.h;
 import static org.jboss.elemento.Elements.p;
 import static org.jboss.elemento.Elements.section;

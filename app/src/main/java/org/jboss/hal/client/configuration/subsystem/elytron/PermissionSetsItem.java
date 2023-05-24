@@ -31,6 +31,7 @@ import com.google.gwt.core.client.GWT;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
+
 import static org.jboss.hal.ballroom.form.Decoration.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PERMISSION_SET;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PERMISSION_SETS;

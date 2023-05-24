@@ -38,6 +38,7 @@ import com.google.common.collect.ImmutableList;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 
 import static java.util.Arrays.asList;
+
 import static org.jboss.hal.processor.TemplateNames.CLASS_NAME;
 import static org.jboss.hal.processor.TemplateNames.GENERATED_WITH;
 import static org.jboss.hal.processor.TemplateNames.PACKAGE_NAME;

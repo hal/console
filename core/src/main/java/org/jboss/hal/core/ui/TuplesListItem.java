@@ -39,6 +39,7 @@ import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 
 import static java.util.Collections.emptyList;
+
 import static org.jboss.elemento.Elements.button;
 import static org.jboss.elemento.Elements.div;
 import static org.jboss.elemento.Elements.i;

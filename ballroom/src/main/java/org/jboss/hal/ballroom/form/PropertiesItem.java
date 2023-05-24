@@ -30,9 +30,10 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 
 import elemental2.dom.HTMLElement;
 
-import static elemental2.dom.DomGlobal.document;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.joining;
+
+import static elemental2.dom.DomGlobal.document;
 import static org.jboss.hal.ballroom.form.Decoration.*;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 

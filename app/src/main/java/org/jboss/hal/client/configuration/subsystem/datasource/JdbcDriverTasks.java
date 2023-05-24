@@ -45,6 +45,7 @@ import elemental2.promise.IThenable.ThenOnFulfilledCallbackFn;
 import elemental2.promise.Promise;
 
 import static java.util.stream.Collectors.toList;
+
 import static org.jboss.hal.client.configuration.subsystem.datasource.AddressTemplates.DATA_SOURCE_SUBSYSTEM_TEMPLATE;
 import static org.jboss.hal.core.runtime.TopologyTasks.runningServers;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DATASOURCES;

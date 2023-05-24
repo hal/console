@@ -43,7 +43,7 @@ public class Tracker implements NavigationHandler, FinderContextHandler, ModelBr
             NameTokens.DEPLOYMENTS,
             // NameTokens.MANAGEMENT,
             NameTokens.MODEL_BROWSER,
-            NameTokens.PATCHING,
+            NameTokens.UPDATE_MANAGER,
             NameTokens.RUNTIME);
 
     private final GoogleAnalytics ga;

@@ -80,8 +80,9 @@ import com.google.web.bindery.event.shared.EventBus;
 import elemental2.dom.HTMLElement;
 import elemental2.promise.Promise;
 
-import static elemental2.dom.DomGlobal.setTimeout;
 import static java.util.Collections.emptyList;
+
+import static elemental2.dom.DomGlobal.setTimeout;
 import static org.jboss.elemento.Elements.a;
 import static org.jboss.elemento.Elements.p;
 import static org.jboss.elemento.Elements.span;

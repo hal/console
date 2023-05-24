@@ -30,6 +30,7 @@ import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
 
 import static java.util.Arrays.asList;
+
 import static jsinterop.annotations.JsPackage.GLOBAL;
 import static org.jboss.elemento.Elements.a;
 import static org.jboss.elemento.Elements.div;

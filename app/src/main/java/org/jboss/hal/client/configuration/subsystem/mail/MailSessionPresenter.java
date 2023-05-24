@@ -66,6 +66,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toSet;
+
 import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.MAIL_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.MAIL_SESSION_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.mail.AddressTemplates.MAIL_SESSION_TEMPLATE;

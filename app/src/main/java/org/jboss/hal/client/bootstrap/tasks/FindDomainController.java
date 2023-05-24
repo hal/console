@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import elemental2.promise.Promise;
 
 import static java.util.stream.Collectors.toList;
+
 import static org.jboss.hal.client.bootstrap.tasks.ReadHostNames.HOST_NAMES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES_ONLY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;

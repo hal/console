@@ -38,6 +38,7 @@ import org.jboss.hal.resources.Strings;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import static java.util.Arrays.asList;
+
 import static org.jboss.hal.client.deployment.AbstractDeploymentColumn.SELECTED_SERVER_GROUP_DEPLOYMENT_TEMPLATE;
 import static org.jboss.hal.client.deployment.StandaloneDeploymentPreview.LAST_DISABLED_AT;
 import static org.jboss.hal.client.deployment.StandaloneDeploymentPreview.LAST_ENABLED_AT;

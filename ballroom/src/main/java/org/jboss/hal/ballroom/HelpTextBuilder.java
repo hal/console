@@ -33,6 +33,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 import static java.util.stream.Collectors.toList;
+
 import static org.jboss.hal.ballroom.HelpTextBuilder.RestartMode.ALL_SERVICES;
 import static org.jboss.hal.ballroom.HelpTextBuilder.RestartMode.NO_SERVICES;
 import static org.jboss.hal.ballroom.HelpTextBuilder.RestartMode.RESOURCE_SERVICES;

@@ -360,6 +360,17 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/runtime/web.html")
     ExternalTextResource runtimeWeb();
 
+    // ------------------------------------------------------ update manager
+
+    @Source("previews/update-manager/update-manager.html")
+    ExternalTextResource updateManager();
+
+    @Source("previews/update-manager/channels.html")
+    ExternalTextResource updateManagerChannels();
+
+    @Source("previews/update-manager/updates.html")
+    ExternalTextResource updateManagerUpdates();
+
     // ------------------------------------------------------ helper methods
 
     Logger logger = LoggerFactory.getLogger(Previews.class);

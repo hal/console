@@ -20,6 +20,7 @@ import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.dmr.NamedNode;
 
 import static java.util.Arrays.asList;
+
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ABORTED_MESSAGE_COUNT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MESSAGE_COUNT;
 

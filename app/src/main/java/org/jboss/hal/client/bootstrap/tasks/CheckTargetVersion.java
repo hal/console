@@ -18,6 +18,7 @@ package org.jboss.hal.client.bootstrap.tasks;
 import javax.inject.Inject;
 
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.config.Version;
 import org.jboss.hal.meta.ManagementModel;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
@@ -48,13 +49,13 @@ public class CheckTargetVersion implements InitializedTask {
     @Override
     public void run() {
         setTimeout(o -> {
-            logger.debug("Management model version: {}, target version: {}",
-                    environment.getManagementVersion(), ManagementModel.TARGET_VERSION);
-            if (environment.getManagementVersion().lessThan(ManagementModel.TARGET_VERSION)) {
+            Version managementVersion = environment.getManagementVersion();
+            logger.debug("Management model version: {}, target version: {}", managementVersion, ManagementModel.TARGET_VERSION);
+            if (managementVersion.lessThan(ManagementModel.TARGET_VERSION)) {
                 logger.warn("The management model version {} is lower than the target version {}",
-                        environment.getManagementVersion(), ManagementModel.TARGET_VERSION);
+                        managementVersion, ManagementModel.TARGET_VERSION);
                 MessageEvent.fire(eventBus, Message.warning(resources.messages().managementVersionMismatch(
-                        environment.getManagementVersion().toString(), ManagementModel.TARGET_VERSION.toString()),
+                        managementVersion.toString(), ManagementModel.TARGET_VERSION.toString()),
                         resources.constants().managementVersionMismatchDescription(), true));
             }
         }, UIConstants.MEDIUM_TIMEOUT);

@@ -33,8 +33,9 @@ import elemental2.core.JsArray;
 import jsinterop.base.Any;
 import jsinterop.base.JsPropertyMap;
 
-import static elemental2.core.Global.JSON;
 import static java.util.Collections.emptyList;
+
+import static elemental2.core.Global.JSON;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE_TYPE;

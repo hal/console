@@ -60,11 +60,12 @@ import elemental2.dom.Element;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.NodeList;
 
-import static elemental2.dom.DomGlobal.document;
 import static java.util.Collections.singletonList;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
+
+import static elemental2.dom.DomGlobal.document;
 import static org.jboss.elemento.Elements.a;
 import static org.jboss.elemento.Elements.asHtmlElement;
 import static org.jboss.elemento.Elements.div;

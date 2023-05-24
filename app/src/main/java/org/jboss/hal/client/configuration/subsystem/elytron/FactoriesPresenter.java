@@ -52,6 +52,7 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.AGGREGATE_HTTP_SERVER_MECHANISM_FACTORY_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.AGGREGATE_SASL_SERVER_FACTORY_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.AGGREGATE_TRANSFORMER_ADDRESS;

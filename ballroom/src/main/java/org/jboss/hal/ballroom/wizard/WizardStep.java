@@ -22,6 +22,8 @@ import java.util.List;
 import org.jboss.elemento.IsElement;
 import org.jboss.hal.ballroom.Attachable;
 
+import elemental2.promise.Promise;
+
 /**
  * A step in a wizard. The UI for the step should <string>not</string> contain a header. The header is part of the wizard and
  * will show this step's title.
@@ -31,12 +33,18 @@ import org.jboss.hal.ballroom.Attachable;
  */
 public abstract class WizardStep<C, S extends Enum<S>> implements IsElement {
 
+    final boolean asyncShow;
     final List<Attachable> attachables;
     private Wizard<C, S> wizard;
     protected String title;
 
     protected WizardStep(String title) {
+        this(title, false);
+    }
+
+    protected WizardStep(String title, boolean asyncShow) {
         this.title = title;
+        this.asyncShow = asyncShow;
         this.attachables = new ArrayList<>();
     }
 
@@ -67,6 +75,15 @@ public abstract class WizardStep<C, S extends Enum<S>> implements IsElement {
      * @param context the current context
      */
     protected void onShow(C context) {
+    }
+
+    /**
+     * Called every time the step is shown, in case the step was created using {@link WizardStep#WizardStep(String, boolean)}.
+     *
+     * @param context the current context
+     */
+    protected Promise<C> onShowAndWait(C context) {
+        return Promise.resolve(context);
     }
 
     /**

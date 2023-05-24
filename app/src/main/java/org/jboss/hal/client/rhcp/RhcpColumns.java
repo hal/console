@@ -43,6 +43,7 @@ import elemental2.promise.Promise;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
+
 import static org.jboss.elemento.Elements.a;
 import static org.jboss.elemento.Elements.bag;
 import static org.jboss.elemento.Elements.img;

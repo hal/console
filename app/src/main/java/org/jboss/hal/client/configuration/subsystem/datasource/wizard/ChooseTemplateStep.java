@@ -30,6 +30,7 @@ import elemental2.dom.HTMLInputElement;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
+
 import static org.jboss.elemento.Elements.*;
 import static org.jboss.elemento.EventType.click;
 

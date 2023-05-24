@@ -26,6 +26,7 @@ public interface ModelDescriptionConstants {
 
     // HAL_* attributes are used internally only!
     // KEEP THESE IN ALPHABETICAL ORDER!
+    @SuppressWarnings("unused") String REMOTE = "remote"; // used by test suite
     String ABORTED_MESSAGE_COUNT = "aborted-message-count";
     String ACCEPTOR = "acceptor";
     String ACCESS = "access";
@@ -55,8 +56,8 @@ public interface ModelDescriptionConstants {
     String ADMIN_ONLY = "admin-only";
     String AFFINITY = "affinity";
     String AGEOUT_HISTORY_OPERATION = "ageout-history";
-    String AGGREGATE_HTTP_SERVER_MECHANISM_FACTORY = "aggregate-http-server-mechanism-factory";
     String AGGREGATE_EVIDENCE_DECODER = "aggregate-evidence-decoder";
+    String AGGREGATE_HTTP_SERVER_MECHANISM_FACTORY = "aggregate-http-server-mechanism-factory";
     String AGGREGATE_PRINCIPAL_DECODER = "aggregate-principal-decoder";
     String AGGREGATE_PRINCIPAL_TRANSFORMER = "aggregate-principal-transformer";
     String AGGREGATE_PROVIDERS = "aggregate-providers";
@@ -76,6 +77,7 @@ public interface ModelDescriptionConstants {
     String APPLICATION_SECURITY_DOMAIN = "application-security-domain";
     String APPLIED_AT = "applied-at";
     String ARCHIVE = "archive";
+    String ARTIFACT_CHANGES = "artifact-changes";
     String ASYNC_HANDLER = "async-handler";
     String ASYNC_OPERATIONS = "async-operations";
     String ATTRIBUTE_GROUP = "attribute-group";
@@ -136,6 +138,10 @@ public interface ModelDescriptionConstants {
     String CHANGE_MESSAGE_PRIORITY = "change-message-priority";
     String CHANGE_MESSAGES_PRIORITY = "change-messages-priority";
     String CHANNEL = "channel";
+    String CHANNEL_CHANGES = "channel-changes";
+    String CHANNEL_NAME = "channel-name";
+    String CHANNEL_REMOVE = "channel-remove";
+    String CHANNELS = "channels";
     String CHECK = "check";
     String CHECKS = "checks";
     String CHILD_TYPE = "child-type";
@@ -143,6 +149,7 @@ public interface ModelDescriptionConstants {
     String CLASS = "class";
     String CLASS_NAME = "class-name";
     String CLASS_PATH = "class-path";
+    String CLEAN = "clean";
     String CLEAR_CACHE = "clear-cache";
     String CLEAR_TEXT = "clear-text";
     String CLIENT_ADDRESS = "client-address";
@@ -219,6 +226,7 @@ public interface ModelDescriptionConstants {
     String CUSTOM_FORMATTER = "custom-formatter";
     String CUSTOM_HANDLER = "custom-handler";
     String CUSTOM_MODIFIABLE_REALM = "custom-modifiable-realm";
+    String CUSTOM_PATCH_FILE = "custom-patch-file";
     String CUSTOM_PERMISSION_MAPPER = "custom-permission-mapper";
     String CUSTOM_POLICY = "custom-policy";
     String CUSTOM_PRINCIPAL_DECODER = "custom-principal-decoder";
@@ -327,10 +335,10 @@ public interface ModelDescriptionConstants {
     String EXPIRE_MESSAGES = "expire-messages";
     String EXPIRED_SESSIONS = "expired-sessions";
     String EXPIRY_ADDRESS = "expiry-address";
-    String EXPORT_SECRET_KEY = "export-secret-key";
     String EXPLODE = "explode";
     String EXPLODED = "exploded";
     String EXPORT_CERTIFICATE = "export-certificate";
+    String EXPORT_SECRET_KEY = "export-secret-key";
     String EXPOSED_SUBSYSTEMS = "exposed-subsystems";
     String EXPRESSION = "expression";
     String EXPRESSIONS_ALLOWED = "expressions-allowed";
@@ -365,6 +373,7 @@ public interface ModelDescriptionConstants {
     String FORMATTER = "formatter";
     String FROM = "from";
     String FULL_REPLACE_DEPLOYMENT = "full-replace-deployment";
+    String GAV = "gav";
     String GENERATE_CERTIFICATE_SIGNING_REQUEST = "generate-certificate-signing-request";
     String GENERATE_KEY_PAIR = "generate-key-pair";
     String GENERATE_SECRET_KEY = "generate-secret-key";
@@ -390,10 +399,12 @@ public interface ModelDescriptionConstants {
     String HANDLER = "handler";
     String HANDLERS = "handlers";
     String HASH = "hash";
-    String HEADERS = "headers";
     String HEADER_NAME = "header-name";
+    String HEADERS = "headers";
     String HEAP = "heap";
     String HIBERNATE_PERSISTENCE_UNIT = "hibernate-persistence-unit";
+    String HISTORY = "history";
+    String HISTORY_FROM_REVISION = "history-from-revision";
     String HOMEPAGE = "homepage";
     String HOST = "host";
     String HOST_CONNECTION = "host-connection";
@@ -438,6 +449,7 @@ public interface ModelDescriptionConstants {
     String INPUT_ARGUMENTS = "input-arguments";
     String INPUT_STREAM_INDEX = "input-stream-index";
     String INSTALLED_DRIVER_LIST = "installed-driver-list";
+    String INSTALLER = "installer";
     String INSTANCE_COUNT = "instance-count";
     String INSTANCE_ID = "instance-id";
     String INTERFACE = "interface";
@@ -520,6 +532,7 @@ public interface ModelDescriptionConstants {
     String LIST_SESSION_ATTRIBUTES = "list-session-attributes";
     String LIST_SESSIONS = "list-sessions";
     String LIST_SESSIONS_AS_JSON = "list-sessions-as-json";
+    String LIST_UPDATES = "list-updates";
     String LISTENER = "listener";
     String LIVE_ONLY = "live-only";
     String LOAD = "load";
@@ -555,12 +568,14 @@ public interface ModelDescriptionConstants {
     String MANAGEMENT_OPERATIONS = "management-operations";
     String MANAGEMENT_SPEC_VERSION = "management-spec-version";
     String MANAGEMENT_VERSION = "management-version";
+    String MANIFEST = "manifest";
     String MAPPED_REGEX_REALM_MAPPER = "mapped-regex-realm-mapper";
     String MAPPED_ROLE_MAPPER = "mapped-role-mapper";
     String MAPPED_ROLES = "mapped-roles";
     String MAPPING_MODULE = "mapping-module";
     String MASTER = "master";
     String MATCH_ALL = "match-all";
+    String MAVEN_REPO_FILES = "maven-repo-files";
     String MAX = "max";
     String MAX_ACTIVE_SESSIONS = "max-active-sessions";
     String MAX_POOL_SIZE = "max-pool-size";
@@ -608,9 +623,13 @@ public interface ModelDescriptionConstants {
     String NEW_ITEM_PATH = "new-item-path";
     String NEW_ITEM_RDN = "new-item-rdn";
     String NEW_ITEM_TEMPLATE = "new-item-template";
+    String NEW_MANIFEST = "new-manifest";
     String NEW_PRIORITY = "new-priority";
+    String NEW_REPOSITORY = "new-repository";
+    String NEW_VERSION = "new-version";
     String NEXT_TIMEOUT = "next-timeout";
     String NILLABLE = "nillable";
+    String NO_RESOLVE_LOCAL_CACHE = "no-resolve-local-cache";
     String NO_TX_SEPARATE_POOL = "no-tx-separate-pool";
     String NODE = "node";
     String NON_DURABLE_MESSAGE_COUNT = "non-durable-message-count";
@@ -630,6 +649,9 @@ public interface ModelDescriptionConstants {
     String OBJECT = "object";
     String OBTAIN_CERTIFICATE = "obtain-certificate";
     String OFF_HEAP = "off-heap";
+    String OLD_MANIFEST = "old-manifest";
+    String OLD_REPOSITORY = "old-repository";
+    String OLD_VERSION = "old-version";
     String OOB = "oob";
     String OP = "operation";
     String OPERATION = "operation";
@@ -661,6 +683,7 @@ public interface ModelDescriptionConstants {
     String PATTERN_FORMATTER = "pattern-formatter";
     String PAUSE = "pause";
     String PAUSED = "paused";
+    String PERFORM_INSTALLATION = "perform-installation";
     String PERIODIC_ROTATING_FILE_AUDIT_LOG = "periodic-rotating-file-audit-log";
     String PERIODIC_ROTATING_FILE_HANDLER = "periodic-rotating-file-handler";
     String PERIODIC_SIZE_ROTATING_FILE_HANDLER = "periodic-size-rotating-file-handler";
@@ -687,6 +710,8 @@ public interface ModelDescriptionConstants {
     String PRE_HANDLER_CHAIN = "pre-handler-chain";
     String PREDEFINED_FILTER = "predefined-filter";
     String PREFIX = "prefix";
+    String PREPARE_REVERT = "prepare-revert";
+    String PREPARE_UPDATES = "prepare-updates";
     String PRESERVE = "preserve";
     String PRIMARY = "primary";
     String PRIMARY_OWNER = "primary-owner";
@@ -748,8 +773,8 @@ public interface ModelDescriptionConstants {
     String REALM_PUBLIC_KEY = "realm-public-key";
     String REALMS = "realms";
     String REASON = "reason";
-    String RECORD_REQUEST_START_TIME = "record-request-start-time";
     String RECONNECT_ATTEMPTS = "reconnect-attempts";
+    String RECORD_REQUEST_START_TIME = "record-request-start-time";
     String RECOVERY_PLUGIN_CLASS_NAME = "recovery-plugin-class-name";
     String RECURSIVE = "recursive";
     String RECURSIVE_DEPTH = "recursive-depth";
@@ -768,7 +793,6 @@ public interface ModelDescriptionConstants {
     String RELOAD_HOST = "reload-host";
     String RELOAD_REQUIRED = "reload-required";
     String RELOAD_SERVERS = "reload-servers";
-    @SuppressWarnings("unused") String REMOTE = "remote"; // used by test suite
     String REMOTE_ACCEPTOR = "remote-acceptor";
     String REMOTE_ADDRESS = "remote-address";
     String REMOTE_CACHE_CONTAINER = "remote-cache-container";
@@ -789,6 +813,7 @@ public interface ModelDescriptionConstants {
     String REPLICATION_PRIMARY = "replication-primary";
     String REPLICATION_SECONDARY = "replication-secondary";
     String REPLY_PROPERTIES = "reply-properties";
+    String REPOSITORIES = "repositories";
     String REQUEST_CONTROLLER = "request-controller";
     String REQUEST_COUNT = "request-count";
     String REQUEST_PROPERTIES = "request-properties";
@@ -819,6 +844,8 @@ public interface ModelDescriptionConstants {
     String RESULT = "result";
     String RESUME = "resume";
     String RESUME_SERVERS = "resume-servers";
+    String RETURN_CODE = "return-code";
+    String REVISION = "revision";
     String REVOKE_CERTIFICATE = "revoke-certificate";
     String ROLE = "role";
     String ROLE_MAP = "role-map";
@@ -863,7 +890,6 @@ public interface ModelDescriptionConstants {
     String SEND_MESSAGES_TO_DEAD_LETTER_ADDRESS = "send-messages-to-dead-letter-address";
     String SENSITIVE = "sensitive";
     String SERVER = "server";
-    String SERVERS = "servers";
     String SERVER_AUTH_MODULES = "server-auth-modules";
     String SERVER_CONFIG = "server-config";
     String SERVER_GROUP = "server-group";
@@ -873,6 +899,7 @@ public interface ModelDescriptionConstants {
     String SERVER_SSL_SNI_CONTEXT = "server-ssl-sni-context";
     String SERVER_STATE = "server-state";
     String SERVER_TYPE = "server-type";
+    String SERVERS = "servers";
     String SERVICE = "service";
     String SERVICE_LOADER_HTTP_SERVER_MECHANISM_FACTORY = "service-loader-http-server-mechanism-factory";
     String SERVICE_LOADER_SASL_SERVER_FACTORY = "service-loader-sasl-server-factory";
@@ -1010,8 +1037,11 @@ public interface ModelDescriptionConstants {
     String UNIT = "unit";
     String UNREGISTERED = "unregistered";
     String UP = "UP";
+    String UPLOAD_CUSTOM_PATCH = "upload-custom-patch";
+    String UPDATE = "update";
     String UPDATE_ACCOUNT = "update-account";
     String UPDATE_AUTO_START_WITH_SERVER_STATUS = "update-auto-start-with-server-status";
+    String UPDATES = "updates";
     String UPTIME = "uptime";
     String URL = "url";
     String USE_RECURSIVE_SEARCH = "use-recursive-search";
@@ -1041,6 +1071,7 @@ public interface ModelDescriptionConstants {
     String WHOAMI = "whoami";
     String WM_SECURITY_MAPPING_GROUPS = "wm-security-mapping-groups";
     String WM_SECURITY_MAPPING_USERS = "wm-security-mapping-users";
+    String WORK_DIR = "work-dir";
     String WORKER = "worker";
     String WORKMANAGER = "workmanager";
     String WRITE = "write";

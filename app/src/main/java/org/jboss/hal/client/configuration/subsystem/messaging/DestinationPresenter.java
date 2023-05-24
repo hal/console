@@ -65,6 +65,7 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import elemental2.promise.Promise;
 
 import static java.util.Arrays.asList;
+
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.ADDRESS_SETTING_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.CORE_QUEUE_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.CORE_QUEUE_TEMPLATE;

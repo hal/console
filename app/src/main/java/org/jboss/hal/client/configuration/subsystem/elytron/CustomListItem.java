@@ -32,10 +32,11 @@ import com.google.gwt.regexp.shared.RegExp;
 
 import elemental2.dom.HTMLElement;
 
-import static elemental2.dom.DomGlobal.document;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
+
+import static elemental2.dom.DomGlobal.document;
 import static org.jboss.hal.ballroom.form.Decoration.DEFAULT;
 import static org.jboss.hal.ballroom.form.Decoration.DEPRECATED;
 import static org.jboss.hal.ballroom.form.Decoration.ENABLED;

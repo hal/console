@@ -49,6 +49,7 @@ import org.jboss.hal.spi.Requires;
 import elemental2.promise.Promise;
 
 import static java.util.Arrays.asList;
+
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.CONNECTION_FACTORY_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.JMS_BRIDGE_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.messaging.AddressTemplates.MESSAGING_SUBSYSTEM_TEMPLATE;

@@ -29,6 +29,7 @@ import org.jboss.hal.meta.StatementContext;
 import org.junit.Test;
 
 import static java.util.stream.Collectors.toList;
+
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_DESCRIPTION_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
 import static org.jboss.hal.meta.processing.RrdParserTestHelper.assertResourceDescriptions;

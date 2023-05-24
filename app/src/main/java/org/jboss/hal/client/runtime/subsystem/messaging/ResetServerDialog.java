@@ -32,6 +32,7 @@ import org.jboss.hal.resources.Strings;
 import elemental2.dom.CSSProperties.WidthUnionType;
 
 import static java.util.Arrays.asList;
+
 import static org.jboss.elemento.Elements.asHtmlElement;
 import static org.jboss.elemento.Elements.htmlElements;
 import static org.jboss.elemento.Elements.stream;

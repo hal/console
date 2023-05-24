@@ -47,6 +47,7 @@ import elemental2.promise.Promise;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
+
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HIBERNATE_PERSISTENCE_UNIT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.JPA;

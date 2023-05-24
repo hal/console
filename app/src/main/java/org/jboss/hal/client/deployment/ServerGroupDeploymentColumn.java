@@ -57,6 +57,7 @@ import elemental2.dom.HTMLElement;
 import elemental2.promise.Promise;
 
 import static java.util.stream.Collectors.toList;
+
 import static org.jboss.hal.client.deployment.AbstractDeploymentColumn.DEPLOYMENT_ADDRESS;
 import static org.jboss.hal.client.deployment.AbstractDeploymentColumn.SELECTED_SERVER_GROUP_DEPLOYMENT_ADDRESS;
 import static org.jboss.hal.core.deployment.Deployment.Status.OK;

@@ -20,7 +20,7 @@ import com.google.gwt.resources.client.ImageResource;
 
 public interface Images extends ClientBundle {
 
-    @Source("homepage/access_control.png")
+    @Source("homepage/access-control.png")
     ImageResource accessControl();
 
     @Source("homepage/configuration.png")
@@ -32,8 +32,8 @@ public interface Images extends ClientBundle {
     @Source("homepage/help.png")
     ImageResource help();
 
-    @Source("homepage/patching.png")
-    ImageResource patching();
+    @Source("homepage/update-manager.png")
+    ImageResource updateManager();
 
     @Source("homepage/runtime.png")
     ImageResource runtime();

@@ -56,6 +56,7 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
 import static java.util.Arrays.asList;
+
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.ADD_PREFIX_ROLE_MAPPER_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.ADD_SUFFIX_ROLE_MAPPER_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.AGGREGATE_EVIDENCE_DECODER_ADDRESS;
@@ -166,7 +167,7 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
                 ElytronResource.X500_SUBJECT_EVIDENCE_DECODER.resource,
                 ElytronResource.X509_SUBJECT_ALT_NAME_EVIDENCE_DECODER.resource),
                 result -> {
-                    // @formatter:off
+                // @formatter:off
                     int i = 0;
                     getView().updateAddPrefixRoleMapper(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));
                     getView().updateAddSuffixRoleMapper(asNamedNodes(result.step(i++).get(RESULT).asPropertyList()));

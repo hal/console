@@ -13,9 +13,12 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.jboss.hal.client.patching;
+package org.jboss.hal.client.installer;
 
-import org.jboss.hal.core.mvp.FinderViewImpl;
+interface Timeouts {
 
-public class PatchingFinderView extends FinderViewImpl implements PatchingFinderPresenter.MyView {
+    // all values in seconds
+    int UPLOAD = 300;
+    int PREPARE = 180;
+    int APPLY = 60;
 }

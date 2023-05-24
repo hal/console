@@ -24,6 +24,7 @@ import org.jboss.hal.dmr.Property;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
+
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ALTERNATIVES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTE_GROUP;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT;

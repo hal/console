@@ -34,7 +34,7 @@ import com.google.common.base.Splitter;
  * <p>
  * <code>Version</code> objects are immutable.
  */
-public class Version implements Comparable {
+public class Version implements Comparable<Version> {
 
     private static final String SEPARATOR = ".";
 
@@ -303,19 +303,17 @@ public class Version implements Comparable {
      * A version is considered to be <b>equal to</b> another version if the major, minor and micro components are equal and the
      * qualifier component is equal (using <code>String.compareTo</code>).
      *
-     * @param object The <code>Version</code> object to be compared.
+     * @param other The <code>Version</code> object to be compared.
      *
      * @return A negative integer, zero, or a positive integer if this object is less than, equal to, or greater than the
      *         specified <code>Version</code> object.
      *
      * @throws ClassCastException If the specified object is not a <code>Version</code>.
      */
-    public int compareTo(Object object) {
-        if (object == this) { // quicktest
+    public int compareTo(Version other) {
+        if (other == this) { // quicktest
             return 0;
         }
-
-        Version other = (Version) object;
 
         int result = major - other.major;
         if (result != 0) {

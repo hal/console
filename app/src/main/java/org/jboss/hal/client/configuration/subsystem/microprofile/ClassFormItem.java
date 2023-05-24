@@ -23,6 +23,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.resources.Ids;
 
 import static java.util.Arrays.asList;
+
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CLASS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CLASS_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MODULE;

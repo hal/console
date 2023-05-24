@@ -27,7 +27,7 @@ public abstract class UploadStep<C extends UploadContext, S extends Enum<S>> ext
 
     public UploadStep(String title, SafeHtml onError) {
         super(title);
-        this.uploadElement = new UploadElement(onError);
+        this.uploadElement = new UploadElement(true, onError);
     }
 
     @Override

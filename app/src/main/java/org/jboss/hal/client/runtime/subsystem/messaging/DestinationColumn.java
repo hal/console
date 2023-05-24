@@ -60,6 +60,7 @@ import elemental2.promise.Promise;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
+
 import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_CORE_QUEUE_ADDRESS;
 import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_DEPLOYMENT_JMS_QUEUE_ADDRESS;
 import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_DEPLOYMENT_JMS_TOPIC_ADDRESS;

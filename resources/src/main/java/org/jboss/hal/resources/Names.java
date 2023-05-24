@@ -57,6 +57,7 @@ public interface Names {
     String CACHING_REALM = "Caching Realm";
     String CATEGORY = "Category";
     String CHANNEL = "Channel";
+    String CHANNELS = "Channels";
     String CLIENT_CONFIGURATION = "Client Configuration";
     String CLIENT_MAPPING = "Client Mapping";
     String CLIENT_MAPPINGS = "Client Mappings";
@@ -129,6 +130,7 @@ public interface Names {
     String FILTERS = "Filters";
     String FORK = "Fork";
 
+    String GAV = "GAV";
     String GENERIC_ACCEPTOR = "Generic Acceptor";
     String GENERIC_CONNECTOR = "Generic Connector";
     String GLOBAL_DIRECTORY = "Global Directory";
@@ -221,6 +223,7 @@ public interface Names {
     String MANAGEMENT_CONSOLE = "Management Console";
     String MANAGEMENT_MODEL = "Management Model";
     String MANAGEMENT_OPERATIONS = "Management Operations";
+    String MANIFEST = "Manifest";
     String MAPPERS_DECODERS = "Mappers / Decoders";
     String MAPPING_MODULE = "Mapping Module";
     String PRIMARY = "Primary";
@@ -387,6 +390,8 @@ public interface Names {
     String UNKNOWN = "unknown";
     String UNMANAGED_DEPLOYMENT = "Unmanaged Deployment";
     String UNDERTOW = "Undertow";
+    String UPDATE_MANAGER = "Update Manager";
+    String UPDATES = "Updates";
     String URL = "URL";
     String USER_PASSWORD_MAPPER = "User Password Mapper";
 

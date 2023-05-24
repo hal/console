@@ -20,9 +20,10 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import static java.util.stream.Collectors.joining;
+
 import static com.google.common.base.Strings.emptyToNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.resources.Strings.substringAfterLast;
 
 /**
@@ -101,6 +102,7 @@ public interface Ids {
     String CACHE_STORE_WRITE_BEHIND = "behind";
     String CACHE_STORE_WRITE_THROUGH = "write";
     String CANCEL_NON_PROGRESSING_OPERATION = "cancel-non-progressing-operation";
+    String CHANNEL_FORM = "channel-form";
     String CONFIGURATION = "configuration";
     String CONFIGURATION_CHANGES = "configuration-changes";
     String CONFIGURATION_CHANGES_EMPTY = "configuration-changes-empty";
@@ -340,13 +342,13 @@ public interface Ids {
     String HOMEPAGE_CONFIGURATION_SECTION = "homepage-configuration-section";
     String HOMEPAGE_DEPLOYMENTS_MODULE = "homepage-deployments-module";
     String HOMEPAGE_DEPLOYMENTS_SECTION = "homepage-deployments-section";
-    String HOMEPAGE_PATCHING_MODULE = "homepage-patching-module";
-    String HOMEPAGE_PATCHING_SECTION = "homepage-patching-section";
     String HOMEPAGE_RUNTIME_MONITOR_SECTION = "homepage-runtime-monitor-section";
     String HOMEPAGE_RUNTIME_MODULE = "homepage-runtime-module";
     String HOMEPAGE_RUNTIME_SECTION = "homepage-runtime-section";
     String HOMEPAGE_RUNTIME_SERVER_GROUP_SECTION = "homepage-runtime-server-group-section";
     String HOMEPAGE_RUNTIME_SERVER_SECTION = "homepage-runtime-server-section";
+    String HOMEPAGE_UPDATE_MANAGER_MODULE = "homepage-update-manager-module";
+    String HOMEPAGE_UPDATE_MANAGER_SECTION = "homepage-update-manager-section";
     String HOST = "host";
     String HOST_PRUNE_ACTIONS = "host-prune-actions";
     String HOST_PRUNE_DISCONNECTED = "host-prune-disconnected";
@@ -771,6 +773,7 @@ public interface Ids {
     String TLC_CONFIGURATION = "tlc-configuration";
     String TLC_DEPLOYMENTS = "tlc-deployments";
     String TLC_HOMEPAGE = "tlc-homepage";
+    String TLC_INSTALLER = "tlc-installer";
     String TLC_MANAGEMENT = "tlc-management";
     String TLC_PATCHING = "tlc-patching";
     String TLC_RUNTIME = "tlc-runtime";
@@ -870,6 +873,25 @@ public interface Ids {
     String UNDERTOW_SINGLE_SIGN_ON_TAB = "undertow-single-sign-on-table";
     String UNDERTOW_STATISTICS_DISABLED = "undertow-statistics-disabled";
     String UNMANAGED_FORM = "unmanaged-form";
+    String UPDATE_MANAGER = "update-manager";
+    String UPDATE_MANAGER_DOMAIN = "update-manager-domain";
+    String UPDATE_MANAGER_LIST_UPDATES = "update-manager-list-updates";
+    String UPDATE_MANAGER_ARTIFACT_CHANGES = "update-manager-artifact-changes";
+    String UPDATE_MANAGER_CHANNEL = "update-manager-channel";
+    String UPDATE_MANAGER_CHANNEL_ADD = "update-manager-channel-add";
+    String UPDATE_MANAGER_CHANNEL_CHANGES = "update-manager-channel-changes";
+    String UPDATE_MANAGER_CHANNEL_REFRESH = "update-manager-channel-refresh";
+    String UPDATE_MANAGER_CLEAN = "update-manager-clean";
+    String UPDATE_MANAGER_CUSTOM_PATCHES = "update-manager-custom-patches";
+    String UPDATE_MANAGER_REVERT = "update-manager-revert";
+    String UPDATE_MANAGER_UPDATE = "update-manager-update";
+    String UPDATE_MANAGER_UPDATE_OFFLINE = "update-manager-update-offline";
+    String UPDATE_MANAGER_UPDATE_ONLINE = "update-manager-update-online";
+    String UPDATE_MANAGER_UPDATE_PATCH = "update-manager-update-patch";
+    String UPDATE_MANAGER_UPDATE_ADD_ACTIONS = "update-manager-update-add-actions";
+    String UPDATE_MANAGER_UPDATE_REFRESH = "update-manager-update-refresh";
+    String UPDATE_MANAGER_UPDATE_SERVER = "update-update-server";
+    String UPDATE_MANAGER_UPDATE_ZIP = "update-manager-update-zip";
     String UPLOAD_FILE_INPUT = "upload-file-input";
     String UPLOAD_NAMES_FORM = "upload-names-form";
     String USER = "user";

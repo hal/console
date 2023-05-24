@@ -60,6 +60,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental2.promise.Promise;
 
 import static java.util.stream.Collectors.toList;
+
 import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_DEPLOYMENT_ADDRESS;
 import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_DEPLOYMENT_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.WEB_SUBDEPLOYMENT_ADDRESS;

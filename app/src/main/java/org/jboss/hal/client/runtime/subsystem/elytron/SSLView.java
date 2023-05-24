@@ -42,6 +42,7 @@ import org.jboss.hal.resources.Resources;
 import elemental2.dom.HTMLElement;
 
 import static java.util.Arrays.asList;
+
 import static org.jboss.elemento.Elements.h;
 import static org.jboss.elemento.Elements.p;
 import static org.jboss.elemento.Elements.section;
@@ -51,7 +52,20 @@ import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.CE
 import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.KEY_MANAGER_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.SECURITY_DOMAIN_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.TRUST_MANAGER_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CERTIFICATE_AUTHORITY_ACCOUNT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHANGE_ACCOUNT_KEY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CREATE_ACCOUNT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEACTIVATE_ACCOUNT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.GET_METADATA;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INIT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.KEY_MANAGER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.METADATA;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_IDENTITY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RELOAD_CERTIFICATE_REVOCATION_LIST;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURITY_DOMAIN;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TRUST_MANAGER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.UPDATE_ACCOUNT;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
 import static org.jboss.hal.resources.Ids.FORM;
@@ -95,7 +109,7 @@ public class SSLView extends HalViewImpl implements SSLPresenter.MyView {
                         table -> presenter.deactivateAccount(table.selectedRow().getName()),
                         Constraint.executable(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE, DEACTIVATE_ACCOUNT)))
 
-                .button(new Button<>(cons.update(), updateAccDesc,
+                .button(new Button<>(cons.onlineUpdates(), updateAccDesc,
                         table -> presenter.updateAccount(table.selectedRow().getName()),
                         Constraint.executable(CERTIFICATE_AUTHORITY_ACCOUNT_TEMPLATE, UPDATE_ACCOUNT)))
 

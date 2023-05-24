@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory;
 import elemental2.promise.Promise;
 
 import static java.util.stream.Collectors.toSet;
+
 import static org.jboss.hal.config.AccessControlProvider.RBAC;
 import static org.jboss.hal.config.AccessControlProvider.SIMPLE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ACCESS;

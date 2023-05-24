@@ -70,6 +70,7 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
+
 import static org.jboss.hal.ballroom.form.Form.State.EMPTY;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ACCESS_TYPE;

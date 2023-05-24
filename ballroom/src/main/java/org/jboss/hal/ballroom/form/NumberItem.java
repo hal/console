@@ -29,6 +29,7 @@ import com.google.gwt.core.client.GWT;
 import elemental2.dom.HTMLInputElement;
 
 import static java.util.Arrays.asList;
+
 import static org.jboss.elemento.Elements.input;
 import static org.jboss.elemento.EventType.bind;
 import static org.jboss.elemento.EventType.change;

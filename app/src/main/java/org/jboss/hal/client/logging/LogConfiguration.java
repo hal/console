@@ -25,8 +25,9 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.logging.client.DefaultLevel;
 import com.google.gwt.user.client.Window;
 
-import static elemental2.dom.DomGlobal.console;
 import static java.util.logging.Level.*;
+
+import static elemental2.dom.DomGlobal.console;
 
 public final class LogConfiguration {
 

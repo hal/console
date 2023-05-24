@@ -20,10 +20,11 @@ import java.util.Date;
 import com.google.gwt.i18n.shared.DateTimeFormat;
 import com.google.gwt.safehtml.shared.SafeHtml;
 
+import static java.lang.System.currentTimeMillis;
+
 import static com.google.gwt.i18n.shared.DateTimeFormat.PredefinedFormat.DATE_SHORT;
 import static com.google.gwt.i18n.shared.DateTimeFormat.PredefinedFormat.DATE_TIME_LONG;
 import static com.google.gwt.i18n.shared.DateTimeFormat.PredefinedFormat.TIME_MEDIUM;
-import static java.lang.System.currentTimeMillis;
 
 public class Message {
 

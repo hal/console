@@ -67,6 +67,7 @@ import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
+
 import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.CACHE_CONTAINER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.DISTRIBUTED_CACHE_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.INVALIDATION_CACHE_ADDRESS;

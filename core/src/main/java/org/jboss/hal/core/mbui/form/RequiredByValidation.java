@@ -27,6 +27,7 @@ import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Messages;
 
 import static java.util.stream.Collectors.toList;
+
 import static org.jboss.hal.ballroom.form.FormItemValidation.ValidationRule.ALWAYS;
 
 public class RequiredByValidation<T> implements FormItemValidation<T> {

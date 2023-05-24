@@ -74,6 +74,7 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
 import static java.util.Arrays.asList;
+
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.AGGREGATE_PROVIDERS_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.AGGREGATE_SECURITY_EVENT_LISTENER_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.AUTHENTICATION_CONFIGURATION_ADDRESS;

@@ -32,9 +32,10 @@ import com.google.gwt.regexp.shared.RegExp;
 
 import elemental2.dom.HTMLElement;
 
-import static elemental2.dom.DomGlobal.document;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+
+import static elemental2.dom.DomGlobal.document;
 import static org.jboss.hal.ballroom.form.Decoration.*;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 

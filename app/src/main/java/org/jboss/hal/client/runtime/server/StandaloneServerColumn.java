@@ -63,6 +63,7 @@ import elemental2.dom.HTMLElement;
 import elemental2.promise.Promise;
 
 import static java.util.Collections.singletonList;
+
 import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.HOST_CONFIGURATION_CHANGES_ADDRESS;
 import static org.jboss.hal.client.runtime.configurationchanges.ConfigurationChangesPresenter.HOST_CONFIGURATION_CHANGES_TEMPLATE;
 import static org.jboss.hal.client.runtime.managementoperations.ManagementOperationsPresenter.MANAGEMENT_OPERATIONS_ADDRESS;

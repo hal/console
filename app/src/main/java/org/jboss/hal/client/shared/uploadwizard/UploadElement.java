@@ -29,12 +29,24 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 
-import static org.jboss.elemento.Elements.*;
+import static org.jboss.elemento.Elements.div;
 import static org.jboss.elemento.Elements.form;
+import static org.jboss.elemento.Elements.input;
 import static org.jboss.elemento.Elements.label;
+import static org.jboss.elemento.Elements.li;
+import static org.jboss.elemento.Elements.removeChildrenFrom;
+import static org.jboss.elemento.Elements.span;
+import static org.jboss.elemento.Elements.ul;
 import static org.jboss.elemento.EventType.change;
 import static org.jboss.elemento.InputType.file;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.clickable;
+import static org.jboss.hal.resources.CSS.fontAwesome;
+import static org.jboss.hal.resources.CSS.link;
+import static org.jboss.hal.resources.CSS.upload;
+import static org.jboss.hal.resources.CSS.uploadAdvanced;
+import static org.jboss.hal.resources.CSS.uploadFile;
+import static org.jboss.hal.resources.CSS.uploadFileList;
+import static org.jboss.hal.resources.CSS.uploadIcon;
 import static org.jboss.hal.resources.FontAwesomeSize.x4;
 
 /** Generic upload component used in various wizards and dialogs. */
@@ -42,15 +54,18 @@ public class UploadElement implements IsElement<HTMLElement> {
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
 
-    private HTMLElement root;
-    private Alert alert;
+    private final boolean single;
+    private final HTMLElement root;
+    private final Alert alert;
+    private final HTMLElement fileListElement;
     private HTMLInputElement fileInput;
-    private HTMLElement labelElement;
 
-    public UploadElement(SafeHtml noFilesError) {
+    public UploadElement(boolean single, SafeHtml noFilesError) {
+        this.single = single;
         HTMLElement iconElement, dragElement;
 
         this.alert = new Alert(Icons.ERROR, noFilesError);
+        String choose = single ? CONSTANTS.chooseOrDragFile() : CONSTANTS.chooseOrDragFiles();
         this.root = form().css(upload)
                 .apply(f -> f.noValidate = true)
                 .add(alert)
@@ -58,12 +73,13 @@ public class UploadElement implements IsElement<HTMLElement> {
                 .add(fileInput = input(file)
                         .id(Ids.UPLOAD_FILE_INPUT)
                         .css(uploadFile)
+                        .apply(f -> f.multiple = !single)
                         .on(change, event -> showFiles(fileInput.files)).element())
-                .add(labelElement = label()
+                .add(label()
                         .apply(l -> l.htmlFor = Ids.UPLOAD_FILE_INPUT)
                         .css(clickable, link)
-                        .textContent(CONSTANTS.chooseFile())
-                        .add(dragElement = span().textContent(" " + CONSTANTS.orDragItHere()).element()).element())
+                        .add(dragElement = span().textContent(choose).element()).element())
+                .add(fileListElement = ul().css(uploadFileList).element())
                 .element();
 
         Elements.setVisible(alert.element(), false);
@@ -87,9 +103,14 @@ public class UploadElement implements IsElement<HTMLElement> {
     }
 
     private void showFiles(elemental2.dom.FileList files) {
+        if (single) {
+            removeChildrenFrom(fileListElement);
+        }
         if (files.getLength() > 0) {
-            elemental2.dom.File file = files.item(0);
-            labelElement.textContent = file.name;
+            for (int i = 0; i < files.getLength(); i++) {
+                elemental2.dom.File file = files.item(i);
+                ul(fileListElement).add(li().textContent(file.name));
+            }
             Elements.setVisible(alert.element(), false);
         }
     }

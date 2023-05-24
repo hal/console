@@ -45,6 +45,7 @@ import org.slf4j.LoggerFactory;
 import com.google.web.bindery.event.shared.EventBus;
 
 import static java.util.stream.Collectors.toSet;
+
 import static org.jboss.hal.config.AccessControlProvider.RBAC;
 import static org.jboss.hal.config.AccessControlProvider.SIMPLE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;

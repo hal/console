@@ -44,8 +44,9 @@ import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
-import static elemental2.dom.DomGlobal.alert;
 import static java.util.stream.Collectors.toList;
+
+import static elemental2.dom.DomGlobal.alert;
 import static org.jboss.hal.flow.Flow.sequential;
 
 public class MacroEditorPresenter
