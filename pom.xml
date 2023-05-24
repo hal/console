@@ -108,7 +108,6 @@
         <version.mockito>5.3.1</version.mockito>
         <version.node>v16.14.0</version.node>
         <version.npm>8.18.0</version.npm>
-        <version.quarkus>3.0.3.Final</version.quarkus>
         <version.slf4j>2.0.3</version.slf4j>
         <version.slf4j.gwt>1.7.7.1</version.slf4j.gwt>
         <version.validation>1.0.0.GA</version.validation>
@@ -125,6 +124,11 @@
         <version.keepachangelog>2.1.1</version.keepachangelog>
         <version.license.plugin>4.2</version.license.plugin>
         <version.nexus.staging.plugin>1.6.13</version.nexus.staging.plugin>
+
+        <!-- Quarkus -->
+        <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
+        <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
+        <quarkus.platform.version>3.0.3.Final</quarkus.platform.version>
 
         <!-- Repos & URLs -->
         <repo.scm.connection>git@github.com:hal/console.git</repo.scm.connection>
@@ -237,6 +241,7 @@
                         <strictCheck>true</strictCheck>
                         <useDefaultExcludes>true</useDefaultExcludes>
                         <mapping>
+                            <Dockerfile>SCRIPT_STYLE</Dockerfile>
                             <parcelrc>DOUBLESLASH_STYLE</parcelrc>
                             <less>SLASHSTAR_STYLE</less>
                             <rng>XML_STYLE</rng>
@@ -248,6 +253,7 @@
                                     <exclude>.sdkmanrc</exclude>
                                     <exclude>version.txt</exclude>
                                     <exclude>LICENSE</exclude>
+                                    <exclude>CODEOWNERS</exclude>
                                     <exclude>README.md</exclude>
                                     <exclude>**/.parcel-cache/**</exclude>
                                     <exclude>**/banner.txt</exclude>
@@ -440,6 +446,7 @@
                 </property>
             </activation>
             <properties>
+                <skipITs>true</skipITs>
                 <quarkus.package.type>native</quarkus.package.type>
             </properties>
         </profile>

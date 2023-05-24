@@ -48,4 +48,9 @@ jobs:
           password: ${{ secrets.QUAY_ROBOT_TOKEN }}
       - name: Standalone Latest
         id: standalone-latest
-        run: $MVN package --projects standalone --also-make -P native,prod,theme-hal -Dquarkus.native.remote-container-build=true -Dquarkus.container-image.push=true -Dquarkus.container-image.image=quay.io/halconsole/hal-development:latest '-Dquarkus.jib.labels."org.opencontainers.image.revision"='$GITHUB_SHA
+        run: $MVN package --projects standalone --also-make -P native,prod,theme-hal \
+          -Dquarkus.container-image.build=true \
+          -Dquarkus.container-image.push=true \
+          -Dquarkus.container-image.image=quay.io/halconsole/hal-development:latest \
+          '-Dquarkus.container-image.labels."org.opencontainers.image.revision"='$GITHUB_SHA \
+          -Dquarkus.native.remote-container-build=true
