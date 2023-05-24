@@ -433,7 +433,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String obtain();
     String obtainCertificate();
     String of();
-    String offlineUsingArchive();
     String offlineUsingArchives();
     String ok();
     String onlineUpdates();

@@ -34,6 +34,7 @@ import elemental2.dom.HTMLElement;
 import elemental2.promise.Promise;
 
 import static java.util.Collections.singletonList;
+
 import static org.jboss.elemento.Elements.div;
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.LIST_UPDATES;
@@ -105,7 +106,7 @@ class UploadArchivesStep<S extends Enum<S>> extends WizardStep<UpdateManagerCont
                         wizard().showError(resources.constants().timeout(), resources.messages().operationTimeout(), false);
                     } else {
                         wizard().showError(resources.constants().error(), resources.messages().uploadArchivesError(),
-                                failure.toString(), false);
+                                String.valueOf(failure), false);
                     }
                     return Promise.reject(failure);
                 });

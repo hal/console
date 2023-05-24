@@ -35,16 +35,18 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.Progress;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.security.Constraint;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
-import org.jboss.hal.spi.Column;
+import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
+import org.jboss.hal.spi.Requires;
 
 import com.google.web.bindery.event.shared.EventBus;
 
@@ -55,6 +57,7 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 
 import static org.jboss.elemento.Elements.p;
+import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_ADDRESS;
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ARTIFACT_CHANGES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CLEAN;
@@ -70,12 +73,14 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.UPDATES;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
-@Column(Ids.UPDATE_MANAGER_UPDATE)
+@AsyncColumn(Ids.UPDATE_MANAGER_UPDATE)
+@Requires(INSTALLER_ADDRESS)
 public class UpdateColumn extends FinderColumn<UpdateItem> {
 
     private final EventBus eventBus;
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
+    private final MetadataRegistry metadataRegistry;
     private final Resources resources;
     private final Progress progress;
 
@@ -84,6 +89,7 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
             final EventBus eventBus,
             final Dispatcher dispatcher,
             final StatementContext statementContext,
+            final MetadataRegistry metadataRegistry,
             final ColumnActionFactory columnActionFactory,
             final Resources resources,
             @Footer final Progress progress) {
@@ -97,6 +103,7 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
         this.eventBus = eventBus;
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
+        this.metadataRegistry = metadataRegistry;
         this.resources = resources;
         this.progress = progress;
 
@@ -223,7 +230,7 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
     }
 
     private void updatePatch() {
-        new UpdatePatchWizard(eventBus, dispatcher, statementContext, resources).show(this);
+        new UpdatePatchWizard(eventBus, dispatcher, statementContext, metadataRegistry, resources).show(this);
     }
 
     private void clean() {

@@ -226,6 +226,7 @@ public interface ModelDescriptionConstants {
     String CUSTOM_FORMATTER = "custom-formatter";
     String CUSTOM_HANDLER = "custom-handler";
     String CUSTOM_MODIFIABLE_REALM = "custom-modifiable-realm";
+    String CUSTOM_PATCH_FILE = "custom-patch-file";
     String CUSTOM_PERMISSION_MAPPER = "custom-permission-mapper";
     String CUSTOM_POLICY = "custom-policy";
     String CUSTOM_PRINCIPAL_DECODER = "custom-principal-decoder";
@@ -1036,6 +1037,7 @@ public interface ModelDescriptionConstants {
     String UNIT = "unit";
     String UNREGISTERED = "unregistered";
     String UP = "UP";
+    String UPLOAD_CUSTOM_PATCH = "upload-custom-patch";
     String UPDATE = "update";
     String UPDATE_ACCOUNT = "update-account";
     String UPDATE_AUTO_START_WITH_SERVER_STATUS = "update-auto-start-with-server-status";

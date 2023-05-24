@@ -18,6 +18,7 @@ package org.jboss.hal.client.installer;
 import org.jboss.hal.ballroom.wizard.Wizard;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Resources;
 
@@ -36,16 +37,19 @@ class UpdatePatchWizard {
     private final EventBus eventBus;
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
+    private final MetadataRegistry metadataRegistry;
     private final Resources resources;
     private final UpdateManagerContext context;
 
     UpdatePatchWizard(final EventBus eventBus,
             final Dispatcher dispatcher,
             final StatementContext statementContext,
+            final MetadataRegistry metadataRegistry,
             final Resources resources) {
         this.eventBus = eventBus;
         this.dispatcher = dispatcher;
         this.statementContext = statementContext;
+        this.metadataRegistry = metadataRegistry;
         this.resources = resources;
         this.context = new UpdateManagerContext();
     }
@@ -58,6 +62,7 @@ class UpdatePatchWizard {
                 .addStep(UPLOAD_PATCHES, new UploadPatchesStep<>(
                         dispatcher,
                         statementContext,
+                        metadataRegistry,
                         resources))
                 .addStep(LIST_UPDATES, new ListUpdatesStep<UpdatePatchState>(
                         resources.constants().listComponents(),
@@ -65,7 +70,8 @@ class UpdatePatchWizard {
                         resources.messages().updateInstallationDescription(
                                 resources.constants().listComponents(),
                                 resources.constants().prepareServerCandidate(),
-                                resources.constants().applyUpdates())))
+                                resources.constants().applyUpdates()),
+                        resources))
                 .addStep(PREPARE_SERVER, new PrepareStep<UpdatePatchState>(
                         (__) -> new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext), PREPARE_UPDATES).build(),
                         eventBus, dispatcher, statementContext, resources))

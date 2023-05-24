@@ -62,7 +62,8 @@ class RevertWizard {
                         resources.messages().revertComponentsDescription(
                                 resources.constants().listComponents(),
                                 resources.constants().prepareServerCandidate(),
-                                resources.constants().applyUpdates())))
+                                resources.constants().applyUpdates()),
+                        resources))
                 .addStep(PREPARE_SERVER, new PrepareStep<RevertState>(
                         context -> new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext), PREPARE_REVERT)
                                 .param(REVISION, context.updateItem.getName())

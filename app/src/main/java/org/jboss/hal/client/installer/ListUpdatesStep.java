@@ -21,25 +21,32 @@ import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Resources;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 
 import elemental2.dom.HTMLElement;
 
 import static org.jboss.elemento.Elements.div;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NEW_VERSION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.OLD_VERSION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STATUS;
 import static org.jboss.hal.resources.CSS.marginBottomLarge;
 import static org.jboss.hal.resources.CSS.marginTopLarge;
 
 class ListUpdatesStep<S extends Enum<S>> extends WizardStep<UpdateManagerContext, S> {
 
+    private final Resources resources;
     private final HTMLElement root;
     private final Table<ModelNode> table;
 
     ListUpdatesStep(final String title,
             final SafeHtml tableDescription,
-            final SafeHtml stepsDescription) {
+            final SafeHtml stepsDescription,
+            final Resources resources) {
         super(title);
+        this.resources = resources;
 
         table = new ModelNodeTable.Builder<ModelNode>(Ids.build(Ids.UPDATE_MANAGER_LIST_UPDATES),
                 Metadata.staticDescription(UpdateManagerResources.INSTANCE.artifactChange()))
@@ -62,5 +69,10 @@ class ListUpdatesStep<S extends Enum<S>> extends WizardStep<UpdateManagerContext
     @Override
     protected void onShow(final UpdateManagerContext context) {
         table.update(context.updates);
+    }
+
+    @Override
+    protected boolean onNext(final UpdateManagerContext context) {
+        return !context.updates.isEmpty();
     }
 }

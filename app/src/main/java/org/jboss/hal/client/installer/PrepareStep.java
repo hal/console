@@ -91,7 +91,7 @@ class PrepareStep<S extends Enum<S>> extends WizardStep<UpdateManagerContext, S>
                         wizard().showError(resources.constants().timeout(), resources.messages().operationTimeout(), false);
                     } else {
                         wizard().showError(resources.constants().error(), resources.messages().prepareServerCandidateError(),
-                                false);
+                                String.valueOf(failure), false);
                     }
                     return Promise.reject(failure);
                 });
@@ -104,7 +104,7 @@ class PrepareStep<S extends Enum<S>> extends WizardStep<UpdateManagerContext, S>
             dispatcher.execute(operation,
                     modelNode -> {
                         callback.proceed();
-                        MessageEvent.fire(eventBus, Message.info(resources.messages().serverCandidateCleanupSuccess()));
+                        MessageEvent.fire(eventBus, Message.success(resources.messages().serverCandidateCleanupSuccess()));
                     }, (op, error) -> {
                         callback.proceed();
                         MessageEvent.fire(eventBus, Message.error(resources.messages().serverCandidateCleanupError()));
