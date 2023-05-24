@@ -20,18 +20,14 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.jboss.hal.core.ComplexAttributeOperations;
 import org.jboss.hal.core.mvp.ApplicationPresenter;
 import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.meta.Metadata;
-import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
-import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
@@ -45,32 +41,31 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_ADDRESS;
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHANNELS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HAL_INDEX;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_ATTRIBUTE_OPERATION;
 
 public class ChannelPresenter extends ApplicationPresenter<ChannelPresenter.MyView, ChannelPresenter.MyProxy> {
 
-    private final ComplexAttributeOperations ca;
     private final Dispatcher dispatcher;
-    private final MetadataRegistry metadataRegistry;
     private final StatementContext statementContext;
     private final Resources resources;
-    private String channelName;
+    private final ChannelOperations channelOperations;
+    String channelName;
 
     @Inject
     public ChannelPresenter(EventBus eventBus,
             ChannelPresenter.MyView view,
             ChannelPresenter.MyProxy proxy,
-            ComplexAttributeOperations ca,
             Dispatcher dispatcher,
-            MetadataRegistry metadataRegistry,
             StatementContext statementContext,
             Resources resources) {
         super(eventBus, view, proxy);
-        this.ca = ca;
         this.dispatcher = dispatcher;
-        this.metadataRegistry = metadataRegistry;
         this.statementContext = statementContext;
         this.resources = resources;
+        this.channelOperations = new ChannelOperations(getEventBus(), dispatcher, statementContext, resources);
 
     }
 
@@ -110,10 +105,8 @@ public class ChannelPresenter extends ApplicationPresenter<ChannelPresenter.MyVi
         });
     }
 
-    void saveChannel(int index, Map<String, Object> changedValues) {
-        Metadata metadata = metadataRegistry.lookup(INSTALLER_TEMPLATE).forComplexAttribute(CHANNELS);
-        ca.save(CHANNELS, Names.CHANNEL, index, INSTALLER_TEMPLATE.resolve(statementContext), changedValues, metadata,
-                this::onReset);
+    void saveChannel(String name, Map<String, Object> changedValues) {
+        channelOperations.saveChannel(name, changedValues, this::onReset);
     }
 
     // @formatter:off

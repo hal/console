@@ -21,7 +21,6 @@ import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
-import org.jboss.hal.resources.Resources;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 
@@ -37,16 +36,13 @@ import static org.jboss.hal.resources.CSS.marginTopLarge;
 
 class ListUpdatesStep<S extends Enum<S>> extends WizardStep<UpdateManagerContext, S> {
 
-    private final Resources resources;
     private final HTMLElement root;
     private final Table<ModelNode> table;
 
     ListUpdatesStep(final String title,
             final SafeHtml tableDescription,
-            final SafeHtml stepsDescription,
-            final Resources resources) {
+            final SafeHtml stepsDescription) {
         super(title);
-        this.resources = resources;
 
         table = new ModelNodeTable.Builder<ModelNode>(Ids.build(Ids.UPDATE_MANAGER_LIST_UPDATES),
                 Metadata.staticDescription(UpdateManagerResources.INSTANCE.artifactChange()))

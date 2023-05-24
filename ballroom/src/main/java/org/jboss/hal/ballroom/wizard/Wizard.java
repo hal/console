@@ -471,6 +471,9 @@ public class Wizard<C, S extends Enum<S>> {
     private void onNext() {
         if (finishCanClose) {
             // we're on the last step and have either seen a success or error message
+            if (finishCallback != null) {
+                finishCallback.onFinish(this, context);
+            }
             close();
         } else {
             if (currentStep() instanceof AsyncStep) {

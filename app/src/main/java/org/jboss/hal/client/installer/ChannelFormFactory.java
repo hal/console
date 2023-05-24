@@ -30,14 +30,19 @@ import org.jboss.hal.resources.Resources;
 import static java.util.Arrays.asList;
 
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHANNELS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.GAV;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MANIFEST;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REPOSITORIES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.URL;
 
 class ChannelFormFactory {
 
-    private static final String MANIFEST_GAV = MANIFEST + "." + GAV;
-    private static final String MANIFEST_URL = MANIFEST + "." + URL;
+    static final String MANIFEST_GAV = MANIFEST + "." + GAV;
+    static final String MANIFEST_URL = MANIFEST + "." + URL;
 
-    static Form<ModelNode> channelForm(MetadataRegistry metadataRegistry, Resources resources) {
+    static Form<ModelNode> channelForm(MetadataRegistry metadataRegistry, Resources resources, boolean add) {
         List<String> manifestAttributes = asList(MANIFEST_GAV, MANIFEST_URL);
         Metadata channelMetadata = metadataRegistry.lookup(INSTALLER_TEMPLATE).forComplexAttribute(CHANNELS);
         ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(Ids.CHANNEL_FORM, channelMetadata)
@@ -45,7 +50,7 @@ class ChannelFormFactory {
                 .include(manifestAttributes)
                 .unsorted()
                 .build();
-        form.getFormItem(NAME).setRequired(true);
+        form.getFormItem(NAME).setEnabled(add);
         // need to set up these manually, since nested properties aren't handled by ModelNodeForm yet.
         form.addFormValidation(
                 new ExactlyOneAlternativeValidation<>(manifestAttributes, resources.constants(), resources.messages()));

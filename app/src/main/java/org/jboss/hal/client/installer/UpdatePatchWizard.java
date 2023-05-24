@@ -70,8 +70,7 @@ class UpdatePatchWizard {
                         resources.messages().updateInstallationDescription(
                                 resources.constants().listComponents(),
                                 resources.constants().prepareServerCandidate(),
-                                resources.constants().applyUpdates()),
-                        resources))
+                                resources.constants().applyUpdates())))
                 .addStep(PREPARE_SERVER, new PrepareStep<UpdatePatchState>(
                         (__) -> new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext), PREPARE_UPDATES).build(),
                         eventBus, dispatcher, statementContext, resources))

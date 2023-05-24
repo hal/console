@@ -24,10 +24,11 @@ import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
-import static org.jboss.elemento.Elements.*;
+import static org.jboss.elemento.Elements.h;
+import static org.jboss.elemento.Elements.p;
+import static org.jboss.elemento.Elements.section;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.HAL_INDEX;
 
 public class ChannelView extends HalViewImpl implements ChannelPresenter.MyView {
 
@@ -36,9 +37,8 @@ public class ChannelView extends HalViewImpl implements ChannelPresenter.MyView 
 
     @Inject
     public ChannelView(MetadataRegistry metadataRegistry, Resources resources) {
-        channelForm = ChannelFormFactory.channelForm(metadataRegistry, resources);
-        channelForm.setSaveCallback(
-                (f, changedValues) -> presenter.saveChannel(f.getModel().get(HAL_INDEX).asInt(-1), changedValues));
+        channelForm = ChannelFormFactory.channelForm(metadataRegistry, resources, false);
+        channelForm.setSaveCallback((f, changedValues) -> presenter.saveChannel(presenter.channelName, changedValues));
         registerAttachable(channelForm);
 
         initElement(row()

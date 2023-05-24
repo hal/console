@@ -43,8 +43,6 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
-import org.jboss.hal.spi.Message;
-import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -56,13 +54,11 @@ import static java.util.stream.Collectors.toList;
 
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_ADDRESS;
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE;
+import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHANNELS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.CHANNEL_REMOVE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.LIST_ADD_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
@@ -70,11 +66,9 @@ import static org.jboss.hal.resources.CSS.fontAwesome;
 @Requires(INSTALLER_ADDRESS)
 public class ChannelColumn extends FinderColumn<Channel> {
 
-    private final EventBus eventBus;
-    private final StatementContext statementContext;
     private final MetadataRegistry metadataRegistry;
-    private final Dispatcher dispatcher;
     private final Resources resources;
+    private final ChannelOperations channelOperations;
 
     @Inject
     public ChannelColumn(final Finder finder,
@@ -89,11 +83,9 @@ public class ChannelColumn extends FinderColumn<Channel> {
                 .onPreview(ChannelPreview::new)
                 .showCount()
                 .withFilter());
-        this.eventBus = eventBus;
-        this.statementContext = statementContext;
         this.metadataRegistry = metadataRegistry;
-        this.dispatcher = dispatcher;
         this.resources = resources;
+        this.channelOperations = new ChannelOperations(eventBus, dispatcher, statementContext, resources);
 
         setItemsProvider(context -> {
             ResourceAddress address = INSTALLER_TEMPLATE.resolve(statementContext);
@@ -157,33 +149,18 @@ public class ChannelColumn extends FinderColumn<Channel> {
     }
 
     private void add() {
-        Form<ModelNode> channelForm = ChannelFormFactory.channelForm(metadataRegistry, resources);
-        AddResourceDialog dialog = new AddResourceDialog(resources.constants().addChannel(), channelForm, (name, modelNode) -> {
-            Operation operation = new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext), LIST_ADD_OPERATION)
-                    .param(NAME, CHANNELS)
-                    .param(VALUE, modelNode)
-                    .build();
-            dispatcher.execute(operation, result -> {
-                MessageEvent.fire(eventBus, Message.success(resources.messages().addResourceSuccess(Names.CHANNEL, name)));
-                // noinspection DataFlowIssue
-                refresh(Ids.asId(name));
-            });
-        });
+        Form<ModelNode> channelForm = ChannelFormFactory.channelForm(metadataRegistry, resources, true);
+        AddResourceDialog dialog = new AddResourceDialog(resources.constants().addChannel(), channelForm,
+                (name, modelNode) -> {
+                    Channel channel = new Channel(modelNode);
+                    channelOperations.addChannel(channel, () -> refresh(Ids.asId(channel.getName())));
+                });
         dialog.show();
     }
 
     private void remove(Channel channel) {
         DialogFactory.showConfirmation(resources.constants().unsubscribeChannel(),
-                resources.messages().unsubscribeChannelQuestion(channel.getName()), () -> {
-                    Operation operation = new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext), CHANNEL_REMOVE)
-                            .param(NAME, channel.getName())
-                            .build();
-                    dispatcher.execute(operation, result -> {
-                        MessageEvent
-                                .fire(eventBus,
-                                        Message.success(resources.messages().unsubscribeChannelSuccess(channel.getName())));
-                        refresh(RefreshMode.CLEAR_SELECTION);
-                    });
-                });
+                resources.messages().unsubscribeChannelQuestion(channel.getName()),
+                () -> channelOperations.removeChannel(channel.getName(), () -> refresh(CLEAR_SELECTION)));
     }
 }

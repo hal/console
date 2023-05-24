@@ -61,8 +61,7 @@ class UpdateOnlineWizard {
                         resources.messages().updateInstallationDescription(
                                 resources.constants().listComponents(),
                                 resources.constants().prepareServerCandidate(),
-                                resources.constants().applyUpdates()),
-                        resources))
+                                resources.constants().applyUpdates())))
                 .addStep(PREPARE_SERVER, new PrepareStep<UpdateOnlineState>(
                         (__) -> new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext), PREPARE_UPDATES).build(),
                         eventBus, dispatcher, statementContext, resources))
