@@ -59,9 +59,9 @@ import static org.jboss.hal.resources.Urls.MANAGEMENT;
 public class EndpointManager {
 
     // wildfly-console is the name convention to set it as the configuration specifically for HAL
-    // as there is no setting specifically to associate /subsystem=keycloak/secure-server=*
+    // as there is no setting specifically to associate /subsystem=elytron-oidc-client/secure-server=*
     // for http management authentication
-    private static final String KEYCLOAK_ADAPTER_WILDFLY_CONSOLE = "/keycloak/adapter/wildfly-console";
+    private static final String ELYTRON_OIDC_CLIENT_WILDFLY_CONSOLE = "/oidc/wildfly-console";
     public static final String CONNECT_PARAMETER = "connect";
     static final String DEFAULT_HOST = "localhost"; // must be in sync with the default value in endpoint.dmr!
     static final int DEFAULT_PORT = 9990; // must be in sync with the default value in endpoint.dmr!
@@ -123,11 +123,12 @@ public class EndpointManager {
                     if (keycloakPresentAndValid()) {
                         callback.execute();
                     } else {
-                        checkKeycloakAdapter(baseUrl, keycloakServerJsUrl -> {
-                            // if there is a keycloak adapter, call keycloak authentication
-                            authKeycloak(getKeycloakAdapterUrl(baseUrl), keycloakServerJsUrl, callback::execute);
+                        checkKeycloakOidcConfiguration(baseUrl, keycloakServerJsUrl -> {
+                            // if there is keycloak OIDC configuration, call keycloak authentication
+                            authKeycloak(getOidcConfigurationUrl(baseUrl), keycloakServerJsUrl, callback::execute);
                         }, () -> {
-                            // if there is no keycloak adapter for wildfly-console, proceed with regular authentication
+                            // if there is no keycloak OIDC configuration for wildfly-console, proceed with regular
+                            // authentication
                             callback.execute();
                         });
                     }
@@ -167,14 +168,14 @@ public class EndpointManager {
         new EndpointDialog(this, storage).show();
     }
 
-    private String getKeycloakAdapterUrl(String baseUrl) {
-        return baseUrl + KEYCLOAK_ADAPTER_WILDFLY_CONSOLE;
+    private String getOidcConfigurationUrl(String baseUrl) {
+        return baseUrl + ELYTRON_OIDC_CLIENT_WILDFLY_CONSOLE;
     }
 
     void pingServer(Endpoint endpoint, AsyncCallback<Void> callback) {
         String managementEndpoint = endpoint.getUrl() + MANAGEMENT;
 
-        checkKeycloakAdapter(endpoint.getUrl(), s -> {
+        checkKeycloakOidcConfiguration(endpoint.getUrl(), s -> {
             callback.onSuccess(null);
         }, () -> {
             try {
@@ -202,8 +203,8 @@ public class EndpointManager {
         });
     }
 
-    private void checkKeycloakAdapter(String baseUrl, Consumer<String> kcExistsCallback, Callback wildflyCallback) {
-        String keycloakAdapterUrl = getKeycloakAdapterUrl(baseUrl);
+    private void checkKeycloakOidcConfiguration(String baseUrl, Consumer<String> kcExistsCallback, Callback wildflyCallback) {
+        String oidcConfigurationUrl = getOidcConfigurationUrl(baseUrl);
         XMLHttpRequest xhr = new XMLHttpRequest();
         xhr.onload = event -> {
             int status = xhr.status;
@@ -212,15 +213,15 @@ public class EndpointManager {
                 String keycloakServerJsUrl = kcConfig.getString(AUTH_SERVER_URL) + "/js/keycloak.js";
                 kcExistsCallback.accept(keycloakServerJsUrl);
             } else {
-                logger.error("Keycloak adapter '{}' doesn't exist - status: {}", keycloakAdapterUrl, status);
+                logger.error("Keycloak OIDC configuration '{}' doesn't exist - status: {}", oidcConfigurationUrl, status);
                 wildflyCallback.execute();
             }
         };
         xhr.addEventListener("error", event -> {
-            logger.error("Keycloak adapter '{}' failed: {}", keycloakAdapterUrl, event);
+            logger.error("Keycloak OIDC '{}' failed: {}", oidcConfigurationUrl, event);
             wildflyCallback.execute();
         });
-        xhr.open(GET.name(), keycloakAdapterUrl, true);
+        xhr.open(GET.name(), oidcConfigurationUrl, true);
         xhr.send();
     }
 
