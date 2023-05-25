@@ -17,11 +17,13 @@ updates:
       interval: "daily"
     ignore:
       - dependency-name: "bootstrap"
-        versions: [">=4"]
+        versions: [ ">=4" ]
       - dependency-name: "d3"
-        versions: [">=6"]
+        versions: [ ">=6" ]
       - dependency-name: "datatables.net-buttons"
-        versions: [">=2"]
+        versions: [ ">=2" ]
+      - dependency-name: "datatables.net-keytable"
+        versions: [ ">=2.8" ]
 
   - package-ecosystem: "npm"
     directory: "/app/local_modules/parcel-resolver-theme"
