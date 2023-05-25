@@ -8,24 +8,38 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Added
 
+- [HAL-1804](https://issues.redhat.com/browse/HAL-1804): Support for Keycloak SSO using Wildfly OIDC Client
 - [HAL-1826](https://issues.redhat.com/browse/HAL-1826): Support nested attributes in MBUI views
+- [HAL-1827](https://issues.redhat.com/browse/HAL-1827): Update the server installation using the Web Console
+- [Hal-1828](https://issues.redhat.com/browse/HAL-1828): Check for duplicate deployment
+- [HAL-1832](https://issues.redhat.com/browse/HAL-1832): Activate OIDC in the console
 
 ### Changed
 
-- [HAL-1818](https://issues.redhat.com/browse/HAL-1818): "servers" and "running" could be a part of ModelDescriptionConstants inside FindNonProgressingTask (thanks @anilabhabaral)
+- [HAL-1818](https://issues.redhat.com/browse/HAL-1818): "servers" and "running" could be a part of ModelDescriptionConstants
+  inside FindNonProgressingTask (thanks @anilabhabaral)
 
 ### Fixed
 
-- [HAL-1822](https://issues.redhat.com/browse/HAL-1822): TopologyTasks.RunningServers uses invalid resource addresses (thanks @anilabhabaral)
+- [HAL-1822](https://issues.redhat.com/browse/HAL-1822): TopologyTasks.RunningServers uses invalid resource addresses (thanks
+  @anilabhabaral)
+- [HAL-1839](https://issues.redhat.com/browse/HAL-1839): Properties in the Resource Adapter(IBM MQ) are removed when updating
+  the connection pool with Management Console
+- [HAL-1848](https://issues.redhat.com/browse/HAL-1848): Disabled datasource throws error in Runtime
+- [HAL-1850](https://issues.redhat.com/browse/HAL-1850): DataSource wizard creates invalid operation
+
+### Removed
+
+- [HAL-1847](https://issues.redhat.com/browse/HAL-1847): Remove driver-name from driver forms
 
 ### Upgrades
 
-- Bump ACE editor to 1.14.0
-- Bump JQuery to 3.6.3
-- Bump Mockito to 4.10.0
-- Bump Parcel to 2.8.2
-- Bump PouchDB to 8.0.0
-- Bump Quarkus to 2.15.1.Final
+- Bump ACE editor to 1.22.0
+- Bump JQuery to 3.6.1
+- Bump Mockito to 5.3.1
+- Bump Parcel to 2.8.0
+- Bump PouchDB to 7.3.1
+- Bump Quarkus to 3.0.3.Final
 - Update GraalVM to 22.3.0
 
 ## [3.6.5] - 2022-12-08
