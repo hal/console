@@ -35,10 +35,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Upgrades
 
 - Bump ACE editor to 1.22.0
-- Bump JQuery to 3.6.1
+- Bump JQuery to 3.6.4
 - Bump Mockito to 5.3.1
-- Bump Parcel to 2.8.0
-- Bump PouchDB to 7.3.1
+- Bump Parcel to 2.8.3
+- Bump PouchDB to 8.0.1
 - Bump Quarkus to 3.0.3.Final
 - Update GraalVM to 22.3.0
 
