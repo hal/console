@@ -15,12 +15,9 @@
  */
 package org.jboss.hal.client.accesscontrol;
 
-import javax.inject.Inject;
-
 import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.form.PreTextItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.ballroom.form.URLItem;
 import org.jboss.hal.config.keycloak.Keycloak;
@@ -35,6 +32,7 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import elemental2.dom.HTMLElement;
+import javax.inject.Inject;
 
 import static org.jboss.elemento.Elements.div;
 import static org.jboss.elemento.Elements.h;
@@ -42,56 +40,66 @@ import static org.jboss.elemento.Elements.p;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.config.AccessControlProvider.SIMPLE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.KEYCLOAK;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROVIDER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PROVIDER_URL;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.USERNAME;
 import static org.jboss.hal.resources.Ids.FORM;
 import static org.jboss.hal.resources.Ids.USER;
 
 public class AccessControlSsoView extends HalViewImpl implements AccessControlSsoPresenter.MyView {
 
-    private AccessControlSsoPresenter presenter;
-    private final Alert warning;
+    private Alert warning;
     private Form<ModelNode> form;
+    private AccessControlSsoPresenter presenter;
 
     @Inject
     public AccessControlSsoView(AccessControl accessControl, Resources resources, KeycloakHolder keycloakHolder) {
-        this.warning = new Alert(Icons.WARNING, resources.messages().simpleProviderWarning(),
-                resources.constants().enableRbac(),
-                event -> {
-                    accessControl.switchProvider();
-                    presenter.onReset();
-                });
+        HTMLElement layout;
+        Keycloak keycloak = keycloakHolder.getKeycloak();
+        if (keycloak != null) {
+            warning = new Alert(Icons.WARNING, resources.messages().simpleProviderWarning(),
+                    resources.constants().enableRbac(),
+                    event -> {
+                        accessControl.switchProvider();
+                        presenter.onReset();
+                    });
 
-        Keycloak.UserProfile userProfile = keycloakHolder.getKeycloak().userProfile;
-        TextBoxItem user = new TextBoxItem(USER);
-        if (userProfile.firstName != null) {
-            String userValue = userProfile.firstName + " " + userProfile.lastName + " <" + userProfile.email + ">";
-            user.setValue(userValue);
+            Keycloak.UserProfile userProfile = keycloakHolder.getKeycloak().userProfile;
+            TextBoxItem user = new TextBoxItem(USER);
+            if (userProfile.firstName != null) {
+                String userValue = userProfile.firstName + " " + userProfile.lastName + " <" + userProfile.email + ">";
+                user.setValue(userValue);
+            }
+            TextBoxItem userName = new TextBoxItem(USERNAME);
+            userName.setValue(userProfile.username);
+            URLItem authServerUrl = new URLItem(PROVIDER_URL);
+            TextBoxItem realm = new TextBoxItem(PROVIDER);
+            URLItem accountUrl = new URLItem("account-url");
+            accountUrl.setValue(keycloakHolder.getKeycloak().createAccountUrl());
+
+            form = new ModelNodeForm.Builder<>(Ids.build(KEYCLOAK, FORM), Metadata.empty())
+                    .readOnly()
+                    .unboundFormItem(userName)
+                    .unboundFormItem(user)
+                    .unboundFormItem(authServerUrl)
+                    .unboundFormItem(accountUrl)
+                    .unboundFormItem(realm)
+                    .build();
+            registerAttachable(form);
+
+            layout = div()
+                    .add(h(1).textContent(Names.ACCESS_CONTROL))
+                    .add(p().textContent(resources.messages().accessControlSsoDescription()))
+                    .add(warning)
+                    .add(form).element();
+        } else {
+            layout = div()
+                    .add(h(1).textContent(Names.ACCESS_CONTROL))
+                    .add(p().textContent(resources.messages().accessControlSsoDescription()))
+                    .add(new Alert(Icons.DISABLED, resources.messages().noResource()))
+                    .element();
         }
-        TextBoxItem userName = new TextBoxItem(USERNAME);
-        userName.setValue(userProfile.username);
-        URLItem authServerUrl = new URLItem(KEYCLOAK_SERVER_URL);
-        TextBoxItem realm = new TextBoxItem(REALM);
-        URLItem accountUrl = new URLItem("account-url");
-        accountUrl.setValue(keycloakHolder.getKeycloak().createAccountUrl());
-        PreTextItem realmPublicKey = new PreTextItem(REALM_PUBLIC_KEY);
-
-        form = new ModelNodeForm.Builder<>(Ids.build(KEYCLOAK, FORM), Metadata.empty())
-                .readOnly()
-                .unboundFormItem(userName)
-                .unboundFormItem(user)
-                .unboundFormItem(authServerUrl)
-                .unboundFormItem(accountUrl)
-                .unboundFormItem(realm)
-                .unboundFormItem(realmPublicKey)
-                .build();
-
-        registerAttachable(form);
-
-        HTMLElement layout = div()
-                .add(h(1).textContent(Names.ACCESS_CONTROL))
-                .add(p().textContent(resources.messages().accessControlSsoDescription()))
-                .add(warning)
-                .add(form).element();
 
         initElement(row()
                 .add(column()
@@ -103,17 +111,15 @@ public class AccessControlSsoView extends HalViewImpl implements AccessControlSs
         this.presenter = presenter;
     }
 
-    private void toggleWarningVisible() {
-        Elements.setVisible(warning.element(), presenter.getEnvironment().getAccessControlProvider() == SIMPLE);
-    }
-
     @Override
     @SuppressWarnings("HardCodedStringLiteral")
     public void update(ModelNode payload) {
-        form.getFormItem(KEYCLOAK_SERVER_URL).setValue(payload.get(KEYCLOAK_SERVER_URL).asString());
-        form.getFormItem(REALM).setValue(payload.get(REALM).asString());
-        form.getFormItem(REALM_PUBLIC_KEY).setValue(payload.get(REALM_PUBLIC_KEY).asString());
-        toggleWarningVisible();
+        if (form != null) {
+            form.getFormItem(PROVIDER_URL).setValue(payload.get(PROVIDER_URL).asString());
+            form.getFormItem(PROVIDER).setValue(payload.get(PROVIDER).asString());
+        }
+        if (warning != null) {
+            Elements.setVisible(warning.element(), presenter.getEnvironment().getAccessControlProvider() == SIMPLE);
+        }
     }
-
 }

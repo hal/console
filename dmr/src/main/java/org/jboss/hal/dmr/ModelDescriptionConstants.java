@@ -740,6 +740,7 @@ public interface ModelDescriptionConstants {
     String PROVIDER_LOADER = "provider-loader";
     String PROVIDER_MODULE = "provider-module";
     String PROVIDER_NAME = "provider-name";
+    String PROVIDER_URL = "provider-url";
     String PROVIDER_SASL_SERVER_FACTORY = "provider-sasl-server-factory";
     String PROXIES = "proxies";
     String PROXY = "proxy";
