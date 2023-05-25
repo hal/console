@@ -39,7 +39,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Bump Mockito to 5.3.1
 - Bump Parcel to 2.8.3
 - Bump PouchDB to 8.0.1
-- Bump Quarkus to 3.0.3.Final
+- Bump Quarkus to 3.0.4.Final
 - Update GraalVM to 22.3.0
 
 ## [3.6.5] - 2022-12-08
