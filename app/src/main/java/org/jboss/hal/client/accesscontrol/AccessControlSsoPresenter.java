@@ -18,6 +18,9 @@ package org.jboss.hal.client.accesscontrol;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
+
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.mvp.HalView;
 import org.jboss.hal.core.mvp.HasPresenter;
@@ -43,8 +46,6 @@ import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
 import elemental2.promise.Promise;
-import javax.inject.Inject;
-import javax.inject.Provider;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROVIDER;

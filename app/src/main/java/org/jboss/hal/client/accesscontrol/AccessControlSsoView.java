@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.client.accesscontrol;
 
+import javax.inject.Inject;
+
 import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.form.Form;
@@ -32,7 +34,6 @@ import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
 import elemental2.dom.HTMLElement;
-import javax.inject.Inject;
 
 import static org.jboss.elemento.Elements.div;
 import static org.jboss.elemento.Elements.h;
