@@ -13,7 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - [HAL-1804](https://issues.redhat.com/browse/HAL-1804): Support for Keycloak SSO using Wildfly OIDC Client
 - [HAL-1826](https://issues.redhat.com/browse/HAL-1826): Support nested attributes in MBUI views
 - [HAL-1827](https://issues.redhat.com/browse/HAL-1827): Update the server installation using the Web Console
-- [Hal-1828](https://issues.redhat.com/browse/HAL-1828): Check for duplicate deployment
+- [HAL-1828](https://issues.redhat.com/browse/HAL-1828): Check for duplicate deployment
 - [HAL-1832](https://issues.redhat.com/browse/HAL-1832): Activate OIDC in the console
 
 ### Changed
