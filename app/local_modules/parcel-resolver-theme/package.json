@@ -7,7 +7,7 @@
     "parcel": ">=2.0.0"
   },
   "devDependencies": {
-    "@parcel/diagnostic": "^2.8.2",
+    "@parcel/diagnostic": "^2.9.0",
     "@parcel/plugin": "^2.8.3",
     "parcel": "^2.8.3"
   }
