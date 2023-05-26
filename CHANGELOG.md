@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [3.6.6] - 2023-05-26
+
 ### Added
 
 - [HAL-1804](https://issues.redhat.com/browse/HAL-1804): Support for Keycloak SSO using Wildfly OIDC Client
@@ -411,7 +413,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - for dependency upgrades
 -->
 
-[Unreleased]: https://github.com/hal/console/compare/v3.6.5...HEAD
+[Unreleased]: https://github.com/hal/console/compare/v3.6.6...HEAD
+[3.6.6]: https://github.com/hal/console/compare/v3.6.5...v3.6.6
 [3.6.5]: https://github.com/hal/console/compare/v3.6.4...v3.6.5
 [3.6.4]: https://github.com/hal/console/compare/v3.6.3...v3.6.4
 [3.6.3]: https://github.com/hal/console/compare/v3.6.2...v3.6.3
