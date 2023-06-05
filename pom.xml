@@ -242,6 +242,10 @@
                         <useDefaultExcludes>true</useDefaultExcludes>
                         <mapping>
                             <Dockerfile>SCRIPT_STYLE</Dockerfile>
+                            <Dockerfile-domain>SCRIPT_STYLE</Dockerfile-domain>
+                            <Dockerfile-domain-development>SCRIPT_STYLE</Dockerfile-domain-development>
+                            <Dockerfile-standalone>SCRIPT_STYLE</Dockerfile-standalone>
+                            <Dockerfile-standalone-development>SCRIPT_STYLE</Dockerfile-standalone-development>
                             <parcelrc>DOUBLESLASH_STYLE</parcelrc>
                             <less>SLASHSTAR_STYLE</less>
                             <rng>XML_STYLE</rng>
