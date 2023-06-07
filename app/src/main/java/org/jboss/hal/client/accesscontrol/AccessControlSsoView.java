@@ -17,13 +17,14 @@ package org.jboss.hal.client.accesscontrol;
 
 import javax.inject.Inject;
 
-import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.ballroom.form.URLItem;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.keycloak.Keycloak;
 import org.jboss.hal.config.keycloak.KeycloakHolder;
+import org.jboss.hal.core.accesscontrol.AccessControl;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.dmr.ModelNode;
@@ -32,6 +33,8 @@ import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+
+import com.google.gwt.safehtml.shared.SafeHtml;
 
 import elemental2.dom.HTMLElement;
 
@@ -50,17 +53,19 @@ import static org.jboss.hal.resources.Ids.USER;
 
 public class AccessControlSsoView extends HalViewImpl implements AccessControlSsoPresenter.MyView {
 
-    private Alert warning;
     private Form<ModelNode> form;
     private AccessControlSsoPresenter presenter;
 
     @Inject
-    public AccessControlSsoView(AccessControl accessControl, Resources resources, KeycloakHolder keycloakHolder) {
+    public AccessControlSsoView(AccessControl accessControl, Environment environment, Resources resources,
+            KeycloakHolder keycloakHolder) {
         HTMLElement layout;
         Keycloak keycloak = keycloakHolder.getKeycloak();
         if (keycloak != null) {
-            warning = new Alert(Icons.WARNING, resources.messages().simpleProviderWarning(),
-                    resources.constants().enableRbac(),
+            SafeHtml providerText = environment.getAccessControlProvider() == SIMPLE
+                    ? resources.messages().switchToRbacProvider()
+                    : resources.messages().switchToSimpleProvider();
+            Alert providerInfo = new Alert(Icons.INFO, providerText, resources.constants().switchProvider(),
                     event -> {
                         accessControl.switchProvider();
                         presenter.onReset();
@@ -92,7 +97,7 @@ public class AccessControlSsoView extends HalViewImpl implements AccessControlSs
             layout = div()
                     .add(h(1).textContent(Names.ACCESS_CONTROL))
                     .add(p().textContent(resources.messages().accessControlSsoDescription()))
-                    .add(warning)
+                    .add(providerInfo)
                     .add(form).element();
         } else {
             layout = div()
@@ -118,9 +123,6 @@ public class AccessControlSsoView extends HalViewImpl implements AccessControlSs
         if (form != null) {
             form.getFormItem(PROVIDER_URL).setValue(payload.get(PROVIDER_URL).asString());
             form.getFormItem(PROVIDER).setValue(payload.get(PROVIDER).asString());
-        }
-        if (warning != null) {
-            Elements.setVisible(warning.element(), presenter.getEnvironment().getAccessControlProvider() == SIMPLE);
         }
     }
 }

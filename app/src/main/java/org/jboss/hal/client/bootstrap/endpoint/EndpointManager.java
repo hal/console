@@ -18,8 +18,6 @@ package org.jboss.hal.client.bootstrap.endpoint;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import javax.inject.Inject;
-
 import org.jboss.elemento.Elements;
 import org.jboss.hal.client.bootstrap.BootstrapFailed;
 import org.jboss.hal.config.Endpoints;
@@ -38,6 +36,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import elemental2.dom.HTMLScriptElement;
 import elemental2.dom.XMLHttpRequest;
+import javax.inject.Inject;
 
 import static elemental2.dom.DomGlobal.document;
 import static elemental2.dom.DomGlobal.setInterval;
@@ -51,7 +50,7 @@ import static org.jboss.hal.resources.Urls.MANAGEMENT;
 
 /**
  * Class which connects to a running management endpoint or triggers the selection of an arbitrary management endpoint. By
- * default this class first tries to connect to the management endpoint the console was loaded from. If no endpoint was found,
+ * default, this class first tries to connect to the management endpoint the console was loaded from. If no endpoint was found,
  * the selection is triggered by {@link EndpointDialog}.
  * <p>
  * Please note: This class must run <em>before</em> any bootstrap function!
@@ -74,7 +73,9 @@ public class EndpointManager {
     private Callback callback;
 
     @Inject
-    public EndpointManager(Endpoints endpoints, EndpointStorage storage, KeycloakHolder keycloakHolder) {
+    public EndpointManager(Endpoints endpoints,
+            EndpointStorage storage,
+            KeycloakHolder keycloakHolder) {
         this.endpoints = endpoints;
         this.storage = storage;
         this.keycloakHolder = keycloakHolder;
@@ -108,6 +109,7 @@ public class EndpointManager {
         }
     }
 
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     private void connect(Optional<Endpoint> endpoint) {
         String baseUrl = endpoint.map(Endpoint::getUrl)
                 .orElse(Endpoints.getBaseUrl());
@@ -125,7 +127,7 @@ public class EndpointManager {
                     } else {
                         checkKeycloakOidcConfiguration(baseUrl, keycloakServerJsUrl -> {
                             // if there is keycloak OIDC configuration, call keycloak authentication
-                            authKeycloak(getOidcConfigurationUrl(baseUrl), keycloakServerJsUrl, callback::execute);
+                            authKeycloak(getOidcConfigurationUrl(baseUrl), keycloakServerJsUrl, callback);
                         }, () -> {
                             // if there is no keycloak OIDC configuration for wildfly-console, proceed with regular
                             // authentication
@@ -134,18 +136,13 @@ public class EndpointManager {
                     }
                     break;
                 case 403:
-                    Elements.removeChildrenFrom(document.body);
-                    document.body.appendChild(
-                            new RbacProviderFailed("Status " + status + " - " + xhr.statusText).element());
+                    RbacProviderFailed.appendToBody("Status " + status + " - " + xhr.statusText);
                     break;
                 case 503:
                     Elements.removeChildrenFrom(document.body);
                     document.body.appendChild(new BootstrapFailed("Status " + status + " - " + xhr.statusText,
                             Endpoints.INSTANCE).element());
                     break;
-                // TODO Show an error page!
-                // case 500:
-                // break;
                 default:
                     logger.info("Unable to serve HAL from '{}'. Please select a management interface.",
                             managementEndpoint);
@@ -175,9 +172,7 @@ public class EndpointManager {
     void pingServer(Endpoint endpoint, AsyncCallback<Void> callback) {
         String managementEndpoint = endpoint.getUrl() + MANAGEMENT;
 
-        checkKeycloakOidcConfiguration(endpoint.getUrl(), s -> {
-            callback.onSuccess(null);
-        }, () -> {
+        checkKeycloakOidcConfiguration(endpoint.getUrl(), s -> callback.onSuccess(null), () -> {
             try {
                 XMLHttpRequest xhr = new XMLHttpRequest();
                 xhr.onload = event -> {
@@ -235,9 +230,7 @@ public class EndpointManager {
             kc.init(initOptions)
                     .success(authenticated -> {
                         setInterval(o -> kc.updateToken(32), 30000);
-                        kc.loadUserProfile().success(profile -> {
-                            kc.userProfile = profile;
-                        });
+                        kc.loadUserProfile().success(profile -> kc.userProfile = profile);
                         set(KEYCLOAK, kc);
                         callback.execute();
                     })

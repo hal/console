@@ -280,7 +280,7 @@ public class Dispatcher implements RecordingHandler {
         fetch(request)
                 .then(response -> {
                     if (response.status != 200) {
-                        return Promise.reject(statusError(200));
+                        return Promise.reject(ResponseStatus.fromStatusCode(response.status).statusText());
                     } else {
                         return response.text();
 
@@ -378,7 +378,7 @@ public class Dispatcher implements RecordingHandler {
     ThenOnFulfilledCallbackFn<Response, String> processResponse() {
         return response -> {
             if (!response.ok && response.status != 500) {
-                return Promise.reject(statusError(response.status));
+                return Promise.reject(ResponseStatus.fromStatusCode(response.status).statusText());
             }
             String contentType = response.headers.get(CONTENT_TYPE.header());
             if (!contentType.startsWith(APPLICATION_DMR_ENCODED)) {
@@ -448,26 +448,8 @@ public class Dispatcher implements RecordingHandler {
     CatchOnRejectedCallbackFn<ModelNode> rejectWithError() {
         return error -> {
             logger.error("Dispatcher error: {}", error);
-            return Promise.reject("Dispatcher error: " + error);
+            return Promise.reject(error);
         };
-    }
-
-    private String statusError(int status) {
-        switch (status) {
-            case 0:
-                return "The response for could not be processed.";
-            case 401:
-            case 403:
-                return "Authentication required.";
-            case 404:
-                return "Management interface not found.";
-            case 500:
-                return "Internal Server Error.";
-            case 503:
-                return "Service temporarily unavailable. Is the server still starting?";
-            default:
-                return "Unexpected status code.";
-        }
     }
 
     // ------------------------------------------------------ macro recording
@@ -539,5 +521,60 @@ public class Dispatcher implements RecordingHandler {
 
     public enum HttpMethod {
         GET, POST
+    }
+
+    public enum ResponseStatus {
+
+        _0(0, "The response for could not be processed."),
+
+        _401(401, "Unauthorized."),
+
+        _403(403, "Forbidden."),
+
+        _404(404, "Management interface not found."),
+
+        _500(500, "Internal Server Error."),
+
+        _503(503, "Service temporarily unavailable. Is the server still starting?"),
+
+        UNKNOWN(-1, "Unexpected status code.");
+
+        public static ResponseStatus fromStatusText(String statusText) {
+            for (ResponseStatus responseStatus : ResponseStatus.values()) {
+                if (responseStatus.statusText.equals(statusText)) {
+                    return responseStatus;
+                }
+            }
+            return UNKNOWN;
+        }
+
+        public static ResponseStatus fromStatusCode(int statusCode) {
+            for (ResponseStatus responseStatus : ResponseStatus.values()) {
+                if (responseStatus.statusCode == statusCode) {
+                    return responseStatus;
+                }
+            }
+            return UNKNOWN;
+        }
+
+        private final int statusCode;
+        private final String statusText;
+
+        ResponseStatus(final int statusCode, final String statusText) {
+            this.statusCode = statusCode;
+            this.statusText = statusText;
+        }
+
+        public boolean notAllowed() {
+            return statusCode == _401.statusCode || statusCode == _403.statusCode;
+        }
+
+        public int statusCode() {
+            return statusCode;
+        }
+
+        public String statusText() {
+            return statusText;
+        }
     }
 }

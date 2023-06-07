@@ -18,6 +18,7 @@ package org.jboss.hal.client.accesscontrol;
 import javax.inject.Inject;
 
 import org.jboss.hal.config.Role;
+import org.jboss.hal.core.accesscontrol.Principal;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.meta.token.NameTokens;

@@ -18,6 +18,7 @@ package org.jboss.hal.core;
 import javax.inject.Inject;
 
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.accesscontrol.AccessControl;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.StatementContext;
@@ -34,6 +35,7 @@ public class Core {
     private final Environment environment;
     private final EventBus eventBus;
     private final StatementContext statementContext;
+    private final AccessControl accessControl;
     private final TableButtonFactory tableButtonFactory;
 
     @Inject
@@ -41,11 +43,13 @@ public class Core {
             Environment environment,
             EventBus eventBus,
             StatementContext statementContext,
+            AccessControl accessControl,
             TableButtonFactory tableButtonFactory) {
         this.dispatcher = dispatcher;
         this.environment = environment;
         this.eventBus = eventBus;
         this.statementContext = statementContext;
+        this.accessControl = accessControl;
         this.tableButtonFactory = tableButtonFactory;
     }
 
@@ -72,6 +76,10 @@ public class Core {
      */
     public StatementContext statementContext() {
         return statementContext;
+    }
+
+    public AccessControl accessControl() {
+        return accessControl;
     }
 
     public TableButtonFactory tableButtonFactory() {

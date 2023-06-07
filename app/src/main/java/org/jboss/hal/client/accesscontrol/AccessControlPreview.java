@@ -18,6 +18,7 @@ package org.jboss.hal.client.accesscontrol;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.config.AccessControlProvider;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.accesscontrol.AccessControl;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Names;

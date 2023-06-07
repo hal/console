@@ -13,18 +13,18 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.jboss.hal.client.accesscontrol;
+package org.jboss.hal.core.accesscontrol;
 
 import org.jboss.hal.resources.Ids;
 
 /** A user or a group with an optional realm. */
-class Principal {
+public class Principal {
 
-    enum Type {
+    public enum Type {
         USER, GROUP
     }
 
-    static String buildResourceName(final Type type, final String name, final String realm) {
+    public static String buildResourceName(final Type type, final String name, final String realm) {
         StringBuilder builder = new StringBuilder();
         builder.append(type.name().toLowerCase()).append("-").append(name);
         if (realm != null) {
@@ -38,7 +38,7 @@ class Principal {
     private final String name;
     private final String realm;
 
-    Principal(final Type type, final String resourceName, final String name, final String realm) {
+    public Principal(final Type type, final String resourceName, final String name, final String realm) {
         this.type = type;
         this.resourceName = resourceName;
         this.name = name;
@@ -87,23 +87,23 @@ class Principal {
         return realm == null ? name : name + "@" + realm;
     }
 
-    String getId() {
+    public String getId() {
         return Ids.principal(getType().name().toLowerCase(), getName());
     }
 
-    String getResourceName() {
+    public String getResourceName() {
         return resourceName;
     }
 
-    String getName() {
+    public String getName() {
         return name;
     }
 
-    String getRealm() {
+    public String getRealm() {
         return realm;
     }
 
-    Type getType() {
+    public Type getType() {
         return type;
     }
 }

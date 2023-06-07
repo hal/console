@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.jboss.hal.client.accesscontrol;
+package org.jboss.hal.core.accesscontrol;
 
 import java.util.Comparator;
 import java.util.HashSet;
@@ -23,14 +23,14 @@ import java.util.stream.Stream;
 
 import org.jboss.hal.config.Role;
 
-class Assignments implements Iterable<Assignment> {
+public class Assignments implements Iterable<Assignment> {
 
     // @formatter:off
-    static final Comparator<Assignment> EXCLUDES_FIRST = (a1, a2) -> Boolean.compare(a1.isInclude(), a2.isInclude());
-    static final Comparator<Assignment> STANDARD_FIRST = Comparator.comparing(a -> a.getRole().getType());
-    static final Comparator<Assignment> USERS_FIRST = Comparator.comparing(a -> a.getPrincipal().getType());
-    static final Comparator<Assignment> BY_ROLE_NAME = Comparator.comparing(a -> a.getRole().getName());
-    static final Comparator<Assignment> BY_PRINCIPAL_NAME = Comparator.comparing(a -> a.getPrincipal().getName());
+    public static final Comparator<Assignment> EXCLUDES_FIRST = (a1, a2) -> Boolean.compare(a1.isInclude(), a2.isInclude());
+    public static final Comparator<Assignment> STANDARD_FIRST = Comparator.comparing(a -> a.getRole().getType());
+    public static final Comparator<Assignment> USERS_FIRST = Comparator.comparing(a -> a.getPrincipal().getType());
+    public static final Comparator<Assignment> BY_ROLE_NAME = Comparator.comparing(a -> a.getRole().getName());
+    public static final Comparator<Assignment> BY_PRINCIPAL_NAME = Comparator.comparing(a -> a.getPrincipal().getName());
     // @formatter:on
 
     private final Set<Assignment> assignments;
@@ -47,29 +47,29 @@ class Assignments implements Iterable<Assignment> {
         assignments.clear();
     }
 
-    Stream<Assignment> byPrincipal(Principal principal) {
+    public Stream<Assignment> byPrincipal(Principal principal) {
         return assignments.stream().filter(assignment -> assignment.getPrincipal().equals(principal));
     }
 
-    Stream<Assignment> includes(Principal principal) {
+    public Stream<Assignment> includes(Principal principal) {
         return assignments.stream()
                 .filter(assignment -> assignment.getPrincipal().equals(principal) && assignment.isInclude());
     }
 
-    Stream<Assignment> excludes(Principal principal) {
+    public Stream<Assignment> excludes(Principal principal) {
         return assignments.stream()
                 .filter(assignment -> assignment.getPrincipal().equals(principal) && !assignment.isInclude());
     }
 
-    Stream<Assignment> byRole(Role role) {
+    public Stream<Assignment> byRole(Role role) {
         return assignments.stream().filter(assignment -> assignment.getRole().equals(role));
     }
 
-    Stream<Assignment> includes(Role role) {
+    public Stream<Assignment> includes(Role role) {
         return assignments.stream().filter(assignment -> assignment.getRole().equals(role) && assignment.isInclude());
     }
 
-    Stream<Assignment> excludes(Role role) {
+    public Stream<Assignment> excludes(Role role) {
         return assignments.stream().filter(assignment -> assignment.getRole().equals(role) && !assignment.isInclude());
     }
 

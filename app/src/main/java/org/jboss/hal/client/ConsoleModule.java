@@ -15,7 +15,6 @@
  */
 package org.jboss.hal.client;
 
-import org.jboss.hal.client.accesscontrol.AccessControl;
 import org.jboss.hal.client.accesscontrol.AccessControlPresenter;
 import org.jboss.hal.client.accesscontrol.AccessControlSsoPresenter;
 import org.jboss.hal.client.accesscontrol.AccessControlSsoView;
@@ -215,7 +214,6 @@ public class ConsoleModule extends AbstractPresenterModule {
 
         // ------------------------------------------------------ misc
 
-        bind(AccessControl.class).in(Singleton.class);
         bind(AccessControlTokens.class).in(Singleton.class);
         bind(DataSourceTemplates.class).in(Singleton.class);
         bind(ExceptionHandler.class).in(Singleton.class);

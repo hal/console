@@ -15,8 +15,6 @@
  */
 package org.jboss.hal.client.skeleton;
 
-import javax.inject.Inject;
-
 import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.ProgressElement;
 import org.jboss.hal.ballroom.Tooltip;
@@ -33,16 +31,38 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import elemental2.dom.HTMLElement;
+import javax.inject.Inject;
 
-import static org.jboss.elemento.Elements.*;
+import static org.jboss.elemento.Elements.a;
+import static org.jboss.elemento.Elements.b;
+import static org.jboss.elemento.Elements.div;
 import static org.jboss.elemento.Elements.footer;
+import static org.jboss.elemento.Elements.li;
 import static org.jboss.elemento.Elements.nav;
+import static org.jboss.elemento.Elements.span;
+import static org.jboss.elemento.Elements.ul;
 import static org.jboss.elemento.EventType.bind;
 import static org.jboss.elemento.EventType.click;
 import static org.jboss.hal.ballroom.ProgressElement.Label.NONE;
 import static org.jboss.hal.ballroom.ProgressElement.Size.XS;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.caret;
+import static org.jboss.hal.resources.CSS.clickable;
+import static org.jboss.hal.resources.CSS.disabled;
+import static org.jboss.hal.resources.CSS.dropdown;
+import static org.jboss.hal.resources.CSS.dropdownMenu;
+import static org.jboss.hal.resources.CSS.dropdownToggle;
+import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.footer;
+import static org.jboss.hal.resources.CSS.footerProgress;
+import static org.jboss.hal.resources.CSS.footerTools;
+import static org.jboss.hal.resources.CSS.hidden;
+import static org.jboss.hal.resources.CSS.navbar;
+import static org.jboss.hal.resources.CSS.navbarFixedBottom;
+import static org.jboss.hal.resources.CSS.navbarFooter;
+import static org.jboss.hal.resources.CSS.navbarNav;
+import static org.jboss.hal.resources.CSS.pfIcon;
+import static org.jboss.hal.resources.CSS.pulse;
+import static org.jboss.hal.resources.CSS.tool;
 import static org.jboss.hal.resources.UIConstants.DROPDOWN;
 import static org.jboss.hal.resources.UIConstants.TOGGLE;
 
@@ -72,7 +92,7 @@ public class FooterView extends HalViewImpl implements FooterPresenter.MyView {
         HTMLElement modelBrowser;
         HTMLElement expressionResolver;
         HTMLElement settings;
-        HTMLElement root = footer().css(footer)
+        HTMLElement root = footer().css(footer).id(Ids.FOOTER_CONTAINER)
                 .add(nav().css(navbar, navbarFooter, navbarFixedBottom)
                         .add(ul().css(CSS.nav, navbarNav)
                                 .add(li().css(footerProgress)

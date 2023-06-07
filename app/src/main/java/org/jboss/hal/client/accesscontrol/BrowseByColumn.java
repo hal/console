@@ -23,6 +23,9 @@ import javax.inject.Inject;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.config.AccessControlProvider;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.accesscontrol.AccessControl;
+import org.jboss.hal.core.finder.ColumnAction;
+import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
@@ -39,6 +42,7 @@ import elemental2.dom.HTMLElement;
 
 import static org.jboss.elemento.Elements.div;
 import static org.jboss.elemento.Elements.setVisible;
+import static org.jboss.hal.resources.CSS.fontAwesome;
 
 @AsyncColumn(Ids.ACCESS_CONTROL_BROWSE_BY)
 public class BrowseByColumn extends StaticItemColumn {
@@ -70,12 +74,12 @@ public class BrowseByColumn extends StaticItemColumn {
 
     @Inject
     public BrowseByColumn(Finder finder, AccessControl accessControl, Environment environment,
-            Resources resources) {
+            ColumnActionFactory columnActionFactory, Resources resources) {
         super(finder, Ids.ACCESS_CONTROL_BROWSE_BY, resources.constants().browseBy(),
 
                 // if Keycloak-SSO is enabled, the user management is performed in keycloak server,
-                // so we need to disable it in widfly
-                // this view is not displayed when user clicks on "access contol" top level menu
+                // so we need to disable it in WidFly
+                // this view is not displayed when user clicks on "Access Contol" top-level menu
                 // but is accessible if user types the named token in the url
                 environment.isSingleSignOn() ? Collections.emptyList()
                         : Arrays.asList(
@@ -101,5 +105,10 @@ public class BrowseByColumn extends StaticItemColumn {
                                                 accessControl, environment, resources))
                                         .nextColumn(Ids.ROLE)
                                         .build()));
+
+        addColumnAction(new ColumnAction.Builder<StaticItem>(Ids.ACCESS_CONTROL_SWITCH_PROVIDER)
+                .element(columnActionFactory.addButton(resources.constants().switchProvider(), fontAwesome("shield")))
+                .handler(column -> accessControl.switchProvider())
+                .build());
     }
 }

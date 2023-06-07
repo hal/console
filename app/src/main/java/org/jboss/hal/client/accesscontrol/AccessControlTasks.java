@@ -21,6 +21,8 @@ import java.util.function.Predicate;
 
 import org.jboss.hal.config.Role;
 import org.jboss.hal.core.OperationFactory;
+import org.jboss.hal.core.accesscontrol.Assignment;
+import org.jboss.hal.core.accesscontrol.Principal;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
