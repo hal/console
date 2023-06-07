@@ -16,19 +16,60 @@
 package org.jboss.hal.client.bootstrap.endpoint;
 
 import org.jboss.elemento.IsElement;
+import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
 
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 
 import static elemental2.dom.DomGlobal.document;
-import static org.jboss.elemento.Elements.*;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.elemento.Elements.a;
+import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.failSafeRemoveFromParent;
+import static org.jboss.elemento.Elements.h;
+import static org.jboss.elemento.Elements.li;
+import static org.jboss.elemento.Elements.nav;
+import static org.jboss.elemento.Elements.p;
+import static org.jboss.elemento.Elements.span;
+import static org.jboss.elemento.Elements.strong;
+import static org.jboss.elemento.Elements.ul;
+import static org.jboss.hal.resources.CSS.alert;
+import static org.jboss.hal.resources.CSS.alertDanger;
+import static org.jboss.hal.resources.CSS.bootstrapError;
+import static org.jboss.hal.resources.CSS.column;
+import static org.jboss.hal.resources.CSS.columnLg;
+import static org.jboss.hal.resources.CSS.columnMd;
+import static org.jboss.hal.resources.CSS.columnSm;
+import static org.jboss.hal.resources.CSS.containerFluid;
+import static org.jboss.hal.resources.CSS.errorCircleO;
+import static org.jboss.hal.resources.CSS.logo;
+import static org.jboss.hal.resources.CSS.logoText;
+import static org.jboss.hal.resources.CSS.logoTextFirst;
+import static org.jboss.hal.resources.CSS.logoTextLast;
+import static org.jboss.hal.resources.CSS.marginTopLarge;
+import static org.jboss.hal.resources.CSS.navbar;
+import static org.jboss.hal.resources.CSS.navbarBrand;
+import static org.jboss.hal.resources.CSS.navbarDefault;
+import static org.jboss.hal.resources.CSS.navbarFixedTop;
+import static org.jboss.hal.resources.CSS.navbarHeader;
+import static org.jboss.hal.resources.CSS.navbarPf;
+import static org.jboss.hal.resources.CSS.pfIcon;
+import static org.jboss.hal.resources.CSS.row;
 
 public class RbacProviderFailed implements IsElement<HTMLDivElement> {
+
+    public static void appendToBody(String error) {
+        failSafeRemoveFromParent(document.getElementById(Ids.HAL_MODAL));
+        failSafeRemoveFromParent(document.getElementById(Ids.HAL_WIZARD));
+        failSafeRemoveFromParent(document.getElementById(Ids.HEADER_CONTAINER));
+        failSafeRemoveFromParent(document.getElementById(Ids.ROOT_CONTAINER));
+        failSafeRemoveFromParent(document.getElementById(Ids.FOOTER_CONTAINER));
+        document.body.appendChild(new RbacProviderFailed(error).element());
+    }
+
     private final HTMLDivElement root;
 
-    public RbacProviderFailed(String error) {
+    private RbacProviderFailed(final String error) {
         HTMLElement errorHolder;
 
         root = div()

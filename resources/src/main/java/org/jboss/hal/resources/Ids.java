@@ -20,10 +20,9 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import static java.util.stream.Collectors.joining;
-
 import static com.google.common.base.Strings.emptyToNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.resources.Strings.substringAfterLast;
 
 /**
@@ -45,6 +44,7 @@ public interface Ids {
     String ACCESS_CONTROL_BROWSE_BY_GROUPS = "access-control-browse-by-groups";
     String ACCESS_CONTROL_BROWSE_BY_ROLES = "access-control-browse-by-roles";
     String ACCESS_CONTROL_BROWSE_BY_USERS = "access-control-browse-by-users";
+    String ACCESS_CONTROL_SWITCH_PROVIDER = "access-control-switch-provider";
     String ACTIVE_OPERATION = "active-operation";
     String ACTIVE_OPERATION_EMPTY = "active-operation-empty";
     String ADD = "add";
@@ -322,6 +322,7 @@ public interface Ids {
     String EXTENSION_STORAGE = "hal-local-storage-extension";
     String EXTENSION_URL_FORM = "extension-url-form";
     String FINDER = "hal-finder";
+    String FOOTER_CONTAINER = "hal-footer-container";
     String FOOTER_EXTENSIONS = "footer-extensions";
     String FOOTER_EXTENSIONS_DROPDOWN = "footer-extensions-dropdown";
     String FORM = "form";
@@ -626,6 +627,7 @@ public interface Ids {
     String NO_MATCH = "no-match";
     String NONE_PROGRESSING_LINK = "none-progressing-link";
     String NATIVE_INTERFACE_ITEM = "native-interface-item";
+    String HEADER_CONTAINER = "hal-header-container";
     String NEAR_CACHE_NONE = "near-cache-none";
     String NEAR_CACHE_INVALIDATION = "near-cache-invalidation";
     String NOTIFICATION_DRAWER_CLEAR_ALL = "notification-drawer-clear-all";

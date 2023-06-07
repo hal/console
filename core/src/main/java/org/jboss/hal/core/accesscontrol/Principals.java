@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.jboss.hal.client.accesscontrol;
+package org.jboss.hal.core.accesscontrol;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,19 +21,18 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import static org.jboss.hal.client.accesscontrol.Principal.Type.GROUP;
-import static org.jboss.hal.client.accesscontrol.Principal.Type.USER;
+import org.jboss.hal.core.accesscontrol.Principal.Type;
 
 /** Contains a list of principals stored in the management model. */
-class Principals implements Iterable<Principal> {
+public class Principals implements Iterable<Principal> {
 
-    private final Map<Principal.Type, Set<Principal>> principals;
+    private final Map<Type, Set<Principal>> principals;
     private final Map<String, Principal> lookup;
 
     Principals() {
         principals = new HashMap<>();
-        principals.put(GROUP, new HashSet<>());
-        principals.put(USER, new HashSet<>());
+        principals.put(Type.GROUP, new HashSet<>());
+        principals.put(Type.USER, new HashSet<>());
         lookup = new HashMap<>();
     }
 
@@ -46,21 +45,21 @@ class Principals implements Iterable<Principal> {
     }
 
     void clear() {
-        principals.get(GROUP).clear();
-        principals.get(USER).clear();
+        principals.get(Type.GROUP).clear();
+        principals.get(Type.USER).clear();
         lookup.clear();
     }
 
-    Principal get(final String id) {
+    public Principal get(final String id) {
         return lookup.get(id);
     }
 
-    Set<Principal> users() {
-        return principals.get(USER);
+    public Set<Principal> users() {
+        return principals.get(Type.USER);
     }
 
-    Set<Principal> groups() {
-        return principals.get(GROUP);
+    public Set<Principal> groups() {
+        return principals.get(Type.GROUP);
     }
 
     @Override

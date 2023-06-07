@@ -16,13 +16,18 @@
 package org.jboss.hal.client.accesscontrol;
 
 import org.jboss.hal.config.Role;
+import org.jboss.hal.core.accesscontrol.Assignment;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 
 import static org.jboss.hal.config.Role.Type.HOST;
 import static org.jboss.hal.config.Role.Type.SERVER_GROUP;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.EXCLUDE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST_SCOPED_ROLE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ROLE_MAPPING;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP_SCOPED_ROLE;
 import static org.jboss.hal.meta.AddressTemplate.OPTIONAL;
 
 interface AddressTemplates {

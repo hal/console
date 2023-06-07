@@ -16,6 +16,7 @@
 package org.jboss.hal.client.accesscontrol;
 
 import org.jboss.hal.config.Role;
+import org.jboss.hal.core.accesscontrol.Assignment;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.resources.Previews;
 import org.jboss.hal.resources.Resources;

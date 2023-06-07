@@ -39,6 +39,8 @@ import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Role;
 import org.jboss.hal.config.RolesChangedEvent;
 import org.jboss.hal.config.Settings;
+import org.jboss.hal.core.accesscontrol.AccessControl;
+import org.jboss.hal.core.accesscontrol.Assignment;
 import org.jboss.hal.core.finder.ColumnAction;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;

@@ -13,14 +13,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.jboss.hal.client.accesscontrol;
+package org.jboss.hal.core.accesscontrol;
 
 import org.jboss.hal.config.Role;
 
 /**
  * An assignment between a principal and a role.
  */
-class Assignment {
+public class Assignment {
 
     private final Principal principal;
     private final Role role;
@@ -66,15 +66,15 @@ class Assignment {
         return (include ? "Include " : "Exclude ") + principal + " -> " + role;
     }
 
-    Principal getPrincipal() {
+    public Principal getPrincipal() {
         return principal;
     }
 
-    Role getRole() {
+    public Role getRole() {
         return role;
     }
 
-    boolean isInclude() {
+    public boolean isInclude() {
         return include;
     }
 }

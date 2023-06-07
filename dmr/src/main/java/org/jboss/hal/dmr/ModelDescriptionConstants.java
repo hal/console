@@ -1045,6 +1045,7 @@ public interface ModelDescriptionConstants {
     String UPDATES = "updates";
     String UPTIME = "uptime";
     String URL = "url";
+    String USE_IDENTITY_ROLES = "use-identity-roles";
     String USE_RECURSIVE_SEARCH = "use-recursive-search";
     String USER_NAME = "user-name";
     String USER_PASSWORD_MAPPER = "user-password-mapper";

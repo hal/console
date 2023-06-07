@@ -19,6 +19,8 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import org.jboss.hal.config.User;
+import org.jboss.hal.core.accesscontrol.AccessControl;
+import org.jboss.hal.core.accesscontrol.Principal;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.dmr.dispatch.Dispatcher;

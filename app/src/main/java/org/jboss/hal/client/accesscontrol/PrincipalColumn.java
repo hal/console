@@ -32,6 +32,8 @@ import org.jboss.hal.client.accesscontrol.AccessControlTasks.AddRoleMapping;
 import org.jboss.hal.client.accesscontrol.AccessControlTasks.CheckRoleMapping;
 import org.jboss.hal.config.Role;
 import org.jboss.hal.config.User;
+import org.jboss.hal.core.accesscontrol.AccessControl;
+import org.jboss.hal.core.accesscontrol.Principal;
 import org.jboss.hal.core.finder.ColumnActionFactory;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;

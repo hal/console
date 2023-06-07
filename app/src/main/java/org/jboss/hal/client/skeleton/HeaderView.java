@@ -22,8 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.inject.Inject;
-
 import org.jboss.elemento.Elements;
 import org.jboss.elemento.HtmlContentBuilder;
 import org.jboss.hal.ballroom.Tooltip;
@@ -61,11 +59,11 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLLIElement;
+import javax.inject.Inject;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.StreamSupport.stream;
-
 import static org.jboss.elemento.Elements.a;
 import static org.jboss.elemento.Elements.b;
 import static org.jboss.elemento.Elements.button;
@@ -191,6 +189,7 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
         HTMLElement accessControl;
         HTMLElement backLink;
         HTMLElement root = nav().css(navbar, navbarDefault, navbarFixedTop, navbarPf)
+                .id(Ids.HEADER_CONTAINER)
                 .add(div().css(navbarHeader)
                         .add(button().css(navbarToggle)
                                 .data(TOGGLE, COLLAPSE)

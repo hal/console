@@ -15,13 +15,13 @@
  */
 package org.jboss.hal.client.bootstrap;
 
-import javax.inject.Inject;
-
 import org.jboss.hal.client.bootstrap.endpoint.EndpointManager;
+import org.jboss.hal.client.bootstrap.endpoint.RbacProviderFailed;
 import org.jboss.hal.client.bootstrap.tasks.BootstrapTasks;
 import org.jboss.hal.client.bootstrap.tasks.InitializationTasks;
 import org.jboss.hal.client.bootstrap.tasks.InitializedTask;
 import org.jboss.hal.core.ExceptionHandler;
+import org.jboss.hal.dmr.dispatch.Dispatcher.ResponseStatus;
 import org.jboss.hal.flow.Flow;
 import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.js.Browser;
@@ -32,6 +32,7 @@ import com.gwtplatform.mvp.client.Bootstrapper;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 
 import elemental2.dom.Event;
+import javax.inject.Inject;
 
 import static elemental2.dom.DomGlobal.window;
 
@@ -82,6 +83,11 @@ public class HalBootstrapper implements Bootstrapper {
                         return null;
                     })
                     .catch_(error -> {
+                        ResponseStatus responseStatus = ResponseStatus.fromStatusText(error.toString());
+                        if (responseStatus.notAllowed()) {
+                            RbacProviderFailed.appendToBody(
+                                    "Status " + responseStatus.statusCode() + " - " + responseStatus.statusText());
+                        }
                         logger.error("Bootstrap error: {}", error);
                         LoadingPanel.get().off();
                         return null;

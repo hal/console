@@ -18,6 +18,7 @@ package org.jboss.hal.client.accesscontrol;
 import javax.inject.Inject;
 
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.accesscontrol.AccessControl;
 import org.jboss.hal.core.accesscontrol.SensitiveGatekeeper;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.PreviewContent;

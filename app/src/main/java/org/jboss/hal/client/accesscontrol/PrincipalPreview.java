@@ -20,6 +20,9 @@ import java.util.List;
 import org.jboss.elemento.Elements;
 import org.jboss.hal.config.Role;
 import org.jboss.hal.config.Roles;
+import org.jboss.hal.core.accesscontrol.AccessControl;
+import org.jboss.hal.core.accesscontrol.Assignment;
+import org.jboss.hal.core.accesscontrol.Principal;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -28,7 +31,11 @@ import elemental2.dom.HTMLElement;
 
 import static java.util.stream.Collectors.toList;
 
-import static org.jboss.elemento.Elements.*;
+import static org.jboss.elemento.Elements.a;
+import static org.jboss.elemento.Elements.h;
+import static org.jboss.elemento.Elements.li;
+import static org.jboss.elemento.Elements.p;
+import static org.jboss.elemento.Elements.ul;
 
 class PrincipalPreview extends PreviewContent<Principal> {
 
