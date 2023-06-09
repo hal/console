@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "@parcel/reporter-cli": "^2.9.0",
-    "@parcel/transformer-less": "^2.9.1",
+    "@parcel/transformer-less": "^2.9.2",
     "copyfiles": "^2.4.1",
     "parcel": "^2.9.1",
     "parcel-resolver-ignore": "^2.1.5",
