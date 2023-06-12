@@ -2,9 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
+to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Changed
+
+- Configure docker files for license plugin
+
+### Fixed
+
+- [HAL-1859](https://issues.redhat.com/browse/HAL-1859): Show RBAC failed page when SSO is enabled
+- Fix script for building WildFly development image
+
+### Upgrades
+
+- Bump Parcel to 2.9.2
+- Bump Quarkus to 3.1.1.Final
 
 ## [3.6.6] - 2023-05-26
 
