@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.client.skeleton;
 
+import javax.inject.Inject;
+
 import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.ProgressElement;
 import org.jboss.hal.ballroom.Tooltip;
@@ -31,7 +33,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import elemental2.dom.HTMLElement;
-import javax.inject.Inject;
 
 import static org.jboss.elemento.Elements.a;
 import static org.jboss.elemento.Elements.b;

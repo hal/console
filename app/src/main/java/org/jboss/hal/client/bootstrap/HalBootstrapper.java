@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.client.bootstrap;
 
+import javax.inject.Inject;
+
 import org.jboss.hal.client.bootstrap.endpoint.EndpointManager;
 import org.jboss.hal.client.bootstrap.endpoint.RbacProviderFailed;
 import org.jboss.hal.client.bootstrap.tasks.BootstrapTasks;
@@ -32,7 +34,6 @@ import com.gwtplatform.mvp.client.Bootstrapper;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 
 import elemental2.dom.Event;
-import javax.inject.Inject;
 
 import static elemental2.dom.DomGlobal.window;
 

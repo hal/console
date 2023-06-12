@@ -18,6 +18,8 @@ package org.jboss.hal.client.bootstrap.endpoint;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import javax.inject.Inject;
+
 import org.jboss.elemento.Elements;
 import org.jboss.hal.client.bootstrap.BootstrapFailed;
 import org.jboss.hal.config.Endpoints;
@@ -36,7 +38,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import elemental2.dom.HTMLScriptElement;
 import elemental2.dom.XMLHttpRequest;
-import javax.inject.Inject;
 
 import static elemental2.dom.DomGlobal.document;
 import static elemental2.dom.DomGlobal.setInterval;
