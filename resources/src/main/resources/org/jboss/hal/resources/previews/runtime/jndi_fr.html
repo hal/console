@@ -1,0 +1,13 @@
+<p>Fournit une vue d'ensemble de l'espace de noms JNDI local. La spécification de la plateforme Jakarta EE définit les contextes JNDI suivants :</p>
+<ul>
+    <li><code>java:comp</code> - L'espace de nommage est étendu au composant actuel (EJB)</li>
+    <li><code>java:module</code> - Limité au module en cours</li>
+    <li><code>java:app</code> - Limité à l’application en cours</li>
+    <li><code>java:global</code> - Limité au serveur d'application</li>
+</ul>
+<p>En plus des espaces de noms standard, ${build.shortName} fournit également les deux espaces de noms globaux suivants :</p>
+<ul>
+    <li><code>java:jboss</code></li>
+    <li><code>java:/</code></li>
+</ul>
+<p>Veuillez noter que seules les entrées dans le contexte java:jboss/exported sont accessibles via JNDI à distance. Pour les déploiements web, <code>java:comp</code> est aliasé <code>java:module</code>, de sorte que les EJB déployés dans un war n'ont pas leur propre espace de noms comp.</p>

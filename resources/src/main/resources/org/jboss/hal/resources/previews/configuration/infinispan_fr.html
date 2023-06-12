@@ -1,0 +1,32 @@
+<p>Infinispan est une plate-forme de grille de données Java. Elle fournit une interface de cache pour la gestion des données mises en cache.
+</p>
+<p>Les conteneurs de cache Infinispan suivants sont utilisés dans ${build.fullName} :</p>
+<ul>
+    <li><code>web</code> pour Web Session Clustering</li>
+    <li><code>ejb</code> pour la mise en cluster des Stateful Session Bean</li>
+    <li><code>hibernate</code> pour la Entity Caching</li>
+    <li><code>singleton</code> pour Singleton Caching</li>
+</ul>
+<p>Chaque conteneur de cache définit un cache "repl" et un cache "dist". Ces caches ne doivent pas être utilisés directement par les applications utilisateur.</p>
+
+<p>Pour plus d'informations sur les fonctionnalités et les options de configuration d'Infinispan, voir la
+   <a href="http://infinispan.org/docs/5.3.x/index.html">Documentation Infinispan</a>.</p>
+
+<h2>Modes de clustering</h2>
+<p>Le clustering peut être configuré de deux manières différentes dans ${build.shortName} en utilisant Infinispan. La méthode la plus adaptée à votre application dépendra de vos besoins. Chaque mode implique un compromis entre la disponibilité, la cohérence, la fiabilité et l'évolutivité. Avant de choisir un mode de clustering, vous devez identifier les caractéristiques les plus importantes de votre réseau et équilibrer ces exigences.</p>
+
+<h3>Mode Réplication</h3>
+<p>Le mode répliqué détecte et ajoute automatiquement de nouvelles instances sur le cluster. Les modifications apportées à ces instances seront répliquées sur tous les nœuds du cluster. Le mode répliqué fonctionne généralement mieux dans les petits clusters en raison de la quantité d'informations qui doivent être répliquées sur le réseau. Infinispan peut être configuré pour utiliser le multicast UDP, ce qui permet d'atténuer la congestion du réseau dans une certaine mesure.</p>
+
+<h3>Mode de distribution</h3>
+<p>Le mode distribution permet à Infinispan de faire évoluer le cluster de manière linéaire. Le mode distribution utilise un algorithme de hachage cohérent pour déterminer l'emplacement d'un nouveau nœud dans le cluster. Le nombre de copies des informations à conserver est configurable. Il existe un compromis entre le nombre de copies conservées, la durabilité des données et les performances : plus le nombre de copies conservées est élevé, plus l'impact sur les performances est important, mais moins il y a de risques de perdre des données en cas de défaillance du serveur. L'algorithme de hachage permet également de réduire le trafic réseau en localisant les entrées sans multidiffusion ni stockage de métadonnées.
+</p>
+<p>Il est conseillé d'utiliser le mode Distribution (dist) comme stratégie de mise en cache lorsque la taille du cluster dépasse 6 à 8 nœuds. Avec le mode Distribution, les données ne sont distribuées qu'à un sous-ensemble de nœuds au sein du cluster, par opposition à tous les nœuds (mode Répliqué par défaut).
+</p>
+
+<h3>Réplication synchrone et asynchrone</h3>
+<p>La réplication peut être effectuée en mode synchrone ou asynchrone, et le mode choisi dépend de vos besoins et de votre application. Dans le cas de la réplication synchrone, le fil d'exécution qui traite la demande de l'utilisateur est bloqué jusqu'à ce que la réplication ait réussi. Ce n'est que lorsque la réplication est réussie qu'une réponse est renvoyée au client et que le fil d'exécution est libéré. La réplication synchrone a un impact sur le trafic réseau car elle nécessite une réponse de chaque nœud du cluster. Elle présente toutefois l'avantage de garantir que toutes les modifications ont été apportées à tous les nœuds du cluster.</p>
+<p>La réplication asynchrone est effectuée en arrière-plan. Infinispan implémente une file d'attente de réplication, qui est utilisée par un thread d'arrière-plan pour effectuer la réplication. La réplication est déclenchée soit en fonction du temps, soit en fonction de la taille de la file d'attente. Une file d'attente de réplication permet d'améliorer les performances car il n'y a pas de conversation entre les nœuds du cluster. La contrepartie de la réplication asynchrone est qu'elle n'est pas aussi précise. Les échecs des tentatives de réplication sont consignés dans un journal et ne sont pas notifiés en temps réel.</p>
+
+<h2>Conteneur Cache</h2>
+<p>Un conteneur de cache est un dépôt pour les caches utilisés par un sous-système. Pour Infinispan, les conteneurs de cache par défaut sont définis dans les fichiers xml de configuration. Un cache est défini comme le cache par défaut, qui sera utilisé pour le clustering.</p>

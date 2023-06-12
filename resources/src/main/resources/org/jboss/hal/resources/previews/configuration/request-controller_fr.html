@@ -1,0 +1,22 @@
+<p>${build.shortName} peut être suspendu ou arrêté progressivement. Cela permet aux demandes actives de se terminer normalement, sans accepter de nouvelles demandes. La valeur du délai d'attente spécifie la durée pendant laquelle l'opération de suspension ou d'arrêt attend que les demandes actives se terminent. Lorsque le serveur est suspendu, les demandes de gestion sont toujours traitées.</p>
+<p>L'arrêt progressif est coordonné à l'échelle du serveur, principalement au niveau des points d'entrée par lesquels une requête entre dans le serveur. Les sous-systèmes suivants prennent en charge l'arrêt progressif :</p>
+<dl>
+    <dt>Undertow</dt>
+    <dd>Le sous-système <code>Undertow</code> attendra que toutes les requêtes soient terminées.</dd>
+    <dt>Modcluster</dt>
+    <dd>Le sous-système <code>modcluster</code> avertira l'équilibreur de charge que le serveur est mis en attente dans la phase <code>PRE_SUSPEND</code>.
+    </dd>
+    <dt>EJB</dt>
+    <dd>Le sous-système
+        Le sous-système <code>ejb3</code> attendra que toutes les requêtes EJB distantes et les livraisons de messages MDB soient terminées. L’envoi aux MDBs est arrêtée dans la phase
+       <code>PRE_SUSPEND</code>. Les minuteries EJB sont suspendues et les minuteries manquées seront activées lors de la reprise du serveur.
+    </dd>
+    <dt>EE Concurrence</dt>
+    <dd>Le serveur attend que toutes les tâches actives soient terminées. Toutes les tâches en attente seront ignorées. Actuellement, comme EE Concurrency n'a pas de persistance, les travaux en file d'attente qui ont été ignorés seront perdus.<br/>Lorsque le serveur est dans un état suspendu, les tâches planifiées continueront à s'exécuter à l'heure prévue mais lanceront une
+       <code>java.lang.IllegalStateException</code>. Lorsque le serveur reprend, les tâches planifiées continuent à s'exécuter normalement et, dans la plupart des cas, il n'est pas nécessaire de les replanifier.
+    </dd>
+    <dt>Lot</dt>
+    <dd>Le serveur arrêtera tous les travaux en cours dans le délai imparti et reportera tous les travaux planifiés.<br/>Actuellement, l'arrêt progressif ne rejette pas les transactions distribuées à distance entrantes ni les nouveaux messages JMS entrants. Les tâches EE batch et EE concurrentielles programmées par l'activité en vol sont actuellement autorisées à se poursuivre. Cependant, les tâches de concurrence EE soumises qui dépassent le délai d'attente sont actuellement erronées lorsqu'elles sont exécutées.
+    </dd>
+</dl>
+<p>Les demandes sont suivies par le sous-système de contrôle des demandes. Sans ce sous-système, les capacités de suspension et de reprise sont limitées et le serveur n'attendra pas la fin des requêtes avant de se suspendre ou de s'arrêter. Toutefois, si vous n'avez pas besoin de cette fonctionnalité, le sous-système de contrôle des requêtes peut être supprimé pour une légère amélioration des performances.</p>

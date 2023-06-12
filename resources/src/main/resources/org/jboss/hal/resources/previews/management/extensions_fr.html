@@ -1,0 +1,33 @@
+<p>Les extensions permettent d'ajouter de nouvelles fonctionnalités à la console de gestion. Elles sont écrites en JavaScript et doivent utiliser l'API
+   <a href="https://github.com/hal/hal.next/wiki/JavaScript-API">JavaScript</a> pour interagir avec la console et l'interface de gestion. Si vous souhaitez développer une extension, consultez
+   <a href="https://github.com/hal/hal.next/wiki/Extensions">https://github.com/hal/hal.next/wiki/Extensions</a> pour plus d'informations.
+</p>
+
+<div class="alert alert-warning">
+    <span class="pficon pficon-warning-triangle-o"></span>Les extensions sont écrites en <strong>JavaScript</strong> et sont
+   <strong>injectées</strong> dans le navigateur. N'installez que des extensions auxquelles vous faites confiance !
+</div>
+
+<h2>Points d'extension</h2>
+<p>La console fournit quatre points d'extension différents qui peuvent être utilisés par des extensions :</p>
+<ol>
+    <li>Header : ajoute un élément de menu au menu déroulant "Extensions" dans l'en-tête</li>
+    <li>Finder Item : ajoute un nouvel élément à une colonne spécifique du Finder</li>
+    <li>Footer : ajoute un élément de menu au menu déroulant "Extensions" dans le pied de page</li>
+    <li>Personnalisé : Il appartient à l'extension de s'ajouter à la console</li>
+</ol>
+
+<h2>Installation</h2>
+<p>Les extensions peuvent être ajoutées à la console de deux façons différentes :</p>
+
+<dl>
+    <dt>Extensions groupées</dt>
+    <dd>
+        <p>Les extensions groupées font partie de l'installation de ${build.fullName} et sont installées en tant que modules. Elles doivent être installées en dehors de la console. WildFly et la console doivent être redémarrés / rechargés après l'ajout ou la suppression d'extensions groupées.</p>
+    </dd>
+
+    <dt>Extensions autonomes</dt>
+    <dd>
+        <p>Les extensions autonomes sont hébergées par un point d'accès public. Ce point d'accès doit servir un fichier JSON qui contient les métadonnées de l'extension. Vous pouvez ajouter et supprimer des extensions autonomes à l'aide de la console de gestion. Elles sont stockées dans le stockage local du navigateur. En tant que telles, elles sont limitées au navigateur et à l'URL qui exécute la console de gestion.</p>
+    </dd>
+</dl>

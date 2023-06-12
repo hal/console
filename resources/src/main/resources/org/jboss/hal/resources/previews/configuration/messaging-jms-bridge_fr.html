@@ -1,0 +1,7 @@
+<p>${build.shortName} La messagerie comprend une api de messages JMS entièrement fonctionnelle. La fonction d'une api JMS est de consommer des messages à partir d'une file d'attente ou d'un sujet source et de les envoyer à une file d'attente ou à un sujet cible, généralement sur un autre serveur.</p>
+
+<p>Les serveurs source et cible n'ont pas besoin d'être dans le même cluster, ce qui rend le pontage approprié pour l'envoi fiable de messages d'un cluster à l'autre, par exemple à travers un WAN, et où la connexion peut ne pas être fiable.</p>
+
+<p>
+    <strong>Note</strong><br/>Ne pas confondre un pont JMS avec un pont de base. Un pont JMS peut être utilisé pour relier deux fournisseurs JMS conformes à JMS 1.1 et utilise l'API JMS. Une passerelle core est utilisée pour relier deux instances de messagerie ${build.shortName} et utilise l'API core. Dans la mesure du possible, il est préférable d'utiliser une passerelle core plutôt qu'une passerelle JMS.
+</p>

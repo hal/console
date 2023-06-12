@@ -1,0 +1,32 @@
+<h2>Rôles standard</h2>
+<p>Il existe sept rôles utilisateur prédéfinis :</p>
+<ul>
+    <li>Contrôleur (Monitor)</li>
+    <li>Opérateur (Operator)</li>
+    <li>Chargé de maintenance (Maintainer)</li>
+    <li>Déployeur (Deployer)</li>
+    <li>Auditeur (Auditor)</li>
+    <li>Administrateur (Administrator)</li>
+    <li>SuperUtilisateur (SuperUser)</li>
+</ul>
+<p>Chacun de ces rôles dispose d'un ensemble différent d'autorisations et est conçu pour des cas d'utilisation spécifiques. Les rôles Moniteur, Opérateur, Mainteneur, Administrateur et SuperUtilisateur s'appuient les uns sur les autres, chacun disposant de plus d'autorisations que le précédent. Les rôles d'auditeur et de déployeur sont similaires aux rôles de moniteur et de mainteneur, mais ils sont assortis d'autorisations et de restrictions supplémentaires.</p>
+
+<h2>Roles délimités (Scoped)</h2>
+<p>Les rôles délimités sont des rôles définis par l'utilisateur qui accordent les autorisations de l'un des rôles standard, mais uniquement pour un ou plusieurs groupes de serveurs ou hôtes spécifiés. Les rôles délimités permettent d'accorder aux utilisateurs de la gestion des autorisations limitées aux seuls groupes de serveurs ou hôtes nécessaires.</p>
+<p>Ils sont définis par cinq caractéristiques :</p>
+<ol>
+    <li>Un nom unique.</li>
+    <li>Rôle(s) standard sur lequel il est basé.</li>
+    <li>S’il s'applique aux groupes de serveurs ou aux hôtes</li>
+    <li>La liste des groupes de serveurs ou des hôtes auxquels il est limité.</li>
+    <li>Si tous les utilisateurs sont automatiquement inclus. La valeur par défaut est false.</li>
+</ol>
+<p>Une fois créé, un rôle délimité peut être assigné aux utilisateurs et aux groupes de la même manière que les rôles standard.</p>
+<p>La création d'un rôle limité ne permet pas de définir de nouvelles autorisations. Les rôles délimités ne peuvent être utilisés que pour appliquer les autorisations d'un rôle existant dans un champ d'application limité. Par exemple, vous pouvez créer un rôle limité basé sur le rôle Déployeur qui est restreint à un seul groupe de serveurs.</p>
+<p>Il n'y a que deux champs d'application auxquels les rôles peuvent être limités, à savoir le groupe d'hôtes et le groupe de serveurs.</p>
+<dl>
+    <dt>Rôles Host-Scoped</dt>
+    <dd>Un rôle à l'échelle de l'hôte restreint les permissions de ce rôle à un ou plusieurs hôtes. Cela signifie que l'accès est fourni aux arborescences de ressources /host=*/ pertinentes, mais que les ressources spécifiques aux autres hôtes sont cachées.</dd>
+    <dt>Rôles Server-Group-Scoped</dt>
+    <dd>Un rôle qui s'applique à un groupe de serveurs restreint les autorisations de ce rôle à un ou plusieurs groupes de serveurs. En outre, les autorisations du rôle s'appliquent également au profil, au groupe de liaison de socket, à la configuration du serveur et aux ressources du serveur qui sont associées aux groupes de serveurs spécifiés. Toutes les sous-ressources de ces groupes qui ne sont pas logiquement liées au groupe de serveurs ne seront pas visibles pour l'utilisateur.</dd>
+</dl>

@@ -1,0 +1,18 @@
+<p>La méthode d'application d'un correctif à ${build.shortName} dépend de votre méthode d'installation. Si vous avez installé ${build.shortName} à l'aide des méthodes ZIP ou d'installation, vous devez utiliser le système de gestion des correctifs basé sur ZIP. Si vous avez utilisé des RPM pour installer ${build.shortName} sur Red Hat Enterprise Linux, vous devez utiliser des correctifs RPM.
+Important.</p>
+
+<p>Avant d'appliquer ou d'annuler un correctif, vous devez sauvegarder votre serveur ${build.shortName}, y compris tous les déploiements et les fichiers de configuration.</p>
+
+<p>Des correctifs cumulatifs pour une installation ZIP ou Installer de ${build.shortName} sont disponibles pour téléchargement à partir du Portail Client Red Hat.</p>
+
+<p>Pour plusieurs hôtes ${build.shortName} dans un environnement de domaine géré, les hôtes individuels peuvent être patchés à partir de votre contrôleur de domaine ${build.shortName}.</p>
+
+<p>En plus d'appliquer un patch, vous pouvez également faire reculer l'application d'un correctif.</p>
+
+<h3>Remarques importantes sur le correctif d'installation de ZIP/Installer</h3>
+
+<ul>
+    <li>Si vous appliquez un correctif qui met à jour un module, les nouveaux JAR corrigés qui sont utilisés au moment de l'exécution sont stockés dans <code>${build.installDir}/modules/system/layers/base/.overlays/PATCH_ID/MODULE</code>. Les fichiers originaux non corrigés sont dans <code>${build.installDir}/modules/system/layers/base/MODULE, mais ces JAR ne sont pas utilisés lors de l'exécution.</code></li>
+    <li>Afin de réduire considérablement la taille des versions de correctifs cumulatifs pour ${build.shortName}, il n'est désormais plus possible d'effectuer un retour en arrière partiel d'un correctif cumulatif. Pour un correctif qui a été appliqué, vous ne pourrez revenir en arrière que sur l'ensemble du correctif.</li>
+    <li>Par exemple, si vous appliquez CP03 à ${build.shortName}, vous ne pourrez pas revenir à CP01 ou CP02. Si vous souhaitez pouvoir revenir sur chaque version de correctif cumulatif, chaque correctif cumulatif doit être appliqué séparément dans l'ordre où il a été publié.</li>
+</ul>

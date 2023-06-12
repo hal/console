@@ -1,0 +1,49 @@
+<p>Contient la configuration des topics suivants :</p>
+<ul>
+    <li>Files d'attente core</li>
+    <li>Destinations JMS</li>
+    <li>Paramètres de sécurité</li>
+    <li>Paramètres d'adresse</li>
+    <li>Déviations</li>
+</ul>
+
+<h2>Files d'attente core</h2>
+<p>Le noyau d'Apache ActiveMQ Artemis est agnostique au JMS. Il n'a pas de concept de sujet JMS. Un sujet JMS est implémenté dans core comme une adresse (le nom du sujet) avec zéro ou plusieurs files d'attente liées à cette adresse. Chaque file d'attente liée à cette adresse représente un abonnement au sujet. De même, une file d'attente JMS est implémentée comme une adresse (le nom de la file d'attente JMS) à laquelle est liée une seule file d'attente qui représente la file d'attente JMS.</p>
+
+<p>Par convention, toutes les files d'attente JMS sont mappées vers des files d'attente principales où le nom de la file d'attente principale est précédé de la chaîne de caractères "jms.queue.". Par exemple, la file d'attente JMS dont le nom est "orders.europe" correspondrait à la file d'attente principale dont le nom est "jms.queue.orders.europe". L'adresse à laquelle la file d'attente principale est liée est également indiquée par le nom de la file d'attente principale.</p>
+
+<p>Pour les sujets JMS, l'adresse à laquelle les files d'attente qui représentent les abonnements sont liées est donnée en ajoutant la chaîne "jms.topic." au nom du sujet JMS. Par exemple, le sujet JMS portant le nom "news.europe" correspondrait à l'adresse centrale "jms.topic.news.europe"</p>
+
+<h2>Destinations JMS</h2>
+<p>Les destinations JMS, tout comme les fabriques de connexion JMS, sont des objets administratifs JMS. Les destinations sont utilisées par les clients JMS pour produire et consommer des messages. La destination permet au client JMS de spécifier la cible lorsqu'il produit des messages et la source des messages lorsqu'il les consomme. Dans le cas d'un modèle de publication et d'abonnement, les destinations sont appelées "sujets". Dans le cas d'un modèle point à point, les destinations sont appelées files d'attente.</p>
+
+<p>Les applications peuvent utiliser de nombreuses destinations JMS différentes, qui sont configurées côté serveur, et auxquelles on accède généralement via JNDI.</p>
+
+<h2>Paramètres de sécurité</h2>
+<p>Les paramètres de sécurité sont utilisés pour configurer la sécurité autour de destinations spécifiques. Pour ce faire, on ajoute une contrainte de sécurité à l'aide de l'élément de configuration security-setting. La messagerie ${build.shortName} est livrée avec un security-setting configuré par défaut.
+   <code>configuré</code> par défaut.</p>
+
+<p>L'option security-setting utilise des caractères génériques pour déterminer les destinations auxquelles appliquer la contrainte de sécurité. La valeur d'un seul
+   <code>#</code> correspondra à n'importe quelle adresse. Pour plus d'informations sur l'utilisation des caractères génériques dans les contraintes de sécurité, voir
+   <a target="_blank" href="https://access.redhat.com/documentation/en/red-hat-jboss-enterprise-application-platform/7.0/paged/configuring-messaging/chapter-7-configuring-security#role_based_security_for_address">Sécurité basée sur les rôles pour les adresses</a>.
+</p>
+
+<h2>Paramètres d'adresse</h2>
+<p>Le sous-système messaging-activemq dispose de plusieurs options configurables qui contrôlent certains aspects de la manière et du moment où un message est délivré, du nombre de tentatives à effectuer et de l'expiration du message. Ces options de configuration se trouvent toutes dans l'élément de configuration
+   <code>&lt;address-setting>.</code> Vous pouvez demander à ${build.shortName} d'appliquer un seul
+   <code>&lt;address-setting></code> à plusieurs destinations en utilisant une syntaxe de caractères génériques.</p>
+
+<p>Pour plus d'informations sur l'utilisation des caractères génériques dans les configurations d'adresse, voir <a target="_blank" href="https://access.redhat.com/documentation/en/red-hat-jboss-enterprise-application-platform/7.0/paged/configuring-messaging/chapter-6-address-settings">Syntaxe des caractères génériques</a>.
+</p>
+
+<h2>Déviations</h2>
+<p>Les déviations sont des objets configurés dans la messagerie ${build.shortName} qui permettent de dévier les messages d'une adresse vers une autre. Les déviations peuvent être classées selon les types suivants :
+
+<dl>
+    <dt>Exclusif</dt>
+    <dd>Un message n'est que dévié vers une nouvelle adresse et n'est jamais envoyé à l'ancienne adresse.</dd>
+    <dt>Non exclusif</dt>
+    <dd>Un message est envoyé à l'ancienne adresse et une copie est également envoyée à la nouvelle adresse. Les déviations non exclusives peuvent être utilisées pour diviser le flux de messages.</dd>
+</dl>
+
+<p>Une déviation ne déviera un message que vers une adresse située sur le même serveur. Si vous souhaitez rediriger un message vers une adresse située sur un autre serveur, un schéma courant consisterait à rediriger le message vers une file d'attente locale, puis à mettre en place une interface utilisateur qui utilise cette file d'attente et la redirige vers une adresse située sur un autre serveur.</p>

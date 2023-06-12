@@ -1,0 +1,50 @@
+<p>包含以下功能的配置：</p>
+<ul>
+    <li>核心队列</li>
+    <li>JMS 目的地</li>
+    <li>安全设置</li>
+    <li>地址设置</li>
+    <li>转接</li>
+</ul>
+
+<h2>核心队列</h2>
+<p>Apache ActiveMQ Artemis 核心是 JMS-agnostic。它没有任何 JMS 主题的概念。JMS 主题以地址（主题）的形式实现,，带有零个或更多个队列的地址。每个绑定到该地址的队列都代表一个主题订阅。同样，JMS 队列是作为一个地址（JMS 队列名）实现的，它代表 JMS 队列。</p>
+
+<p>通常，所有 JMS 队列都映射到核心队列名称有字符串 "jms.queue." 的核心队列。例如，名为 "orders.europe" 的 JMS 队列将映射到名为 "jms.queue.orders.europe" 的内核队列。核心队列绑定的地址也会由核心队列的名称提供。</p>
+
+<p>对于JMS主题在其代表订阅的队列都绑定是通过前面加上字符串给出的地址“jms.topic。”到JMS主题的名称。例如,名为 "news.europe" 的 JMS 主题将映射到核心地址 "jms.topic.news.europe"</p>
+
+<h2>JMS 目的地</h2>
+<p>JMS 目的地和 JMS 连接工厂是 JMS 管理对象。目的地供 JMS 客户用于生成和使用消息。目的地允许 JMS 客户端在生成消息时指定目标，在使用消息时指定消息的源。当使用发布订阅模式时，目的地被称为主题。当使用点到点模式时，目的地指的是队列。</p>
+
+<p>应用程序可以使用在服务器侧配置的、通常通过JNDI访问的多个不同的 JMS 目的地。</p>
+
+<h2>安全设置</h2>
+<p>安全设置用于为特定目的地配置安全性。这是通过使用 security-setting 配置元素添加安全约束来实现的。${build.shortName} 消息默认带有一个配置的
+    <code>security-setting</code>。</p>
+
+<p>security-setting 选项会使用通配符来处理应用安全约束的目的地。单个
+    <code>#</code> patterm 的值将匹配任意地址。如需了解有关在安全限制中使用通配符的更多信息，请参阅
+    <a target="_blank" href="https://access.redhat.com/documentation/en/red-hat-jboss-enterprise-application-platform/7.0/paged/configuring-messaging/chapter-7-configuring-security#role_based_security_for_address">Role Based Security for Addresses</a>。
+</p>
+
+<h2>地址设置</h2>
+<p>messaging-activemq 子系统有几个可配置的选项,它们控制消息如何和何时发送,应该发出多少次尝试,以及消息过期的时间。 这些配置选项都存在于
+    <code>&lt;address-setting></code> 配置元素中。您可以使用通配符语法，将 ${build.shortName} 应用一个单独的
+    <code>&lt;address-setting></code> 到多个目的地。</p>
+
+<p>如需了解更多于在地址中使用通配符信息，请参阅
+    <a target="_blank" href="https://access.redhat.com/documentation/en/red-hat-jboss-enterprise-application-platform/7.0/paged/configuring-messaging/chapter-6-address-settings">Wildcard Syntax</a>。
+</p>
+
+<h2>转接</h2>
+<p>权限是在 ${build.shortName} 信息中配置的对象，可帮助将信息从一个地址传递到另一个地址。Divert 可以是以下类型：
+
+<dl>
+    <dt>排他（exclusive）</dt>
+    <dd>消息只转移到新的地址，永远不会发送到旧地址。</dd>
+    <dt>非排他（non-exclusive）</dt>
+    <dd>一条信息会发送原来的地址， 副本也会发送到新的地址。 非排他性 divert 可以用来分割信息流。</dd>
+</dl>
+
+<p>一个 divert 只会将一个消息转到相同服务器中的一个地址。如果需要把消息转移到另外一台服务器的一个地址时，则可以先把它转移到本地的 store-and-forward 队列中，然后设置一个 api 来从队列中获取信息并转发到另外一个服务器的一个地址上。</p>

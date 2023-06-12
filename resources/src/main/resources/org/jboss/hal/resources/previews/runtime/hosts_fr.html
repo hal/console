@@ -1,0 +1,25 @@
+<p>Un contrôleur d'hôte est lancé lorsque le script <code>domain.sh</code> ou <code>domain.bat</code> est exécuté sur un hôte.</p>
+
+<p>Le principale responsabilité d'un contrôleur hôte est la gestion de serveurs. Il délègue les tâches de gestion de domaines et est chargé de démarrer ou stopper les processus de serveurs d'application individuels qui exécutent sur son hôte.</p>
+
+<p>Il entre en interaction avec le contrôleur de domaines pour gérer la communication entre les serveurs et le contrôleur de domaines. Plusieurs contrôleurs hôtes d'un domaine peuvent interagir avec un contrôleur de domaine unique. Par conséquent, tous les contrôleurs hôtes et les instances de serveurs exécutant en mode de domaine unique ont un contrôleur de domaine unique et doivent appartenir au même domaine.</p>
+
+<p>Par défaut, chaque contrôleur d'hôte lit sa configuration à partir du fichier
+   <code>domain/configuration/host.xml</code> situé dans le fichier d'installation ${build.shortName} décompressé sur le système de fichiers de son hôte. Le fichier
+   <code>host.xml</code> contient les informations de configuration suivantes qui sont spécifiques à l'hôte en question :
+</p>
+
+<ul>
+    <li>Les noms des instances ${build.shortName} destinées à être exécutées à partir de cette installation.</li>
+    <li>Une des configurations suivantes :</li>
+    <ul>
+        <li>Comment le contrôleur contacte le contrôleur de domaines pour s'enregistrer lui-même et pour accéder à la configuration de domaine.</li>
+        <li>Comment rechercher et contacter un contrôleur de domaines éloigné.</li>
+        <li> Si le contrôleur hôte doit agir en tant que contrôleur de domaine</li>
+    </ul>
+    <li>Configurations spécifiques à l'installation physique locale. Par exemple, les définitions d'interfaces nommées déclarées dans le fichier
+       <code>domain.xml</code> peuvent être mises en correspondance avec une adresse IP spécifique à une machine dans le fichier
+       <code>host.x</code>ml. Et les noms de chemin abstraits dans domain.xml peuvent être mis en correspondance avec des chemins de système de fichiers réels dans
+       <code>host</code>.xml.
+    </li>
+</ul>

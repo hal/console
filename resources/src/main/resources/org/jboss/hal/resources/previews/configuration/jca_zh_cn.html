@@ -1,0 +1,16 @@
+<p>Jakarta EE Connector Architecture（JCA）定义了 Jakarta EE 系统到外部异构企业信息系统（EIS）的标准架构。EIS 的例子包括企业资源规划（ERP）系统、主框架事务处理（TP）、数据库和消息系统。资源适配器是实现 Jakarta EE Connector API 架构的一个组件。</p>
+<p>JCA 1.7 提供这些管理功能：</p>
+<ul>
+    <li>连接</li>
+    <li>事务</li>
+    <li>安全</li>
+    <li>生命周期</li>
+    <li>工作实例</li>
+    <li>事务流</li>
+    <li>消息流</li>
+</ul>
+
+<h2>Resource Adapters</h2>
+<p>资源适配器是提供 Jakarta EE 应用程序和使用 JCA 规格的 EIS 系统间通讯的可部署 Jakarta EE 组件。EIS 厂商经常提供资源适配器，允许他们的产品与 Jakarta EE 应用程序轻易集成。</p>
+<p>企业信息系统（Enterprise Information System，EIS ）可以是机构里的其他软件包系统。如 ERP 系统、数据库系统、电子邮件服务器和专有消息系统。</p>
+<p>资源适配器打包在资源适配器归档（Resource Adapter Archive，RAR）文件中，它可以部署到 ${build.shortName}。RAR 文件也可以包含在 Enterprise Archive（EAR）部署里。</p>

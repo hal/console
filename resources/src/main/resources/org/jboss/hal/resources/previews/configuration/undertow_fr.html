@@ -1,0 +1,17 @@
+<p>Le sous-système Undertow vous permet de configurer les paramètres du serveur web et du conteneur de servlets. Il implémente la spécification
+   <a href="https://jcp.org/en/jsr/detail?id=340" target="_blank">Java Servlet 3.1</a> ainsi que les websockets et prend en charge HTTP Upgrade et l'utilisation de gestionnaires non bloquants à haute performance dans les déploiements de servlets. Le sous-système Undertow a également la capacité d'agir comme un proxy inverse de haute performance qui prend en charge mod_cluster.
+</p>
+
+<p>Dans le sous-système Undertow, il y a six composants principaux à configurer :</p>
+<ol>
+    <li>Paramètres globaux</li>
+    <li>Caches tampons</li>
+    <li>Serveur</li>
+    <li>Conteneur de servlet</li>
+    <li>Filtres</li>
+    <li>Handlers</li>
+</ol>
+
+<p><strong>Important</strong><br/>
+    Le sous-système Undertow s'appuie également sur le sous-système IO pour fournir des workers XNIO et des pools de tampons. Le sous-système IO est configuré séparément et fournit une configuration par défaut qui devrait offrir des performances optimales dans la plupart des cas.
+</p>

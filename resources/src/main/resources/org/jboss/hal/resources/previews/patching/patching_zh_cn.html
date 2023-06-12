@@ -1,0 +1,18 @@
+<p>对 ${build.shortName} 应用补丁的方法取决于您的安装方法。如果使用 ZIP 或安装程序安装 ${build.shortName}，则需要使用基于 ZIP 的补丁管理系统。如果使用 RPM 在 Red Hat Enterprise Linux 上安装 ${build.shortName}，则需要使用 RPM 补丁。
+重要。</p>
+
+<p>在应用或回滚补丁之前，应该备份 ${build.shortName} 服务器，包括所有部署和配置文件。</p>
+
+<p>对于使用 ZIP 或 Installer 安装的 ${build.shortName}，相应的补丁程序可以从红帽客户门户网站获得。</p>
+
+<p>对于有多个 ${build.shortName} 主机的管理域环境，每个单独的主机都可以通过 ${build.shortName} 域控制器应用补丁。</p>
+
+<p>除了应用补丁，您也可以回滚补丁的应用。</p>
+
+<h3>使用 ZIP/Installer 安装补丁的主要信息</h3>
+
+<ul>
+    <li>如果您应用了一个会更新模块的补丁程序，在运行时使用的新的应用了补丁的 JAR 将保存在 <code>${build.installDir}/modules/system/layers/base/.overlays/PATCH_ID/MODULE</code> 中。 原始的未应用补丁的文件位于 <code>${build.installDir}/modules/system/layers/base/MODULE</code> 中，这些 JAR 不会在运行时使用。</li>
+    <li>为了显著减少 ${build.shortName} 的累积补丁版本，现在将无法执行累积补丁的部分回滚。对于应用的补丁，您只能回滚整个补丁。</li>
+    <li>例如，如果为 ${build.shortName} 应用了 CP03，则无法回滚到 CP01 或 CP02。如果希望可以回滚到每个累积补丁版本，则必须按照不同补丁版本的发布顺序单独应用每个累积补丁。</li>
+</ul>

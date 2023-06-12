@@ -1,0 +1,13 @@
+<p>服务器代表一个 Undertow 实例并由以下元素组成：</p>
+<ol>
+    <li>主机</li>
+    <li>http listener</li>
+    <li>HTTPS listener</li>
+    <li>AJP Listener</li>
+</ol>
+
+<p>host 元素提供虚拟主机配置，而三个 listener 元素则提供到 Undertow 实例的相应类型的连接。</p>
+
+<p><strong>备注</strong><br/>
+    可以配置多服务器，这将会完全隔离部署和服务器。在某些情况下（如多租户环境）这很有用。
+</p>

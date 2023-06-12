@@ -1,0 +1,10 @@
+<p>elytron 子系统在 ${build.fullName} 中是新的。它是一个基于 WildFly Elytron 项目的安全框架，用于统一整个应用服务器的安全性。elytron 子系统启用了单个配置来保护应用程序和管理接口。WildFly Elytron 还提供一组 API 和 SPI 来提供自定义功能实施并与子系统集成。</p>
+<p>此外，Elytron 还有其他几个重要特点：</p>
+<ul>
+    <li>更强的 HTTP 和 SASL 身份验证机制。</li>
+    <li>改进了允许在安全域间传播 SecurityIdentities 的架构。这可确保可用于授权的透明转换。此转换通过可配置角色解码器、角色映射器和权限映射器进行。</li>
+    <li>为 SSL / TLS 配置配置提供了一个集中的点，包括密码套件和协议。</li>
+    <li>SSL/TLS 优化，如 eager SecureIdentity 构建和紧密连接的授权来建立 SSL/TLS 连接。Eager SecureIdentity 构建可以消除基于每个请求来构建 SecureIdentity 的要求。紧密连接的授权来建立 SSL/TLS 连接可以在接收到第一个请求前进行权限检查。</li>
+    <li>一个安全凭证存储替换了之前的 vault 实现。新的安全凭证存储除了可以加密字符串外，还可以存储多个其他加密凭证类型。</li>
+</ul>
+<p>新的 elytron 子系统与旧的安全子系统和内核管理验证并行存在。旧的方法和 Elytron 都可用于保护管理接口以及为应用程序提供安全性。</p>

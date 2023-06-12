@@ -1,0 +1,23 @@
+<p>Le sous-système de source de données vous permet de créer et de configurer des sources de données et de gérer des pilotes de base de données JDBC.</p>
+<h2>Sources de données</h2>
+<p>Les deux types généraux de ressources sont appelés sources de données et sources de données XA.</p>
+<ul>
+    <li>Les <strong>sources de données non XA</strong> sont utilisées pour les applications qui n'utilisent pas de transactions ou pour les applications qui utilisent des transactions avec une seule base de données.</li>
+    <li>Les sources de <strong>données XA</strong> sont utilisées par des applications dont les transactions sont réparties entre plusieurs bases de données. Les sources de données XA entraînent des ressources supplémentaires.</li>
+</ul>
+<h2>Pilotes JDBC</h2>
+<p>Avant que votre application puisse se connecter à une source de données, les pilotes JDBC du fournisseur de la source de données doivent être installés. Vous avez le choix entre deux méthodes d'installation des pilotes JDBC :</p>
+<dl>
+    <dt>Modules</dt>
+    <dd><p>Pour installer un pilote JDBC en tant que module, vous devez créer une structure de chemin de fichier sous le répertoire
+       <code>${build.installDir}/modules</code>, copier le JAR du pilote JDBC dans le sous-répertoire
+       <code>main/</code> et créer un fichier <code>module.xml</code>.</p>
+        <p>Une fois que le pilote JDBC est disponible en tant que module, vous pouvez utiliser cette section pour ajouter et supprimer des configurations de pilotes.</p>
+    </dd>
+
+    <dt>DÃ©ploiements</dt>
+    <dd>
+        <p>Vous pouvez déployer des pilotes JDBC comme n'importe quel autre déploiement. Cela signifie que vous pouvez les déployer sur plusieurs serveurs dans un groupe de serveurs, si vous utilisez un domaine géré. Tout pilote compatible JDBC 4 sera automatiquement reconnu et installé dans le système par son nom et sa version.</p>
+        <p>En mode domaine, les pilotes déployés en tant qu'applications n'apparaîtront dans cette section que s'il y a des serveurs en cours d'exécution qui correspondent au profil sélectionné.</p>
+    </dd>
+</dl>

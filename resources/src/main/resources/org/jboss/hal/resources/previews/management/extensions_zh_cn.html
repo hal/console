@@ -1,0 +1,33 @@
+<p>扩展是向管理控制台添加新功能的方法。它们使用 JavaScript 编写，并使用 
+ <a href="https://github.com/hal/hal.next/wiki/JavaScript-API">JavaScript API</a> 与控制台和管理接口进行交互。如果要开发一个扩展，请参阅 
+ <a href="https://github.com/hal/hal.next/wiki/Extensions">https://github.com/hal/hal.next/wiki/Extensions</a> 了解更多信息。
+</p>
+
+<div class="alert alert-warning">
+    <span class="pficon pficon-warning-triangle-o"></span>扩展使用 <strong>JavaScript</strong> 编写，并被
+    <strong>注入</strong>到浏览器。请只安装您信任的扩展！
+</div>
+
+<h2>扩展点</h2>
+<p>控制台提供了扩展可以使用的四种不同的扩展点：</p>
+<ol>
+    <li>Header：在标头中的"扩展"下拉菜单中添加一个菜单项</li>
+    <li>Finder Item：将一个新项添加到特定的 finder 列中</li>
+    <li>Footer ：将菜单项添加到页脚中的"扩展"下拉菜单中</li>
+    <li>Custom：扩展如何将自身添加到控制台</li>
+</ol>
+
+<h2>安装</h2>
+<p>扩展可以使用两种不同方式加入到控制台：</p>
+
+<dl>
+    <dt>捆绑扩展</dt>
+    <dd>
+        <p>捆绑的扩展是 ${build.fullName} 安装的一部分，并作为模块安装。它们必须在控制台以外安装。必须在添加或删除捆绑的扩展后重启控制台。</p>
+    </dd>
+
+    <dt>独立扩展</dt>
+    <dd>
+        <p>独立扩展由公共可用端点托管。此端点必须提供包含扩展元数据的 JSON 文件。您可以使用管理控制台添加和删除独立扩展。它们存储在浏览器的本地存储中。因此，它们的范围特定于浏览器以及运行管理控制台的 URL。</p>
+    </dd>
+</dl>

@@ -1,0 +1,16 @@
+<p>JGroups 是创建可靠消息通讯的工具包，它可用来创建集群，其中的节点可以彼此发送消息。</p>
+<p><code>jgroups</code> 子系统为 ${build.shortName} 中的高可用性服务提供组交流的支持。您可以配置命名的频道和协议堆栈，并查看频道的运行时统计数据。
+    当使用提供高可用性功能的配置时，<code>jgroups</code> 子系统可用，如
+    在一个受管域中的 <i>ha</i> 或 <i>full-ha</i> 配置集，或一个独立服务器中的 <code>standalone-ha.xml</code> 或
+    <code>standalone-full-ha.xml</code> 配置文件。</p>
+<p>${build.shortName} 预配置了两个 JGroups 栈：</p>
+<dl>
+    <dt>udp</dt>
+    <dd>集群里的节点使用 Datagram Protocol (UDP) 多播进行彼此间的通讯。这是默认设置。</dd>
+    <dt>tcp</dt>
+    <dd>集群中的节点使用 TCP 协议和其它节点进行通讯。</dd>
+</dl>
+<p>您可以使用预配置的设置，或根据您系统的具体情况定义自己的设置。</p>
+<p><strong>注：</strong><br/> 
+ 与 UDP 相比，TCP 的资源开销更大且通常被认为速度更慢，因为它需要处理错误检查、数据包排序以及本身的拥塞控制。JGroups 为 UDP 处理这些功能，TCP 本身可以保证正确处理这些情况。如果使用 JGroups 不可靠或网络有阻塞的情况，或多播不可用时，TCP 是一个好的选择。
+</p>

@@ -1,0 +1,26 @@
+<p>Contient la configuration pour découvrir les groupes, les connecteurs, les fabriques de connexion, les files d'attente et les sujets vers un serveur ActiveMQ Artemis distant :</p>
+
+<h2>Connecteurs</h2>
+<p>Un connecteur définit comment se connecter à un serveur ActiveMQ Artemis distant.</p>
+
+<p>Pour plus d'informations sur les connecteurs, voir la
+   <a target="_blank" href="https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.1/html/configuring_messaging/acceptors_and_connectors">Documentation sur les connecteurs</a>.
+</p>
+
+<h2>Groupes discovery</h2>
+<p>Un groupe discovery définit la manière dont les informations sur les connecteurs sont reçues à partir d'un point d'extrémité de diffusion, par exemple une adresse multicast UDP ou un canal JGroup.</p>
+<p>Un groupe discovery maintient une liste de connecteurs, un pour chaque diffusion par un serveur différent. Lorsqu'il reçoit des diffusions sur le point d'extrémité de diffusion d'un serveur particulier, il met à jour son entrée dans la liste pour ce serveur. S'il n'a pas reçu de diffusion d'un serveur particulier pendant un certain temps, il supprime l'entrée de ce serveur de sa liste.</p>
+
+
+<h2>Fabriques de connexion</h2>
+<p>Par défaut, le sous-système de messagerie ${build.shortName} fournit les fabriques de connexion <code>InVmConnectionFactory</code> et
+   <code>RemoteConnectionFactory</code>, ainsi que la fabrique de connexion mutualisée
+   <code>activemq-ra</code> pooled connection factory.
+</p>
+
+<p>Les fabriques de connexions mutualisées vous permettent de configurer les connecteurs entrants et sortants de l'adaptateur de ressources ActiveMQ Artemis distant. Pour plus d'informations sur la configuration d'une fabrique de connexions groupées pour se connecter à un serveur ActiveMQ Artemis distant, voir
+   <a target="_blank" href="https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.1/html/configuring_messaging/resource_adapters#use_provided_amq_adapter">Utilisation de l'adaptateur de ressources intégré pour les connexions distantes</a>.
+</p>
+
+<h2>File d'attente externe / Sujet</h2>
+<p>Les files d'attente et les sujets qui existent dans le serveur ActiveMQ Artemis distant.</p>

@@ -1,0 +1,13 @@
+<p>Les Enterprise beans sont des composants d'application côté serveur définis dans la spécification Enterprise JavaBeans (EJB) 3.1. Les Enterprise beans sont conçus pour la mise en œuvre de la logique commerciale de l'application d'une manière découplée afin d'encourager la réutilisation.
+    Les Enterprise beans sont écrits sous forme de classes Java et annotés avec les annotations EJB appropriées. Ils peuvent être déployés sur le serveur d'application dans leur propre archive (un fichier JAR) ou dans le cadre d'une application Jakarta EE. Le serveur d'application gère le cycle de vie de chaque enterprise bean et leur fournit des services tels que la sécurité, les transactions et la gestion de la concurrence.
+    Un enterprise bean peut également définir un nombre quelconque d'interfaces métier. Ces interfaces permettent de mieux contrôler quelles méthodes de l'enterprise bean sont disponibles pour les clients et peuvent également permettre l'accès à des clients s'exécutant dans des JVM distantes.
+    Il existe trois types d'Enterprise Bean : Les Session beans, les Message-driven beans et les Entity beans.</p>
+
+<h2>Session Beans</h2>
+<p>Les Session Beans sont des Enterprise Beans qui encapsulent un ensemble de processus ou de tâches d'entreprise connexes et qui sont injectés dans les classes qui les demandent. Il existe trois types de Session Bean : sans état, avec état et singleton.</p>
+
+<h2>Message-Driven Beans</h2>
+<p>Les MDB (Message-driven Beans) fournissent un modèle de développement d'applications basé sur les événements. Les méthodes des MDB ne sont pas injectées ou invoquées à partir du code client, mais sont déclenchées par la réception de messages provenant d'un service de messagerie tel qu'un serveur Java Messaging Service (JMS). La spécification Jakarta EE exige que JMS soit pris en charge, mais d'autres systèmes de messagerie peuvent également l'être.</p>
+
+<h2>Entity Beans</h2>
+<p>Les Entity Beans sont maintenant dépréciés dans EJB 3.1 et il est recommandé d'utiliser les entités JPA à la place. Les Entity Beans ne doivent être utilisés que pour assurer la compatibilité ascendante avec les systèmes existants.</p>

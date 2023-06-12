@@ -1,0 +1,17 @@
+<p>La haute disponibilité est la capacité du système à continuer à fonctionner après une panne d'un ou plusieurs serveurs.</p>
+
+<p>Une caractéristique de la haute disponibilité est le basculement, c'est-à-dire la capacité des connexions client à migrer d'un serveur à un autre en cas de panne de serveur afin que les applications client puissent continuer à fonctionner.</p>
+
+<p><strong>Remarque</strong><br/> Seules les données de messages persistants survivront au basculement. Les données non persistantes ne seront pas disponibles après le basculement.</p>
+
+<h2>Paires Live / Backup</h2>
+<p>${build.shortName} La messagerie permet de relier des serveurs entre eux sous la forme de paires "live" - "backup", où chaque serveur "live" dispose d'un "backup". Les serveurs actifs reçoivent les messages des clients, tandis qu'un serveur de secours n'est pas opérationnel tant que le basculement n'a pas eu lieu. Un serveur de secours peut appartenir à un seul serveur actif, et il restera en mode passif, attendant de reprendre le travail du serveur actif.</p>
+
+<p>Lorsqu'un serveur en direct tombe en panne ou est mis hors service en mode correct, le serveur de secours actuellement en mode passif devient le nouveau serveur en direct. Si le nouveau serveur live est configuré pour permettre une reprise automatique, il détectera le retour de l'ancien serveur live et s'arrêtera automatiquement, permettant à l'ancien serveur live de recommencer à recevoir des messages.</p>
+
+<p><strong>Remarque</strong><br/> Si vous ne déployez qu'une paire de serveurs live/sauvegarde, vous ne pouvez pas utiliser efficacement un équilibreur de charge devant la paire, car l'instance de sauvegarde ne traite pas activement les messages. De plus, les services tels que JNDI et le serveur web Undertow ne sont pas non plus actifs sur le serveur de secours. Pour ces raisons, le déploiement d'applications JEE sur une instance de ${build.shortName} utilisée comme serveur de messagerie de secours n'est pas pris en charge.</p>
+
+<h2>Politiques de Haute disponibilité (HA)</h2>
+<p>${build.shortName} La messagerie prend en charge deux stratégies différentes pour la sauvegarde d'un serveur : la <em>réplication</em> et le <em>stockage partagé</em>. Chaque stratégie peut jouer le rôle d'un serveur primaire ou secondaire. N'oubliez pas qu'une seule option de stratégie HA peut être configurée par serveur de messagerie.</p>
+
+<p>Pour plus d'informations sur la haute disponibilité et les différentes stratégies et politiques, voir <a target="_blank" href="https://access.redhat.com/documentation/en/red-hat-jboss-enterprise-application-platform/7.0/paged/configuring-messaging/chapter-29-high-availability">Haute disponibilité</a>.</p>

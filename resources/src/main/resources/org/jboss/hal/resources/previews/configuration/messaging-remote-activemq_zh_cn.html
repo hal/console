@@ -1,0 +1,25 @@
+<p>包含发现组、连接器、连接工厂、队列和主题到远程 ActiveMQ Artemis 服务器的配置：</p>
+
+<h2>连接器</h2>
+<p>连接器定义如何连接到一个远程 ActiveMQ Artemis 服务器。</p>
+
+<p>有关连接器的更多信息，请参阅 
+ <a target="_blank" href="https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.1/html/configuring_messaging/acceptors_and_connectors">连接器文档</a>.
+</p>
+
+<h2>发现组（discovery group）</h2>
+<p>广播组定义了如何从一个广播端点（例如，一个 UDP 多播地址或 JGroup 信道）接收连接器信息。</p>
+<p>发现组维护一个连接器列表，每个连接器用于由一个不同的服务器发送的每个广播。由于它从特定服务器接收广播端点上的广播，它会更新该服务器列表列表中的条目。如果它在一定时间内尚未从特定服务器收到广播，会从列表中删除该服务器的条目。</p>
+
+
+<h2>连接工厂</h2>
+<p>默认情况下，${build.shortName} 消息子系统提供了 <code>InVmConnectionFactory</code> 和
+    <code>RemoteConnectionFactory</code> 连接工厂，以及
+    <code>activemq-ra</code> 池的连接工厂。
+</p>
+
+<p>池化连接工厂允许您配置远程 ActiveMQ Artemis 资源适配器的入站和出站连接器。如需了解更多与配置 pooled-connection-factory 连接到远程 ActiveMQ Artemis 服务器的信息，请参阅<a target="_blank" href="https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.1/html/configuring_messaging/resource_adapters#use_provided_amq_adapter">使用集成资源适配器进行远程连接</a>。
+</p>
+
+<h2>外部队列/主题</h2>
+<p>远程 ActiveMQ Artemis 服务器中存在的队列和主题。</p>

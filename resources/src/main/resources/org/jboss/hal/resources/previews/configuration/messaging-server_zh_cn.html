@@ -1,0 +1,26 @@
+<p>一个 Apache ActiveMQ Artemis。每个 Apache ActiveMQ Artemis 服务器都有自己的超高性能持久性日志，它被消息和其它需要持久性的功能使用。</p>
+
+<p>使用高性能日志功能可以使持久性消息的性能大大提高，而这些性能不会通过使用关系数据库实现。。</p>
+
+<p>Apache ActiveMQ Artemis 客户端，可能在不同的物理计算机上与 Apache ActiveMQ Artemis 服务器进行交互。Apache ActiveMQ Artemis 当前提供了两个 API 用于客户端的消息传递：</p>
+
+<ol>
+    <li>核心客户端 API。一个简单直观的 Java API，提供全套通讯功能，且没有 JMS 那么复杂。</li>
+    <li>JMS 客户端 API。标准的用于客户端的 JMS API。</li>
+</ol>
+
+<p>Apache ActiveMQ Artemis 还在服务器端提供了不同的协议实现，您可以使用相应的客户端来使用这些协议：</p>
+
+<ol>
+    <li>Stomp</li>
+    <li>OpenWire</li>
+    <li>AMQP</li>
+</ol>
+
+<p>JMS 的语言环境通过客户端上的 JMS 门面层实现。</p>
+
+<p>Apache ActiveMQ Artemis 服务器并不是一个 JMS，实际上它并不知道任何 JMS 的信息。它是一个与具体协议无关的消息服务器，被设计为可以使用不同的协议。</p>
+
+<p>当用户在客户端使用 JMS API 时，在使用 Apache ActiveMQ Artemis wire 的格式进行转换前，所有 JMS 交换数据都会被翻译为在 Apache ActiveMQ Artemis 核心客户端 API 进行的操作。</p>
+
+<p>服务器始终只与核心 API 进行交互。</p>

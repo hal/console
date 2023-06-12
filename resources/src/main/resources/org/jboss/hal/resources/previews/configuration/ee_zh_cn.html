@@ -1,0 +1,7 @@
+<p>EE 子系统在 Jakarta EE 平台中提供常见功能，如 EE Concurrency 实用程序和 <code>@Resource</code> 注入。该子系统还负责管理 Jakarta EE 应用部署的生命周期，即 .ear 文件。</p>
+<p>EE子系统配置可以被用于：</p>
+<ul>
+    <li>允许对 Jakarta EE 应用进行自定义部署。</li>
+    <li>管理全局模块：一组 JBoss 模块将作为依赖项添加到每个 Jakarta EE 部署的 JBoss 模块中。这样的依赖项允许 Jakarta EE 部署查看全局模块导出的类。</li>
+    <li>管理 EE 并发工具：它已被引入，以简化编写多线程 Jakarta EE 应用的任务。这些工具的实例由 ${build.fullName} 管理，以及 EE 子系统提供的相关配置。</li>
+</ul>

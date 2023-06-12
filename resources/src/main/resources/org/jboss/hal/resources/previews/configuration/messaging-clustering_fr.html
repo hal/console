@@ -1,0 +1,47 @@
+<p>${build.shortName} Les clusters de messagerie permettent de regrouper des groupes de serveurs de messagerie ${build.shortName} afin de partager la charge de traitement des messages. Chaque nœud actif du cluster est un serveur de messagerie ${build.shortName} actif qui gère ses propres messages et ses propres connexions.</p>
+
+<p>Le cluster est formée par chaque nœud qui déclare des connexions du cluster à d'autres nœuds dans le fichier de configuration ${build.shortName}. Lorsqu'un nœud établit une connexion de cluster avec un autre nœud, il crée en interne une connexion d'api centrale entre lui-même et l'autre nœud. Cela se fait de manière transparente dans les coulisses ; il n'est pas nécessaire de déclarer une API explicite pour chaque nœud. Ces connexions permettent aux messages de circuler entre les nœuds de cluster afin d'équilibrer la charge.</p>
+
+<p>Pour une documentation complète sur les clusters, voir
+   <a target="_blank" href="https://access.redhat.com/documentation/en/red-hat-jboss-enterprise-application-platform/7.0/paged/configuring-messaging/chapter-28-clusters-overview">Vue d'ensemble des clusters</a>.
+</p>
+
+<p>Cette section contient la configuration pour les sujets suivants :</p>
+<ul>
+    <li>Groupes de diffusion</li>
+    <li>Groupes discovery</li>
+    <li>Connexions de cluster</li>
+    <li>Handlers de groupe</li>
+    <li>Core Bridges</li>
+</ul>
+
+<h2>Groupes de diffusion</h2>
+<p>Un groupe de diffusion est le moyen par lequel un serveur diffuse des connecteurs sur le réseau. Un connecteur définit la manière dont un client, ou un autre serveur, peut établir des connexions avec le serveur.</p>
+
+<p>Le groupe de diffusion prend un ensemble de connecteurs et les diffuse sur le réseau. En fonction de la technique de diffusion que vous avez configurée pour le cluster, celui-ci utilise soit UDP, soit JGroups pour diffuser les informations sur les paires de connecteurs.</p>
+
+<p>Les groupes de diffusion sont définis dans le sous-système messaging-activemq de la configuration du serveur. Il peut y avoir plusieurs groupes de diffusion par serveur de messagerie ${build.shortName}.</p>
+
+<h2>Groupes discovery</h2>
+<p>Alors que le groupe de diffusion définit comment l'information sur les connecteurs est diffusée à partir d'un serveur, un groupe discovery définit comment l'information sur les connecteurs est reçue à partir d'un point d'extrémité de diffusion, par exemple, une adresse multicast UDP ou un canal JGroup.</p>
+
+<p>Un groupe discovery maintient une liste de connecteurs, un pour chaque diffusion par un serveur différent. Lorsqu'il reçoit des diffusions sur le point d'extrémité de diffusion d'un serveur particulier, il met à jour son entrée dans la liste pour ce serveur. S'il n'a pas reçu de diffusion d'un serveur particulier pendant un certain temps, il supprime l'entrée de ce serveur de sa liste.</p>
+
+<h2>Connexions de cluster</h2>
+<p>Les connexions de cluster regroupent les serveurs en clusters (grappes) afin que les messages puissent être équilibrés entre les nœuds du cluster. Les connexions de cluster sont définies dans la configuration du serveur ${build.shortName} à l'aide de l'élément
+   <code>cluster-connection</code>. Il peut y avoir zéro ou plusieurs connexions de cluster définies par serveur de messagerie ${build.shortName}.
+</p>
+
+<h2>Handlers de groupe</h2>
+<p>Dans un cluster, des groupes de messages avec des identifiants de groupe spécifiques peuvent arriver sur n'importe quel nœud. Il est important pour un nœud de déterminer quels identifiants de cluster sont liés à quel consommateur sur quel nœud. Chaque nœud est chargé d'acheminer correctement les groupes de messages vers le nœud dont le consommateur traite ces identifiants de groupe, quel que soit l'endroit où les groupes de messages arrivent par défaut. Une fois que les messages avec un identifiant de groupe donné sont envoyés à un consommateur spécifique connecté à un nœud donné du cluster, ces messages ne sont jamais envoyés à un autre nœud, même si le consommateur est déconnecté.</p>
+
+<p>Cette situation est résolue par un gestionnaire de groupement. Chaque nœud dispose d'un gestionnaire de regroupement qui (avec d'autres gestionnaires) est chargé d'acheminer les groupes de messages vers le nœud approprié.</p>
+
+<h2>Core Bridges</h2>
+<p>La fonction d'une api est de consommer les messages d'une destination et de les transférer à une autre, typiquement sur un serveur de messagerie ${build.shortName} différent.</p>
+
+<p>Les serveurs source et cible n'ont pas besoin d'être dans le même cluster, ce qui permet d'envoyer de manière fiable des messages d'un cluster à l'autre, par exemple, à travers un WAN ou Internet et quand la connexion peut ne pas être fiable.</p>
+
+<p>L'api dispose d'une résilience intégrée aux pannes, de sorte que si la connexion au serveur cible est perdue, par exemple en raison d'une panne de réseau, l'api tentera à nouveau de se connecter à la cible jusqu'à ce qu'elle soit à nouveau en ligne. Lorsque la connexion est rétablie, l'api reprend son fonctionnement normal.</p>
+
+<p>Les ponts sont un moyen de connecter de manière fiable deux serveurs de messagerie ${build.shortName} distincts. Avec une api de base, les serveurs source et cible doivent être des serveurs de messagerie ${build.shortName}.</p>
