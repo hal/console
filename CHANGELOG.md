@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix visibility of update manager
+
 ## [3.6.7] - 2023-06-13
 
 ### Changed

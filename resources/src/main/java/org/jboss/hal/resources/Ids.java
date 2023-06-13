@@ -776,7 +776,7 @@ public interface Ids {
     String TLC_CONFIGURATION = "tlc-configuration";
     String TLC_DEPLOYMENTS = "tlc-deployments";
     String TLC_HOMEPAGE = "tlc-homepage";
-    String TLC_INSTALLER = "tlc-installer";
+    String TLC_UPDATE_MANAGER = "tlc-update-manager";
     String TLC_MANAGEMENT = "tlc-management";
     String TLC_PATCHING = "tlc-patching";
     String TLC_RUNTIME = "tlc-runtime";

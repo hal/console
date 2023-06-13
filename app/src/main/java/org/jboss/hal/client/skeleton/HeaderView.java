@@ -27,6 +27,7 @@ import javax.inject.Inject;
 import org.jboss.elemento.Elements;
 import org.jboss.elemento.HtmlContentBuilder;
 import org.jboss.hal.ballroom.Tooltip;
+import org.jboss.hal.config.Build;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Role;
@@ -70,6 +71,7 @@ import static org.jboss.elemento.Elements.a;
 import static org.jboss.elemento.Elements.b;
 import static org.jboss.elemento.Elements.button;
 import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.failSafeRemoveFromParent;
 import static org.jboss.elemento.Elements.i;
 import static org.jboss.elemento.Elements.li;
 import static org.jboss.elemento.Elements.nav;
@@ -179,17 +181,21 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
     private HandlerRegistration refreshHandler;
 
     @Inject
-    public HeaderView(Places places, AccessControl ac, Resources resources) {
+    public HeaderView(Environment environment, Places places, AccessControl ac, Resources resources) {
         this.places = places;
         this.resources = resources;
+
+        boolean su = ac.isSuperUserOrAdministrator();
+        boolean community = environment.getHalBuild() == Build.COMMUNITY;
 
         HTMLElement logoLink;
         HTMLElement nonProgressingOperationLink;
         HTMLElement logout;
         HTMLElement reconnect;
-        HTMLElement installer;
+        HTMLElement updateManager;
         HTMLElement accessControl;
         HTMLElement backLink;
+
         HTMLElement root = nav().css(navbar, navbarDefault, navbarFixedTop, navbarPf)
                 .id(Ids.HEADER_CONTAINER)
                 .add(div().css(navbarHeader)
@@ -291,9 +297,9 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
                                         .add(a().css(clickable)
                                                 .id(Ids.TLC_RUNTIME)
                                                 .textContent(Names.RUNTIME)))
-                                .add(installer = li()
+                                .add(updateManager = li()
                                         .add(a().css(clickable)
-                                                .id(Ids.TLC_INSTALLER)
+                                                .id(Ids.TLC_UPDATE_MANAGER)
                                                 .textContent(Names.UPDATE_MANAGER))
                                         .element())
                                 .add(accessControl = li()
@@ -337,10 +343,12 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
         notificationDrawer = new NotificationDrawer(resources);
         topLevelCategories.parentNode.insertBefore(notificationDrawer.element(), topLevelCategories);
 
-        boolean su = ac.isSuperUserOrAdministrator();
+        if (community) {
+            failSafeRemoveFromParent(updateManager);
+        }
         if (!su) {
-            topLevelCategories.removeChild(installer);
-            topLevelCategories.removeChild(accessControl);
+            failSafeRemoveFromParent(updateManager);
+            failSafeRemoveFromParent(accessControl);
         }
 
         String accessControlNameToken = ac.isSingleSignOn() ? NameTokens.ACCESS_CONTROL_SSO : NameTokens.ACCESS_CONTROL;
@@ -370,7 +378,7 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
                         Ids.TLC_DEPLOYMENTS,
                         Ids.TLC_CONFIGURATION,
                         Ids.TLC_RUNTIME,
-                        Ids.TLC_INSTALLER,
+                        Ids.TLC_UPDATE_MANAGER,
                         Ids.TLC_ACCESS_CONTROL,
                 });
 

@@ -184,20 +184,22 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
         }
 
         if (su) {
-            sections = Collections.singleton(new HomepageSection(places, resources,
-                    Ids.HOMEPAGE_UPDATE_MANAGER_SECTION, NameTokens.UPDATE_MANAGER,
-                    resources.constants().homepageUpdateManagerSection(),
-                    resources.constants().homepageUpdateManagerStepIntro(),
-                    Arrays.asList(
-                            resources.constants().homepageUpdateManagerStep1(),
-                            resources.constants().homepageUpdateManagerStep2(),
-                            resources.constants().homepageUpdateManagerStep3()),
-                    true));
-            updateManager = new HomepageModule(places,
-                    Ids.HOMEPAGE_UPDATE_MANAGER_MODULE, NameTokens.UPDATE_MANAGER, Names.UPDATE_MANAGER,
-                    resources.constants().homepageUpdateManagerSubHeader(),
-                    resources.images().updateManager(),
-                    sections).element();
+            if (!community) {
+                sections = Collections.singleton(new HomepageSection(places, resources,
+                        Ids.HOMEPAGE_UPDATE_MANAGER_SECTION, NameTokens.UPDATE_MANAGER,
+                        resources.constants().homepageUpdateManagerSection(),
+                        resources.constants().homepageUpdateManagerStepIntro(),
+                        Arrays.asList(
+                                resources.constants().homepageUpdateManagerStep1(),
+                                resources.constants().homepageUpdateManagerStep2(),
+                                resources.constants().homepageUpdateManagerStep3()),
+                        true));
+                updateManager = new HomepageModule(places,
+                        Ids.HOMEPAGE_UPDATE_MANAGER_MODULE, NameTokens.UPDATE_MANAGER, Names.UPDATE_MANAGER,
+                        resources.constants().homepageUpdateManagerSubHeader(),
+                        resources.images().updateManager(),
+                        sections).element();
+            }
 
             if (ssoEnabled) {
                 accessControl = new HomepageModule(places,
@@ -229,19 +231,37 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
                         .add(deployments)
                         .add(configuration))
                 .element();
-        if (su) {
-            root.appendChild(div().css(eapHomeRow)
-                    .add(runtime)
-                    .add(updateManager)
-                    .element());
-            root.appendChild(div().css(eapHomeRow)
-                    .add(accessControl)
-                    .add(help)
-                    .element());
+        if (community) {
+            if (su) {
+                root.appendChild(div().css(eapHomeRow)
+                        .add(runtime)
+                        .add(accessControl)
+                        .element());
+                root.appendChild(div().css(eapHomeRow)
+                        .add(help)
+                        .element());
+            } else {
+                root.appendChild(div().css(eapHomeRow)
+                        .add(runtime)
+                        .add(help)
+                        .element());
+            }
         } else {
-            root.appendChild(div().css(eapHomeRow)
-                    .add(runtime)
-                    .add(help).element());
+            if (su) {
+                root.appendChild(div().css(eapHomeRow)
+                        .add(runtime)
+                        .add(updateManager)
+                        .element());
+                root.appendChild(div().css(eapHomeRow)
+                        .add(accessControl)
+                        .add(help)
+                        .element());
+            } else {
+                root.appendChild(div().css(eapHomeRow)
+                        .add(runtime)
+                        .add(help)
+                        .element());
+            }
         }
         initElement(root);
     }
