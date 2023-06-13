@@ -18,6 +18,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Upgrades
 
+- Bump ACE editor to 1.22.1
 - Bump Parcel to 2.9.2
 - Bump Quarkus to 3.1.1.Final
 
@@ -61,7 +62,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [3.6.5] - 2022-12-08
 
-### Added 
+### Added
 
 - [HAL-1425](https://issues.redhat.com/browse/HAL-1425): Deployment with persistence.xml - check if data source is available
 - Add SECURITY.md file
@@ -110,7 +111,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [3.6.3] - 2022-08-20
 
-### Fixed 
+### Fixed
 
 - [HAL-1803](https://issues.redhat.com/browse/HAL-1803): Tests are not executed in main
 - [HAL-1802](https://issues.redhat.com/browse/HAL-1802): HAL console unavailable after GWT upgrade to 2.10.0
