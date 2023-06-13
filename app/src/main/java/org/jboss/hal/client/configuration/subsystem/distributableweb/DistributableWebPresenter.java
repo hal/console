@@ -20,8 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.inject.Inject;
-
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
@@ -50,11 +48,15 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
+import javax.inject.Inject;
+
+import static java.util.Collections.emptyList;
 import static org.jboss.hal.client.configuration.subsystem.distributableweb.AddressTemplates.DISTRIBUTABLE_WEB_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.AFFINITY;
@@ -174,6 +176,32 @@ public class DistributableWebPresenter
             this.routing = newRouting;
             reload();
         });
+    }
+
+    void addInfinispanSessionManagement(final String infinispanId, final Metadata metadata) {
+        AddResourceDialog dialog = new AddResourceDialog(
+                Ids.build(infinispanId, Ids.TABLE, Ids.ADD),
+                resources.messages().addResourceTitle(SessionManagement.INFINISPAN.type),
+                metadata, emptyList(), (name, model) -> {
+                    ResourceAddress sessionAddress = SessionManagement.INFINISPAN.template.resolve(statementContext, name);
+                    Operation sessionOp = new Operation.Builder(sessionAddress, ADD)
+                            .payload(model)
+                            .build();
+                    ResourceAddress affinityAddress = SessionManagement.INFINISPAN.template
+                            .append(AFFINITY + "=" + Affinity.LOCAL.resource)
+                            .resolve(statementContext, name);
+                    Operation affinityOp = new Operation.Builder(affinityAddress, ADD)
+                            .build();
+                    Composite composite = new Composite(sessionOp, affinityOp);
+                    dispatcher.execute(composite, (CompositeResult result) -> {
+                        SafeHtml successMessage = resources.messages().addResourceSuccess(
+                                SessionManagement.INFINISPAN.type, name);
+                        MessageEvent.fire(getEventBus(), Message.success(successMessage));
+                        reload();
+                    }, (__, error) -> MessageEvent.fire(getEventBus(),
+                            Message.error(resources.messages().addResourceError(name, error))));
+                });
+        dialog.show();
     }
 
     // ------------------------------------------------------ affinity
