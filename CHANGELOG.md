@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.6.7] - 2023-06-13
+
 ### Changed
 
 - Configure docker files for license plugin
@@ -429,7 +431,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - for dependency upgrades
 -->
 
-[Unreleased]: https://github.com/hal/console/compare/v3.6.6...HEAD
+[Unreleased]: https://github.com/hal/console/compare/v3.6.7...HEAD
+[3.6.7]: https://github.com/hal/console/compare/v3.6.6...v3.6.7
 [3.6.6]: https://github.com/hal/console/compare/v3.6.5...v3.6.6
 [3.6.5]: https://github.com/hal/console/compare/v3.6.4...v3.6.5
 [3.6.4]: https://github.com/hal/console/compare/v3.6.3...v3.6.4
