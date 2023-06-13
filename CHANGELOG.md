@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.6.8] - 2023-06-13
+
 ### Fixed
 
 - [HAL-1865](https://issues.redhat.com/browse/HAL-1865): Not possible to create Infinispan Session
@@ -436,7 +438,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - for dependency upgrades
 -->
 
-[Unreleased]: https://github.com/hal/console/compare/v3.6.7...HEAD
+[Unreleased]: https://github.com/hal/console/compare/v3.6.8...HEAD
+[3.6.8]: https://github.com/hal/console/compare/v3.6.7...v3.6.8
 [3.6.7]: https://github.com/hal/console/compare/v3.6.6...v3.6.7
 [3.6.6]: https://github.com/hal/console/compare/v3.6.5...v3.6.6
 [3.6.5]: https://github.com/hal/console/compare/v3.6.4...v3.6.5
