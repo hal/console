@@ -9,6 +9,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- [HAL-1865](https://issues.redhat.com/browse/HAL-1865): Not possible to create Infinispan Session
 - Fix visibility of the update manager
 
 ## [3.6.7] - 2023-06-13

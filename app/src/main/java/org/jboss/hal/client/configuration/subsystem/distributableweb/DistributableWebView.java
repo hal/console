@@ -20,8 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
-
 import org.jboss.elemento.EventType;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.Tabs;
@@ -33,7 +31,6 @@ import org.jboss.hal.core.mbui.MbuiContext;
 import org.jboss.hal.core.mbui.MbuiViewImpl;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
-import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.NamedNode;
@@ -47,15 +44,27 @@ import org.jboss.hal.spi.MbuiView;
 
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLSelectElement;
+import javax.annotation.PostConstruct;
 
 import static java.util.stream.Collectors.toList;
-
-import static org.jboss.elemento.Elements.*;
+import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.h;
+import static org.jboss.elemento.Elements.label;
+import static org.jboss.elemento.Elements.option;
+import static org.jboss.elemento.Elements.p;
+import static org.jboss.elemento.Elements.section;
+import static org.jboss.elemento.Elements.select;
+import static org.jboss.elemento.Elements.setVisible;
+import static org.jboss.elemento.Elements.span;
 import static org.jboss.hal.ballroom.JQuery.$;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.AFFINITY;
 import static org.jboss.hal.resources.CSS.pfIcon;
 import static org.jboss.hal.resources.CSS.selectpicker;
-import static org.jboss.hal.resources.Ids.*;
+import static org.jboss.hal.resources.Ids.DISTRIBUTABLE_WEB_ROUTING_SELECT;
+import static org.jboss.hal.resources.Ids.FORM;
+import static org.jboss.hal.resources.Ids.ITEM;
+import static org.jboss.hal.resources.Ids.TAB;
+import static org.jboss.hal.resources.Ids.build;
 
 @MbuiView
 @SuppressWarnings("WeakerAccess")
@@ -142,7 +151,20 @@ public abstract class DistributableWebView extends MbuiViewImpl<DistributableWeb
                                                                                                                             // Management";
 
         hotRodSessionManagementForm = createMgmtForm(hotRodId, SessionManagement.HOTROD);
-        hotRodSessionManagementTable = createMgmtTable(hotRodId, SessionManagement.HOTROD);
+        Metadata metadata = mbuiContext.metadataRegistry().lookup(SessionManagement.HOTROD.template);
+        hotRodSessionManagementTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(hotRodId, Ids.TABLE), metadata)
+                .button(mbuiContext.tableButtonFactory().add(
+                        Ids.build(hotRodId, Ids.TABLE, Ids.ADD),
+                        SessionManagement.HOTROD.type,
+                        SessionManagement.HOTROD.template,
+                        (name, address) -> presenter.reload()))
+                .button(mbuiContext.tableButtonFactory().remove(
+                        SessionManagement.HOTROD.type,
+                        SessionManagement.HOTROD.template,
+                        table -> table.selectedRow().getName(),
+                        () -> presenter.reload()))
+                .column("name", (cell, type, row, meta) -> row.getName())
+                .build();
         hotRodSessionManagementAffinityElement = new AffinityElement(SessionManagement.HOTROD, mbuiContext.metadataRegistry(),
                 mbuiContext.resources());
 
@@ -163,7 +185,18 @@ public abstract class DistributableWebView extends MbuiViewImpl<DistributableWeb
                 SessionManagement.INFINISPAN.type.lastIndexOf(' '));
 
         infinispanSessionManagementForm = createMgmtForm(infinispanId, SessionManagement.INFINISPAN);
-        infinispanSessionManagementTable = createMgmtTable(infinispanId, SessionManagement.INFINISPAN);
+        Metadata metadata1 = mbuiContext.metadataRegistry().lookup(SessionManagement.INFINISPAN.template);
+        infinispanSessionManagementTable = new ModelNodeTable.Builder<NamedNode>(Ids.build(infinispanId, Ids.TABLE), metadata1)
+                .button(mbuiContext.tableButtonFactory().add(
+                        SessionManagement.INFINISPAN.template,
+                        table -> presenter.addInfinispanSessionManagement(infinispanId, metadata1)))
+                .button(mbuiContext.tableButtonFactory().remove(
+                        SessionManagement.INFINISPAN.type,
+                        SessionManagement.INFINISPAN.template,
+                        table -> table.selectedRow().getName(),
+                        () -> presenter.reload()))
+                .column("name", (cell, type, row, meta) -> row.getName())
+                .build();
         infinispanSessionManagementAffinityElement = new AffinityElement(SessionManagement.INFINISPAN,
                 mbuiContext.metadataRegistry(), mbuiContext.resources());
 
@@ -278,19 +311,6 @@ public abstract class DistributableWebView extends MbuiViewImpl<DistributableWeb
                     resetForm(sessionManagement.type, name, sessionManagement.template.resolve(statementContext(), name), form,
                             metadata);
                 })
-                .build();
-    }
-
-    private Table<NamedNode> createMgmtTable(String mgmtId, SessionManagement sessionManagement) {
-        Metadata metadata = mbuiContext.metadataRegistry().lookup(sessionManagement.template);
-        return new ModelNodeTable.Builder<NamedNode>(build(mgmtId, ModelDescriptionConstants.TABLE), metadata)
-                .button(mbuiContext.tableButtonFactory().add(
-                        build(mgmtId, ModelDescriptionConstants.TABLE, ModelDescriptionConstants.ADD), sessionManagement.type,
-                        sessionManagement.template, (name, address) -> presenter.reload()))
-                .button(mbuiContext.tableButtonFactory().remove(sessionManagement.type, sessionManagement.template,
-                        table -> table.selectedRow().getName(),
-                        () -> presenter.reload()))
-                .column("name", (cell, type, row, meta) -> row.getName())
                 .build();
     }
 
