@@ -57,6 +57,9 @@ public class Role implements NamedObject {
         STANDARD, HOST, SERVER_GROUP
     }
 
+    // Lowercase name. Must only be used internally!
+    // Is used in equals() and hashCode()
+    private final String identifier;
     private final String name;
     private final Type type;
     private final Role baseRole;
@@ -69,6 +72,7 @@ public class Role implements NamedObject {
 
     public Role(String name, Role baseRole, Type type,
             Iterable<String> scope) {
+        this.identifier = name.toLowerCase();
         this.name = name;
         this.baseRole = baseRole;
         this.type = type;
@@ -90,7 +94,7 @@ public class Role implements NamedObject {
 
         Role role = (Role) o;
         // noinspection RedundantIfStatement
-        if (!name.equals(role.name)) {
+        if (!identifier.equals(role.identifier)) {
             return false;
         }
         return true;
@@ -98,7 +102,7 @@ public class Role implements NamedObject {
 
     @Override
     public int hashCode() {
-        return name.hashCode();
+        return identifier.hashCode();
     }
 
     /** @return a string representation of this role. */
@@ -114,7 +118,7 @@ public class Role implements NamedObject {
 
     /** @return the unique ID of this role. */
     public String getId() {
-        return Ids.role(name);
+        return Ids.role(identifier);
     }
 
     /** @return true if this is a standard role, false otherwise. */
