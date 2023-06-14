@@ -126,7 +126,8 @@ public class AccessControl {
             if (runAs.isEmpty()) {
                 return currentUser.isSuperuser() || currentUser.isAdministrator();
             } else {
-                return runAs.contains(SUPER_USER.getName()) || runAs.contains(ADMINISTRATOR.getName());
+                Set<Role> roles = runAs.stream().map(Role::new).collect(toSet());
+                return roles.contains(SUPER_USER) || roles.contains(ADMINISTRATOR);
             }
         }
         return true;
