@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- [HAL-1866](https://issues.redhat.com/browse/HAL-1866): Make role comparison case insensitive
+
 ## [3.6.8] - 2023-06-13
 
 ### Fixed
