@@ -1,1 +1,1 @@
-3.6.9.Final
+3.6.10-SNAPSHOT
