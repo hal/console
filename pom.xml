@@ -424,14 +424,20 @@
 
     <profiles>
         <profile>
-            <id>fast</id>
+            <id>quick-build</id>
+            <activation>
+                <property>
+                    <name>quickly</name>
+                </property>
+            </activation>
             <properties>
-                <skip.gwt>true</skip.gwt>
                 <checkstyle.skip>true</checkstyle.skip>
                 <enforcer.skip>true</enforcer.skip>
                 <formatter.skip>true</formatter.skip>
                 <impsort.skip>true</impsort.skip>
                 <license.skip>true</license.skip>
+                <maven.javadoc.skip>true</maven.javadoc.skip>
+                <skip.gwt>true</skip.gwt>
                 <skipITs>true</skipITs>
                 <skipTests>true</skipTests>
             </properties>
