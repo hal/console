@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+
 import org.jboss.elemento.EventType;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.Tabs;
@@ -44,9 +46,9 @@ import org.jboss.hal.spi.MbuiView;
 
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLSelectElement;
-import javax.annotation.PostConstruct;
 
 import static java.util.stream.Collectors.toList;
+
 import static org.jboss.elemento.Elements.div;
 import static org.jboss.elemento.Elements.h;
 import static org.jboss.elemento.Elements.label;
