@@ -7,6 +7,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Upgrades
+
+- Bump ACE editor to 1.23.0
+- Bump Mockito to 5.4.0
+- Bump Quarkus to 3.1.2.Final
+
 ## [3.6.9] - 2023-06-15
 
 ### Changed
