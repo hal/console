@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.6.10] - 2023-06-23
+
 ### Upgrades
 
 - Bump ACE editor to 1.23.0
@@ -450,7 +452,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - for dependency upgrades
 -->
 
-[Unreleased]: https://github.com/hal/console/compare/v3.6.9...HEAD
+[Unreleased]: https://github.com/hal/console/compare/v3.6.10...HEAD
+[3.6.10]: https://github.com/hal/console/compare/v3.6.9...v3.6.10
 [3.6.9]: https://github.com/hal/console/compare/v3.6.8...v3.6.9
 [3.6.8]: https://github.com/hal/console/compare/v3.6.7...v3.6.8
 [3.6.7]: https://github.com/hal/console/compare/v3.6.6...v3.6.7
