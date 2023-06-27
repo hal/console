@@ -24,6 +24,7 @@
     "@parcel/transformer-less": "^2.9.3",
     "copyfiles": "^2.4.1",
     "parcel": "^2.9.3",
+    "@parcel/plugin": "^2.9.3",
     "parcel-resolver-ignore": "^2.1.5",
     "parcel-resolver-theme": "file:local_modules/parcel-resolver-theme",
     "process": "^0.11.10"
