@@ -29,6 +29,7 @@ import org.jboss.elemento.IsElement;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.Form.FinishReset;
+import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.ballroom.tree.SelectionContext;
 import org.jboss.hal.ballroom.tree.Tree;
@@ -36,8 +37,8 @@ import org.jboss.hal.ballroom.wizard.Wizard;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
-import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
+import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Operation;
@@ -52,6 +53,7 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.processing.MetadataProcessor;
 import org.jboss.hal.meta.processing.SuccessfulMetadataCallback;
 import org.jboss.hal.resources.CSS;
+import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
@@ -62,6 +64,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.web.bindery.event.shared.EventBus;
 
@@ -416,10 +419,10 @@ public class ModelBrowser implements IsElement<HTMLElement> {
                 public void onMetadata(Metadata metadata) {
                     flattenDescription(metadata.getDescription().get(OPERATIONS).get(ADD).get(REQUEST_PROPERTIES));
                     String title = new LabelBuilder().label(parent.text);
-                    NameItem nameItem = new NameItem();
+                    ResourceNameItem resourceNameItem = new ResourceNameItem();
                     String id = Ids.build(parent.id, "add");
                     ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
-                            .unboundFormItem(nameItem, 0)
+                            .unboundFormItem(resourceNameItem, 0)
                             .fromRequestProperties()
                             .panelForOptionalAttributes()
                             .build();
@@ -428,7 +431,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
                             resources.messages().addResourceTitle(title),
                             form, (name1, model) -> {
                                 unflattenModel(model);
-                                crud.add(title, nameItem.getValue(), fqAddress(parent, nameItem.getValue()),
+                                crud.add(title, resourceNameItem.getValue(), fqAddress(parent, resourceNameItem.getValue()),
                                         model, (n, a) -> refresh(parent));
                             });
                     dialog.show();
@@ -608,6 +611,21 @@ public class ModelBrowser implements IsElement<HTMLElement> {
                     resolve.onInvoke(context);
                 }
             });
+        }
+    }
+
+    /**
+     * Modified name item that uses the "_name" string as the field name (to avoid clashing with resource specific "name"
+     * attributes, which are rare but do exist).
+     */
+    private static final class ResourceNameItem extends TextBoxItem {
+
+        private static final Constants CONSTANTS = GWT.create(Constants.class);
+
+        public ResourceNameItem() {
+            super("_" + ModelDescriptionConstants.NAME, CONSTANTS.resourceName());
+            setRequired(true);
+            setExpressionAllowed(false);
         }
     }
 }
