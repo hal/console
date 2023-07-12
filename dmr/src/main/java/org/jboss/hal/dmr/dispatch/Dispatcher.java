@@ -44,6 +44,9 @@ import org.jboss.hal.dmr.macro.MacroOptions;
 import org.jboss.hal.dmr.macro.Macros;
 import org.jboss.hal.dmr.macro.RecordingEvent;
 import org.jboss.hal.dmr.macro.RecordingEvent.RecordingHandler;
+import org.jboss.hal.resources.Resources;
+import org.jboss.hal.spi.Message;
+import org.jboss.hal.spi.MessageEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -114,7 +117,7 @@ public class Dispatcher implements RecordingHandler {
     @Inject
     public Dispatcher(Environment environment, Endpoints endpoints, Settings settings,
             EventBus eventBus, ResponseHeadersProcessors responseHeadersProcessors,
-            Macros macros) {
+            Macros macros, Resources resources) {
         this.environment = environment;
         this.endpoints = endpoints;
         this.settings = settings;
@@ -123,7 +126,10 @@ public class Dispatcher implements RecordingHandler {
         this.macros = macros;
 
         this.eventBus.addHandler(RecordingEvent.getType(), this);
-        this.errorCallback = (operation, error) -> logger.error("Dispatcher error: {}, operation {}", error, operation.asCli());
+        this.errorCallback = (operation, error) -> {
+            logger.error("Dispatcher error: {}, operation {}", error, operation.asCli());
+            eventBus.fireEvent(new MessageEvent(Message.error(resources.messages().lastOperationException(), error)));
+        };
     }
 
     // ------------------------------------------------------ execute composite
