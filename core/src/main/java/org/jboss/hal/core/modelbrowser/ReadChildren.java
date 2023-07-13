@@ -53,13 +53,9 @@ final class ReadChildren implements DataFunction<Context> {
 
     static String uniqueId(Node<Context> parent, String name) {
         String parentId = parent.id;
-        int index = parent.id.indexOf(ID_SEPARATOR);
-        if (index != -1) {
-            if (parent.data.isFullyQualified()) {
-                parentId = parent.id.substring(index + ID_SEPARATOR.length(), parent.id.length());
-            } else {
-                parentId = parent.id.substring(0, index);
-            }
+        int index = parent.id.lastIndexOf(ID_SEPARATOR);
+        if (index != -1 && parent.data.isFullyQualified()) {
+            parentId = parent.id.substring(index + ID_SEPARATOR.length());
         }
         return parentId + ID_SEPARATOR + name;
     }
