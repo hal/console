@@ -16,12 +16,9 @@
 package org.jboss.hal.client.accesscontrol;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 import javax.inject.Inject;
 
-import org.jboss.hal.ballroom.Alert;
-import org.jboss.hal.config.AccessControlProvider;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.accesscontrol.AccessControl;
 import org.jboss.hal.core.finder.ColumnAction;
@@ -30,7 +27,6 @@ import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.PreviewContent;
 import org.jboss.hal.core.finder.StaticItem;
 import org.jboss.hal.core.finder.StaticItemColumn;
-import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Previews;
 import org.jboss.hal.resources.Resources;
@@ -41,7 +37,6 @@ import com.google.gwt.resources.client.ExternalTextResource;
 import elemental2.dom.HTMLElement;
 
 import static org.jboss.elemento.Elements.div;
-import static org.jboss.elemento.Elements.setVisible;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
 @AsyncColumn(Ids.ACCESS_CONTROL_BROWSE_BY)
@@ -49,26 +44,17 @@ public class BrowseByColumn extends StaticItemColumn {
 
     private static class TopLevelPreview extends PreviewContent<StaticItem> {
 
-        private final Environment environment;
-        private final Alert warning;
-
         TopLevelPreview(String header, ExternalTextResource resource,
-                AccessControl accessControl, Environment environment, Resources resources) {
+                AccessControl accessControl, Resources resources) {
             super(header);
-            this.environment = environment;
-            this.warning = new Alert(Icons.WARNING, resources.messages().simpleProviderWarning(),
-                    resources.constants().enableRbac(),
-                    event -> accessControl.switchProvider());
 
-            previewBuilder().add(warning);
+            AccessControlWarnings warnings = new AccessControlWarnings(accessControl, resources);
+            previewBuilder().add(warnings.providerWarning);
+            previewBuilder().add(warnings.ssoWarning);
+
             HTMLElement content = div().element();
             Previews.innerHtml(content, resource);
             previewBuilder().add(content);
-        }
-
-        @Override
-        public void update(StaticItem item) {
-            setVisible(warning.element(), environment.getAccessControlProvider() == AccessControlProvider.SIMPLE);
         }
     }
 
@@ -76,35 +62,29 @@ public class BrowseByColumn extends StaticItemColumn {
     public BrowseByColumn(Finder finder, AccessControl accessControl, Environment environment,
             ColumnActionFactory columnActionFactory, Resources resources) {
         super(finder, Ids.ACCESS_CONTROL_BROWSE_BY, resources.constants().browseBy(),
-
-                // if Keycloak-SSO is enabled, the user management is performed in keycloak server,
-                // so we need to disable it in WidFly
-                // this view is not displayed when user clicks on "Access Contol" top-level menu
-                // but is accessible if user types the named token in the url
-                environment.isSingleSignOn() ? Collections.emptyList()
-                        : Arrays.asList(
-                                new StaticItem.Builder(resources.constants().users())
-                                        .id(Ids.ACCESS_CONTROL_BROWSE_BY_USERS)
-                                        .onPreview(new TopLevelPreview(resources.constants().users(),
-                                                resources.previews().rbacUsers(), accessControl, environment,
-                                                resources))
-                                        .nextColumn(Ids.USER)
-                                        .build(),
-                                new StaticItem.Builder(resources.constants().groups())
-                                        .id(Ids.ACCESS_CONTROL_BROWSE_BY_GROUPS)
-                                        .onPreview(new TopLevelPreview(resources.constants().groups(),
-                                                resources.previews().rbacGroups(), accessControl, environment,
-                                                resources))
-                                        .nextColumn(Ids.GROUP)
-                                        .build(),
-                                new StaticItem.Builder(resources.constants().roles())
-                                        .id(Ids.ACCESS_CONTROL_BROWSE_BY_ROLES)
-                                        .onPreview(new TopLevelPreview(resources.constants().roles(),
-                                                environment.isStandalone() ? resources.previews()
-                                                        .rbacRolesStandalone() : resources.previews().rbacRolesDomain(),
-                                                accessControl, environment, resources))
-                                        .nextColumn(Ids.ROLE)
-                                        .build()));
+                Arrays.asList(
+                        new StaticItem.Builder(resources.constants().users())
+                                .id(Ids.ACCESS_CONTROL_BROWSE_BY_USERS)
+                                .onPreview(new TopLevelPreview(resources.constants().users(),
+                                        resources.previews().rbacUsers(), accessControl,
+                                        resources))
+                                .nextColumn(Ids.USER)
+                                .build(),
+                        new StaticItem.Builder(resources.constants().groups())
+                                .id(Ids.ACCESS_CONTROL_BROWSE_BY_GROUPS)
+                                .onPreview(new TopLevelPreview(resources.constants().groups(),
+                                        resources.previews().rbacGroups(), accessControl,
+                                        resources))
+                                .nextColumn(Ids.GROUP)
+                                .build(),
+                        new StaticItem.Builder(resources.constants().roles())
+                                .id(Ids.ACCESS_CONTROL_BROWSE_BY_ROLES)
+                                .onPreview(new TopLevelPreview(resources.constants().roles(),
+                                        environment.isStandalone() ? resources.previews()
+                                                .rbacRolesStandalone() : resources.previews().rbacRolesDomain(),
+                                        accessControl, resources))
+                                .nextColumn(Ids.ROLE)
+                                .build()));
 
         addColumnAction(new ColumnAction.Builder<StaticItem>(Ids.ACCESS_CONTROL_SWITCH_PROVIDER)
                 .element(columnActionFactory.addButton(resources.constants().switchProvider(), fontAwesome("shield")))

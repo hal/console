@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- [HAL-1874](https://issues.redhat.com/browse/HAL-1874): Enable access control tab for SSO
+
 ## [3.6.10] - 2023-06-23
 
 ### Upgrades

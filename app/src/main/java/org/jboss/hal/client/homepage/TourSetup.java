@@ -183,7 +183,7 @@ class TourSetup {
 
     private void commonSteps(Tour tour) {
         // steps for access control apply to both standalone and domain mode
-        if (accessControl.isSuperUserOrAdministrator() && !accessControl.isSingleSignOn()) {
+        if (accessControl.superUserOrAdministrator() && !accessControl.singleSignOn()) {
             PlaceRequest browseBy = new PlaceRequest.Builder().nameToken(NameTokens.ACCESS_CONTROL).build();
             PlaceRequest users = places.finderPlace(NameTokens.ACCESS_CONTROL,
                     new FinderPath().append(Ids.ACCESS_CONTROL_BROWSE_BY,

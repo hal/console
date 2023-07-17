@@ -20,6 +20,7 @@ public interface Urls {
     String EXTENSION_DOCUMENTATION = "https://github.com/hal/hal.next/wiki/Extensions";
     String JBOSS_ORG_DEVELOPER_MATERIALS = "http://www.jboss.org/developer-materials/";
     String JBOSS_COMMUNITY_DISCUSSIONS = "https://community.jboss.org/en/wildfly?view=discussions";
+    String KEYCLOAK = "https://www.keycloak.org";
     String LOGOUT = "/logout";
     String MANAGEMENT = "/management";
     String UPLOAD = "/management-upload";

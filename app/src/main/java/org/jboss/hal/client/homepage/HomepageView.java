@@ -50,10 +50,8 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
     public HomepageView(Environment environment, AccessControl ac, Resources resources, Places places) {
 
         boolean standalone = environment.isStandalone();
-        boolean ssoEnabled = environment.isSingleSignOn();
         boolean community = environment.getHalBuild() == Build.COMMUNITY;
-        boolean su = ac.isSuperUserOrAdministrator();
-        String name = environment.getInstanceInfo().productName();
+        boolean su = ac.superUserOrAdministrator();
 
         Iterable<HomepageSection> sections;
         HTMLElement header;
@@ -201,26 +199,19 @@ public class HomepageView extends HalViewImpl implements HomepagePresenter.MyVie
                         sections).element();
             }
 
-            if (ssoEnabled) {
-                accessControl = new HomepageModule(places,
-                        Ids.HOMEPAGE_ACCESS_CONTROL_MODULE, NameTokens.ACCESS_CONTROL_SSO, Names.ACCESS_CONTROL,
-                        resources.constants().homepageAccessControlSsoSubHeader(),
-                        resources.images().accessControl(), Collections.emptyList()).element();
-            } else {
-                sections = Collections.singleton(new HomepageSection(places, resources,
-                        Ids.HOMEPAGE_ACCESS_CONTROL_SECTION, NameTokens.ACCESS_CONTROL,
-                        resources.constants().homepageAccessControlSection(),
-                        resources.constants().homepageAccessControlStepIntro(),
-                        Arrays.asList(
-                                resources.constants().homepageAccessControlStep1(),
-                                resources.constants().homepageAccessControlStep2()),
-                        true));
-                accessControl = new HomepageModule(places,
-                        Ids.HOMEPAGE_ACCESS_CONTROL_MODULE, NameTokens.ACCESS_CONTROL, Names.ACCESS_CONTROL,
-                        resources.constants().homepageAccessControlSubHeader(),
-                        resources.images().accessControl(),
-                        sections).element();
-            }
+            sections = Collections.singleton(new HomepageSection(places, resources,
+                    Ids.HOMEPAGE_ACCESS_CONTROL_SECTION, NameTokens.ACCESS_CONTROL,
+                    resources.constants().homepageAccessControlSection(),
+                    resources.constants().homepageAccessControlStepIntro(),
+                    Arrays.asList(
+                            resources.constants().homepageAccessControlStep1(),
+                            resources.constants().homepageAccessControlStep2()),
+                    true));
+            accessControl = new HomepageModule(places,
+                    Ids.HOMEPAGE_ACCESS_CONTROL_MODULE, NameTokens.ACCESS_CONTROL, Names.ACCESS_CONTROL,
+                    resources.constants().homepageAccessControlSubHeader(),
+                    resources.images().accessControl(),
+                    sections).element();
         }
 
         help = new HomepageHelp(environment, resources).element();
