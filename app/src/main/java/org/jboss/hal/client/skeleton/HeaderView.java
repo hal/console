@@ -185,7 +185,7 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
         this.places = places;
         this.resources = resources;
 
-        boolean su = ac.isSuperUserOrAdministrator();
+        boolean su = ac.superUserOrAdministrator();
         boolean community = environment.getHalBuild() == Build.COMMUNITY;
 
         HTMLElement logoLink;
@@ -351,8 +351,6 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
             failSafeRemoveFromParent(accessControl);
         }
 
-        String accessControlNameToken = ac.isSingleSignOn() ? NameTokens.ACCESS_CONTROL_SSO : NameTokens.ACCESS_CONTROL;
-
         // @formatter:off
         tlcPlaceRequests = new HashMap<>();
         tlcPlaceRequests.put(NameTokens.HOMEPAGE, new PlaceRequest.Builder().nameToken(NameTokens.HOMEPAGE).build());
@@ -360,7 +358,7 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
         tlcPlaceRequests.put(NameTokens.CONFIGURATION, new PlaceRequest.Builder().nameToken(NameTokens.CONFIGURATION).build());
         tlcPlaceRequests.put(NameTokens.RUNTIME, new PlaceRequest.Builder().nameToken(NameTokens.RUNTIME).build());
         tlcPlaceRequests.put(NameTokens.UPDATE_MANAGER, new PlaceRequest.Builder().nameToken(NameTokens.UPDATE_MANAGER).build());
-        tlcPlaceRequests.put(accessControlNameToken, new PlaceRequest.Builder().nameToken(accessControlNameToken).build());
+        tlcPlaceRequests.put(NameTokens.ACCESS_CONTROL, new PlaceRequest.Builder().nameToken(NameTokens.ACCESS_CONTROL).build());
         // @formatter:on
 
         tlc = new HashMap<>();
@@ -371,7 +369,7 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
                         NameTokens.CONFIGURATION,
                         NameTokens.RUNTIME,
                         NameTokens.UPDATE_MANAGER,
-                        accessControlNameToken,
+                        NameTokens.ACCESS_CONTROL,
                 },
                 new String[] {
                         Ids.TLC_HOMEPAGE,

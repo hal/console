@@ -29,6 +29,8 @@ import org.jboss.hal.config.Role;
 import org.jboss.hal.config.Roles;
 import org.jboss.hal.config.Settings;
 import org.jboss.hal.config.User;
+import org.jboss.hal.config.keycloak.Keycloak;
+import org.jboss.hal.config.keycloak.KeycloakHolder;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
@@ -41,6 +43,7 @@ import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
+import org.jboss.hal.resources.Urls;
 import org.jboss.hal.spi.Callback;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
@@ -81,7 +84,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.USE_IDENTITY_ROLES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION;
 
-/** Small helper class to check if the current user has access to restricted features. */
 public class AccessControl {
 
     private static final String LOCAL_USERNAME = "$local";
@@ -95,11 +97,13 @@ public class AccessControl {
     private final Settings settings;
     private final User currentUser;
     private final Dispatcher dispatcher;
+    private final KeycloakHolder keycloakHolder;
     private final Resources resources;
 
     private final Roles roles;
     private final Principals principals;
     private final Assignments assignments;
+    private String ssoUrl;
 
     @Inject
     public AccessControl(Environment environment,
@@ -107,34 +111,20 @@ public class AccessControl {
             Dispatcher dispatcher,
             User currentUser,
             Settings settings,
+            KeycloakHolder keycloakHolder,
             Resources resources) {
         this.environment = environment;
         this.eventBus = eventBus;
         this.settings = settings;
         this.currentUser = currentUser;
         this.dispatcher = dispatcher;
+        this.keycloakHolder = keycloakHolder;
         this.resources = resources;
 
         this.roles = environment.getRoles();
         this.principals = new Principals();
         this.assignments = new Assignments();
-    }
-
-    public boolean isSuperUserOrAdministrator() {
-        if (environment.getAccessControlProvider() == AccessControlProvider.RBAC) {
-            Set<String> runAs = settings.get(RUN_AS).asSet();
-            if (runAs.isEmpty()) {
-                return currentUser.isSuperuser() || currentUser.isAdministrator();
-            } else {
-                Set<Role> roles = runAs.stream().map(Role::new).collect(toSet());
-                return roles.contains(SUPER_USER) || roles.contains(ADMINISTRATOR);
-            }
-        }
-        return true;
-    }
-
-    public boolean isSingleSignOn() {
-        return environment.isSingleSignOn();
+        this.ssoUrl = Urls.KEYCLOAK;
     }
 
     public void switchProvider() {
@@ -176,6 +166,14 @@ public class AccessControl {
 
     public void reload(Callback callback) {
         reset();
+
+        // try to create the account URL, if SSO is enabled
+        if (singleSignOn()) {
+            Keycloak keycloak = keycloakHolder.getKeycloak();
+            if (keycloak != null) {
+                ssoUrl = keycloak.createAccountUrl();
+            }
+        }
 
         List<Operation> operations = new ArrayList<>();
         operations.add(new Operation.Builder(ADDRESS, READ_RESOURCE_OPERATION)
@@ -276,6 +274,29 @@ public class AccessControl {
         assignments.add(assignment);
     }
 
+    // ------------------------------------------------------ properties
+
+    public boolean superUserOrAdministrator() {
+        if (environment.getAccessControlProvider() == AccessControlProvider.RBAC) {
+            Set<String> runAs = settings.get(RUN_AS).asSet();
+            if (runAs.isEmpty()) {
+                return currentUser.isSuperuser() || currentUser.isAdministrator();
+            } else {
+                Set<Role> roles = runAs.stream().map(Role::new).collect(toSet());
+                return roles.contains(SUPER_USER) || roles.contains(ADMINISTRATOR);
+            }
+        }
+        return true;
+    }
+
+    public boolean singleSignOn() {
+        return environment.isSingleSignOn();
+    }
+
+    public boolean simpleProvider() {
+        return environment.getAccessControlProvider() == AccessControlProvider.SIMPLE;
+    }
+
     public Roles roles() {
         return roles;
     }
@@ -286,5 +307,9 @@ public class AccessControl {
 
     public Assignments assignments() {
         return assignments;
+    }
+
+    public String ssoUrl() {
+        return ssoUrl;
     }
 }

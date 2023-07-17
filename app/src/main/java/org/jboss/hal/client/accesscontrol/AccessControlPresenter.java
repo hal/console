@@ -17,7 +17,6 @@ package org.jboss.hal.client.accesscontrol;
 
 import javax.inject.Inject;
 
-import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.accesscontrol.AccessControl;
 import org.jboss.hal.core.accesscontrol.SensitiveGatekeeper;
 import org.jboss.hal.core.finder.Finder;
@@ -42,24 +41,18 @@ import static org.jboss.hal.client.accesscontrol.AddressTemplates.SERVER_GROUP_S
 public class AccessControlPresenter extends
         FinderPresenter<AccessControlPresenter.MyView, AccessControlPresenter.MyProxy> {
 
-    private final Environment environment;
     private final AccessControl accessControl;
 
     @Inject
     public AccessControlPresenter(EventBus eventBus, MyView view, MyProxy myProxy, Finder finder,
-            Environment environment, AccessControl accessControl, Resources resources) {
+            AccessControl accessControl, Resources resources) {
         super(eventBus, view, myProxy, finder, resources);
-        this.environment = environment;
         this.accessControl = accessControl;
     }
 
     @Override
     protected void onReset() {
-        if (environment.isSingleSignOn()) {
-            super.onReset();
-        } else {
-            accessControl.reload(super::onReset);
-        }
+        accessControl.reload(super::onReset);
     }
 
     @Override
@@ -69,7 +62,7 @@ public class AccessControlPresenter extends
 
     @Override
     protected PreviewContent<Void> initialPreview() {
-        return new AccessControlPreview(accessControl, environment, resources);
+        return new AccessControlPreview(accessControl, resources);
     }
 
     // @formatter:off

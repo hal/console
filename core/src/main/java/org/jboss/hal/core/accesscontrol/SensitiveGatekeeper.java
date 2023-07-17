@@ -19,7 +19,7 @@ import javax.inject.Inject;
 
 import com.gwtplatform.mvp.client.proxy.Gatekeeper;
 
-/** A gatekeeper which needs {@link AccessControl#isSuperUserOrAdministrator()} to pass. */
+/** A gatekeeper which needs {@link AccessControl#superUserOrAdministrator()} to pass. */
 public class SensitiveGatekeeper implements Gatekeeper {
 
     private final AccessControl accessControl;
@@ -31,6 +31,6 @@ public class SensitiveGatekeeper implements Gatekeeper {
 
     @Override
     public boolean canReveal() {
-        return accessControl.isSuperUserOrAdministrator();
+        return accessControl.superUserOrAdministrator();
     }
 }

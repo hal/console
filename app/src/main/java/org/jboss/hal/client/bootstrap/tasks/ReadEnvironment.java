@@ -132,24 +132,26 @@ public final class ReadEnvironment implements Task<FlowContext> {
                     // user info
                     if (environment.isSingleSignOn() && keycloak != null) {
                         user.setName(keycloak.userProfile.username);
-                        // as Keycloak is a native js object, the Java 8 collection methods as: stream, foreach, iterator
-                        // are not supported on the javascript side when run in the browser.
+                        // if SSO is enabled, get the roles from Keycloak.
+                        // As Keycloak is a native js object, the Java 8 collection methods as:
+                        // stream, foreach, iterator are not supported on the javascript side
+                        // when run in the browser.
                         if (keycloak.realmAccess != null && keycloak.realmAccess.roles != null) {
                             for (int i = 0; i < keycloak.realmAccess.roles.length; i++) {
                                 String role = keycloak.realmAccess.roles[i];
                                 user.addRole(new Role(role));
                             }
                         }
-                    } else {
-                        ModelNode whoami = result.step(1).get(RESULT);
-                        String username = whoami.get("identity").get("username").asString();
-                        user.setName(username);
-                        if (whoami.hasDefined("mapped-roles")) {
-                            List<ModelNode> roles = whoami.get("mapped-roles").asList();
-                            for (ModelNode role : roles) {
-                                String roleName = role.asString();
-                                user.addRole(new Role(roleName));
-                            }
+                    }
+                    // in any case use the roles from the :whoami operation
+                    ModelNode whoami = result.step(1).get(RESULT);
+                    String username = whoami.get("identity").get("username").asString();
+                    user.setName(username);
+                    if (whoami.hasDefined("mapped-roles")) {
+                        List<ModelNode> roles = whoami.get("mapped-roles").asList();
+                        for (ModelNode role : roles) {
+                            String roleName = role.asString();
+                            user.addRole(new Role(roleName));
                         }
                     }
                     user.setAuthenticated(true);

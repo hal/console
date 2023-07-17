@@ -194,6 +194,7 @@ public interface Names {
     String JSP = "JSP";
     String JVM_ATTRIBUTES = "JVM Attributes";
 
+    String KEYCLOAK = "Keycloak";
     String KEY_MANAGER = "Key Manager";
     String KEY_OVERRIDES = "Key Overrides";
     String KEY_STORE = "Key Store";

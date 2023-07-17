@@ -15,12 +15,8 @@
  */
 package org.jboss.hal.client.accesscontrol;
 
-import org.jboss.hal.ballroom.Alert;
-import org.jboss.hal.config.AccessControlProvider;
-import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.accesscontrol.AccessControl;
 import org.jboss.hal.core.finder.PreviewContent;
-import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Previews;
 import org.jboss.hal.resources.Resources;
@@ -28,35 +24,18 @@ import org.jboss.hal.resources.Resources;
 import elemental2.dom.HTMLElement;
 
 import static org.jboss.elemento.Elements.section;
-import static org.jboss.elemento.Elements.setVisible;
 
 class AccessControlPreview extends PreviewContent<Void> {
 
-    private final Environment environment;
-    private final Alert warning;
-    private final Alert warningSso;
-
-    AccessControlPreview(AccessControl accessControl, Environment environment, Resources resources) {
+    AccessControlPreview(AccessControl accessControl, Resources resources) {
         super(Names.ACCESS_CONTROL);
-        this.environment = environment;
-        this.warning = new Alert(Icons.WARNING, resources.messages().simpleProviderWarning(),
-                resources.constants().enableRbac(),
-                event -> accessControl.switchProvider());
 
-        this.warningSso = new Alert(Icons.WARNING, resources.messages().ssoAccessControlWarning());
+        AccessControlWarnings warnings = new AccessControlWarnings(accessControl, resources);
+        previewBuilder().add(warnings.providerWarning);
+        previewBuilder().add(warnings.ssoWarning);
 
         HTMLElement content;
-        previewBuilder().add(warning);
-        previewBuilder().add(warningSso);
         previewBuilder().add(content = section().element());
         Previews.innerHtml(content, resources.previews().rbacOverview());
-        update(null);
-    }
-
-    @Override
-    public void update(Void item) {
-        setVisible(warning.element(),
-                environment.getAccessControlProvider() == AccessControlProvider.SIMPLE);
-        setVisible(warningSso.element(), environment.isSingleSignOn());
     }
 }
