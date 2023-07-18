@@ -11,6 +11,25 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - [HAL-1874](https://issues.redhat.com/browse/HAL-1874): Enable access control tab for SSO
 
+### Changed
+
+- [HAL-1867](https://issues.redhat.com/browse/HAL-1867): Security subsystem should be labeled also as Elytron
+
+### Fixed
+
+- [HAL-1869](https://issues.redhat.com/browse/HAL-1869): It's not clear which attributes will be reset (which attributes are
+  required)
+- [HAL-1871](https://issues.redhat.com/browse/HAL-1871): Make ModelBrowser able to process resources that has their own "name"
+  field
+- [HAL-1872](https://issues.redhat.com/browse/HAL-1872): Not possible to configure subsystem=transaction/log-store
+- [HAL-1873](https://issues.redhat.com/browse/HAL-1873): Restore the firing of message event with error message
+
+### Upgrades
+
+- Bump ACE editor to 1.23.4
+- Bump Parcel to 2.9.3
+- Bump Quarkus to 3.2.0.Final
+
 ## [3.6.10] - 2023-06-23
 
 ### Upgrades
