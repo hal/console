@@ -6,7 +6,7 @@ Specification-Title: HAL :: Console
 Specification-Version: 3.6
 Specification-Vendor: Red Hat
 Implementation-Title: HAL :: Console
-Implementation-Version: 3.6.10.Final
+Implementation-Version: 3.6.11.Final
 Implementation-Vendor-Id: org.jboss.hal
 Implementation-Vendor: Red Hat
 Implementation-URL: https://hal.github.io/hal-code-parent/hal-gwt-parent
@@ -15,10 +15,10 @@ Java-Vendor: Eclipse Adoptium
 Java-Version: 11
 Os-Arch: amd64
 Os-Name: Linux
-Os-Version: 5.15.0-1040-azure
+Os-Version: 5.15.0-1041-azure
 Scm-Connection: scm:git:git@github.com:hal/console.git/hal-code-parent/h
  al-gwt-parent/hal-console
-Scm-Revision: c089a9e82c4ca5f6f12e57a59efc8228c0c4fe98
+Scm-Revision: 463bc5adda37fa41e01a72b9782613d9b821ebb9
 Scm-Url: https://github.com/hal/console/hal-code-parent/hal-gwt-parent/h
  al-console
 
