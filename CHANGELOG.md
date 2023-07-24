@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- [HAL-1878](https://issues.redhat.com/browse/HAL-1878): Disable reset for interface resource
+
 ## [3.6.11] - 2023-07-18
 
 ### Added

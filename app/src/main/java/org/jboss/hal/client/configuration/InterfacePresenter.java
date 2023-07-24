@@ -20,7 +20,6 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.jboss.hal.ballroom.form.Form;
-import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
@@ -30,8 +29,6 @@ import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.AddressTemplate;
-import org.jboss.hal.meta.Metadata;
-import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
@@ -55,7 +52,6 @@ public class InterfacePresenter
     static final AddressTemplate ROOT_TEMPLATE = AddressTemplate.of(ROOT_ADDRESS);
 
     private final CrudOperations crud;
-    private final MetadataRegistry metadataRegistry;
     private final StatementContext statementContext;
     private String interfce;
 
@@ -65,11 +61,9 @@ public class InterfacePresenter
             MyProxy proxy,
             Finder finder,
             CrudOperations crud,
-            MetadataRegistry metadataRegistry,
             StatementContext statementContext) {
         super(eventBus, view, proxy, finder);
         this.crud = crud;
-        this.metadataRegistry = metadataRegistry;
         this.statementContext = statementContext;
     }
 
@@ -105,16 +99,6 @@ public class InterfacePresenter
     @SuppressWarnings("UnusedParameters")
     void saveInterface(final Form<ModelNode> form, final Map<String, Object> changedValues) {
         crud.save(Names.INTERFACE, interfce, ROOT_TEMPLATE, changedValues, this::reload);
-    }
-
-    void resetInterface(final Form<ModelNode> form) {
-        Metadata metadata = metadataRegistry.lookup(ROOT_TEMPLATE);
-        crud.reset(Names.INTERFACE, interfce, ROOT_TEMPLATE, form, metadata, new FinishReset<ModelNode>(form) {
-            @Override
-            public void afterReset(final Form<ModelNode> form) {
-                reload();
-            }
-        });
     }
 
     // @formatter:off
