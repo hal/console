@@ -684,16 +684,16 @@ public class CrudOperations {
      * @param template the address template which is resolved against the current statement context and the resource name to get
      *        the resource address for the operation
      * @param changedValues the changed values / payload for the operation
-     * @param callback the callback executed after the resource has been saved
+     * @param successCallback the callback executed after the resource has been saved
      */
     public void save(String type, String name, AddressTemplate template, Map<String, Object> changedValues,
-            Callback callback) {
+            Callback successCallback) {
         metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback(eventBus, resources) {
             @Override
             public void onMetadata(Metadata metadata) {
                 ResourceAddress address = template.resolve(statementContext, name);
                 Composite operations = operationFactory.fromChangeSet(address, changedValues, metadata);
-                save(operations, resources.messages().modifyResourceSuccess(type, name), callback);
+                save(operations, resources.messages().modifyResourceSuccess(type, name), successCallback);
             }
         });
     }
@@ -709,16 +709,16 @@ public class CrudOperations {
      *        the resource address for the operation
      * @param changedValues the changed values / payload for the operation
      * @param successMessage the success message fired after saving the resource
-     * @param callback the callback executed after the resource has been saved
+     * @param successCallback the callback executed after the resource has been saved
      */
     public void save(String name, AddressTemplate template, Map<String, Object> changedValues, SafeHtml successMessage,
-            Callback callback) {
+            Callback successCallback) {
         metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback(eventBus, resources) {
             @Override
             public void onMetadata(Metadata metadata) {
                 ResourceAddress address = template.resolve(statementContext, name);
                 Composite operations = operationFactory.fromChangeSet(address, changedValues, metadata);
-                save(operations, successMessage, callback);
+                save(operations, successMessage, successCallback);
             }
         });
     }
@@ -736,12 +736,32 @@ public class CrudOperations {
      * @param address the fq address for the operation
      * @param changedValues the changed values / payload for the operation
      * @param metadata the metadata of the attributes in the change set
-     * @param callback the callback executed after the resource has been saved
+     * @param successCallback the callback executed after the resource has been saved
      */
     public void save(String type, String name, ResourceAddress address, Map<String, Object> changedValues,
-            Metadata metadata, Callback callback) {
+            Metadata metadata, Callback successCallback) {
         Composite operations = operationFactory.fromChangeSet(address, changedValues, metadata);
-        save(operations, resources.messages().modifyResourceSuccess(type, name), callback);
+        save(operations, resources.messages().modifyResourceSuccess(type, name), successCallback);
+    }
+
+    /**
+     * Writes the changed values to the specified resource. After the resource has been saved a standard success message is
+     * fired and the specified callback is executed.
+     * <p>
+     * If the change set is empty, a warning message is fired and the specified callback is executed.
+     *
+     * @param type the human readable resource type used in the success message
+     * @param name the resource name
+     * @param address the fq address for the operation
+     * @param changedValues the changed values / payload for the operation
+     * @param metadata the metadata of the attributes in the change set
+     * @param successCallback the callback executed after the resource has been saved
+     * @param errorCallback the callback executed if the save operation fails
+     */
+    public void save(String type, String name, ResourceAddress address, Map<String, Object> changedValues,
+            Metadata metadata, Callback successCallback, Callback errorCallback) {
+        Composite operations = operationFactory.fromChangeSet(address, changedValues, metadata);
+        save(operations, resources.messages().modifyResourceSuccess(type, name), successCallback, errorCallback);
     }
 
     /**
@@ -754,11 +774,11 @@ public class CrudOperations {
      * @param changedValues the changed values / payload for the operation
      * @param metadata the metadata of the attributes in the change set
      * @param successMessage the success message fired after saving the resource
-     * @param callback the callback executed after the resource has been saved
+     * @param successCallback the callback executed after the resource has been saved
      */
     public void save(ResourceAddress address, Map<String, Object> changedValues, Metadata metadata,
-            SafeHtml successMessage, Callback callback) {
-        save(operationFactory.fromChangeSet(address, changedValues, metadata), successMessage, callback);
+            SafeHtml successMessage, Callback successCallback) {
+        save(operationFactory.fromChangeSet(address, changedValues, metadata), successMessage, successCallback);
     }
 
     // ------------------------------------------------------ (u)pdate using operation
@@ -773,32 +793,54 @@ public class CrudOperations {
      * @param type the human readable resource type used in the success message
      * @param name the resource name
      * @param operations the composite operation to persist the changed values
-     * @param callback the callback executed after the resource has been saved
+     * @param successCallback the callback executed after the resource has been saved
      */
-    public void save(String type, String name, Composite operations, Callback callback) {
-        save(operations, resources.messages().modifyResourceSuccess(type, name), callback);
+    public void save(String type, String name, Composite operations, Callback successCallback) {
+        save(operations, resources.messages().modifyResourceSuccess(type, name), successCallback);
     }
 
     /**
      * Writes the changed values to the specified resource. After the resource has been saved the specified success message is
-     * fired and the specified callback is executed.
+     * fired and the specified successCallback is executed.
      * <p>
-     * If the composite operation is empty (i.e. there were no changes), a warning message is fired and the specified callback
-     * is executed.
+     * If the composite operation is empty (i.e. there were no changes), a warning message is fired and the specified
+     * successCallback is executed.
      *
      * @param operations the composite operation to persist the changed values
      * @param successMessage the success message fired after saving the resource
-     * @param callback the callback executed after the resource has been saved
+     * @param successCallback the callback executed after the resource has been saved
      */
-    public void save(Composite operations, SafeHtml successMessage, Callback callback) {
+    public void save(Composite operations, SafeHtml successMessage, Callback successCallback) {
+        save(operations, successMessage, successCallback, null);
+    }
+
+    /**
+     * Writes the changed values to the specified resource. After the resource has been saved the specified success message is
+     * fired and the specified successCallback is executed.
+     * <p>
+     * If the composite operation is empty (i.e. there were no changes), a warning message is fired and the specified
+     * successCallback is executed.
+     *
+     * @param operations the composite operation to persist the changed values
+     * @param successMessage the success message fired after saving the resource
+     * @param successCallback the callback executed after the resource has been saved
+     * @param errorCallback the callback executed if the save operation fails
+     */
+    public void save(Composite operations, SafeHtml successMessage, Callback successCallback, Callback errorCallback) {
         if (operations.isEmpty()) {
             MessageEvent.fire(eventBus, Message.warning(resources.messages().noChanges()));
-            callback.execute();
+            successCallback.execute();
         } else {
             dispatcher.execute(operations, (CompositeResult result) -> {
-                MessageEvent.fire(eventBus, Message.success(successMessage));
-                callback.execute();
-            });
+                        MessageEvent.fire(eventBus, Message.success(successMessage));
+                        successCallback.execute();
+                    },
+                    (operation, error) -> {
+                        // call the default dispatcher error callback
+                        dispatcher.getDefaultErrorCallback().onError(operation, error);
+                        // call the error callback provided by the caller
+                        errorCallback.execute();
+                    });
         }
     }
 
@@ -812,15 +854,15 @@ public class CrudOperations {
      * @param template the address template which is resolved against the current statement context to get the resource address
      *        for the operation
      * @param changedValues the changed values / payload for the operation
-     * @param callback the callback executed after the resource has been saved
+     * @param successCallback the callback executed after the resource has been saved
      */
     public void saveSingleton(String type, AddressTemplate template, Map<String, Object> changedValues,
-            Callback callback) {
+            Callback successCallback) {
         metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback(eventBus, resources) {
             @Override
             public void onMetadata(Metadata metadata) {
                 saveSingleton(template.resolve(statementContext), changedValues, metadata,
-                        resources.messages().modifySingleResourceSuccess(type), callback);
+                        resources.messages().modifySingleResourceSuccess(type), successCallback);
             }
         });
     }
@@ -833,14 +875,14 @@ public class CrudOperations {
      *        for the operation
      * @param changedValues the changed values / payload for the operation
      * @param successMessage the success message fired after saving the resource
-     * @param callback the callback executed after the resource has been saved
+     * @param successCallback the callback executed after the resource has been saved
      */
     public void saveSingleton(AddressTemplate template, Map<String, Object> changedValues, SafeHtml successMessage,
-            Callback callback) {
+            Callback successCallback) {
         metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback(eventBus, resources) {
             @Override
             public void onMetadata(Metadata metadata) {
-                saveSingleton(template.resolve(statementContext), changedValues, metadata, successMessage, callback);
+                saveSingleton(template.resolve(statementContext), changedValues, metadata, successMessage, successCallback);
             }
         });
     }
@@ -855,12 +897,28 @@ public class CrudOperations {
      * @param address the fq address for the operation
      * @param changedValues the changed values / payload for the operation
      * @param metadata the metadata of the attributes in the change set
-     * @param callback the callback executed after the resource has been saved
+     * @param successCallback the callback executed after the resource has been saved
      */
     public void saveSingleton(String type, ResourceAddress address, Map<String, Object> changedValues,
-            Metadata metadata, Callback callback) {
+            Metadata metadata, Callback successCallback) {
         saveSingleton(address, changedValues, metadata, resources.messages().modifySingleResourceSuccess(type),
-                callback);
+                successCallback);
+    }
+
+    /**
+     * Writes the changed values to the specified singleton resource. After the resource has been saved a success message is
+     * fired and the specified callback is executed.
+     *
+     * @param type the human readable resource type used in the success message
+     * @param address the fq address for the operation
+     * @param changedValues the changed values / payload for the operation
+     * @param metadata the metadata of the attributes in the change set
+     * @param successCallback the callback executed after the resource has been saved
+     */
+    public void saveSingleton(String type, ResourceAddress address, Map<String, Object> changedValues,
+            Metadata metadata, Callback successCallback, Callback errorCallback) {
+        saveSingleton(address, changedValues, metadata, resources.messages().modifySingleResourceSuccess(type),
+                successCallback, errorCallback);
     }
 
     /**
@@ -871,11 +929,26 @@ public class CrudOperations {
      * @param changedValues the changed values / payload for the operation
      * @param metadata the metadata of the attributes in the change set
      * @param successMessage the success message fired after saving the resource
-     * @param callback the callback executed after the resource has been saved
+     * @param successCallback the callback executed after the resource has been saved
      */
     public void saveSingleton(ResourceAddress address, Map<String, Object> changedValues, Metadata metadata,
-            SafeHtml successMessage, Callback callback) {
-        save(operationFactory.fromChangeSet(address, changedValues, metadata), successMessage, callback);
+            SafeHtml successMessage, Callback successCallback, Callback errorCallback) {
+        save(operationFactory.fromChangeSet(address, changedValues, metadata), successMessage, successCallback, errorCallback);
+    }
+
+    /**
+     * Writes the changed values to the specified singleton resource. After the resource has been saved a success message is
+     * fired and the specified callback is executed.
+     *
+     * @param address the fq address for the operation
+     * @param changedValues the changed values / payload for the operation
+     * @param metadata the metadata of the attributes in the change set
+     * @param successMessage the success message fired after saving the resource
+     * @param successCallback the callback executed after the resource has been saved
+     */
+    public void saveSingleton(ResourceAddress address, Map<String, Object> changedValues, Metadata metadata,
+            SafeHtml successMessage, Callback successCallback) {
+        save(operationFactory.fromChangeSet(address, changedValues, metadata), successMessage, successCallback);
     }
 
     // ------------------------------------------------------ (u) reset using template
