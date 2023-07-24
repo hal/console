@@ -132,6 +132,10 @@ public class Dispatcher implements RecordingHandler {
         };
     }
 
+    public ErrorCallback getDefaultErrorCallback() {
+        return this.errorCallback;
+    }
+
     // ------------------------------------------------------ execute composite
 
     public void execute(Composite operations, Consumer<CompositeResult> success) {

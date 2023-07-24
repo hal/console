@@ -51,12 +51,14 @@ public abstract class MbuiViewImpl<P extends MbuiPresenter> extends HalViewImpl 
 
     protected void saveForm(final String type, final String name, final ResourceAddress address,
             final Map<String, Object> changedValues, final Metadata metadata) {
-        mbuiContext.crud().save(type, name, address, changedValues, metadata, () -> presenter.reload());
+        mbuiContext.crud().save(type, name, address, changedValues, metadata, () -> presenter.reload(),
+                () -> presenter.reload());
     }
 
     protected void saveSingletonForm(final String type, final ResourceAddress address,
             final Map<String, Object> changedValues, final Metadata metadata) {
-        mbuiContext.crud().saveSingleton(type, address, changedValues, metadata, () -> presenter.reload());
+        mbuiContext.crud().saveSingleton(type, address, changedValues, metadata, () -> presenter.reload(),
+                () -> presenter.reload());
     }
 
     protected <T> void resetForm(final String type, final String name, final ResourceAddress address,
