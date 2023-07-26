@@ -832,9 +832,9 @@ public class CrudOperations {
             successCallback.execute();
         } else {
             dispatcher.execute(operations, (CompositeResult result) -> {
-                        MessageEvent.fire(eventBus, Message.success(successMessage));
-                        successCallback.execute();
-                    },
+                MessageEvent.fire(eventBus, Message.success(successMessage));
+                successCallback.execute();
+            },
                     (operation, error) -> {
                         // call the default dispatcher error callback
                         dispatcher.getDefaultErrorCallback().onError(operation, error);

@@ -26,7 +26,7 @@ import org.jboss.hal.config.Role;
 import org.jboss.hal.config.User;
 import org.jboss.hal.config.Version;
 import org.jboss.hal.config.keycloak.Keycloak;
-import org.jboss.hal.config.keycloak.KeycloakHolder;
+import org.jboss.hal.config.keycloak.KeycloakSingleton;
 import org.jboss.hal.core.runtime.server.Server;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.ModelNode;
@@ -68,21 +68,19 @@ public final class ReadEnvironment implements Task<FlowContext> {
     private final Dispatcher dispatcher;
     private final Environment environment;
     private final User user;
-    private final KeycloakHolder keycloakHolder;
 
     @Inject
-    public ReadEnvironment(Dispatcher dispatcher, Environment environment, User user, KeycloakHolder keycloakHolder) {
+    public ReadEnvironment(Dispatcher dispatcher, Environment environment, User user) {
         this.dispatcher = dispatcher;
         this.environment = environment;
         this.user = user;
-        this.keycloakHolder = keycloakHolder;
     }
 
     @Override
     public Promise<FlowContext> apply(final FlowContext context) {
         logger.debug("Read environment");
 
-        Keycloak keycloak = keycloakHolder.getKeycloak();
+        Keycloak keycloak = KeycloakSingleton.instance();
         environment.setSingleSignOn(keycloak != null);
         if (keycloak != null) {
             logger.debug("Keycloak token: {}", keycloak.token);
@@ -131,7 +129,7 @@ public final class ReadEnvironment implements Task<FlowContext> {
 
                     // user info
                     if (environment.isSingleSignOn() && keycloak != null) {
-                        user.setName(keycloak.userProfile.username);
+                        user.setName(keycloak.profile.username);
                         // if SSO is enabled, get the roles from Keycloak.
                         // As Keycloak is a native js object, the Java 8 collection methods as:
                         // stream, foreach, iterator are not supported on the javascript side

@@ -29,7 +29,7 @@ import org.jboss.hal.config.Settings;
 import org.jboss.hal.config.User;
 import org.jboss.hal.config.UserChangedEvent;
 import org.jboss.hal.config.UserChangedEvent.UserChangedHandler;
-import org.jboss.hal.config.keycloak.KeycloakHolder;
+import org.jboss.hal.config.keycloak.KeycloakSingleton;
 import org.jboss.hal.core.finder.FinderContext;
 import org.jboss.hal.core.finder.FinderContextEvent;
 import org.jboss.hal.core.finder.FinderContextEvent.FinderContextHandler;
@@ -132,7 +132,6 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
     private final User user;
     private final ServerActions serverActions;
     private final Resources resources;
-    private final KeycloakHolder keycloakHolder;
 
     private PresenterType presenterType;
     private PlaceRequest normalMode;
@@ -151,7 +150,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
             Settings settings,
             User user,
             ServerActions serverActions,
-            Resources resources, KeycloakHolder keycloakHolder) {
+            Resources resources) {
         super(eventBus, view);
         this.placeManager = placeManager;
         this.places = places;
@@ -161,7 +160,6 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
         this.user = user;
         this.serverActions = serverActions;
         this.resources = resources;
-        this.keycloakHolder = keycloakHolder;
     }
 
     @Override
@@ -286,7 +284,7 @@ public class HeaderPresenter extends PresenterWidget<HeaderPresenter.MyView> imp
 
     void logout() {
         if (environment.isSingleSignOn()) {
-            keycloakHolder.getKeycloak().logout(null);
+            KeycloakSingleton.instance().logout(null);
         } else {
             Dialog dialog = new Dialog.Builder(resources.constants().logout())
                     .add(p().innerHtml(resources.messages().closeToLogout()).element())

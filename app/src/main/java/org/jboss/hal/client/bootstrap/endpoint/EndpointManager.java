@@ -16,7 +16,6 @@
 package org.jboss.hal.client.bootstrap.endpoint;
 
 import java.util.Optional;
-import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
@@ -24,10 +23,8 @@ import org.jboss.elemento.Elements;
 import org.jboss.hal.client.bootstrap.BootstrapFailed;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.keycloak.Keycloak;
-import org.jboss.hal.config.keycloak.KeycloakHolder;
+import org.jboss.hal.config.keycloak.KeycloakSingleton;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.js.Json;
-import org.jboss.hal.js.JsonObject;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.spi.Callback;
 import org.slf4j.Logger;
@@ -36,13 +33,9 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Strings;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import elemental2.dom.HTMLScriptElement;
 import elemental2.dom.XMLHttpRequest;
 
 import static elemental2.dom.DomGlobal.document;
-import static elemental2.dom.DomGlobal.setInterval;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.AUTH_SERVER_URL;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.KEYCLOAK;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.URL;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.GET;
@@ -69,17 +62,14 @@ public class EndpointManager {
 
     private final Endpoints endpoints;
     private final EndpointStorage storage;
-    private final KeycloakHolder keycloakHolder;
 
     private Callback callback;
 
     @Inject
     public EndpointManager(Endpoints endpoints,
-            EndpointStorage storage,
-            KeycloakHolder keycloakHolder) {
+            EndpointStorage storage) {
         this.endpoints = endpoints;
         this.storage = storage;
-        this.keycloakHolder = keycloakHolder;
     }
 
     public void select(Callback callback) {
@@ -112,8 +102,7 @@ public class EndpointManager {
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     private void connect(Optional<Endpoint> endpoint) {
-        String baseUrl = endpoint.map(Endpoint::getUrl)
-                .orElse(Endpoints.getBaseUrl());
+        String baseUrl = endpoint.map(Endpoint::getUrl).orElse(Endpoints.getBaseUrl());
         endpoints.useBase(baseUrl);
         String managementEndpoint = baseUrl + MANAGEMENT;
         XMLHttpRequest xhr = new XMLHttpRequest();
@@ -123,17 +112,21 @@ public class EndpointManager {
                 case 0:
                 case 200:
                 case 401:
-                    if (keycloakPresentAndValid()) {
+                    if (KeycloakSingleton.presentAndValid()) {
+                        logger.info("Keycloak present and valid");
                         callback.execute();
                     } else {
-                        checkKeycloakOidcConfiguration(baseUrl, keycloakServerJsUrl -> {
-                            // if there is keycloak OIDC configuration, call keycloak authentication
-                            authKeycloak(getOidcConfigurationUrl(baseUrl), keycloakServerJsUrl, callback);
-                        }, () -> {
-                            // if there is no keycloak OIDC configuration for wildfly-console, proceed with regular
-                            // authentication
-                            callback.execute();
-                        });
+                        KeycloakSingleton.check(baseUrl)
+                                .then(Keycloak::authenticate)
+                                .then(ignore -> {
+                                    callback.execute();
+                                    return null;
+                                })
+                                .catch_(error -> {
+                                    logger.warn(String.valueOf(error));
+                                    callback.execute();
+                                    return null;
+                                });
                     }
                     break;
                 case 403:
@@ -166,90 +159,35 @@ public class EndpointManager {
         new EndpointDialog(this, storage).show();
     }
 
-    private String getOidcConfigurationUrl(String baseUrl) {
-        return baseUrl + ELYTRON_OIDC_CLIENT_WILDFLY_CONSOLE;
-    }
-
     void pingServer(Endpoint endpoint, AsyncCallback<Void> callback) {
         String managementEndpoint = endpoint.getUrl() + MANAGEMENT;
-
-        checkKeycloakOidcConfiguration(endpoint.getUrl(), s -> callback.onSuccess(null), () -> {
-            try {
-                XMLHttpRequest xhr = new XMLHttpRequest();
-                xhr.onload = event -> {
-                    int status = xhr.status;
-                    if (status == 200) {
-                        callback.onSuccess(null);
-                    } else {
-                        logger.error("Wrong status {} when pinging '{}'", status, managementEndpoint);
-                        callback.onFailure(new IllegalStateException());
+        KeycloakSingleton.check(endpoint.getUrl())
+                .then(keycloak -> {
+                    try {
+                        XMLHttpRequest xhr = new XMLHttpRequest();
+                        xhr.onload = event -> {
+                            int status = xhr.status;
+                            if (status == 200) {
+                                callback.onSuccess(null);
+                            } else {
+                                logger.error("Wrong status {} when pinging '{}'", status, managementEndpoint);
+                                callback.onFailure(new IllegalStateException());
+                            }
+                        };
+                        xhr.onerror = event -> {
+                            callback.onFailure(null);
+                            return null;
+                        };
+                        xhr.open(GET.name(), managementEndpoint, true);
+                        xhr.withCredentials = true;
+                        xhr.send();
+                    } catch (Exception e) {
+                        logger.error("Error when pinging '{}'. cause: {}", managementEndpoint, e.getMessage());
+                        callback.onFailure(e);
                     }
-                };
-                xhr.onerror = event -> {
-                    callback.onFailure(null);
                     return null;
-                };
-                xhr.open(GET.name(), managementEndpoint, true);
-                xhr.withCredentials = true;
-                xhr.send();
-            } catch (Exception e) {
-                logger.error("Error when pinging '{}'. cause: {}", managementEndpoint, e.getMessage());
-                callback.onFailure(e);
-            }
-        });
+                });
     }
-
-    private void checkKeycloakOidcConfiguration(String baseUrl, Consumer<String> kcExistsCallback, Callback wildflyCallback) {
-        String oidcConfigurationUrl = getOidcConfigurationUrl(baseUrl);
-        XMLHttpRequest xhr = new XMLHttpRequest();
-        xhr.onload = event -> {
-            int status = xhr.status;
-            if (status == 200) {
-                JsonObject kcConfig = Json.parse(xhr.responseText);
-                String keycloakServerJsUrl = kcConfig.getString(AUTH_SERVER_URL) + "/js/keycloak.js";
-                kcExistsCallback.accept(keycloakServerJsUrl);
-            } else {
-                logger.error("Keycloak OIDC configuration '{}' doesn't exist - status: {}", oidcConfigurationUrl, status);
-                wildflyCallback.execute();
-            }
-        };
-        xhr.addEventListener("error", event -> {
-            logger.error("Keycloak OIDC '{}' failed: {}", oidcConfigurationUrl, event);
-            wildflyCallback.execute();
-        });
-        xhr.open(GET.name(), oidcConfigurationUrl, true);
-        xhr.send();
-    }
-
-    private void authKeycloak(String kcAdapterUrl, String keycloakServerJsUrl, Callback callback) {
-        // load keycloak.js from keycloak server url
-        HTMLScriptElement script = (HTMLScriptElement) document.createElement("script");
-        script.src = keycloakServerJsUrl;
-        script.onload = onLoadEvent -> {
-            Keycloak kc = new Keycloak(kcAdapterUrl);
-            Keycloak.Api initOptions = new Keycloak.Api();
-            kc.init(initOptions)
-                    .success(authenticated -> {
-                        setInterval(o -> kc.updateToken(32), 30000);
-                        kc.loadUserProfile().success(profile -> kc.userProfile = profile);
-                        set(KEYCLOAK, kc);
-                        callback.execute();
-                    })
-                    .error(() -> logger.error("Error, could not initialize keycloak authentication."));
-
-            keycloakHolder.setKeycloak(kc);
-        };
-        document.head.appendChild(script);
-    }
-
-    private native boolean set(String key, Object value)/*-{
-        $wnd[key] = value;
-    }-*/;
-
-    private native boolean keycloakPresentAndValid()/*-{
-        var keycloak = $wnd[keycloak];
-        return keycloak != null && !keycloak.isTokenExpired();
-    }-*/;
 
     void onConnect(Endpoint endpoint) {
         storage.saveSelection(endpoint);
