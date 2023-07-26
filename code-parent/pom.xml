@@ -72,6 +72,11 @@
                 <version>${version.elemental}</version>
             </dependency>
             <dependency>
+                <groupId>com.google.jsinterop</groupId>
+                <artifactId>base</artifactId>
+                <version>${version.jsinterop}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.gwtplatform</groupId>
                 <artifactId>gwtp-all</artifactId>
                 <version>${version.gwtp}</version>
