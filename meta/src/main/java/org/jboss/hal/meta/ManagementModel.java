@@ -30,7 +30,7 @@ public class ManagementModel {
     private static final Version V_5_0_0 = new Version(5, 0, 0); // WildFly 11
 
     /** The target version of the console. */
-    public static final Version TARGET_VERSION = new Version(21, 0, 0); // WildFly 28
+    public static final Version TARGET_VERSION = new Version(22, 0, 0); // WildFly 29
 
     public static Version parseVersion(ModelNode modelNode) {
         if (modelNode.hasDefined(MANAGEMENT_MAJOR_VERSION) &&
