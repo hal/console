@@ -15,7 +15,6 @@
  */
 package org.jboss.hal.config;
 
-import org.jboss.hal.config.keycloak.KeycloakHolder;
 import org.jboss.hal.spi.GinModule;
 
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -30,7 +29,6 @@ public class ConfigModule extends AbstractGinModule {
         bind(Endpoints.class).in(Singleton.class);
         bind(Environment.class).in(Singleton.class);
         bind(Settings.class).in(Singleton.class);
-        bind(KeycloakHolder.class).in(Singleton.class);
 
         requestStaticInjection(Endpoints.class);
         requestStaticInjection(Settings.class);

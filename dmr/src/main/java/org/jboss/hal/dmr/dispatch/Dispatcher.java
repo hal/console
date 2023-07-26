@@ -29,6 +29,8 @@ import org.jboss.hal.config.AccessControlProvider;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.Settings;
+import org.jboss.hal.config.keycloak.Keycloak;
+import org.jboss.hal.config.keycloak.KeycloakSingleton;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
@@ -352,7 +354,7 @@ public class Dispatcher implements RecordingHandler {
         }
 
         // 4. bearer token
-        String token = getBearerToken();
+        String token = token();
         if (token != null) {
             builder.append("&access_token=").append(token);
         }
@@ -370,7 +372,7 @@ public class Dispatcher implements RecordingHandler {
             headers.set(CONTENT_TYPE.header(), APPLICATION_DMR_ENCODED);
         }
         headers.set(X_MANAGEMENT_CLIENT_NAME.header(), HEADER_MANAGEMENT_CLIENT_VALUE);
-        String bearerToken = getBearerToken();
+        String bearerToken = token();
         if (bearerToken != null) {
             headers.set("Authorization", "Bearer " + bearerToken);
         }
@@ -510,16 +512,13 @@ public class Dispatcher implements RecordingHandler {
 
     // ------------------------------------------------------ Keycloak
 
-    /** Obtains the bearer token from keycloak object attached to the window. */
-    public static native String getBearerToken()/*-{
-        // keycloak javascript object is created in EndpointManager class
-        // noinspection JSUnresolvedVariable
-        var keycloak = $wnd.keycloak;
-        if (keycloak != null && keycloak.token != null) {
+    private String token() {
+        Keycloak keycloak = KeycloakSingleton.instance();
+        if (keycloak != null) {
             return keycloak.token;
         }
         return null;
-    }-*/;
+    }
 
     // ------------------------------------------------------ inner classes
 

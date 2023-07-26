@@ -30,7 +30,7 @@ import org.jboss.hal.config.Roles;
 import org.jboss.hal.config.Settings;
 import org.jboss.hal.config.User;
 import org.jboss.hal.config.keycloak.Keycloak;
-import org.jboss.hal.config.keycloak.KeycloakHolder;
+import org.jboss.hal.config.keycloak.KeycloakSingleton;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.CompositeResult;
 import org.jboss.hal.dmr.ModelNode;
@@ -97,7 +97,6 @@ public class AccessControl {
     private final Settings settings;
     private final User currentUser;
     private final Dispatcher dispatcher;
-    private final KeycloakHolder keycloakHolder;
     private final Resources resources;
 
     private final Roles roles;
@@ -111,14 +110,12 @@ public class AccessControl {
             Dispatcher dispatcher,
             User currentUser,
             Settings settings,
-            KeycloakHolder keycloakHolder,
             Resources resources) {
         this.environment = environment;
         this.eventBus = eventBus;
         this.settings = settings;
         this.currentUser = currentUser;
         this.dispatcher = dispatcher;
-        this.keycloakHolder = keycloakHolder;
         this.resources = resources;
 
         this.roles = environment.getRoles();
@@ -169,7 +166,7 @@ public class AccessControl {
 
         // try to create the account URL, if SSO is enabled
         if (singleSignOn()) {
-            Keycloak keycloak = keycloakHolder.getKeycloak();
+            Keycloak keycloak = KeycloakSingleton.instance();
             if (keycloak != null) {
                 ssoUrl = keycloak.createAccountUrl();
             }

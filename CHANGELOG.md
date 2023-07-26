@@ -12,6 +12,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - [HAL-1878](https://issues.redhat.com/browse/HAL-1878): Disable reset for interface resource
 - [HAL-1877](https://issues.redhat.com/browse/HAL-1877): Invalid values are not cleared when switching between view and edit
   mode in forms
+- [HAL-1879](https://issues.redhat.com/browse/HAL-1879): Upgrade Keycloak adapter to Keycloak 22.x
 
 ## [3.6.11] - 2023-07-18
 
