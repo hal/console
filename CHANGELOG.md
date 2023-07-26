@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.6.12] - 2023-07-26
+
 ### Changed
 
 - [HAL-1878](https://issues.redhat.com/browse/HAL-1878): Disable reset for interface resource
@@ -490,7 +492,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - for dependency upgrades
 -->
 
-[Unreleased]: https://github.com/hal/console/compare/v3.6.11...HEAD
+[Unreleased]: https://github.com/hal/console/compare/v3.6.12...HEAD
+[3.6.12]: https://github.com/hal/console/compare/v3.6.11...v3.6.12
 [3.6.11]: https://github.com/hal/console/compare/v3.6.10...v3.6.11
 [3.6.10]: https://github.com/hal/console/compare/v3.6.9...v3.6.10
 [3.6.9]: https://github.com/hal/console/compare/v3.6.8...v3.6.9
