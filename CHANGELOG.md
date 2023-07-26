@@ -13,6 +13,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - [HAL-1877](https://issues.redhat.com/browse/HAL-1877): Invalid values are not cleared when switching between view and edit
   mode in forms
 - [HAL-1879](https://issues.redhat.com/browse/HAL-1879): Upgrade Keycloak adapter to Keycloak 22.x
+- Bump management model version to 22.0.0 to match WildFly 29
+
+### Upgrades
+
+- Bump Quarkus to 3.2.2.Final
+- Bump Elemental to 1.2.0
 
 ## [3.6.11] - 2023-07-18
 
