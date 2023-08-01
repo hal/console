@@ -25,10 +25,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.function.Function;
 
 import org.jboss.hal.core.expression.Expression;
+import org.jboss.hal.core.mbui.form.FormHelper;
 import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelType;
@@ -47,21 +47,15 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ACCESS_TYPE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ALTERNATIVES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.EXPRESSIONS_ALLOWED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NILLABLE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_ONLY;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUIRES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEFINE_ATTRIBUTE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION;
-import static org.jboss.hal.dmr.ModelNodeHelper.failSafeList;
 
 public class OperationFactory {
 
@@ -212,63 +206,37 @@ public class OperationFactory {
     Composite resetResource(ResourceAddress address, Set<String> attributes,
             Metadata metadata) {
         List<Operation> operations = new ArrayList<>();
-        ResourceDescription description = metadata.getDescription();
 
-        // collect all attributes from the 'requires' list of this attribute
-        // HashMultimap<String, String> requires = HashMultimap.create();
-        TreeSet<String> requires = new TreeSet<>();
-        ModelNode attributesDescription = description.get(ATTRIBUTES);
-        attributes.forEach(attribute -> {
-            ModelNode attributeDescription = attributesDescription.get(attribute);
-            if (attributeDescription != null && attributeDescription.hasDefined(REQUIRES)) {
-                failSafeList(attributeDescription, REQUIRES).forEach(node -> requires.add(node.asString()));
-                /*
-                 * .map(ModelNode::asString) .forEach(requiresName -> { requires.add(requiresName); });
-                 */
-            }
-        });
-
-        attributes.stream()
-                .map(attribute -> description.findAttribute(ATTRIBUTES, attribute))
-                .filter(Objects::nonNull)
+        FormHelper.getResettableProperties(attributes, metadata)
+                .stream()
                 .forEach(property -> {
                     ModelNode attributeDescription = property.getValue();
-                    boolean nillable = attributeDescription.hasDefined(NILLABLE) &&
-                            attributeDescription.get(NILLABLE).asBoolean();
-                    boolean readOnly = attributeDescription.hasDefined(ACCESS_TYPE) &&
-                            READ_ONLY.equals(attributeDescription.get(ACCESS_TYPE).asString());
-                    boolean alternatives = attributeDescription.hasDefined(ALTERNATIVES) &&
-                            !attributeDescription.get(ALTERNATIVES).asList().isEmpty();
-                    boolean requiredBy = requires.contains(property.getName());
-
-                    if (nillable && !readOnly && !alternatives && !requiredBy) {
-                        boolean hasDefault = attributeDescription.hasDefined(DEFAULT);
-                        ModelType type = attributeDescription.get(TYPE).asType();
-                        switch (type) {
-                            case BIG_DECIMAL:
-                            case BIG_INTEGER:
-                            case BOOLEAN:
-                            case BYTES:
-                            case DOUBLE:
-                            case INT:
-                            case LONG:
-                                if (hasDefault) {
-                                    operations.add(undefineAttribute(address, property.getName()));
-                                }
-                                break;
-                            case EXPRESSION:
-                            case LIST:
-                            case OBJECT:
-                            case PROPERTY:
-                            case STRING:
+                    boolean hasDefault = attributeDescription.hasDefined(DEFAULT);
+                    ModelType type = attributeDescription.get(TYPE).asType();
+                    switch (type) {
+                        case BIG_DECIMAL:
+                        case BIG_INTEGER:
+                        case BOOLEAN:
+                        case BYTES:
+                        case DOUBLE:
+                        case INT:
+                        case LONG:
+                            if (hasDefault) {
                                 operations.add(undefineAttribute(address, property.getName()));
-                                break;
-                            case TYPE:
-                            case UNDEFINED:
-                                break;
-                            default:
-                                break;
-                        }
+                            }
+                            break;
+                        case EXPRESSION:
+                        case LIST:
+                        case OBJECT:
+                        case PROPERTY:
+                        case STRING:
+                            operations.add(undefineAttribute(address, property.getName()));
+                            break;
+                        case TYPE:
+                        case UNDEFINED:
+                            break;
+                        default:
+                            break;
                     }
                 });
         return new Composite(operations);
