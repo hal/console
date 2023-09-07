@@ -67,6 +67,10 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
             ModelNode value = nested
                     ? ModelNodeHelper.failSafeGet(model, name.replace('.', '/'))
                     : model.get(name);
+            if (!value.isDefined()) {
+                // fail back to model.get(name) if ModelNodeHelper.failSafeGet() return an undefined value.
+                value = model.get(name);
+            }
             if (value.isDefined()) {
                 ModelNode attributeDescription = findAttribute(name);
                 if (attributeDescription == null) {
