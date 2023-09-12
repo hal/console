@@ -115,9 +115,9 @@
 
         <!-- Plugin versions -->
         <version.build.helper.plugin>3.4.0</version.build.helper.plugin>
-        <version.checkstyle.plugin>3.1.1</version.checkstyle.plugin>
+        <version.checkstyle.plugin>3.3.0</version.checkstyle.plugin>
         <version.degraph.plugin>4.0.2</version.degraph.plugin>
-        <version.enforcer.plugin>3.0.0-M3</version.enforcer.plugin>
+        <version.enforcer.plugin>3.3.0</version.enforcer.plugin>
         <version.formatter.plugin>2.23.0</version.formatter.plugin>
         <version.frontend.plugin>1.14.0</version.frontend.plugin>
         <version.gwt.plugin>1.0.1</version.gwt.plugin>
