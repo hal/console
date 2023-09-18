@@ -102,7 +102,8 @@ public class ExpressionResolver implements ResolveExpressionEvent.ResolveExpress
                 for (Property host : hosts) {
                     List<Property> servers = host.getValue().asPropertyList();
                     for (Property server : servers) {
-                        values.put(server.getName(),
+                        // server names don't have to be unique across hosts
+                        values.put(host.getName() + "/" + server.getName(),
                                 server.getValue().get(RESPONSE).get(RESULT).asString());
                     }
                 }
