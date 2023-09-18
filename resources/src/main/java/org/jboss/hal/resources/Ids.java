@@ -20,10 +20,9 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import static java.util.stream.Collectors.joining;
-
 import static com.google.common.base.Strings.emptyToNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.resources.Strings.substringAfterLast;
 
 /**
@@ -82,13 +81,11 @@ public interface Ids {
     String CACHE_CONTAINER_FORM = "cc-form";
     String CACHE_CONTAINER_ITEM = "cc-item";
     String CACHE_CONTAINER_REFRESH = "cc-refresh";
-    String CACHE_CONTAINER_THREAD_POOL_ASYNC_OPERATIONS = "cc-thread-pool-async-operations";
+    String CACHE_CONTAINER_THREAD_POOL_ASYNC = "cc-thread-pool-async";
+    String CACHE_CONTAINER_THREAD_POOL_BLOCKING = "cc-thread-pool-blocking";
     String CACHE_CONTAINER_THREAD_POOL_EXPIRATION = "cc-thread-pool-expiration";
     String CACHE_CONTAINER_THREAD_POOL_LISTENER = "cc-thread-pool-listener";
-    String CACHE_CONTAINER_THREAD_POOL_PERSISTENCE = "cc-thread-pool-persistence";
-    String CACHE_CONTAINER_THREAD_POOL_REMOTE_COMMAND = "cc-thread-pool-remote-command";
-    String CACHE_CONTAINER_THREAD_POOL_STATE_TRANSFER = "cc-thread-pool-state-transfer";
-    String CACHE_CONTAINER_THREAD_POOL_TRANSPORT = "cc-thread-pool-transport";
+    String CACHE_CONTAINER_THREAD_POOL_NON_BLOCKING = "cc-thread-pool-non-blocking";
     String CACHE_CONTAINER_THREAD_POOLS_ITEM = "cc-thread-pools-item";
     String CACHE_CONTAINER_TRANSPORT_EMPTY = "cc-transport-empty";
     String CACHE_CONTAINER_TRANSPORT_FORM = "cc-transport-form";
@@ -317,15 +314,8 @@ public interface Ids {
     String ENDPOINT_REFRESH = "endpoint-refresh";
     String ENDPOINT_SELECT = "endpoint-select";
     String ENDPOINT_STORAGE = "hal-local-storage-endpoint";
-    String EXTENSION = "extension";
-    String EXTENSION_ADD = "extension-add";
-    String EXTENSION_REVIEW_FORM = "extension-review-form";
-    String EXTENSION_STORAGE = "hal-local-storage-extension";
-    String EXTENSION_URL_FORM = "extension-url-form";
     String FINDER = "hal-finder";
     String FOOTER_CONTAINER = "hal-footer-container";
-    String FOOTER_EXTENSIONS = "footer-extensions";
-    String FOOTER_EXTENSIONS_DROPDOWN = "footer-extensions-dropdown";
     String FORM = "form";
     String GROUP = "group";
     String HAL_MODAL = "hal-modal";
@@ -334,10 +324,7 @@ public interface Ids {
     String HAL_WIZARD_TITLE = "hal-wizard-title";
     String HEADER = "header";
     String HEADER_CONNECTED_TO = "header-connected-to";
-    String HEADER_EXTENSIONS = "header-extensions";
-    String HEADER_EXTENSIONS_DROPDOWN = "header-extensions-dropdown";
     String HEADER_USERNAME = "header-username";
-    String HOMEPAGE = "homepage";
     String HOMEPAGE_ACCESS_CONTROL_MODULE = "homepage-access-control-module";
     String HOMEPAGE_ACCESS_CONTROL_SECTION = "homepage-access-control-section";
     String HOMEPAGE_CONFIGURATION_MODULE = "homepage-configuration-module";
@@ -358,7 +345,6 @@ public interface Ids {
     String HOST_REFRESH = "host-refresh";
     String HTTP_INTERFACE_ITEM = "http-interface-item";
     String INLINE_ACTION = "inline-action";
-    String INLINE_ACTION_DROPDOWN = "inline-action-dropdown";
     String INTERFACE = "interface";
     String INTERFACE_ADD = "interface-add";
     String INTERFACE_REFRESH = "interface-refresh";
@@ -629,8 +615,6 @@ public interface Ids {
     String NONE_PROGRESSING_LINK = "none-progressing-link";
     String NATIVE_INTERFACE_ITEM = "native-interface-item";
     String HEADER_CONTAINER = "hal-header-container";
-    String NEAR_CACHE_NONE = "near-cache-none";
-    String NEAR_CACHE_INVALIDATION = "near-cache-invalidation";
     String NOTIFICATION_DRAWER_CLEAR_ALL = "notification-drawer-clear-all";
     String NOTIFICATION_DRAWER_CLOSE = "notification-drawer-close";
     String NOTIFICATION_DRAWER_MARK_ALL_READ = "notification-drawer-mark-all-read";
@@ -653,11 +637,8 @@ public interface Ids {
     String RELOAD_LINK = "reload-link";
     String REMOTE_CACHE_CONTAINER_ADD = "rcc-add";
     String REMOTE_CACHE_CONTAINER_CONFIGURATION_FORM = "rcc-configuration-form";
-    String REMOTE_CACHE_CONTAINER_CONFIGURATION_TAB = "rcc-configuration-tab";
     String REMOTE_CACHE_CONTAINER_ITEM = "rcc-item";
     String REMOTE_CACHE_CONTAINER_FORM = "rcc-form";
-    String REMOTE_CACHE_CONTAINER_NEAR_CACHE_TAB = "rcc-near-cache-tab";
-    String REMOTE_CACHE_CONTAINER_TABS = "rcc-tabs";
     String REMOTE_CLUSTER_ADD = "rc-add";
     String REMOTE_CLUSTER_ITEM = "rc-item";
     String REMOTE_CLUSTER_FORM = "rc-form";
@@ -772,13 +753,10 @@ public interface Ids {
     String THREAD_POOL_FORM = "thread-pool-form";
     String TIMEOUT = "timeout";
     String TLC_ACCESS_CONTROL = "tlc-access-control";
-    String TLC_ACCESS_CONTROL_SSO = "tlc-access-control-sso";
     String TLC_CONFIGURATION = "tlc-configuration";
     String TLC_DEPLOYMENTS = "tlc-deployments";
     String TLC_HOMEPAGE = "tlc-homepage";
     String TLC_UPDATE_MANAGER = "tlc-update-manager";
-    String TLC_MANAGEMENT = "tlc-management";
-    String TLC_PATCHING = "tlc-patching";
     String TLC_RUNTIME = "tlc-runtime";
     String TOOLBAR = "toolbar";
     String TOOLBAR_ACTION_DROPDOWN = "toolbar-action-dropdown";

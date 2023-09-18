@@ -28,13 +28,10 @@ interface AddressTemplates {
     // cache container and sub resources
     String CACHE_CONTAINER_ADDRESS = INFINISPAN_SUBSYSTEM_ADDRESS + "/cache-container=*";
     String SELECTED_CACHE_CONTAINER_ADDRESS = INFINISPAN_SUBSYSTEM_ADDRESS + "/cache-container=" + SELECTION_EXPRESSION;
-    String THREAD_POOL_ASYNC_OPERATIONS = CACHE_CONTAINER_ADDRESS + "/thread-pool=async-operations";
+    String THREAD_POOL_BLOCKING = CACHE_CONTAINER_ADDRESS + "/thread-pool=blocking";
     String THREAD_POOL_EXPIRATION = CACHE_CONTAINER_ADDRESS + "/thread-pool=expiration";
     String THREAD_POOL_LISTENER = CACHE_CONTAINER_ADDRESS + "/thread-pool=listener";
-    String THREAD_POOL_PERSISTENCE = CACHE_CONTAINER_ADDRESS + "/thread-pool=persistence";
-    String THREAD_POOL_REMOTE_COMMAND = CACHE_CONTAINER_ADDRESS + "/thread-pool=remote-command";
-    String THREAD_POOL_SITE_TRANSFER = CACHE_CONTAINER_ADDRESS + "/thread-pool=state-transfer";
-    String THREAD_POOL_TRANSPORT = CACHE_CONTAINER_ADDRESS + "/thread-pool=transport";
+    String THREAD_POOL_NON_BLOCKING = CACHE_CONTAINER_ADDRESS + "/thread-pool=non-blocking";
     String TRANSPORT_JGROUPS_ADDRESS = CACHE_CONTAINER_ADDRESS + "/transport=jgroups";
 
     // remote cache container and sub resources

@@ -17,7 +17,8 @@ package org.jboss.hal.client.configuration.subsystem.infinispan;
 
 import javax.inject.Inject;
 
-import org.jboss.hal.ballroom.Tabs;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Table;
@@ -33,18 +34,17 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-
-import elemental2.dom.HTMLElement;
-
 import static java.util.stream.Collectors.joining;
-
 import static org.jboss.elemento.Elements.h;
 import static org.jboss.elemento.Elements.p;
 import static org.jboss.elemento.Elements.section;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
-import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.*;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.COMPONENT_CONNECTION_POOL_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.COMPONENT_SECURITY_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.REMOTE_CACHE_CONTAINER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.REMOTE_CLUSTER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.THREAD_POOL_ASYNC_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOTE_CLUSTER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDINGS;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
@@ -56,7 +56,6 @@ import static org.jboss.hal.resources.CSS.pfIcon;
 public class RemoteCacheContainerView extends HalViewImpl implements RemoteCacheContainerPresenter.MyView {
 
     private final Form<ModelNode> configurationForm;
-    private final NearCacheElement nearCacheElement;
     private final Table<NamedNode> remoteClusterTable;
     private final Form<NamedNode> remoteClusterForm;
     private final Form<ModelNode> connectionPoolForm;
@@ -73,15 +72,10 @@ public class RemoteCacheContainerView extends HalViewImpl implements RemoteCache
                 .onSave((form, changedValues) -> presenter.saveRemoteCacheContainer(changedValues))
                 .prepareReset(form -> presenter.resetRemoteCacheContainer(form))
                 .build();
-        nearCacheElement = new NearCacheElement(metadataRegistry, resources);
-        Tabs tabs = new Tabs(Ids.REMOTE_CACHE_CONTAINER_TABS);
-        tabs.add(Ids.REMOTE_CACHE_CONTAINER_CONFIGURATION_TAB, resources.constants().attributes(),
-                configurationForm.element());
-        tabs.add(Ids.REMOTE_CACHE_CONTAINER_NEAR_CACHE_TAB, Names.NEAR_CACHE, nearCacheElement.element());
         HTMLElement configurationSection = section()
                 .add(h(1).textContent(Names.CONFIGURATION))
                 .add(p().textContent(metadata.getDescription().getDescription()))
-                .add(tabs).element();
+                .add(configurationForm).element();
 
         metadata = metadataRegistry.lookup(REMOTE_CLUSTER_TEMPLATE);
         remoteClusterTable = new ModelNodeTable.Builder<NamedNode>(Ids.REMOTE_CLUSTER_TABLE, metadata)
@@ -93,7 +87,7 @@ public class RemoteCacheContainerView extends HalViewImpl implements RemoteCache
                     ModelNode socketBindings = row.get(SOCKET_BINDINGS);
                     if (socketBindings.isDefined()) {
                         return SafeHtmlUtils.fromString(
-                                socketBindings.asList().stream().map(ModelNode::asString).collect(joining(", ")))
+                                        socketBindings.asList().stream().map(ModelNode::asString).collect(joining(", ")))
                                 .asString();
                     }
                     return "";
@@ -157,7 +151,7 @@ public class RemoteCacheContainerView extends HalViewImpl implements RemoteCache
                 securitySection);
 
         registerAttachable(navigation);
-        registerAttachable(configurationForm, nearCacheElement);
+        registerAttachable(configurationForm);
         registerAttachable(remoteClusterTable, remoteClusterForm);
         registerAttachable(connectionPoolForm, threadPoolForm, securityForm);
 
@@ -175,13 +169,11 @@ public class RemoteCacheContainerView extends HalViewImpl implements RemoteCache
     @Override
     public void setPresenter(RemoteCacheContainerPresenter presenter) {
         this.presenter = presenter;
-        this.nearCacheElement.setPresenter(presenter);
     }
 
     @Override
     public void update(CacheContainer cacheContainer) {
         configurationForm.view(cacheContainer);
-        nearCacheElement.update(cacheContainer);
         remoteClusterForm.clear();
         remoteClusterTable.update(asNamedNodes(failSafePropertyList(cacheContainer, REMOTE_CLUSTER)));
         connectionPoolForm.view(failSafeGet(cacheContainer, "component/connection-pool"));
