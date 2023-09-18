@@ -19,6 +19,11 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.annotations.NameToken;
+import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.Form.FinishRemove;
 import org.jboss.hal.ballroom.form.Form.FinishReset;
@@ -45,22 +50,13 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.spi.Requires;
 
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-
 import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.CACHE_CONTAINER_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.CACHE_CONTAINER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.SELECTED_CACHE_CONTAINER_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.THREAD_POOL_ASYNC_OPERATIONS;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.THREAD_POOL_BLOCKING;
 import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.THREAD_POOL_EXPIRATION;
 import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.THREAD_POOL_LISTENER;
-import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.THREAD_POOL_PERSISTENCE;
-import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.THREAD_POOL_REMOTE_COMMAND;
-import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.THREAD_POOL_SITE_TRANSFER;
-import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.THREAD_POOL_TRANSPORT;
+import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.THREAD_POOL_NON_BLOCKING;
 import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.TRANSPORT_JGROUPS_ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_ALIASES;
@@ -251,13 +247,10 @@ public class CacheContainerPresenter
     @ProxyCodeSplit
     @NameToken(NameTokens.CACHE_CONTAINER)
     @Requires(value = { CACHE_CONTAINER_ADDRESS,
-            THREAD_POOL_ASYNC_OPERATIONS,
+            THREAD_POOL_BLOCKING,
             THREAD_POOL_EXPIRATION,
             THREAD_POOL_LISTENER,
-            THREAD_POOL_PERSISTENCE,
-            THREAD_POOL_REMOTE_COMMAND,
-            THREAD_POOL_SITE_TRANSFER,
-            THREAD_POOL_TRANSPORT,
+            THREAD_POOL_NON_BLOCKING,
             TRANSPORT_JGROUPS_ADDRESS }, recursive = false)
     public interface MyProxy extends ProxyPlace<CacheContainerPresenter> {
     }

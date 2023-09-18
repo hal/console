@@ -17,6 +17,7 @@ package org.jboss.hal.client.skeleton;
 
 import javax.inject.Inject;
 
+import elemental2.dom.HTMLElement;
 import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.ProgressElement;
 import org.jboss.hal.ballroom.Tooltip;
@@ -26,13 +27,10 @@ import org.jboss.hal.core.mvp.HalViewImpl;
 import org.jboss.hal.core.ui.UIRegistry;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
-import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.resources.UIConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import elemental2.dom.HTMLElement;
 
 import static org.jboss.elemento.Elements.a;
 import static org.jboss.elemento.Elements.b;
@@ -56,7 +54,6 @@ import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.footer;
 import static org.jboss.hal.resources.CSS.footerProgress;
 import static org.jboss.hal.resources.CSS.footerTools;
-import static org.jboss.hal.resources.CSS.hidden;
 import static org.jboss.hal.resources.CSS.navbar;
 import static org.jboss.hal.resources.CSS.navbarFixedBottom;
 import static org.jboss.hal.resources.CSS.navbarFooter;
@@ -69,7 +66,7 @@ import static org.jboss.hal.resources.UIConstants.TOGGLE;
 
 public class FooterView extends HalViewImpl implements FooterPresenter.MyView {
 
-    private static Logger logger = LoggerFactory.getLogger(FooterView.class);
+    private static final Logger logger = LoggerFactory.getLogger(FooterView.class);
 
     private final Resources resources;
 
@@ -112,13 +109,6 @@ public class FooterView extends HalViewImpl implements FooterPresenter.MyView {
                                                 .add(updateAvailable = span().css(pfIcon("info")).element())
                                                 .add(halVersion = span().element())
                                                 .element()))
-                                .add(li().css(dropdown, hidden).id(Ids.FOOTER_EXTENSIONS_DROPDOWN)
-                                        .add(a().css(tool, clickable, dropdownToggle)
-                                                .data(TOGGLE, DROPDOWN)
-                                                .title(Names.EXTENSIONS)
-                                                .add(span().css(fontAwesome("th-large")))
-                                                .add(b().css(caret)))
-                                        .add(ul().css(dropdown, dropdownMenu).id(Ids.FOOTER_EXTENSIONS)))
                                 .add(li().css(dropdown)
                                         .add(a("#").css(tool, dropdownToggle).data(TOGGLE, DROPDOWN)
                                                 .add(span().css(fontAwesome("wrench")))

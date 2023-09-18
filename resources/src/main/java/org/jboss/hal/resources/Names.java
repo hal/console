@@ -29,8 +29,8 @@ public interface Names {
     String AJP_LISTENER = "AJP Listener";
     String ARCHIVE = "Archive";
     String APPLICATION_SECURITY_DOMAIN = "Application Security Domain";
+    String ASYNC = "Async";
     String ASYNC_ACTION_HANDLER = "Async ActionHandler";
-    String ASYNC_OPERATIONS = "Async Operations";
     String ATTRIBUTE_MAPPING = "Attribute Mapping";
     String AUDIT_LOG = "Audit Log";
     String AUDIT_MODULE = "Audit Module";
@@ -43,13 +43,13 @@ public interface Names {
     String BATCH = "Batch";
     String BATCH_STATUS = "Batch Status";
     String BINDINGS_DIRECTORY = "Bindings Directory";
+    String BLOCKING = "Blocking";
     String BOOT_ERRORS = "Boot Errors";
     String BOOTSTRAP = "Bootstrap";
     String BRIDGE = "Bridge";
     String BROWSER_DEFAULT_TITLE = "%n | Management Console";
     String BROWSER_FALLBACK_TITLE = "HAL Management Console";
     String BUFFER_CACHES = "Buffer Caches";
-    String BUNDLED_EXTENSION = "Bundled Extension";
     String BYTE_BUFFER_POOL = "Byte Buffer Pool";
 
     String CACHE = "Cache";
@@ -117,8 +117,6 @@ public interface Names {
     String EXECUTIONS = "Executions";
     String EXPIRATION = "Expiration";
     String EXPRESSION = "Expression";
-    String EXTENSION = "Extension";
-    String EXTENSIONS = "Extensions";
     String EXTERNAL_JMS_QUEUE = "External JMS Queue";
     String EXTERNAL_JMS_TOPIC = "External JMS Topic";
 
@@ -141,7 +139,6 @@ public interface Names {
     String HAL = "HAL";
     String HANDLER = "Handler";
     String HANDLERS = "Handlers";
-    String HANDLER_CHAIN = "Handler Chain";
     String HEAP = "Heap";
     String HOMEPAGE = "Homepage";
     String HOST = "Host";
@@ -169,7 +166,6 @@ public interface Names {
     String INSTANCE_ID = "Instance ID";
     String INTERFACE = "Interface";
     String INTERFACES = "Interfaces";
-    String INVALIDATION = "Invalidation";
     String INVALIDATION_CACHE = "Invalidation Cache";
     String IO = "IO";
 
@@ -192,7 +188,6 @@ public interface Names {
     String JMS_TOPIC = "JMS Topic";
     String JSON_FORMATTER = "JSON Formatter";
     String JSP = "JSP";
-    String JVM_ATTRIBUTES = "JVM Attributes";
 
     String KEYCLOAK = "Keycloak";
     String KEY_MANAGER = "Key Manager";
@@ -248,9 +243,9 @@ public interface Names {
     String MODCLUSTER = "Modcluster";
     String MODULE = "Module";
 
-    String NEAR_CACHE = "Near Cache";
     String NEW_ITEM_TEMPLATE = "New Item Template";
     String NODE = "Node";
+    String NON_BLOCKING = "Non Blocking";
     String NON_HEAP = "Non-heap";
     String NONE = "none";
     String NOT_AVAILABLE = "n/a";
@@ -269,14 +264,12 @@ public interface Names {
     String PARTITION_HANDLING = "Partition Handling";
     String PATCH = "Patch";
     String PATCHES = "Patches";
-    String PATCHING = "Patching";
     String PATHS = "Paths";
     String PATTERN_FORMATTER = "Pattern Formatter";
     String PERIODIC_HANDLER = "Periodic Handler";
     String PERIODIC_SIZE_HANDLER = "Periodic Size Handler";
     String PERMISSIONS = "Permissions";
     String PERMISSION_MAPPINGS = "Permission Mappings";
-    String PERSISTENCE = "Persistence";
     String POLICY = "Policy";
     String POOL = "Pool";
     String POOLED_CONNECTION_FACTORY = "Pooled Connection Factory";
@@ -301,7 +294,6 @@ public interface Names {
     String REMOTE_ACCEPTOR = "Remote Acceptor";
     String REMOTE_CACHE_CONTAINER = "Remote Cache Container";
     String REMOTE_CLUSTER = "Remote Cluster";
-    String REMOTE_COMMAND = "Remote Command";
     String REMOTE_CONNECTOR = "Remote Connector";
     String REMOTE_CONNECTOR_SECURITY = "Remote Connector Security";
     String REMOTE_CONNECTOR_SECURITY_POLICY = "Remote Connector Security Policy";
@@ -356,7 +348,6 @@ public interface Names {
     String SOCKET_BROADCAST_GROUP = "Socket Broadcast Group";
     String SOCKET_DISCOVERY_GROUP = "Socket Discovery Group";
     String SSL = "SSL";
-    String STANDALONE_EXTENSION = "Standalone Extension";
     String STANDALONE_SERVER = "Standalone Server";
     String STATE_TRANSFER = "State Transfer";
     String STORE_RESOURCE = "Store";

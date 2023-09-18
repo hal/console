@@ -23,30 +23,37 @@ import org.jboss.hal.resources.Names;
 import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.CACHE_CONTAINER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.THREAD_POOL;
 
-/** Represents the different thread pool singletons of a cache container. */
+/**
+ * Represents the different thread pool singletons of a cache container.
+ */
 enum ThreadPool {
 
-    ASYNC_OPERATIONS(Ids.CACHE_CONTAINER_THREAD_POOL_ASYNC_OPERATIONS, Names.ASYNC_OPERATIONS,
-            ModelDescriptionConstants.ASYNC_OPERATIONS), EXPIRATION(Ids.CACHE_CONTAINER_THREAD_POOL_EXPIRATION,
-                    Names.EXPIRATION, ModelDescriptionConstants.EXPIRATION), LISTENER(Ids.CACHE_CONTAINER_THREAD_POOL_LISTENER,
-                            Names.LISTENER,
-                            ModelDescriptionConstants.LISTENER), PERSISTENCE(Ids.CACHE_CONTAINER_THREAD_POOL_PERSISTENCE,
-                                    Names.PERSISTENCE, ModelDescriptionConstants.PERSISTENCE), REMOTE_COMMAND(
-                                            Ids.CACHE_CONTAINER_THREAD_POOL_REMOTE_COMMAND, Names.REMOTE_COMMAND,
-                                            ModelDescriptionConstants.REMOTE_COMMAND), STATE_TRANSFER(
-                                                    Ids.CACHE_CONTAINER_THREAD_POOL_STATE_TRANSFER, Names.STATE_TRANSFER,
-                                                    ModelDescriptionConstants.STATE_TRANSFER), TRANSPORT(
-                                                            Ids.CACHE_CONTAINER_THREAD_POOL_TRANSPORT, Names.TRANSPORT,
-                                                            ModelDescriptionConstants.TRANSPORT),;
+    ASYNC(Ids.CACHE_CONTAINER_THREAD_POOL_ASYNC,
+            Names.ASYNC, ModelDescriptionConstants.ASYNC, true),
+
+    BLOCKING(Ids.CACHE_CONTAINER_THREAD_POOL_BLOCKING,
+            Names.BLOCKING, ModelDescriptionConstants.BLOCKING, false),
+
+    EXPIRATION(Ids.CACHE_CONTAINER_THREAD_POOL_EXPIRATION,
+            Names.EXPIRATION, ModelDescriptionConstants.EXPIRATION, false),
+
+    LISTENER(Ids.CACHE_CONTAINER_THREAD_POOL_LISTENER,
+            Names.LISTENER, ModelDescriptionConstants.LISTENER, false),
+
+    NON_BLOCKING(Ids.CACHE_CONTAINER_THREAD_POOL_NON_BLOCKING,
+            Names.NON_BLOCKING, ModelDescriptionConstants.NON_BLOCKING, false),
+    ;
 
     final String baseId;
     final String type;
     final String resource;
+    final boolean remote;
 
-    ThreadPool(String baseId, String type, String resource) {
+    ThreadPool(String baseId, String type, String resource, boolean remote) {
         this.baseId = baseId;
         this.type = type;
         this.resource = resource;
+        this.remote = remote;
     }
 
     String path() {

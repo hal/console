@@ -24,6 +24,13 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import com.google.common.base.Strings;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.web.bindery.event.shared.HandlerRegistration;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import elemental2.dom.Element;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLLIElement;
 import org.jboss.elemento.Elements;
 import org.jboss.elemento.HtmlContentBuilder;
 import org.jboss.hal.ballroom.Tooltip;
@@ -54,19 +61,9 @@ import org.jboss.hal.spi.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Strings;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.web.bindery.event.shared.HandlerRegistration;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-
-import elemental2.dom.Element;
-import elemental2.dom.HTMLElement;
-import elemental2.dom.HTMLLIElement;
-
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.StreamSupport.stream;
-
 import static org.jboss.elemento.Elements.a;
 import static org.jboss.elemento.Elements.b;
 import static org.jboss.elemento.Elements.button;
@@ -102,7 +99,6 @@ import static org.jboss.hal.resources.CSS.dropdownToggle;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.halBreadcrumb;
 import static org.jboss.hal.resources.CSS.halHeaderCollapse;
-import static org.jboss.hal.resources.CSS.hidden;
 import static org.jboss.hal.resources.CSS.iconBar;
 import static org.jboss.hal.resources.CSS.logo;
 import static org.jboss.hal.resources.CSS.logoText;
@@ -247,13 +243,6 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
                                                         .style("padding-right: 0"))
                                                 .add(badgeIcon = span().css(badge).id(Ids.BADEGE_ICON).element())
                                                 .element()))
-                                .add(li().css(dropdown, hidden).id(Ids.HEADER_EXTENSIONS_DROPDOWN)
-                                        .add(a().css(clickable, dropdownToggle)
-                                                .data(TOGGLE, DROPDOWN)
-                                                .title(Names.EXTENSIONS)
-                                                .add(span().css(fontAwesome("th-large")))
-                                                .add(b().css(caret)))
-                                        .add(ul().css(dropdownMenu, CSS.userDropdown).id(Ids.HEADER_EXTENSIONS)))
                                 .add(li().css(dropdown)
                                         .add(a().css(clickable, dropdownToggle).data(TOGGLE, DROPDOWN)
                                                 .add(span().css(pfIcon("user")))
@@ -363,7 +352,7 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
 
         tlc = new HashMap<>();
         initTlc(root,
-                new String[] {
+                new String[]{
                         NameTokens.HOMEPAGE,
                         NameTokens.DEPLOYMENTS,
                         NameTokens.CONFIGURATION,
@@ -371,7 +360,7 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
                         NameTokens.UPDATE_MANAGER,
                         NameTokens.ACCESS_CONTROL,
                 },
-                new String[] {
+                new String[]{
                         Ids.TLC_HOMEPAGE,
                         Ids.TLC_DEPLOYMENTS,
                         Ids.TLC_CONFIGURATION,
@@ -444,7 +433,7 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
 
     @Override
     public void updateRoles(Environment environment, Settings settings, User user) {
-        for (Iterator<HTMLElement> iterator = Elements.iterator(userDropdown); iterator.hasNext();) {
+        for (Iterator<HTMLElement> iterator = Elements.iterator(userDropdown); iterator.hasNext(); ) {
             HTMLElement element = iterator.next();
             if (element == logoutItem) {
                 continue;
@@ -630,7 +619,7 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
         }
         breadcrumbHandlers.clear();
 
-        for (Iterator<FinderSegment<?>> iterator = finderContext.getPath().iterator(); iterator.hasNext();) {
+        for (Iterator<FinderSegment<?>> iterator = finderContext.getPath().iterator(); iterator.hasNext(); ) {
             FinderSegment<?> segment = iterator.next();
             if (segment.getColumnId() == null || segment.getItemId() == null) {
                 // we need to ignore half filled segments which occur when removing items from a column
@@ -733,7 +722,7 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
 
         } else {
             ModelBrowser modelBrowser = path.getModelBrowser();
-            for (Iterator<Segment[]> iterator = path.iterator(); iterator.hasNext();) {
+            for (Iterator<Segment[]> iterator = path.iterator(); iterator.hasNext(); ) {
                 Segment[] segments = iterator.next();
                 Segment key = segments[0];
                 Segment value = segments[1];
@@ -760,7 +749,7 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
     }
 
     private void clearBreadcrumb() {
-        for (Iterator<HTMLElement> iterator = Elements.iterator(breadcrumb); iterator.hasNext();) {
+        for (Iterator<HTMLElement> iterator = Elements.iterator(breadcrumb); iterator.hasNext(); ) {
             HTMLElement element = iterator.next();
             if (element == backItem || element == breadcrumbToolsItem) {
                 continue;

@@ -79,7 +79,7 @@ public interface ModelDescriptionConstants {
     String ARCHIVE = "archive";
     String ARTIFACT_CHANGES = "artifact-changes";
     String ASYNC_HANDLER = "async-handler";
-    String ASYNC_OPERATIONS = "async-operations";
+    String ASYNC = "async";
     String ATTRIBUTE_GROUP = "attribute-group";
     String ATTRIBUTE_MAPPING = "attribute-mapping";
     String ATTRIBUTES = "attributes";
@@ -342,7 +342,6 @@ public interface ModelDescriptionConstants {
     String EXPOSED_SUBSYSTEMS = "exposed-subsystems";
     String EXPRESSION = "expression";
     String EXPRESSIONS_ALLOWED = "expressions-allowed";
-    String EXTENSION_POINT = "extension-point";
     String EXTERNAL_JMS_QUEUE = "external-jms-queue";
     String EXTERNAL_JMS_TOPIC = "external-jms-topic";
     String EXTRA_PROPS = "extra-props";
@@ -617,7 +616,6 @@ public interface ModelDescriptionConstants {
     String NAMESPACES = "namespaces";
     String NAMING = "naming";
     String NATIVE_INTERFACE = "native-interface";
-    String NEAR_CACHE = "near-cache";
     String NEW_IDENTITY_ATTRIBUTES = "new-identity-attributes";
     String NEW_ITEM_ATTRIBUTES = "new-item-attributes";
     String NEW_ITEM_PATH = "new-item-path";
@@ -635,6 +633,7 @@ public interface ModelDescriptionConstants {
     String NON_DURABLE_MESSAGE_COUNT = "non-durable-message-count";
     String NON_DURABLE_SUBSCRIPTION_COUNT = "non-durable-subscription-count";
     String NONE = "none";
+    String NON_BLOCKING = "non-blocking";
     String NOT = "not";
     String NUMBER_OF_ABORTED_TRANSACTIONS = "number-of-aborted-transactions";
     String NUMBER_OF_APPLICATION_ROLLBACKS = "number-of-application-rollbacks";

@@ -19,6 +19,11 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import com.google.web.bindery.event.shared.EventBus;
+import com.gwtplatform.mvp.client.annotations.NameToken;
+import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.core.CrudOperations;
@@ -42,15 +47,7 @@ import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
-import org.jboss.hal.spi.Message;
-import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
-
-import com.google.web.bindery.event.shared.EventBus;
-import com.gwtplatform.mvp.client.annotations.NameToken;
-import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.COMPONENT_CONNECTION_POOL_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.COMPONENT_SECURITY_TEMPLATE;
@@ -59,8 +56,6 @@ import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTem
 import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.REMOTE_CLUSTER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.SELECTED_REMOTE_CACHE_CONTAINER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.infinispan.AddressTemplates.THREAD_POOL_ASYNC_TEMPLATE;
-import static org.jboss.hal.client.configuration.subsystem.infinispan.NearCache.INVALIDATION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INFINISPAN;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
@@ -270,33 +265,6 @@ public class RemoteCacheContainerPresenter
     private ResourceAddress threadPoolAddress() {
         return SELECTED_REMOTE_CACHE_CONTAINER_TEMPLATE
                 .append("thread-pool=async")
-                .resolve(statementContext);
-    }
-
-    // ------------------------------------------------------ near cache
-
-    void switchNearCache(NearCache newMode) {
-        Operation operation = new Operation.Builder(nearCacheAddress(newMode), ADD).build();
-        dispatcher.execute(operation, result -> {
-            MessageEvent.fire(getEventBus(),
-                    Message.success(resources.messages().addSingleResourceSuccess(newMode.type)));
-            reload();
-        });
-    }
-
-    void saveInvalidationNearCache(Map<String, Object> changedValues) {
-        Metadata metadata = metadataRegistry.lookup(REMOTE_CACHE_CONTAINER_TEMPLATE.append("near-cache=invalidation"));
-        crud.saveSingleton(Names.INVALIDATION, nearCacheAddress(INVALIDATION), changedValues, metadata, this::reload);
-    }
-
-    void resetInvalidationNearCache(Form<ModelNode> form) {
-        Metadata metadata = metadataRegistry.lookup(REMOTE_CACHE_CONTAINER_TEMPLATE.append("near-cache=invalidation"));
-        crud.resetSingleton(Names.INVALIDATION, nearCacheAddress(INVALIDATION), form, metadata, this::reload);
-    }
-
-    private ResourceAddress nearCacheAddress(NearCache nearCache) {
-        return SELECTED_REMOTE_CACHE_CONTAINER_TEMPLATE
-                .append("near-cache=" + nearCache.resource)
                 .resolve(statementContext);
     }
 

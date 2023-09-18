@@ -21,6 +21,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
@@ -32,8 +33,6 @@ import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
-
-import elemental2.dom.HTMLElement;
 
 import static org.jboss.elemento.Elements.h;
 import static org.jboss.elemento.Elements.p;
@@ -66,7 +65,9 @@ public class CacheContainerView extends HalViewImpl implements CacheContainerPre
 
         threadPools = new HashMap<>();
         for (ThreadPool threadPool : ThreadPool.values()) {
-            threadPools.put(threadPool, new ThreadPoolElement(threadPool, metadataRegistry));
+            if (!threadPool.remote) {
+                threadPools.put(threadPool, new ThreadPoolElement(threadPool, metadataRegistry));
+            }
         }
 
         transport = new TransportElement(metadataRegistry, resources);
