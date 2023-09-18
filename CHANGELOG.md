@@ -7,6 +7,24 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+[HAL-1880](https://issues.redhat.com/browse/HAL-1880): Upgrade semver from 5.7.1 to 5.7.2
+[HAL-1864](https://issues.redhat.com/browse/HAL-1864): Hide reset link if no attributes can be reset
+
+### Fixed
+
+[HAL-1904](https://issues.redhat.com/browse/HAL-1904): Fix (remote) chache container
+[HAL-1902](https://issues.redhat.com/browse/HAL-1902): Fix chache container
+[HAL-1885](https://issues.redhat.com/browse/HAL-1885): Handle duplicate server names in expression resolution
+[HAL-1884](https://issues.redhat.com/browse/HAL-1884): Fix unnested attributes handle in MBUI views
+
+### Upgrades
+
+Bump ACE editor to 1.26.0
+Bump Mockito 5.5.0
+Bump Quarkus to 3.3.3
+
 ## [3.6.12] - 2023-07-26
 
 ### Changed
