@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.6.14] - 2023-09-25
+
 ### Changed
 
 - [HAL-1880](https://issues.redhat.com/browse/HAL-1880): Upgrade semver from 5.7.1 to 5.7.2
@@ -516,7 +518,8 @@ Release process failed. Do not use this release!
 - for dependency upgrades
 -->
 
-[Unreleased]: https://github.com/hal/console/compare/v3.6.13...HEAD
+[Unreleased]: https://github.com/hal/console/compare/v3.6.14...HEAD
+[3.6.14]: https://github.com/hal/console/compare/v3.6.13...v3.6.14
 [3.6.13]: https://github.com/hal/console/compare/v3.6.12...v3.6.13
 [3.6.12]: https://github.com/hal/console/compare/v3.6.11...v3.6.12
 [3.6.11]: https://github.com/hal/console/compare/v3.6.10...v3.6.11
