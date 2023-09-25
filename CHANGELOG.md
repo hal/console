@@ -7,8 +7,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [3.6.14] - 2023-09-25
-
 ### Changed
 
 - [HAL-1880](https://issues.redhat.com/browse/HAL-1880): Upgrade semver from 5.7.1 to 5.7.2
@@ -16,8 +14,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-- [HAL-1904](https://issues.redhat.com/browse/HAL-1904): Fix (remote) chache container
-- [HAL-1902](https://issues.redhat.com/browse/HAL-1902): Fix chache container
+- [HAL-1904](https://issues.redhat.com/browse/HAL-1904): Fix (remote) cache container
+- [HAL-1902](https://issues.redhat.com/browse/HAL-1902): Fix cache container
 - [HAL-1885](https://issues.redhat.com/browse/HAL-1885): Handle duplicate server names in expression resolution
 - [HAL-1884](https://issues.redhat.com/browse/HAL-1884): Fix unnested attributes handle in MBUI views
 
@@ -28,6 +26,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Bump JsTree 3.3.16
 - Bump Mockito 5.5.0
 - Bump Quarkus to 3.4.1
+
+## [3.6.14] - 2023-09-25
+
+Release process failed. Do not use this release!
 
 ## [3.6.13] - 2023-09-25
 
