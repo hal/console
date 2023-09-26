@@ -254,7 +254,7 @@ public abstract class AbstractDeploymentColumn<T extends Content> extends Finder
         ITEM_DISABLE_ACTION = createItemAction(resources.constants().disable(), this::disable, UNDEPLOY);
         ITEM_ENABLE_ACTION = createItemAction(resources.constants().enable(), this::enable, DEPLOY);
         ITEM_EXPLODE_ACTION = createItemAction(resources.constants().explode(), this::explode, EXPLODE);
-        ITEM_REMOVE_ACTION = createItemAction(resources.constants().remove(), this::remove, REMOVE);
+        ITEM_REMOVE_ACTION = createItemAction(resources.constants().undeploy(), this::remove, REMOVE);
         ITEM_REPLACE_ACTION = createItemAction(resources.constants().replace(), this::replace, FULL_REPLACE_DEPLOYMENT, ADD);
         // standalone-only
         ITEM_EXPLODE_SUBS_ACTION = createItemAction(resources.constants().explodeSubdeployments(), this::explodeSubs, EXPLODE);
