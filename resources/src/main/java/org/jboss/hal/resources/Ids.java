@@ -20,9 +20,10 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import static java.util.stream.Collectors.joining;
+
 import static com.google.common.base.Strings.emptyToNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static java.util.stream.Collectors.joining;
 import static org.jboss.hal.resources.Strings.substringAfterLast;
 
 /**
@@ -804,7 +805,6 @@ public interface Ids {
     String UNDERTOW_HOST_MAIN_PAGE = "undertow-host-main-page";
     String UNDERTOW_HOST_PAGES = "undertow-host-pages";
     String UNDERTOW_HOST_REFRESH = "undertow-host-refresh";
-    String UNDERTOW_HOST_SINGLE_SIGN_ON = "undertow-host-single-sign-on";
     String UNDERTOW_HOST_TABLE = "undertow-host-table";
     String UNDERTOW_LISTENER_PROCESSING_DISABLED = "undertow-listener-processing-disabled";
     String UNDERTOW_LISTENER_REFRESH = "undertow-listener-refresh";
