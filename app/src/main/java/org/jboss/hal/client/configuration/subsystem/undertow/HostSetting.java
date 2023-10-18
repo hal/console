@@ -30,10 +30,7 @@ enum HostSetting {
     CONSOLE_ACCESS_LOG(Ids.UNDERTOW_HOST_CONSOLE_ACCESS_LOG, Names.CONSOLE_ACCESS_LOG, fontAwesome("laptop"),
             ModelDescriptionConstants.CONSOLE_ACCESS_LOG),
 
-    HTTP_INVOKER(Ids.UNDERTOW_HOST_HTTP_INVOKER, Names.HTTP_INVOKER, pfIcon("service"), ModelDescriptionConstants.HTTP_INVOKER),
-
-    SINGLE_SIGN_ON(Ids.UNDERTOW_HOST_SINGLE_SIGN_ON, Names.SINGLE_SIGN_ON, pfIcon("key"),
-            ModelDescriptionConstants.SINGLE_SIGN_ON);
+    HTTP_INVOKER(Ids.UNDERTOW_HOST_HTTP_INVOKER, Names.HTTP_INVOKER, pfIcon("service"), ModelDescriptionConstants.HTTP_INVOKER);
 
     final String baseId;
     final String type;
