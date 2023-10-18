@@ -72,8 +72,10 @@ public class ApplicationSecurityDomainView extends HalViewImpl implements Applic
 
         // ------------------------------------------------------ credential reference
 
-        crForm = cr.form(Ids.UNDERTOW_APP_SECURITY_DOMAIN, ssoMetadata, null, null,
+        crForm = cr.form(Ids.UNDERTOW_APP_SECURITY_DOMAIN, ssoMetadata, CREDENTIAL_REFERENCE, null, null,
+                () -> presenter.checkSingleSignOn(),
                 () -> presenter.resolveSingleSignOn(),
+                () -> presenter.addSingleSignOn(),
                 () -> presenter.reload());
 
         Tabs tabs = new Tabs(Ids.UNDERTOW_APP_SECURITY_DOMAIN_TAB_CONTAINER);
