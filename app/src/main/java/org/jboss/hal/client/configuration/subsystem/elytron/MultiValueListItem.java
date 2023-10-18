@@ -72,8 +72,12 @@ class MultiValueListItem extends TagsItem<ModelNode> implements ModelNodeItem {
     private static final Messages MESSAGES = GWT.create(Messages.class);
 
     MultiValueListItem(String attribute) {
+        this(attribute, NAME, VALUE);
+    }
+
+    MultiValueListItem(String attribute, String name, String value) {
         super(attribute, new LabelBuilder().label(attribute), MESSAGES.multiValueListHint(),
-                EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED), new MapMapping());
+                EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED), new MapMapping(name, value));
     }
 
     @Override
@@ -113,6 +117,14 @@ class MultiValueListItem extends TagsItem<ModelNode> implements ModelNodeItem {
         private static final RegExp REGEX = RegExp.compile(
                 "^([\\w\\-\\.\\/]+)=([\\w\\-\\.\\/" + VALUE_SEPARATOR + "]+)$"); // NON-NLS
 
+        private final String name;
+        private final String value;
+
+        private MapMapping(String name, String value) {
+            this.name = name;
+            this.value = value;
+        }
+
         @Override
         public Validator validator() {
             return REGEX::test;
@@ -122,9 +134,9 @@ class MultiValueListItem extends TagsItem<ModelNode> implements ModelNodeItem {
         public ModelNode parseTag(final String tag) {
             String[] parts = tag.split("=");
             ModelNode kv = new ModelNode();
-            kv.get(NAME).set(parts[0]);
+            kv.get(name).set(parts[0]);
             for (String v : parts[1].split(VALUE_SEPARATOR)) {
-                kv.get(VALUE).add(v);
+                kv.get(value).add(v);
             }
 
             ModelNode node = new ModelNode();
@@ -138,7 +150,7 @@ class MultiValueListItem extends TagsItem<ModelNode> implements ModelNodeItem {
                 return emptyList();
             }
             return value.asList().stream()
-                    .map(kv -> kv.get(NAME).asString() + "=" + kv.get(VALUE).asList().stream()
+                    .map(kv -> kv.get(name).asString() + "=" + kv.get(this.value).asList().stream()
                             .map(ModelNode::asString)
                             .collect(joining(VALUE_SEPARATOR)))
                     .collect(toList());
@@ -150,7 +162,7 @@ class MultiValueListItem extends TagsItem<ModelNode> implements ModelNodeItem {
                 return "";
             }
             return value.asList().stream()
-                    .map(kv -> kv.get(NAME).asString() + " \u21D2 " + kv.get(VALUE).asList().stream()
+                    .map(kv -> kv.get(name).asString() + " \u21D2 " + kv.get(this.value).asList().stream()
                             .map(ModelNode::asString)
                             .collect(joining(VALUE_SEPARATOR)))
                     .collect(joining("\n"));

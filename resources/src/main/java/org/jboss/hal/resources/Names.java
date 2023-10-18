@@ -220,6 +220,7 @@ public interface Names {
     String MANAGEMENT_MODEL = "Management Model";
     String MANAGEMENT_OPERATIONS = "Management Operations";
     String MANIFEST = "Manifest";
+    String MAPPED_ROLE_MAPPER = "Mapped Role Mapper";
     String MAPPERS_DECODERS = "Mappers / Decoders";
     String MAPPING_MODULE = "Mapping Module";
     String PRIMARY = "Primary";

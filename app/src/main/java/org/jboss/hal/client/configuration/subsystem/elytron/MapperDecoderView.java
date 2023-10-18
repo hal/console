@@ -45,7 +45,16 @@ import static org.jboss.elemento.Elements.p;
 import static org.jboss.elemento.Elements.section;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.CONSTANT_PERMISSION_MAPPER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.MAPPED_ROLE_MAPPER_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CLASS_NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CONSTANT_PERMISSION_MAPPER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.FROM;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MAPPED_ROLE_MAPPER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MODULE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PERMISSIONS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ROLE_MAP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TABLE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TO;
 import static org.jboss.hal.resources.Ids.FORM;
 import static org.jboss.hal.resources.Ids.ITEM;
 import static org.jboss.hal.resources.Ids.build;
@@ -143,7 +152,8 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
                 .build();
 
         mappedRoleMapperForm = new ModelNodeForm.Builder<NamedNode>(build(mappedId, FORM), mappedMetadata)
-                .customFormItem(ROLE_MAP, desc -> new RoleMapListItem(ROLE_MAP, labelBuilder.label(ROLE_MAP)))
+                .customFormItem(ROLE_MAP, (desc) -> new MultiValueListItem(ROLE_MAP, FROM, TO))
+                // .customFormItem(ROLE_MAP, desc -> new RoleMapListItem(ROLE_MAP, labelBuilder.label(ROLE_MAP)))
                 .onSave((form, changedValues) -> {
                     String name = form.getModel().getName();
                     ResourceAddress address = MAPPED_ROLE_MAPPER_TEMPLATE.resolve(mbuiContext.statementContext(), name);
@@ -152,8 +162,8 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
                 .build();
 
         HTMLElement mappedSection = section()
-                .add(h(1).textContent(Names.SIMPLE_PERMISSION_MAPPER))
-                .add(p().textContent(metadata.getDescription().getDescription()))
+                .add(h(1).textContent(Names.MAPPED_ROLE_MAPPER))
+                .add(p().textContent(mappedMetadata.getDescription().getDescription()))
                 .add(mappedRoleMapperTable)
                 .add(mappedRoleMapperForm).element();
 
