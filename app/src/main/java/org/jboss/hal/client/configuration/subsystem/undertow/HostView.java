@@ -107,14 +107,6 @@ public class HostView extends HalViewImpl implements HostPresenter.MyView {
                         .add(p().textContent(metadata.getDescription().getDescription()))
                         .add(hostSettingForms.get(setting).element()));
 
-        setting = HostSetting.SINGLE_SIGN_ON;
-        metadata = metadataRegistry.lookup(HOST_TEMPLATE.append(setting.templateSuffix()));
-        navigation.addPrimary(Ids.build(setting.baseId, Ids.ITEM), setting.type, setting.icon,
-                section()
-                        .add(h(1).textContent(setting.type))
-                        .add(p().textContent(metadata.getDescription().getDescription()))
-                        .add(hostSettingForms.get(setting).element()));
-
         registerAttachable(navigation, configurationForm, consoleAccessLogKeysForm);
         registerAttachables(hostSettingForms.values());
 
