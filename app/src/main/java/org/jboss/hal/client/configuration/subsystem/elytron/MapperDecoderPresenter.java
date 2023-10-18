@@ -82,11 +82,13 @@ import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTempla
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.X500_ATTRIBUTE_PRINCIPAL_DECODER_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.X500_SUBJECT_EVIDENCE_DECODER_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.X509_SUBJECT_ALT_NAME_EVIDENCE_DECODER_ADDRESS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.FROM;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MAPPED_ROLE_MAPPER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PERMISSIONS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PERMISSION_MAPPINGS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ROLE_MAP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TO;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 
 public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter.MyView, MapperDecoderPresenter.MyProxy>
@@ -273,7 +275,8 @@ public class MapperDecoderPresenter extends MbuiPresenter<MapperDecoderPresenter
         String id = Ids.build(Ids.ELYTRON_MAPPED_ROLE_MAPPER, Ids.ADD);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
                 .unboundFormItem(new NameItem(), 0)
-                .customFormItem(ROLE_MAP, desc -> new RoleMapListItem(ROLE_MAP, new LabelBuilder().label(ROLE_MAP)))
+                // .customFormItem(ROLE_MAP, desc -> new RoleMapListItem(ROLE_MAP, new LabelBuilder().label(ROLE_MAP)))
+                .customFormItem(ROLE_MAP, (desc) -> new MultiValueListItem(ROLE_MAP, FROM, TO))
                 .addOnly()
                 .build();
         String title = new LabelBuilder().label(MAPPED_ROLE_MAPPER);
