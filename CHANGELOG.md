@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.6.16] - 2023-10-18
+
 ### Fixed
 
 - [HAL-1914](https://issues.redhat.com/browse/HAL-1914): Unable to create/edit Elytron mapped-role-mapper
@@ -539,7 +541,8 @@ Release process failed. Do not use this release!
 - for dependency upgrades
 -->
 
-[Unreleased]: https://github.com/hal/console/compare/v3.6.15...HEAD
+[Unreleased]: https://github.com/hal/console/compare/v3.6.16...HEAD
+[3.6.16]: https://github.com/hal/console/compare/v3.6.15...v3.6.16
 [3.6.15]: https://github.com/hal/console/compare/v3.6.14...v3.6.15
 [3.6.14]: https://github.com/hal/console/compare/v3.6.13...v3.6.14
 [3.6.13]: https://github.com/hal/console/compare/v3.6.12...v3.6.13
