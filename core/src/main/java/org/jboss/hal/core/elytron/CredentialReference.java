@@ -86,7 +86,16 @@ public class CredentialReference {
     public Form<ModelNode> form(String baseId, Metadata metadata, String alternativeName,
             Supplier<String> alternativeValue, Supplier<ResourceAddress> address, Callback callback) {
 
-        return form(baseId, metadata, CREDENTIAL_REFERENCE, alternativeName, alternativeValue, address, callback);
+        return form(baseId, metadata, CREDENTIAL_REFERENCE, alternativeName, alternativeValue, null, address, null, callback);
+    }
+
+    /**
+     * @see CredentialReference#form(String, Metadata, String, String, Supplier, Supplier, Supplier, Callback, Callback)
+     */
+
+    public Form<ModelNode> form(String baseId, Metadata metadata, String crName, String alternativeName,
+            Supplier<String> alternativeValue, Supplier<ResourceAddress> address, Callback callback) {
+        return form(baseId, metadata, crName, alternativeName, alternativeValue, null, address, null, callback);
     }
 
     /**
@@ -98,12 +107,15 @@ public class CredentialReference {
      * @param crName the name of the credential-reference complex attribute
      * @param alternativeName the name of the alternative attribute
      * @param alternativeValue the value of the alternative attribute
+     * @param ping the operation to check the presence of the credential reference
      * @param address the fully qualified address of the resource used for the CRUD actions
+     * @param emptyAction the action to perform to add a credential reference from an empty state
      * @param callback the callback executed after the {@code credential-reference} attributes has been added, saved, reset or
      *        removed
      */
     public Form<ModelNode> form(String baseId, Metadata metadata, String crName, String alternativeName,
-            Supplier<String> alternativeValue, Supplier<ResourceAddress> address, Callback callback) {
+            Supplier<String> alternativeValue, Supplier<Operation> ping, Supplier<ResourceAddress> address,
+            Callback emptyAction, Callback callback) {
 
         String credentialReferenceName = crName == null ? CREDENTIAL_REFERENCE : crName;
         Metadata crMetadata = metadata.forComplexAttribute(credentialReferenceName);
@@ -112,24 +124,26 @@ public class CredentialReference {
                 Ids.build(baseId, credentialReferenceName, Ids.FORM, Ids.EMPTY),
                 resources.constants().noResource());
 
+        Callback defaultEmptyAction = () -> {
+            if (alternativeName != null && alternativeValue != null &&
+                    !Strings.isNullOrEmpty(alternativeValue.get())) {
+                String alternativeLabel = new LabelBuilder().label(alternativeName);
+                DialogFactory.showConfirmation(
+                        resources.messages().addResourceTitle(Names.CREDENTIAL_REFERENCE),
+                        resources.messages().credentialReferenceAddConfirmation(alternativeLabel),
+                        () -> setTimeout(
+                                o -> addCredentialReference(baseId, crMetadata, credentialReferenceName,
+                                        alternativeName,
+                                        address, callback),
+                                SHORT_TIMEOUT));
+            } else {
+                addCredentialReference(baseId, crMetadata, credentialReferenceName, null, address,
+                        callback);
+            }
+        };
+
         if (crMetadata.getSecurityContext().isWritable()) {
-            emptyStateBuilder.primaryAction(resources.constants().add(), () -> {
-                if (alternativeName != null && alternativeValue != null &&
-                        !Strings.isNullOrEmpty(alternativeValue.get())) {
-                    String alternativeLabel = new LabelBuilder().label(alternativeName);
-                    DialogFactory.showConfirmation(
-                            resources.messages().addResourceTitle(Names.CREDENTIAL_REFERENCE),
-                            resources.messages().credentialReferenceAddConfirmation(alternativeLabel),
-                            () -> setTimeout(
-                                    o -> addCredentialReference(baseId, crMetadata, credentialReferenceName,
-                                            alternativeName,
-                                            address, callback),
-                                    SHORT_TIMEOUT));
-                } else {
-                    addCredentialReference(baseId, crMetadata, credentialReferenceName, null, address,
-                            callback);
-                }
-            },
+            emptyStateBuilder.primaryAction(resources.constants().add(), emptyAction == null ? defaultEmptyAction : emptyAction,
                     Constraint.executable(metadata.getTemplate(), ADD))
                     .description(resources.messages().noResource());
         } else {
@@ -137,21 +151,21 @@ public class CredentialReference {
         }
         EmptyState noCredentialReference = emptyStateBuilder.build();
 
+        Supplier<Operation> defaultPing = () -> {
+            ResourceAddress fqAddress = address.get();
+            Operation operation = null;
+            if (fqAddress != null && crMetadata.getSecurityContext().isReadable()) {
+                operation = new Operation.Builder(address.get(), READ_ATTRIBUTE_OPERATION)
+                        .param(NAME, credentialReferenceName).build();
+            }
+            return operation;
+        };
+
         ModelNodeForm.Builder<ModelNode> formBuilder = new ModelNodeForm.Builder<>(
                 Ids.build(baseId, credentialReferenceName, Ids.FORM), crMetadata)
                 .include(STORE, ALIAS, CLEAR_TEXT, TYPE)
                 .unsorted()
-                .singleton(
-                        () -> {
-                            ResourceAddress fqAddress = address.get();
-                            Operation operation = null;
-                            if (fqAddress != null && crMetadata.getSecurityContext().isReadable()) {
-                                operation = new Operation.Builder(address.get(), READ_ATTRIBUTE_OPERATION)
-                                        .param(NAME, credentialReferenceName).build();
-                            }
-                            return operation;
-                        },
-                        noCredentialReference)
+                .singleton(ping == null ? defaultPing : ping, noCredentialReference)
                 .onSave(((f, changedValues) -> {
                     ResourceAddress fqa = address.get();
                     if (fqa != null) {

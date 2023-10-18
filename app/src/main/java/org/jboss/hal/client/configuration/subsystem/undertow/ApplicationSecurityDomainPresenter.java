@@ -187,7 +187,7 @@ public class ApplicationSecurityDomainPresenter extends
     }
 
     ResourceAddress resolveSingleSignOn() {
-        return SELECTED_SINGLE_SIGN_ON_TEMPLATE.resolve(statementContext);
+        return SELECTED_APPLICATION_SECURITY_DOMAIN_TEMPLATE.resolve(statementContext);
     }
 
     void addSingleSignOn() {
