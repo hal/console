@@ -11,6 +11,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - [HAL-1914](https://issues.redhat.com/browse/HAL-1914): Unable to create/edit Elytron mapped-role-mapper
 - [HAL-1929](https://issues.redhat.com/browse/HAL-1929): Undertow single-sign-on settings should be removed from Web
+- [HAL-1936](https://issues.redhat.com/browse/HAL-1936): Application Security Domain (Undertow) - credential reference
+  not handled correctly
   Console
 
 ### Upgrades
