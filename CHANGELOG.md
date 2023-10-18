@@ -7,6 +7,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- [HAL-1914](https://issues.redhat.com/browse/HAL-1914): Unable to create/edit Elytron mapped-role-mapper
+- [HAL-1929](https://issues.redhat.com/browse/HAL-1929): Undertow single-sign-on settings should be removed from Web
+  Console
+
+### Upgrades
+
+- Bump ACE editor to 1.30.0
+- Bump Elemento to 1.1.4
+- Bump JBoss parent to 40
+- Bump Mockito to 5.6.0
+- Bump Parcel to 2.10.0
+- Bump Quarkus to 3.4.2
+
 ## [3.6.15] - 2023-09-25
 
 ### Changed
