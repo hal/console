@@ -42,7 +42,7 @@ enum ThreadPool {
 
     NON_BLOCKING(Ids.CACHE_CONTAINER_THREAD_POOL_NON_BLOCKING,
             Names.NON_BLOCKING, ModelDescriptionConstants.NON_BLOCKING, false),
-    ;
+            ;
 
     final String baseId;
     final String type;

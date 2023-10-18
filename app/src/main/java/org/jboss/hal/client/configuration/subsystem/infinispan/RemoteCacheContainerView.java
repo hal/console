@@ -17,8 +17,6 @@ package org.jboss.hal.client.configuration.subsystem.infinispan;
 
 import javax.inject.Inject;
 
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.table.Table;
@@ -34,7 +32,12 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+
+import elemental2.dom.HTMLElement;
+
 import static java.util.stream.Collectors.joining;
+
 import static org.jboss.elemento.Elements.h;
 import static org.jboss.elemento.Elements.p;
 import static org.jboss.elemento.Elements.section;
@@ -87,7 +90,7 @@ public class RemoteCacheContainerView extends HalViewImpl implements RemoteCache
                     ModelNode socketBindings = row.get(SOCKET_BINDINGS);
                     if (socketBindings.isDefined()) {
                         return SafeHtmlUtils.fromString(
-                                        socketBindings.asList().stream().map(ModelNode::asString).collect(joining(", ")))
+                                socketBindings.asList().stream().map(ModelNode::asString).collect(joining(", ")))
                                 .asString();
                     }
                     return "";

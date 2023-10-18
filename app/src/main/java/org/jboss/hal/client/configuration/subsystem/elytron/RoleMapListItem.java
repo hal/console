@@ -19,9 +19,6 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.regexp.shared.RegExp;
-import elemental2.dom.HTMLElement;
 import org.jboss.hal.ballroom.form.ModelNodeItem;
 import org.jboss.hal.ballroom.form.TagsItem;
 import org.jboss.hal.ballroom.form.TagsManager;
@@ -29,10 +26,16 @@ import org.jboss.hal.ballroom.form.TagsMapping;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.resources.Messages;
 
-import static elemental2.dom.DomGlobal.document;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.regexp.shared.RegExp;
+
+import elemental2.dom.HTMLElement;
+
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
+
+import static elemental2.dom.DomGlobal.document;
 import static org.jboss.hal.ballroom.form.Decoration.DEFAULT;
 import static org.jboss.hal.ballroom.form.Decoration.DEPRECATED;
 import static org.jboss.hal.ballroom.form.Decoration.ENABLED;
