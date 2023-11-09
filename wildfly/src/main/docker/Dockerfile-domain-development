@@ -22,7 +22,6 @@ ENV JBOSS_HOME /opt/jboss/wildfly
 ARG WILDFLY_VERSION
 COPY wildfly-${WILDFLY_VERSION}.tar.gz /
 
-
 USER root
 ARG WILDFLY_VERSION
 RUN tar xf /wildfly-${WILDFLY_VERSION}.tar.gz --directory=/ \

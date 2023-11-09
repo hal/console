@@ -175,9 +175,9 @@ else
   if [[ "$WILDFLY_MAJOR_VERSION" -lt "24" ]]; then
     BASE=docker.io/jboss/wildfly
   fi
-  # Use JDK17 for for WildFly 27 and above
+  # Use JDK suffix for for WildFly 27 and above
   if [[ "$WILDFLY_MAJOR_VERSION" -gt "26" ]]; then
-    WILDFLY_VERSION=$WILDFLY_VERSION-jdk17
+    WILDFLY_VERSION=$WILDFLY_VERSION-jdk11
   fi
 
   msg
@@ -185,7 +185,7 @@ else
   ${DOCKER} build \
     --platform linux/amd64 \
     --build-arg WILDFLY_VERSION="${WILDFLY_VERSION}" \
-    --build-arg DOCKER_BASE="${BASE}" \
+    --build-arg WILDFLY_BASE="${BASE}" \
     --file src/main/docker/Dockerfile-standalone \
     --tag "${TAG}:${TAG_VERSION}" \
     .
@@ -195,7 +195,7 @@ else
   ${DOCKER} build \
     --platform linux/amd64 \
     --build-arg WILDFLY_VERSION="${WILDFLY_VERSION}" \
-    --build-arg DOCKER_BASE="${BASE}" \
+    --build-arg WILDFLY_BASE="${BASE}" \
     --file src/main/docker/Dockerfile-domain \
     --tag "${TAG_DOMAIN}:${TAG_VERSION}" \
     .

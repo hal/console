@@ -15,8 +15,8 @@
 #
 
 ARG WILDFLY_VERSION=latest
-ARG DOCKER_BASE=jboss/wildfly
-FROM ${DOCKER_BASE}:${WILDFLY_VERSION}
+ARG WILDFLY_BASE=jboss/wildfly
+FROM ${WILDFLY_BASE}:${WILDFLY_VERSION}
 
 LABEL maintainer="Harald Pehl <hpehl@redhat.com>"
 
