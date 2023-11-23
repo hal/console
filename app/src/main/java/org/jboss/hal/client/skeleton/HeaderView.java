@@ -244,7 +244,9 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
                                                 .add(span()
                                                         .css(fontAwesome("bell"))
                                                         .style("padding-right: 0"))
-                                                .add(badgeIcon = span().css(badge).id(Ids.BADEGE_ICON).element())
+                                                .add(badgeIcon = span().css(badge).id(Ids.BADGE_ICON)
+                                                        .textContent(" ") // badge content can't be empty
+                                                        .element())
                                                 .element()))
                                 .add(li().css(dropdown)
                                         .add(a().css(clickable, dropdownToggle).data(TOGGLE, DROPDOWN)
