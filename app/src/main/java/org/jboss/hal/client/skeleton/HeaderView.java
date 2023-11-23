@@ -83,6 +83,7 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
 
     private static final Logger logger = LoggerFactory.getLogger(HeaderView.class);
     private static final PlaceRequest HOMEPAGE = new PlaceRequest.Builder().nameToken(NameTokens.HOMEPAGE).build();
+    private static final String SPACE = " ";
 
     private final Places places;
     private final Resources resources;
@@ -178,7 +179,9 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
                                                 .add(span()
                                                         .css(fontAwesome("bell"))
                                                         .style("padding-right: 0"))
-                                                .add(badgeIcon = span().css(badge).id(Ids.BADEGE_ICON).element())
+                                                .add(badgeIcon = span().css(badge).id(Ids.BADGE_ICON)
+                                                        .textContent(SPACE) // badge content can't be empty
+                                                        .element())
                                                 .element()))
                                 .add(li().css(dropdown, hidden).id(Ids.HEADER_EXTENSIONS_DROPDOWN)
                                         .add(a().css(clickable, dropdownToggle)
@@ -245,7 +248,7 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
                                 .add(backItem = li()
                                         .add(backLink = a().css(clickable, back)
                                                 .add(i().css(fontAwesome("angle-double-left")))
-                                                .add(" " + resources.constants().back())
+                                                .add(SPACE + resources.constants().back())
                                                 .element())
                                         .element())
                                 .add(breadcrumbToolsItem = li().css(breadcrumbTools)
@@ -635,11 +638,11 @@ public class HeaderView extends HalViewImpl implements HeaderPresenter.MyView {
                 String breadcrumbValue = segment.getItemTitle();
                 if (breadcrumbValue.length() > MAX_BREADCRUMB_VALUE_LENGTH) {
                     a.appendChild(span()
-                            .textContent(abbreviateMiddle(breadcrumbValue, MAX_BREADCRUMB_VALUE_LENGTH) + " ")
+                            .textContent(abbreviateMiddle(breadcrumbValue, MAX_BREADCRUMB_VALUE_LENGTH) + SPACE)
                             .title(breadcrumbValue)
                             .element());
                 } else {
-                    a.appendChild(span().textContent(breadcrumbValue + " ").element());
+                    a.appendChild(span().textContent(breadcrumbValue + SPACE).element());
                 }
                 a.appendChild(span().css(caret).element());
                 value.appendChild(ul()

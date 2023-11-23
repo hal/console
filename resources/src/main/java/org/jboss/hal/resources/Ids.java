@@ -55,7 +55,7 @@ public interface Ids {
     String ASSIGNMENT_EXCLUDE = "assignement-exclude";
     String ASSIGNMENT_INCLUDE = "assignement-include";
     String ATTRIBUTES = "attributes";
-    String BADEGE_ICON = "badge-icon";
+    String BADGE_ICON = "badge-icon";
     String BOOT_ERRORS_ADDRESS_COLUMN = "boot-errors-address-column";
     String BOOT_ERRORS_EMPTY = "boot-errors-empty";
     String BOOT_ERRORS_FORM = "boot-errors-form";
