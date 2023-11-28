@@ -212,27 +212,7 @@
                 <metadata address="/{selected.profile}/subsystem=ejb3/service=timer-service">
                     <h1>Timer</h1>
                     <p>${metadata.getDescription().getDescription()}</p>
-                    <form id="ejb3-service-timer-form" title="Timer" auto-save="true" reset="true">
-                        <attributes>
-                            <attribute name="default-data-store">
-                                <suggest-handler>
-                                    <templates>
-                                        <!-- @formatter:off -->
-                                        <template address="/{selected.profile}/subsystem=ejb3/service=timer-service/database-data-store=*"/>
-                                        <template address="/{selected.profile}/subsystem=ejb3/service=timer-service/file-data-store=*"/>
-                                        <!-- @formatter:on -->
-                                    </templates>
-                                </suggest-handler>
-                            </attribute>
-                            <attribute name="thread-pool-name">
-                                <suggest-handler>
-                                    <templates>
-                                        <template address="/{selected.profile}/subsystem=ejb3/thread-pool=*"/>
-                                    </templates>
-                                </suggest-handler>
-                            </attribute>
-                        </attributes>
-                    </form>
+                    <form id="ejb3-service-timer-form" title="Timer" auto-save="true" reset="true" />
                 </metadata>
             </sub-item>
         </item>
