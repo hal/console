@@ -213,6 +213,7 @@ public interface ModelDescriptionConstants {
     String CREATE_ACCOUNT = "create-account";
     String CREATE_ADDRESS = "createAddress"; // no typo!
     String CREATE_DURABLE_QUEUE = "create-durable-queue";
+    String CREATE_EXPRESSION = "create-expression";
     String CREATE_NON_DURABLE_QUEUE = "create-non-durable-queue";
     String CREATE_TIME = "create-time";
     String CREATION_TIME = "creation-time";
@@ -251,6 +252,7 @@ public interface ModelDescriptionConstants {
     String DEFAULT_JOB_REPOSITORY = "default-job-repository";
     String DEFAULT_REALM = "default-realm";
     String DEFAULT_REMOTE_CLUSTER = "default-remote-cluster";
+    String DEFAULT_RESOLVER = "default-resolver";
     String DEFAULT_SECURITY_DOMAIN = "default-security-domain";
     String DEFAULT_SFSB_CACHE = "default-sfsb-cache";
     String DEFAULT_SFSB_PASSIVATION_DISABLED_CACHE = "default-sfsb-passivation-disabled-cache";

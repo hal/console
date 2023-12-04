@@ -34,16 +34,19 @@ import org.jboss.hal.spi.MessageEvent;
 import com.google.web.bindery.event.shared.EventBus;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CREATE_EXPRESSION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT_RESOLVER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ENCRYPTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.EXPRESSION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESOLVERS;
 
+
+
 public class ExpressionEncryptor implements EncryptExpressionEvent.EncryptExpressionHandler {
 
     private static final ResourceAddress ELYTRON_ADDRESS = ResourceAddress.from("subsystem=elytron");
-
     private static final ResourceAddress EXPRESSION_ADDRESS = ResourceAddress.from("subsystem=elytron/expression=encryption");
 
     private final EventBus eventBus;
@@ -86,7 +89,7 @@ public class ExpressionEncryptor implements EncryptExpressionEvent.EncryptExpres
                     List<String> resolverNames = result.get(ENCRYPTION).get(RESOLVERS)
                             .asList().stream().map(r -> r.get(NAME).asString())
                             .collect(Collectors.toList());
-                    boolean hasDefaultResolver = result.hasDefined("default-resolver");
+                    boolean hasDefaultResolver = result.hasDefined(DEFAULT_RESOLVER);
                     showDialog(resolverNames, hasDefaultResolver);
                 },
                 (op1, error) -> showEmptyDialog());
@@ -102,7 +105,7 @@ public class ExpressionEncryptor implements EncryptExpressionEvent.EncryptExpres
 
     void saveEncryption(ModelNode payload) {
 
-        Operation operation = new Operation.Builder(EXPRESSION_ADDRESS, "create-expression")
+        Operation operation = new Operation.Builder(EXPRESSION_ADDRESS, CREATE_EXPRESSION)
                 .payload(payload)
                 .build();
         dispatcher.execute(operation,
