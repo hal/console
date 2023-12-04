@@ -39,15 +39,13 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.EXPRESSION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESOLVERS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT_RESOLVER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CREATE_EXPRESSION;
 
 public class ExpressionEncryptor implements EncryptExpressionEvent.EncryptExpressionHandler {
 
     private static final ResourceAddress ELYTRON_ADDRESS = ResourceAddress.from("subsystem=elytron");
-
     private static final ResourceAddress EXPRESSION_ADDRESS = ResourceAddress.from("subsystem=elytron/expression=encryption");
-
-    private static final String DEFAULT_RESOLVER = "default-resolver";
-    private static final String CREATE_EXPRESSION = "create-expression";
 
     private final EventBus eventBus;
     private final Environment environment;

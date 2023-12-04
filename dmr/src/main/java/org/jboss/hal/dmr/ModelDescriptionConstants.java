@@ -236,6 +236,8 @@ public interface ModelDescriptionConstants {
     String CUSTOM_ROLE_DECODER = "custom-role-decoder";
     String CUSTOM_ROLE_MAPPER = "custom-role-mapper";
     String CUSTOM_SECURITY_EVENT_LISTENER = "custom-security-event-listener";
+    String DEFAULT_RESOLVER = "default-resolver";
+    String CREATE_EXPRESSION = "create-expression";
     String DATA_COLUMN = "data-column";
     String DATA_SOURCE = "data-source";
     String DATASOURCE_CLASS = "datasource-class";
