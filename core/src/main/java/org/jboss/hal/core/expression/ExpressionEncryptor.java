@@ -34,13 +34,15 @@ import org.jboss.hal.spi.MessageEvent;
 import com.google.web.bindery.event.shared.EventBus;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CREATE_EXPRESSION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT_RESOLVER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ENCRYPTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.EXPRESSION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESOLVERS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT_RESOLVER;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.CREATE_EXPRESSION;
+
+
 
 public class ExpressionEncryptor implements EncryptExpressionEvent.EncryptExpressionHandler {
 
