@@ -46,6 +46,9 @@ public class ExpressionEncryptor implements EncryptExpressionEvent.EncryptExpres
 
     private static final ResourceAddress EXPRESSION_ADDRESS = ResourceAddress.from("subsystem=elytron/expression=encryption");
 
+    private static final String DEFAULT_RESOLVER = "default-resolver";
+    private static final String CREATE_EXPRESSION = "create-expression";
+
     private final EventBus eventBus;
     private final Environment environment;
     private final Dispatcher dispatcher;
@@ -86,7 +89,7 @@ public class ExpressionEncryptor implements EncryptExpressionEvent.EncryptExpres
                     List<String> resolverNames = result.get(ENCRYPTION).get(RESOLVERS)
                             .asList().stream().map(r -> r.get(NAME).asString())
                             .collect(Collectors.toList());
-                    boolean hasDefaultResolver = result.hasDefined("default-resolver");
+                    boolean hasDefaultResolver = result.hasDefined(DEFAULT_RESOLVER);
                     showDialog(resolverNames, hasDefaultResolver);
                 },
                 (op1, error) -> showEmptyDialog());
@@ -102,7 +105,7 @@ public class ExpressionEncryptor implements EncryptExpressionEvent.EncryptExpres
 
     void saveEncryption(ModelNode payload) {
 
-        Operation operation = new Operation.Builder(EXPRESSION_ADDRESS, "create-expression")
+        Operation operation = new Operation.Builder(EXPRESSION_ADDRESS, CREATE_EXPRESSION)
                 .payload(payload)
                 .build();
         dispatcher.execute(operation,
