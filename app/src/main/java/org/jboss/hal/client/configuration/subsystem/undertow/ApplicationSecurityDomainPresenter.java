@@ -180,14 +180,14 @@ public class ApplicationSecurityDomainPresenter extends
     // ------------------------------------------------------ single sign on
 
     Operation checkSingleSignOn() {
-        ResourceAddress address = resolveSingleSignOn();
+        ResourceAddress address = resourceAddress();
         return new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
                 .param(CHILD_TYPE, SETTING)
                 .build();
     }
 
     ResourceAddress resolveSingleSignOn() {
-        return SELECTED_APPLICATION_SECURITY_DOMAIN_TEMPLATE.resolve(statementContext);
+        return SELECTED_SINGLE_SIGN_ON_TEMPLATE.resolve(statementContext);
     }
 
     void addSingleSignOn() {
