@@ -26,10 +26,10 @@ import static org.junit.Assert.assertTrue;
 
 public class ConstraintsTest {
 
-    private static final Constraint ENGAGE = Constraint.executable(AddressTemplate.of("j/l/p"), "engage");
-    private static final Constraint NCC = Constraint.writable(AddressTemplate.of("da/ta"), "NCC-1701-D");
-    private static final String ENGAGE_DATA = "executable(j/l/p:engage)";
-    private static final String NCC_DATA = "writable(da/ta@NCC-1701-D)";
+    private static final Constraint ENGAGE = Constraint.executable(AddressTemplate.of("j=o/l=k/p=z"), "engage");
+    private static final Constraint NCC = Constraint.writable(AddressTemplate.of("da=ta/ta=da"), "NCC-1701-D");
+    private static final String ENGAGE_DATA = "executable(j=o/l=k/p=z:engage)";
+    private static final String NCC_DATA = "writable(da=ta/ta=da@NCC-1701-D)";
     private static final String AND_DATA = ENGAGE_DATA + "&" + NCC_DATA;
     private static final String OR_DATA = ENGAGE_DATA + "|" + NCC_DATA;
 
