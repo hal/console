@@ -251,8 +251,11 @@ public abstract class AbstractDeploymentColumn<T extends Content> extends Finder
 
         COLUMN_UPLOAD_ACTION = createColumnAction(columnProps.actionDeploymentId, columnProps.actionDeploymentTitle,
                 column -> uploadDeployment());
-        COLUMN_ADD_UNMANAGED_ACTION = createColumnAction(columnProps.actionUnmanagedId,
-                resources.messages().addResourceTitle(Names.UNMANAGED_DEPLOYMENT), column -> addUnmanaged());
+        COLUMN_ADD_UNMANAGED_ACTION = new ColumnAction.Builder<T>(columnProps.actionUnmanagedId)
+                .title(Names.UNMANAGED_DEPLOYMENT)
+                .handler(column -> addUnmanaged())
+                .constraint(Constraint.executable(DEPLOYMENT_TEMPLATE, ADD))
+                .build();
         COLUMN_ADD_EMPTY_ACTION = createColumnAction(Ids.DEPLOYMENT_EMPTY_CREATE, resources.constants().deploymentEmptyCreate(),
                 column -> createEmpty());
         COLUMN_ADD_FROM_REPOSITORY_ACTION = createColumnAction(Ids.SERVER_GROUP_DEPLOYMENT_ADD,
@@ -607,11 +610,11 @@ public abstract class AbstractDeploymentColumn<T extends Content> extends Finder
 
     /* unmanaged deployment */
     protected void addUnmanaged() {
-        Metadata metadata = metadataRegistry.lookup(columnProps.template);
+        Metadata metadata = metadataRegistry.lookup(DEPLOYMENT_TEMPLATE);
         AddUnmanagedDialog dialog = new AddUnmanagedDialog(metadata, resources,
                 (name, model) -> {
                     if (model != null) {
-                        String runtimeName = model.get(RUNTIME_NAME).asString();
+                        String runtimeName = model.hasDefined(RUNTIME_NAME) ? model.get(RUNTIME_NAME).asString() : null;
                         List<Task<FlowContext>> tasks = new ArrayList<>();
                         tasks.add(new DeploymentTasks.AddUnmanagedDeployment(dispatcher, name, model));
                         if (columnProps.columnType == ColumnType.SERVER_GROUP) {
@@ -622,6 +625,12 @@ public abstract class AbstractDeploymentColumn<T extends Content> extends Finder
                                     refreshByName(name);
                                     MessageEvent.fire(eventBus, Message.success(resources.messages()
                                             .addResourceSuccess(Names.UNMANAGED_DEPLOYMENT, name)));
+                                    return null;
+                                })
+                                .catch_(error -> {
+                                    MessageEvent.fire(eventBus,
+                                            Message.error(columnProps.getDeploymentErrorText.apply(name),
+                                                    String.valueOf(error)));
                                     return null;
                                 });
                     }
@@ -857,6 +866,12 @@ public abstract class AbstractDeploymentColumn<T extends Content> extends Finder
                                 refresh(CLEAR_SELECTION);
                                 MessageEvent.fire(eventBus,
                                         Message.success(resources.messages().contentDeployed1(content.getName())));
+                            }, (__, error) -> {
+                                if (enable) {
+                                    ItemMonitor.stopProgress(Ids.content(cnt.getName()));
+                                }
+                                MessageEvent.fire(eventBus,
+                                        Message.error(columnProps.getDeploymentErrorText.apply(content.getName()), error));
                             });
                         }).show();
             }
