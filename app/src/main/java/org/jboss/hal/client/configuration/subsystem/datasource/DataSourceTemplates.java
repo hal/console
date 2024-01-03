@@ -37,7 +37,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 public class DataSourceTemplates implements Iterable<DataSourceTemplate> {
 
     private static final String ADMIN = "admin";
-    private static final String DATABASE_NAME = "DatabaseName";
+    private static final String DATABASE_NAME = "<DatabaseName>";
     private static final String H2 = "h2";
     private static final String LOCALHOST = "localhost";
     private static final String MARIADB = "mariadb";
