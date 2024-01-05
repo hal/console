@@ -23,11 +23,11 @@ import static org.junit.Assert.assertEquals;
 
 public class ConstraintTest {
 
-    private static final AddressTemplate TEMPLATE = AddressTemplate.of("j/l/p");
+    private static final AddressTemplate TEMPLATE = AddressTemplate.of("j=o/l=o/p=o");
     private static final String OPERATION = "engage";
     private static final String ATTRIBUTE = "NCC-1701-D";
-    private static final String ENGAGE_DATA = "executable(j/l/p:engage)";
-    private static final String NCC_DATA = "writable(j/l/p@NCC-1701-D)";
+    private static final String ENGAGE_DATA = "executable(j=o/l=o/p=o:engage)";
+    private static final String NCC_DATA = "writable(j=o/l=o/p=o@NCC-1701-D)";
 
     private Constraint ex, wr;
 
