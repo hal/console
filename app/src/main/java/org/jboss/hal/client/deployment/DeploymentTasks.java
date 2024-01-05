@@ -47,6 +47,7 @@ import org.jboss.hal.spi.MessageEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.EventBus;
@@ -250,7 +251,7 @@ class DeploymentTasks {
         }
     }
 
-    /** Deploys the specified content to the specified server group. The deployment is not enable on the server group. */
+    /** Deploys the specified content to the specified server group. The deployment will be enabled on the server group. */
     static final class AddServerGroupDeployment implements Task<FlowContext> {
 
         private final Environment environment;
@@ -282,10 +283,12 @@ class DeploymentTasks {
                 ResourceAddress address = new ResourceAddress()
                         .add(SERVER_GROUP, serverGroup)
                         .add(DEPLOYMENT, name);
-                Operation operation = new Operation.Builder(address, ADD)
-                        .param(RUNTIME_NAME, runtimeName)
-                        .param(ENABLED, true)
-                        .build();
+                Operation.Builder builder = new Operation.Builder(address, ADD)
+                        .param(ENABLED, true);
+                if (!Strings.isNullOrEmpty(runtimeName)) {
+                    builder.param(RUNTIME_NAME, runtimeName);
+                }
+                Operation operation = builder.build();
                 return dispatcher.execute(operation).then(__ -> Promise.resolve(context));
             }
         }
@@ -465,14 +468,15 @@ class DeploymentTasks {
 
             if (replace) {
                 builder = new Operation.Builder(ResourceAddress.root(), FULL_REPLACE_DEPLOYMENT) // NON-NLS
-                        .param(NAME, name)
-                        .param(RUNTIME_NAME, runtimeName);
+                        .param(NAME, name);
                 // leave "enabled" as undefined to indicate that the state of the existing deployment should be retained
             } else {
                 builder = new Operation.Builder(new ResourceAddress().add(DEPLOYMENT, name), ADD)
-                        .param(RUNTIME_NAME, runtimeName)
                         .param(ENABLED, enabled);
 
+            }
+            if (!Strings.isNullOrEmpty(runtimeName)) {
+                builder.param(RUNTIME_NAME, runtimeName);
             }
             Operation operation = builder.build();
             operation.get(CONTENT).add().get(INPUT_STREAM_INDEX).set(0); // NON-NLS
