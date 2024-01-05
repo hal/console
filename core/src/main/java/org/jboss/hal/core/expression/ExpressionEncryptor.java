@@ -42,8 +42,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESOLVERS;
 
-
-
 public class ExpressionEncryptor implements EncryptExpressionEvent.EncryptExpressionHandler {
 
     private static final ResourceAddress ELYTRON_ADDRESS = ResourceAddress.from("subsystem=elytron");
