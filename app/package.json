@@ -23,8 +23,8 @@
     "@parcel/reporter-cli": "^2.11.0",
     "@parcel/transformer-less": "^2.11.0",
     "copyfiles": "^2.4.1",
-    "parcel": "^2.10.3",
-    "@parcel/plugin": "^2.10.3",
+    "parcel": "^2.11.0",
+    "@parcel/plugin": "^2.11.0",
     "parcel-resolver-ignore": "^2.2.0",
     "parcel-resolver-theme": "file:local_modules/parcel-resolver-theme",
     "process": "^0.11.10"
