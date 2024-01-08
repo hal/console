@@ -18,6 +18,7 @@ package org.jboss.hal.client.installer;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
@@ -169,6 +170,11 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
                             .handler(itm -> revert(itm))
                             .constraint(Constraint.executable(INSTALLER_TEMPLATE, PREPARE_REVERT))
                             .build());
+                    actions.add(new ItemAction.Builder<UpdateItem>()
+                            .title("Revert using archives") // TODO i18n
+                            .handler(itm -> revertUsingArchives(itm))
+                            .constraint(Constraint.executable(INSTALLER_TEMPLATE, PREPARE_REVERT))
+                            .build());
                 }
                 return actions;
             }
@@ -240,6 +246,17 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
     }
 
     private void revert(UpdateItem updateItem) {
+        internalRevert(updateItem,
+                updates -> new RevertWizard(eventBus, dispatcher, statementContext, resources, updateItem, updates).show(this));
+    }
+
+    private void revertUsingArchives(UpdateItem updateItem) {
+        internalRevert(updateItem,
+                updates -> new RevertUsingArchivesWizard(eventBus, dispatcher, statementContext, resources, updateItem, updates)
+                        .show(this));
+    }
+
+    private void internalRevert(UpdateItem updateItem, Consumer<List<ModelNode>> updatesConsumer) {
         Operation operation = new Operation.Builder(AddressTemplates.INSTALLER_TEMPLATE.resolve(statementContext),
                 HISTORY_FROM_REVISION)
                 .param(REVISION, updateItem.getName())
@@ -256,7 +273,7 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
                                 .build();
                         dialog.show();
                     } else {
-                        new RevertWizard(eventBus, dispatcher, statementContext, resources, updateItem, updates).show(this);
+                        updatesConsumer.accept(updates);
                     }
                 }, (op, error) -> MessageEvent.fire(eventBus, Message.error(resources.messages().lastOperationFailed())));
     }
