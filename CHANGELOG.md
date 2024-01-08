@@ -7,6 +7,30 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- [HAL-1960](https://issues.redhat.com/browse/HAL-1960): Mark variable parts in attributes in the DB wizards
+- [HAL-1953](https://issues.redhat.com/browse/HAL-1953): Unable to add unamanaged deployment for server group
+- [HAL-1952](https://issues.redhat.com/browse/HAL-1952): Adding string constants have been used directly in the Encrypt
+  Expression code in the ExpressionEncryptor class
+- [HAL-1949](https://issues.redhat.com/browse/HAL-1949): Fix SSO address templates
+- [HAL-1947](https://issues.redhat.com/browse/HAL-1947): Fix timer-service attributes handling
+- [HAL-1945](https://issues.redhat.com/browse/HAL-1945): Fix notification badge visibility
+- [HAL-1906](https://issues.redhat.com/browse/HAL-1906): Encode prefix in data source pool name
+
+### Changed
+
+- [HAL-1894](https://issues.redhat.com/browse/HAL-1894): Change JVM for WildFly images to 11
+
+### Upgrades
+
+- Bump ACE editor to 1.32.3
+- Bump JBoss parent to 42
+- Bump Mockito to 5.8.0
+- Bump Moment to 2.30.0
+- Bump Quarkus to 3.6.0
+- Bump Parcel to 2.11.0
+
 ## [3.6.16] - 2023-10-18
 
 ### Fixed
