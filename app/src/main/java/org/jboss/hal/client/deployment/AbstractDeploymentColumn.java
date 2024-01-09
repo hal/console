@@ -149,6 +149,8 @@ public abstract class AbstractDeploymentColumn<T extends Content> extends Finder
     private final ItemAction<T> ITEM_EXPLODE_ACTION;
     private final ItemAction<T> ITEM_EXPLODE_SUBS_ACTION;
     private final ItemAction<T> ITEM_REMOVE_ACTION;
+
+    private final ItemAction<T> ITEM_REMOVE_LABEL_REMOVE_ACTION;
     private final ItemAction<T> ITEM_REPLACE_ACTION;
     private final ItemAction<T> ITEM_DEPLOY_ACTION;
     private final ItemAction<T> ITEM_UNDEPLOY_ACTION;
@@ -255,6 +257,7 @@ public abstract class AbstractDeploymentColumn<T extends Content> extends Finder
         ITEM_ENABLE_ACTION = createItemAction(resources.constants().enable(), this::enable, DEPLOY);
         ITEM_EXPLODE_ACTION = createItemAction(resources.constants().explode(), this::explode, EXPLODE);
         ITEM_REMOVE_ACTION = createItemAction(resources.constants().undeploy(), this::remove, REMOVE);
+        ITEM_REMOVE_LABEL_REMOVE_ACTION = createItemAction(resources.constants().remove(), this::remove, REMOVE);
         ITEM_REPLACE_ACTION = createItemAction(resources.constants().replace(), this::replace, FULL_REPLACE_DEPLOYMENT, ADD);
         // standalone-only
         ITEM_EXPLODE_SUBS_ACTION = createItemAction(resources.constants().explodeSubdeployments(), this::explodeSubs, EXPLODE);
@@ -415,7 +418,7 @@ public abstract class AbstractDeploymentColumn<T extends Content> extends Finder
                 break;
             case CONTENT:
                 if (item.getServerGroupDeployments().isEmpty()) {
-                    actions.add(ITEM_REMOVE_ACTION);
+                    actions.add(ITEM_REMOVE_LABEL_REMOVE_ACTION);
                 } else {
                     actions.add(ITEM_UNDEPLOY_ACTION);
                 }
