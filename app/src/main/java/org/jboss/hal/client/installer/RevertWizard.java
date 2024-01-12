@@ -23,6 +23,7 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Resources;
+
 import com.google.web.bindery.event.shared.EventBus;
 
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE;
