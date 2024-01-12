@@ -96,6 +96,12 @@ public class ProgressElement implements IsElement, Progress {
         reset(0);
     }
 
+    private void setBarWidth(int percent) {
+        int width = (determinate && reverse) ? 100 - percent : percent;
+        progressBarElement.setAttribute(ARIA_VALUENOW, String.valueOf(width));
+        progressBarElement.style.width = width(width + "%");
+    }
+
     @Override
     public void reset(int mx, String label) {
         value = 0;
@@ -105,17 +111,11 @@ public class ProgressElement implements IsElement, Progress {
         if (determinate) {
             progressBarElement.classList.remove(progressBarStriped);
             progressBarElement.classList.remove(active);
-            progressBarElement.setAttribute(ARIA_VALUENOW, "0");
-            if (reverse) {
-                progressBarElement.style.width = width("100%"); // NON-NLS
-            } else {
-                progressBarElement.style.width = width(0);
-            }
+            setBarWidth(0);
         } else {
             progressBarElement.classList.add(progressBarStriped);
             progressBarElement.classList.add(active);
-            progressBarElement.setAttribute(ARIA_VALUENOW, "100");
-            progressBarElement.style.width = width("100%");
+            setBarWidth(100);
         }
         if (label != null) {
             valueElement.textContent = label;
@@ -130,9 +130,8 @@ public class ProgressElement implements IsElement, Progress {
         if (determinate) {
             if (value < max) {
                 value++;
-                double percent = min(round(((double) value / (double) max) * 100.0), 100.0);
-                progressBarElement.setAttribute(ARIA_VALUENOW, String.valueOf(percent));
-                progressBarElement.style.width = width(reverse ? (100 - percent) + "%" : String.valueOf(percent));
+                long percent = min(round(((double) value / (double) max) * 100.0), 100);
+                setBarWidth((int) percent);
                 if (label != null) {
                     valueElement.textContent = label;
                 } else {
@@ -144,6 +143,7 @@ public class ProgressElement implements IsElement, Progress {
 
     @Override
     public void finish() {
+        tick();
         // give the user a chance to see that we're finished
         setTimeout((o) -> Elements.setVisible(root, false), MEDIUM_TIMEOUT);
     }
