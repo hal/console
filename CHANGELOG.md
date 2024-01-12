@@ -9,6 +9,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- [HAL-1963](https://issues.redhat.com/browse/HAL-1963): Make --no-resolve-local-cache the default
+- [HAL-1961](https://issues.redhat.com/browse/HAL-1961): fix progress bar width setting
 - [HAL-1960](https://issues.redhat.com/browse/HAL-1960): Mark variable parts in attributes in the DB wizards
 - [HAL-1953](https://issues.redhat.com/browse/HAL-1953): Unable to add unamanaged deployment for server group
 - [HAL-1952](https://issues.redhat.com/browse/HAL-1952): Adding string constants have been used directly in the Encrypt

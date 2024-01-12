@@ -23,7 +23,6 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Resources;
-
 import com.google.web.bindery.event.shared.EventBus;
 
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE;
@@ -33,6 +32,7 @@ import static org.jboss.hal.client.installer.RevertState.PREPARE_SERVER;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PREPARE_REVERT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REVISION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.USE_DEFAULT_LOCAL_CACHE;
 
 class RevertWizard {
 
@@ -66,6 +66,7 @@ class RevertWizard {
                 .addStep(PREPARE_SERVER, new PrepareStep<RevertState>(
                         context -> new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext), PREPARE_REVERT)
                                 .param(REVISION, context.updateItem.getName())
+                                .param(USE_DEFAULT_LOCAL_CACHE, true)
                                 .build(),
                         eventBus, dispatcher, statementContext, resources))
                 .addStep(APPLY_REVERT, new ApplyStep<RevertState>(

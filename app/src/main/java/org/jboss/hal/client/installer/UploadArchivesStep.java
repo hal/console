@@ -34,13 +34,12 @@ import elemental2.dom.HTMLElement;
 import elemental2.promise.Promise;
 
 import static java.util.Collections.singletonList;
-
 import static org.jboss.elemento.Elements.div;
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.LIST_UPDATES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MAVEN_REPO_FILES;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NO_RESOLVE_LOCAL_CACHE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UPDATES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.USE_DEFAULT_LOCAL_CACHE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.WORK_DIR;
 import static org.jboss.hal.flow.Flow.sequential;
 
@@ -85,7 +84,7 @@ class UploadArchivesStep<S extends Enum<S>> extends WizardStep<UpdateManagerCont
         }
         Operation operation = new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext), LIST_UPDATES)
                 .param(MAVEN_REPO_FILES, mavenRepoFiles)
-                .param(NO_RESOLVE_LOCAL_CACHE, true)
+                .param(USE_DEFAULT_LOCAL_CACHE, false)
                 .build();
         List<Task<FlowContext>> tasks = singletonList(
                 flowContext -> dispatcher.upload(uploadElement.getFiles(), operation).then(result -> {

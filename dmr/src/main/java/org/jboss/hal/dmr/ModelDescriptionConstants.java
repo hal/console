@@ -629,7 +629,6 @@ public interface ModelDescriptionConstants {
     String NEW_VERSION = "new-version";
     String NEXT_TIMEOUT = "next-timeout";
     String NILLABLE = "nillable";
-    String NO_RESOLVE_LOCAL_CACHE = "no-resolve-local-cache";
     String NO_TX_SEPARATE_POOL = "no-tx-separate-pool";
     String NODE = "node";
     String NON_DURABLE_MESSAGE_COUNT = "non-durable-message-count";
@@ -1038,6 +1037,7 @@ public interface ModelDescriptionConstants {
     String UNDERTOW = "undertow";
     String UNIT = "unit";
     String UNREGISTERED = "unregistered";
+    String USE_DEFAULT_LOCAL_CACHE = "use-default-local-cache";
     String UP = "UP";
     String UPLOAD_CUSTOM_PATCH = "upload-custom-patch";
     String UPDATE = "update";
