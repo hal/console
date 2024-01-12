@@ -20,7 +20,6 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Resources;
-
 import com.google.web.bindery.event.shared.EventBus;
 
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE;
@@ -29,8 +28,8 @@ import static org.jboss.hal.client.installer.UpdateOfflineState.LIST_UPDATES;
 import static org.jboss.hal.client.installer.UpdateOfflineState.PREPARE_SERVER;
 import static org.jboss.hal.client.installer.UpdateOfflineState.UPLOAD_ARCHIVES;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NO_RESOLVE_LOCAL_CACHE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PREPARE_UPDATES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.USE_DEFAULT_LOCAL_CACHE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.WORK_DIR;
 
 class UpdateOfflineWizard {
@@ -72,7 +71,7 @@ class UpdateOfflineWizard {
                         updateManagerContext -> new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext),
                                 PREPARE_UPDATES)
                                 .param(WORK_DIR, updateManagerContext.workDir)
-                                .param(NO_RESOLVE_LOCAL_CACHE, true)
+                                .param(USE_DEFAULT_LOCAL_CACHE, false)
                                 .build(),
                         eventBus, dispatcher, statementContext, resources))
                 .addStep(APPLY_UPDATE, new ApplyStep<UpdateOfflineState>(

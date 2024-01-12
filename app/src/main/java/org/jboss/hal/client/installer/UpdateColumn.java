@@ -20,7 +20,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
-
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.core.finder.ColumnAction;
@@ -47,7 +46,6 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
-
 import com.google.web.bindery.event.shared.EventBus;
 
 import elemental2.dom.HTMLElement;
@@ -55,7 +53,6 @@ import elemental2.promise.Promise;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
-
 import static org.jboss.elemento.Elements.p;
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_ADDRESS;
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE;
@@ -70,6 +67,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.REVISION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TIMESTAMP;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UPDATES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.USE_DEFAULT_LOCAL_CACHE;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
@@ -203,7 +201,9 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
 
     private void updateOnline() {
         progress.reset();
-        Operation operation = new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext), LIST_UPDATES).build();
+        Operation operation = new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext), LIST_UPDATES)
+                .param(USE_DEFAULT_LOCAL_CACHE, true)
+                .build();
         dispatcher.execute(operation,
                 result -> {
                     List<ModelNode> updates = result.get(UPDATES).asList();
