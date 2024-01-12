@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.6.17] - 2024-01-12
+
 ### Fixed
 
 - [HAL-1963](https://issues.redhat.com/browse/HAL-1963): Make --no-resolve-local-cache the default
@@ -567,7 +569,8 @@ Release process failed. Do not use this release!
 - for dependency upgrades
 -->
 
-[Unreleased]: https://github.com/hal/console/compare/v3.6.16...HEAD
+[Unreleased]: https://github.com/hal/console/compare/v3.6.17...HEAD
+[3.6.17]: https://github.com/hal/console/compare/v3.6.16...v3.6.17
 [3.6.16]: https://github.com/hal/console/compare/v3.6.15...v3.6.16
 [3.6.15]: https://github.com/hal/console/compare/v3.6.14...v3.6.15
 [3.6.14]: https://github.com/hal/console/compare/v3.6.13...v3.6.14
