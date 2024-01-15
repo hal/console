@@ -563,46 +563,45 @@ public final class AddressTemplate implements Iterable<String> {
 
         private static final String DELIMITER = "/";
 
-        private final String s;
-        private final int len;
-
         private int pos;
-        private String next;
+        private final LinkedList<String> tokens;
 
         StringTokenizer(String s) {
-            this.s = s;
-            this.len = s.length();
+            this.tokens = tokenize(s);
+        }
+
+        private LinkedList<String> tokenize(String s) {
+            int pos = 0;
+            final int len = s.length();
+            while (pos < len && StringTokenizer.DELIMITER.indexOf(s.charAt(pos)) != -1) {
+                pos++;
+            }
+            final String forTokenization = (pos == 0) ? s : s.substring(pos);
+            final LinkedList<String> ephemeralTokens = new LinkedList<String>();
+            final String[] rawTokens = forTokenization.split(StringTokenizer.DELIMITER);
+            for (int i = 0; i < rawTokens.length; i++) {
+                final String rawToken = rawTokens[i];
+                if (rawToken.contains("=") || rawToken.startsWith("{")) {
+                    ephemeralTokens.add(rawToken);
+                } else {
+                    // HAL-1906
+                    ephemeralTokens.set(ephemeralTokens.size() - 1,
+                            ephemeralTokens.getLast() + StringTokenizer.DELIMITER + rawToken);
+                }
+            }
+            return ephemeralTokens;
         }
 
         String nextToken() {
             if (!hasMoreTokens()) {
                 throw new NoSuchElementException();
             }
-            String result = next;
-            next = null;
+            final String result = this.tokens.get(pos++);
             return result;
         }
 
         boolean hasMoreTokens() {
-            if (next != null) {
-                return true;
-            }
-            // skip leading delimiters
-            while (pos < len && DELIMITER.indexOf(s.charAt(pos)) != -1) {
-                pos++;
-            }
-
-            if (pos >= len) {
-                return false;
-            }
-
-            int p0 = pos++;
-            while (pos < len && DELIMITER.indexOf(s.charAt(pos)) == -1) {
-                pos++;
-            }
-
-            next = s.substring(p0, pos++);
-            return true;
+            return pos < this.tokens.size();
         }
     }
 

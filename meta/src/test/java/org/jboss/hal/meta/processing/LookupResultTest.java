@@ -20,7 +20,7 @@ public class LookupResultTest {
 
     @Before
     public void setUp() {
-        template = AddressTemplate.of("template");
+        template = AddressTemplate.of("template=test");
         lookupResult = new LookupResult(Sets.<AddressTemplate>newHashSet(template));
     }
 
@@ -32,7 +32,7 @@ public class LookupResultTest {
 
     @Test(expected = MissingMetadataException.class)
     public void missingMetadata() {
-        lookupResult.missingMetadata(AddressTemplate.of("foo"));
+        lookupResult.missingMetadata(AddressTemplate.of("{foo}"));
     }
 
     @Test
@@ -57,18 +57,18 @@ public class LookupResultTest {
     @Test
     public void allPresent() {
         LookupResult localLookupResult = new LookupResult(Sets.newHashSet(
-                AddressTemplate.of("one"),
-                AddressTemplate.of("two"),
-                AddressTemplate.of("three")));
+                AddressTemplate.of("{one}"),
+                AddressTemplate.of("{two}"),
+                AddressTemplate.of("{three}")));
 
-        localLookupResult.markMetadataPresent(AddressTemplate.of("one"), ALL_PRESENT);
-        localLookupResult.markMetadataPresent(AddressTemplate.of("two"), RESOURCE_DESCRIPTION_PRESENT);
-        localLookupResult.markMetadataPresent(AddressTemplate.of("three"), SECURITY_CONTEXT_PRESENT);
+        localLookupResult.markMetadataPresent(AddressTemplate.of("{one}"), ALL_PRESENT);
+        localLookupResult.markMetadataPresent(AddressTemplate.of("{two}"), RESOURCE_DESCRIPTION_PRESENT);
+        localLookupResult.markMetadataPresent(AddressTemplate.of("{three}"), SECURITY_CONTEXT_PRESENT);
         assertFalse(localLookupResult.allPresent());
 
-        localLookupResult.markMetadataPresent(AddressTemplate.of("one"), ALL_PRESENT);
-        localLookupResult.markMetadataPresent(AddressTemplate.of("two"), ALL_PRESENT);
-        localLookupResult.markMetadataPresent(AddressTemplate.of("three"), ALL_PRESENT);
+        localLookupResult.markMetadataPresent(AddressTemplate.of("{one}"), ALL_PRESENT);
+        localLookupResult.markMetadataPresent(AddressTemplate.of("{two}"), ALL_PRESENT);
+        localLookupResult.markMetadataPresent(AddressTemplate.of("{three}"), ALL_PRESENT);
         assertTrue(localLookupResult.allPresent());
     }
 }
