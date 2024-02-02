@@ -15,9 +15,8 @@
  */
 package org.jboss.hal.client.configuration.subsystem.microprofile;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
+import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLElement;
 import org.jboss.elemento.HtmlContentBuilder;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.Form;
@@ -39,11 +38,10 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
-import elemental2.dom.HTMLDivElement;
-import elemental2.dom.HTMLElement;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import static java.util.Arrays.asList;
-
 import static org.jboss.elemento.Elements.div;
 import static org.jboss.elemento.Elements.p;
 import static org.jboss.elemento.Elements.setVisible;
@@ -182,6 +180,7 @@ class AddConfigSourceWizard {
             String id = Ids.build(Ids.MICRO_PROFILE_CONFIG_SOURCE, SOURCE, Ids.FORM);
             Metadata emptyMetadata = Metadata.empty();
             nameItem = new NameItem();
+            nameItem.setRequired(false);
             sourceItem = new RadioItem(SOURCE, resources.constants().source(),
                     asList(new String[] { CLASS, DIR, PROPERTIES }), false);
             sourceItem.setName(SOURCE);
@@ -209,6 +208,7 @@ class AddConfigSourceWizard {
 
         @Override
         protected void onShow(Context context) {
+            nameItem.setRequired(true);
             nameItem.setValue(context.name);
             sourceItem.setValue(context.source);
             form.edit(context.modelNode);
