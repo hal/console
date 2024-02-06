@@ -45,6 +45,7 @@ All recent development happens in the branch `main`. There are additional branch
 | Branch | Description                                       |
 |--------|---------------------------------------------------|
 | main   | Main branch used for development                  |
+| 3.6.x  | Branch used for WildFly 27.x - 31.x and EAP 8.0.x |
 | 3.3.x  | Branch used for WildFly 23.x - 26.x and EAP 7.4.x |
 | 3.2.x  | Branch used for WildFly 17.x - 22.x and EAP 7.3.x |
 | 3.1.x  | Branch used for WildFly 16.x and EAP 7.2.x        |
