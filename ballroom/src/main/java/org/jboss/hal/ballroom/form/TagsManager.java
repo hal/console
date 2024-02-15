@@ -40,7 +40,8 @@ public class TagsManager {
     private static final String EMPTY = "empty";
     private static final String PUSH_TAG = "pushTag";
     private static final String ADDED_EVENT = "tm:pushed";
-    private static final String REMOVED_EVENT = "tm:spliced";
+    private static final String REMOVED_BY_CLICK_EVENT = "tm:spliced";
+    private static final String REMOVED_BY_BACKSPACE_EVENT = "tm:popped";
     private static final String INVALID_EVENT = "tm:invalid";
     private static final String DUPLICATED_EVENT = "tm:duplicated";
     private static final String TAGS = "tags";
@@ -148,7 +149,8 @@ public class TagsManager {
 
         @JsOverlay
         final void onRemoved(RemovedListener removedListener) {
-            on(REMOVED_EVENT, removedListener);
+            on(REMOVED_BY_CLICK_EVENT, removedListener);
+            on(REMOVED_BY_BACKSPACE_EVENT, removedListener);
         }
 
         @JsOverlay
