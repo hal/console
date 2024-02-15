@@ -15,8 +15,9 @@
  */
 package org.jboss.hal.client.configuration.subsystem.microprofile;
 
-import elemental2.dom.HTMLDivElement;
-import elemental2.dom.HTMLElement;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.jboss.elemento.HtmlContentBuilder;
 import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.form.Form;
@@ -38,10 +39,11 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLElement;
 
 import static java.util.Arrays.asList;
+
 import static org.jboss.elemento.Elements.div;
 import static org.jboss.elemento.Elements.p;
 import static org.jboss.elemento.Elements.setVisible;

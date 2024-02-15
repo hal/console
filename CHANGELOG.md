@@ -7,6 +7,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- [HAL-1969](https://issues.redhat.com/browse/HAL-1969): Name in MP "Add Config Source" wizard is not marked as required
+- [HAL-1967](https://issues.redhat.com/browse/HAL-1967): TagsItem - backspace doesn't remove items
+
+### Upgrades
+
+- Bump ACE editor to 1.32.6
+- Bump GWT to 2.11.0
+- Bump Mockito to 5.10.0
+
 ## [3.6.17] - 2024-01-12
 
 ### Fixed
@@ -231,7 +242,7 @@ Release process failed. Do not use this release!
 - Bump ACE editor to 1.13.2
 - Bump Datatables to 1.12.1
 - Bump Mockito to 4.9.0
-- Bump Parcel to 2.8.0 
+- Bump Parcel to 2.8.0
 - Bump PouchDB to 7.3.1
 - Bump Quarkus to 2.14.3.Final
 - Bump SLF4J to 2.0.2
@@ -397,7 +408,7 @@ Release process failed. Do not use this release!
 
 - [HAL-1542](https://issues.redhat.com/browse/HAL-1542): Replace Grunt with Parcel
 - [HAL-1623](https://issues.redhat.com/browse/HAL-1623): Upgrade JavaScript dependencies
-- Update developer related documentation 
+- Update developer related documentation
 
 ### Fixed
 
