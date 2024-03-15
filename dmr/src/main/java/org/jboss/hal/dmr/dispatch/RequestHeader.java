@@ -18,7 +18,11 @@ package org.jboss.hal.dmr.dispatch;
 public enum RequestHeader {
 
     // only those which are used in HAL
-    ACCEPT("Accept"), CONTENT_TYPE("Content-Type"), X_MANAGEMENT_CLIENT_NAME("X-Management-Client-Name");
+    ACCEPT("Accept"),
+
+    CONTENT_TYPE("Content-Type"),
+
+    X_MANAGEMENT_CLIENT_NAME("X-Management-Client-Name");
 
     private final String header;
 
