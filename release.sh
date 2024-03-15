@@ -160,20 +160,20 @@ sed -E -i '' -e 's/\[([0-9]+\.[0-9]+\.[0-9]+)\.Final\]/[\1]/g' -e 's/v([0-9]+\.[
 msg "Push changes"
 git commit --quiet -am "Release ${RELEASE_VERSION}"
 for remote in "${GIT_REMOTES[@]}"; do
-  git push --quiet "${remote}" main &> /dev/null
+  git push --quiet "${remote}" 3.6.x &> /dev/null
   msg "    ${YELLOW}✓${NOFORMAT} ${remote}"
 done
 msg "Push tag"
 git tag "${TAG}"
 for remote in "${GIT_REMOTES[@]}"; do
-  git push --quiet --tags "${remote}" main &> /dev/null
+  git push --quiet --tags "${remote}" 3.6.x &> /dev/null
   msg "    ${YELLOW}✓${NOFORMAT} ${remote}"
 done
 ./versionBump.sh "${SNAPSHOT_VERSION}"
 msg "Push changes"
 git commit --quiet -am "Next is ${NEXT_VERSION}"
 for remote in "${GIT_REMOTES[@]}"; do
-  git push --quiet "${remote}" main &> /dev/null
+  git push --quiet "${remote}" 3.6.x &> /dev/null
   msg "    ${YELLOW}✓${NOFORMAT} ${remote}"
 done
 msg "Done. Watch the release workflow at ${WORKFLOW_URL}"
