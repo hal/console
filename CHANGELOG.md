@@ -7,6 +7,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- [HAL-1969](https://issues.redhat.com/browse/HAL-1969): Mark name as required
+- [HAL-1957](https://issues.redhat.com/browse/HAL-1957): Bad label for removing deployment in domain
+
 ## [3.6.17] - 2024-01-12
 
 ### Fixed
