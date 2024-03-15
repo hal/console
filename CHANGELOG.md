@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.6.18] - 2024-03-15
+
 ### Fixed
 
 - [HAL-1969](https://issues.redhat.com/browse/HAL-1969): Mark name as required
@@ -574,7 +576,8 @@ Release process failed. Do not use this release!
 - for dependency upgrades
 -->
 
-[Unreleased]: https://github.com/hal/console/compare/v3.6.17...HEAD
+[Unreleased]: https://github.com/hal/console/compare/v3.6.18...HEAD
+[3.6.18]: https://github.com/hal/console/compare/v3.6.17...v3.6.18
 [3.6.17]: https://github.com/hal/console/compare/v3.6.16...v3.6.17
 [3.6.16]: https://github.com/hal/console/compare/v3.6.15...v3.6.16
 [3.6.15]: https://github.com/hal/console/compare/v3.6.14...v3.6.15
