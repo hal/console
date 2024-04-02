@@ -1,0 +1,13 @@
+<p>Enterprise Bean은 EJB(Enterprise JavaBeans) 3.1 사양에 정의된 서버 측 애플리케이션 구성 요소입니다. Enterprise Bean은 재사용을 장려하기 위해 분리된 방식으로 애플리케이션 비즈니스 로직을 구현하도록 설계되었습니다.
+    Enterprise Bean은 Java 클래스로 작성되고 적절한 EJB 주석으로 주석이 추가됩니다. 자체 아카이브(JAR 파일)로 애플리케이션 서버에 배포하거나 Jakarta EE 애플리케이션의 일부로 배포할 수 있습니다. 애플리케이션 서버는 각 Enterprise Bean의 라이프사이클을 관리하고 보안, 트랜잭션, 동시성 관리와 같은 서비스를 제공합니다.
+    Enterprise Bean은 또한 원하는 수의 비즈니스 인터페이스를 정의할 수 있습니다. 비즈니스 인터페이스는 클라이언트가 사용할 수 있는 Bean의 메소드에 대한 더 큰 제어를 제공하고 원격 JVM에서 실행 중인 클라이언트에 대한 액세스를 허용할 수도 있습니다.
+    Enterprise Bean에는 세션 Bean, 메시지 구동 Bean 및 Entity Bean의 세 가지 유형이 있습니다.</p>
+
+<h2>Session Beans</h2>
+<p>세션 빈(Session Bean)은 일련의 관련 비즈니스 프로세스 또는 작업을 캡슐화하고 이를 요청하는 클래스에 주입되는 엔터프라이즈 빈입니다. 세션 빈에는 Stateless, Stateful, Singleton이라는 세 가지 유형이 있습니다.</p>
+
+<h2>Message-Driven Beans</h2>
+<p>MDB(Message-Driven Bean)는 애플리케이션 개발을 위한 이벤트 중심 모델을 제공합니다. MDB의 메소드는 클라이언트 코드에 삽입되거나 클라이언트 코드에서 호출되지 않지만 JMS(Java Messaging Service) 서버와 같은 메시징 서비스로부터 메시지를 수신하여 트리거됩니다. Jakarta EE 사양에서는 JMS가 지원되어야 하지만 다른 메시징 시스템도 지원될 수 있습니다.</p>
+
+<h2>Entity Beans</h2>
+<p>이제 EJB 3.1에서는 Entity Bean이 더 이상 사용되지 않으며 대신 JPA 엔터티를 사용하는 것이 좋습니다. Entity Bean은 레거시 시스템과의 하위 호환성을 위해서만 사용해야 합니다.</p>

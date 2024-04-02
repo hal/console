@@ -51,9 +51,9 @@
     <set-property name="user.agent" value="gecko1_8,safari"/>
 
     <!-- Multiple locales -->
-    <extend-property name="locale" values="en,de,es,fr,pt_BR,zh_Hans,ja"/>
+    <extend-property name="locale" values="en,de,es,fr,pt_BR,zh_Hans,ja,ko"/>
     <set-property-fallback name="locale" value="en"/>
-    <set-property name="locale" value="en,de,es,fr,pt_BR,zh_Hans,ja"/>
+    <set-property name="locale" value="en,de,es,fr,pt_BR,zh_Hans,ja,ko"/>
     <property-provider name="locale">
         var locale_value = "";
         var cookieName = "hal-cookie-locale"; // keep in sync with org.jboss.hal.resources.Ids.COOKIE

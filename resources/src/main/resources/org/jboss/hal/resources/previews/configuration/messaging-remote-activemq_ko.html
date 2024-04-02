@@ -1,0 +1,26 @@
+<p>원격 ActiveMQ Artemis 서버에 대한 검색 그룹, 커넥터, 연결 팩토리, 큐 및 토픽에 대한 구성이 포함되어 있습니다.</p>
+
+<h2>커넥터</h2>
+<p>커넥터는 원격 ActiveMQ Artemis 서버에 연결하는 방법을 정의합니다.</p>
+
+<p>커넥터에 대한 자세한 내용은 다음을 참조하세요.
+    <a target="_blank" href="https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.1/html/configuring_messaging/acceptors_and_connectors">커넥터 문서</a>.
+</p>
+
+<h2>검색 그룹</h2>
+<p>검색 그룹은 브로드캐스트 엔드포인트(예: UDP 멀티캐스트 주소 또는 JGroup 채널)에서 커넥터 정보를 수신하는 방법을 정의합니다.</p>
+<p>검색 그룹은 서로 다른 서버에서 브로드캐스트하는 커넥터마다 하나씩 커넥터 목록을 유지 관리합니다. 특정 서버의 브로드캐스트 끝점에서 브로드캐스트를 받으면 해당 서버 목록의 항목을 업데이트합니다. 특정 서버로부터 오랫동안 방송을 받지 못한 경우 해당 서버의 항목이 목록에서 제거됩니다.</p>
+
+
+<h2>연결 팩토리</h2>
+<p>기본적으로 ${build.shortName} 메시징 서브시스템은 <code>InVmConnectionFactory</code>를 제공하고
+    <code>RemoteConnectionFactory</code> 연결 팩토리 및
+    <code>activemq-ra</code> 풀 연결 팩토리.
+</p>
+
+<p>풀링된 연결 팩토리를 사용하면 원격 ActiveMQ Artemis 리소스 어댑터의 인바운드 및 아웃바운드 커넥터를 구성할 수 있습니다. 원격 ActiveMQ Artemis 서버에 연결하기 위해 pooled-connection-factory를 구성하는 방법에 대한 자세한 내용은 다음을 참조하세요.
+    <a target="_blank" href="https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.1/html/configuring_messaging/resource_adapters#use_provided_amq_adapter">원격 연결을 위한 통합 리소스 어댑터 사용</a >.
+</p>
+
+<h2>외부 큐/토픽</h2>
+<p>원격 ActiveMQ Artemis 서버에 존재하는 큐 및 토픽</p>

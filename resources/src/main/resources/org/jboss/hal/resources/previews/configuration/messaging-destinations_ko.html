@@ -1,0 +1,50 @@
+<p>다음 주제에 대한 구성이 포함되어 있습니다:</p>
+<ul>
+    <li>코어 큐</li>
+    <li>JMS 대상</li>
+    <li>보안 설정</li>
+    <li>주소 설정</li>
+    <li>전환</li>
+</ul>
+
+<h2>코어 큐</h2>
+<p>Apache ActiveMQ Artemis 코어는 JMS에 구애받지 않습니다. JMS 주제에 대한 개념이 없습니다. JMS 주제는 0개 이상의 큐가 바인딩된 주소(주제 이름)로 코어에서 구현됩니다. 해당 주소에 바인딩된 각 큐는 주제 구독을 나타냅니다. 마찬가지로 JMS 큐는 JMS 큐을 나타내는 하나의 단일 큐가 바인딩된 주소(JMS 큐 이름)로 구현됩니다.</p>
+
+<p>관례에 따라 모든 JMS 큐는 코어 큐 이름에 "jms.queue"라는 문자열이 있는 코어 큐에 매핑됩니다. 그 앞에 추가됩니다. 예: "orders.europe"라는 이름의 JMS 큐는 "jms.queue.orders.europe"라는 이름의 코어 큐에 매핑됩니다. 코어 큐가 바인딩되는 주소는 코어 큐 이름으로도 지정됩니다.</p>
+
+<p>JMS 주제의 경우 구독을 나타내는 큐가 바인딩되는 주소는 "jms.topic" 문자열을 앞에 추가하여 제공됩니다. JMS 주제의 이름으로. 예: 이름이 "news.europe"인 JMS 주제는 코어 주소 "jms.topic.news.europe"에 매핑됩니다.</p>
+
+<h2>JMS 대상</h2>
+<p>JMS 대상은 JMS 연결 팩토리와 함께 JMS 관리 객체입니다. 대상은 메시지 생성 및 소비를 위해 JMS 클라이언트에서 사용됩니다. 대상을 사용하면 JMS 클라이언트가 메시지를 생성할 때 대상을 지정하고 메시지를 사용할 때 메시지 소스를 지정할 수 있습니다. 게시-구독 패턴을 사용할 때 대상을 주제라고 합니다. 지점간 패턴을 사용할 때 대상을 큐 라고 합니다.</p>
+
+<p>애플리케이션은 서버 측에 구성되고 일반적으로 JNDI를 통해 액세스되는 다양한 JMS 대상을 사용할 수 있습니다.</p>
+
+<h2>보안 설정</h2>
+<p>보안 설정은 특정 대상에 대한 보안을 구성하는 데 사용됩니다. 이는 security-setting 구성 요소를 사용하여 보안 제약 조건을 추가함으로써 수행됩니다. ${build.shortName} 메시징은
+    <code>보안 설정</code>은 기본적으로 구성됩니다.</p>
+
+<p>보안 설정 옵션은 와일드카드를 사용하여 보안 제약 조건을 적용할 대상을 처리합니다. 싱글의 가치
+    <code>#</code> 패턴은 모든 주소와 일치합니다. 보안 제약 조건에서 와일드카드 사용에 대한 자세한 내용은 다음을 참조하세요.
+    <a target="_blank" href="https://access.redhat.com/documentation/en/red-hat-jboss-enterprise-application-platform/7.0/paged/configuring-messaging/chapter-7-configuring- security#role_based_security_for_address">주소에 대한 역할 기반 보안</a>.
+</p>
+
+<h2>주소 설정</h2>
+<p>messaging-activemq 서브시스템에는 메시지 전달 방법 및 시기, 시도 횟수, 메시지 만료 시기 등을 제어하는 ​​구성 가능한 여러 옵션이 있습니다. 이러한 구성 옵션은 모두
+    <code>&lt;address-setting&gt;</code> 구성 요소입니다. ${build.shortName}이 단일을 적용하도록 할 수 있습니다.
+    와일드카드 구문을 사용하여 여러 대상에 <code>&lt;address-setting&gt;</code>을 적용합니다.</p>
+
+<p>주소 설정에서 와일드카드 사용에 대한 자세한 내용은 다음을 참조하세요.
+    <a target="_blank" href="https://access.redhat.com/documentation/en/red-hat-jboss-enterprise-application-platform/7.0/paged/configuring-messaging/chapter-6-address-settings">와일드카드 구문</a>.
+</p>
+
+<h2>전환</h2>
+<p>전환은 메시지를 한 주소에서 다른 주소로 전환하는 데 도움이 되는 ${build.shortName} 메시징에 구성된 개체입니다. 전환은 다음 유형으로 분류될 수 있습니다.
+
+<DL>
+    <dt>독점</dt>
+    <dd>메시지는 새 주소로만 전달되며 이전 주소로는 전송되지 않습니다.</dd>
+    <dt>비독점</dt>
+    <dd>이전 주소로 메시지가 전송되고, 그 사본이 새 주소로도 전송됩니다. 메시지 흐름을 분할하기 위해 비독점 전환을 사용할 수 있습니다.</dd>
+</dl>
+
+<p>전환은 동일한 서버에 있는 주소로만 메시지를 전환합니다. 다른 서버의 주소로 전환하려는 경우 일반적인 패턴은 로컬 저장 및 전달 대기열로 전환한 다음 해당 대기열에서 소비하고 다른 서버의 주소로 전달하는 API를 설정하는 것입니다. </p>

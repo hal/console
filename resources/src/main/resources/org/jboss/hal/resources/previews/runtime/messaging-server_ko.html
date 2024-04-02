@@ -1,0 +1,26 @@
+<p>Apache ActiveMQ Artemis 서버입니다. 각 Apache ActiveMQ Artemis 서버에는 메시지 및 기타 지속성에 사용되는 자체 초고성능 영구 저널이 있습니다.</p>
+
+<p>고성능 저널을 사용하면 지속성을 위해 관계형 데이터베이스를 사용할 때 달성할 수 없는 놀라운 지속성 메시지 성능이 가능합니다.</p>
+
+<p>Apache ActiveMQ Artemis 클라이언트는 잠재적으로 다른 물리적 시스템에 있을 수 있으며 Apache ActiveMQ Artemis 서버와 상호 작용합니다. Apache ActiveMQ Artemis는 현재 클라이언트 측 메시징을 위한 두 가지 API를 제공합니다.</p>
+
+<ol>
+    <li>핵심 클라이언트 API. 이는 JMS의 일부 복잡성 없이 전체 메시징 기능 세트를 허용하는 간단하고 직관적인 Java API입니다.</li>
+    <li>JMS 클라이언트 API. 표준 JMS API는 클라이언트 측에서 사용할 수 있습니다.</li>
+</ol>
+
+<p>Apache ActiveMQ Artemis는 서버에서 다양한 프로토콜 구현도 제공하므로 이러한 프로토콜에 대해 각 클라이언트를 사용할 수 있습니다.</p>
+
+<ol>
+    <li>Stomp</li>
+    <li>OpenWire</li>
+    <li>AMQP</li>
+</ol>
+
+<p>JMS 의미 체계는 클라이언트 측 JMS 파사드 레이어에 의해 구현됩니다.</p>
+
+<p>Apache ActiveMQ Artemis 서버는 JMS를 사용하지 않으며 실제로 JMS에 대해 아무것도 모릅니다. 이는 여러 다른 프로토콜과 함께 사용하도록 설계된 프로토콜에 구애받지 않는 메시징 서버입니다.</p>
+
+<p>사용자가 클라이언트 측에서 JMS API를 사용하는 경우 모든 JMS 상호 작용은 Apache ActiveMQ Artemis 와이어 형식을 사용하여 유선으로 전송되기 전에 Apache ActiveMQ Artemis 코어 클라이언트 API의 작업으로 변환됩니다.</p>
+
+<p>서버는 항상 핵심 API 상호작용만 처리합니다.</p>

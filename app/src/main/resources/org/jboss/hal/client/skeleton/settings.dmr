@@ -22,7 +22,8 @@
                 "fr",
                 "pt_BR",
                 "zh_Hans",
-                "ja"
+                "ja",
+                "ko"
             ],
         },
         "page-size" => {

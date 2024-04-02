@@ -1,0 +1,18 @@
+<p>${build.shortName}에 패치를 적용하는 방법은 설치 방법에 따라 다릅니다. ZIP 또는 설치 프로그램 방법을 사용하여 ${build.shortName}을(를) 설치한 경우 ZIP 기반 패치 관리 시스템을 사용해야 합니다. RPM을 사용하여 Red Hat Enterprise Linux에 ${build.shortName}을 설치한 경우 RPM 패치를 사용해야 합니다.
+중요합니다.</p>
+
+<p>패치를 적용하거나 롤백하기 전에 모든 배포 및 구성 파일을 포함하여 ${build.shortName} 서버를 백업해야 합니다.</p>
+
+<p>${build.shortName}의 ZIP 또는 설치 프로그램 설치를 위한 누적 패치는 Red Hat 고객 포털에서 다운로드할 수 있습니다.</p>
+
+<p>관리형 도메인 환경에 있는 여러 ${build.shortName} 호스트의 경우 ${build.shortName} 도메인 컨트롤러에서 개별 호스트를 패치할 수 있습니다.</p>
+
+<p>패치 적용 외에도 패치 적용을 롤백할 수도 있습니다.</p>
+
+<h3>ZIP/설치 프로그램 설치 패치에 대한 중요 참고 사항</h3>
+
+<ul>
+    <li>모듈을 업데이트하는 패치를 적용하는 경우 런타임에 사용되는 새로운 패치 JAR은 <code>${build.installDir}/modules/system/layers/base/.overlays/PATCH_ID/MODULE<에 저장됩니다. /코드>. 패치되지 않은 원본 파일은 <code>${build.installDir}/modules/system/layers/base/MODULE</code>에 남아 있지만 이러한 JAR은 런타임에 사용되지 않습니다.</li>
+    <li>${build.shortName}에 대한 누적 패치 릴리스 크기를 크게 줄이기 위해 이제 누적 패치의 부분 롤백을 수행할 수 없습니다. 적용된 패치의 경우 전체 패치만 롤백할 수 있습니다.</li>
+    <li>예를 들어 CP03을 ${build.shortName}에 적용하면 CP01 또는 CP02로 롤백할 수 없습니다. 각 누적 패치 릴리스로 롤백하는 기능을 원하는 경우 각 누적 패치를 릴리스된 순서대로 별도로 적용해야 합니다.</li>
+</ul>

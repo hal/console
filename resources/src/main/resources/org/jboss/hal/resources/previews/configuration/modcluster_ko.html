@@ -1,0 +1,3 @@
+<p>mod_cluster는 httpd 기반 로드 밸런서입니다. mod_jk 및 mod_proxy와 마찬가지로 mod_cluster는 통신 채널을 사용하여 httpd의 요청을 일련의 응용 프로그램 서버 노드 중 하나로 전달합니다. mod_jk 및 mod_proxy와 달리 mod_cluster는 애플리케이션 서버 노드와 httpd 간의 추가 연결을 활용합니다.</p>
+
+<p>애플리케이션 서버 노드는 이 연결을 사용하여 MCMP(Mod-Cluster Management Protocol)라고도 불리는 사용자 정의 HTTP 메소드 세트를 통해 서버측 로드 밸런싱 요소 및 수명 주기 이벤트를 다시 httpd로 전송합니다. 이 추가 피드백 채널을 통해 mod_cluster는 다른 로드 밸런싱 솔루션에서는 찾아볼 수 없는 수준의 지능과 세분성을 제공할 수 있습니다.</p>

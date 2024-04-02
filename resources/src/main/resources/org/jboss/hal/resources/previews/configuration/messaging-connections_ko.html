@@ -1,0 +1,33 @@
+<p>다음 주제에 대한 구성이 포함되어 있습니다:</p>
+<ul>
+    <li>접속자 및 커넥터</li>
+    <li>커넥터 서비스</li>
+    <li>(풀링된) 연결 팩토리</li>
+</ul>
+
+<h2>접속자 및 커넥터</h2>
+<p>수용자는 ${build.shortName} 내장 메시징 서버에서 허용되는 연결 유형을 정의합니다. 서버당 수락자를 원하는 수만큼 정의할 수 있습니다.</p>
+
+<p>커넥터는 내장된 ${build.shortName} 메시징 서버에 연결하는 방법을 정의하며 클라이언트가 연결하는 데 사용됩니다.</p>
+
+<p>접속자와 커넥터에 대한 자세한 내용은 다음을 참조하세요.
+    <a target="_blank" href="https://access.redhat.com/documentation/en/red-hat-jboss-enterprise-application-platform/7.0/paged/configuring-messaging/chapter-8-configuring- the-messaging-transports">수용체 및 커넥터 섹션</a>.
+</p>
+
+<h2>커넥터 서비스</h2>
+<p>커넥터 서비스를 사용하면 외부 구성 요소를 Apache ActiveMQ Artemis와 통합하여 메시지를 보내고 받을 수 있습니다.</p>
+
+<h2>연결 팩토리</h2>
+<p>기본적으로 ${build.shortName} 메시징 서브시스템은 <code>InVmConnectionFactory</code>를 제공하고
+    <code>RemoteConnectionFactory</code> 연결 팩토리 및
+    <code>activemq-ra</code> 풀 연결 팩토리.</p>
+
+<p><code>InVmConnectionFactory</code>는 다음을 참조합니다.
+    <code>in-vm-connector</code>는 클라이언트와 서버가 모두 동일한 JVM에서 실행 중일 때 메시지를 보내고 받는 데 사용할 수 있습니다.
+    <code>RemoteConnectionFactory</code>는 다음을 참조합니다.
+    <code>http-connector</code>는 클라이언트와 서버가 서로 다른 JVM에서 실행 중일 때 HTTP를 통해 메시지를 보내고 받는 데 사용할 수 있습니다.
+</p>
+
+<p>풀링된 연결 팩토리를 사용하면 통합 ActiveMQ Artemis 리소스 어댑터의 인바운드 및 아웃바운드 커넥터를 구성할 수 있습니다. 원격 ActiveMQ Artemis 서버에 연결하기 위해 pooled-connection-factory를 구성하는 방법에 대한 자세한 내용은 다음을 참조하세요.
+    <a target="_blank" href="https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.0/html/configuring_messaging/resource_adapters#use_provided_amq_adapter">원격 연결을 위한 통합 리소스 어댑터 사용</a >.
+</p>

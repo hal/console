@@ -1,0 +1,13 @@
+<p>로컬 JNDI 네임스페이스의 개요를 제공합니다. Jakarta EE 플랫폼 사양은 다음 JNDI 컨텍스트를 정의합니다.</p>
+<ul>
+    <li><code>java:comp</code> - 네임스페이스 범위는 현재 구성 요소(예: EJB)로 지정됩니다.</li>
+    <li><code>java:module</code> - 현재 모듈로 범위 지정</li>
+    <li><code>java:app</code> - 현재 애플리케이션으로 범위 지정</li>
+    <li><code>java:global</code> - 애플리케이션 서버로 범위가 지정됨</li>
+</ul>
+<p>표준 네임스페이스 외에도 ${build.shortName}은 다음 두 가지 전역 네임스페이스도 제공합니다.</p>
+<ul>
+    <li><code>java:jboss</code></li>
+    <li><code>java:/</code></li>
+</ul>
+<p>java:jboss/exported 컨텍스트 내의 항목만 원격 JNDI를 통해 액세스할 수 있다는 점에 유의하십시오. 웹 배포의 경우 <code>java:comp</code>는 <code>java:module</code>로 별칭이 지정되므로 war에 배포된 EJB에는 자체 comp 네임스페이스가 없습니다.</p>
