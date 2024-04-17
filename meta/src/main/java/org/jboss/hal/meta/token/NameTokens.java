@@ -36,6 +36,7 @@ public interface NameTokens {
     String CORE_MANAGEMENT = "core-management";
     String DATA_SOURCE_CONFIGURATION = ModelDescriptionConstants.DATA_SOURCE + CONFIGURATION_SUFFIX;
     String DATA_SOURCE_RUNTIME = ModelDescriptionConstants.DATA_SOURCE + RUNTIME_SUFFIX;
+    String DATA_SOURCE_XA_RUNTIME = ModelDescriptionConstants.DATA_SOURCE + "-xa" + RUNTIME_SUFFIX;
     String DEPLOYMENT_SCANNERS = ModelDescriptionConstants.DEPLOYMENT_SCANNER;
     String DEPLOYMENT = "deployment";
     String DEPLOYMENTS = "deployments";
