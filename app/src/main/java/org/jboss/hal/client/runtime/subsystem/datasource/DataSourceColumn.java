@@ -59,7 +59,6 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.jboss.gwt.elemento.core.Elements.span;
 import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.*;
-import static org.jboss.hal.client.runtime.subsystem.datasource.DataSourcePresenter.XA_PARAM;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
 import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_HOST;
@@ -277,11 +276,17 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                 List<ItemAction<DataSource>> actions = new ArrayList<>();
                 if (dataSource.isEnabled()) {
                     if (!dataSource.fromDeployment() && dataSource.isStatisticsEnabled()) {
-                        PlaceRequest placeRequest = places.selectedServer(NameTokens.DATA_SOURCE_RUNTIME)
-                                .with(NAME, dataSource.getName())
-                                .with(XA_PARAM, String.valueOf(dataSource.isXa()))
-                                .build();
-                        actions.add(itemActionFactory.view(placeRequest));
+                        if (dataSource.isXa()) {
+                            PlaceRequest placeRequest = places.selectedServer(NameTokens.DATA_SOURCE_XA_RUNTIME)
+                                    .with(NAME, dataSource.getName())
+                                    .build();
+                            actions.add(itemActionFactory.view(placeRequest));
+                        } else {
+                            PlaceRequest placeRequest = places.selectedServer(NameTokens.DATA_SOURCE_RUNTIME)
+                                    .with(NAME, dataSource.getName())
+                                    .build();
+                            actions.add(itemActionFactory.view(placeRequest));
+                        }
                     }
                     actions.add(new ItemAction.Builder<DataSource>().title(resources.constants().test())
                             .handler(item -> testConnection(item))

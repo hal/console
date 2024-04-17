@@ -40,20 +40,16 @@ import org.jboss.hal.spi.Requires;
 
 import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.meta.AddressTemplate.OPTIONAL;
 import static org.jboss.hal.meta.token.NameTokens.DATA_SOURCE_RUNTIME;
 
 public class DataSourcePresenter
         extends ApplicationFinderPresenter<DataSourcePresenter.MyView, DataSourcePresenter.MyProxy> {
-
-    static final String XA_PARAM = "xa";
 
     private final FinderPathFactory finderPathFactory;
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
     private final Resources resources;
     private String name;
-    private boolean xa;
 
     @Inject
     public DataSourcePresenter(EventBus eventBus,
@@ -81,7 +77,6 @@ public class DataSourcePresenter
     public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
         name = request.getParameter(NAME, null);
-        xa = Boolean.valueOf(request.getParameter(XA_PARAM, String.valueOf(false)));
         getView().setup();
     }
 
@@ -89,26 +84,21 @@ public class DataSourcePresenter
     public FinderPath finderPath() {
         return finderPathFactory.runtimeServerPath()
                 .append(Ids.RUNTIME_SUBSYSTEM, DATASOURCES, resources.constants().monitor(), Names.DATASOURCES)
-                .append(Ids.DATA_SOURCE_RUNTIME, Ids.dataSourceRuntime(name, xa), Names.DATASOURCE, name);
+                .append(Ids.DATA_SOURCE_RUNTIME, Ids.dataSourceRuntime(name, false), Names.DATASOURCE, name);
     }
 
     @Override
     protected void reload() {
-        ResourceAddress address = xa ? XA_DATA_SOURCE_TEMPLATE.resolve(statementContext, name) : DATA_SOURCE_TEMPLATE
-                .resolve(statementContext, name);
+        ResourceAddress address = DATA_SOURCE_TEMPLATE.resolve(statementContext, name);
         Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                 .param(INCLUDE_RUNTIME, true)
                 .param(RECURSIVE, true)
                 .build();
-        dispatcher.execute(operation, result -> getView().update(new DataSource(name, result, xa)));
+        dispatcher.execute(operation, result -> getView().update(new DataSource(name, result, false)));
     }
 
     String getDataSource() {
         return name;
-    }
-
-    boolean isXa() {
-        return xa;
     }
 
 
@@ -116,10 +106,8 @@ public class DataSourcePresenter
     @ProxyCodeSplit
     @NameToken(DATA_SOURCE_RUNTIME)
     @Requires({DATA_SOURCE_ADDRESS, XA_DATA_SOURCE_ADDRESS,
-            OPTIONAL + DATA_SOURCE_POOL_ADDRESS,
-            OPTIONAL + DATA_SOURCE_JDBC_ADDRESS,
-            OPTIONAL + XA_DATA_SOURCE_POOL_ADDRESS,
-            OPTIONAL + XA_DATA_SOURCE_JDBC_ADDRESS})
+            DATA_SOURCE_POOL_ADDRESS,
+            DATA_SOURCE_JDBC_ADDRESS})
     public interface MyProxy extends ProxyPlace<DataSourcePresenter> {
     }
 
