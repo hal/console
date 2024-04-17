@@ -38,8 +38,8 @@ import static org.jboss.elemento.Elements.span;
 import static org.jboss.elemento.EventType.click;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
-import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.DATA_SOURCE_JDBC_TEMPLATE;
-import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.DATA_SOURCE_POOL_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_JDBC_TEMPLATE;
+import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_POOL_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.STATISTICS_ENABLED;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.resources.CSS.clearfix;
@@ -48,50 +48,20 @@ import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.marginRight5;
 import static org.jboss.hal.resources.CSS.pullRight;
 
-public class DataSourceView extends HalViewImpl implements DataSourcePresenter.MyView {
+public class DataSourceXAView extends HalViewImpl implements DataSourceXAPresenter.MyView {
 
     private static final String POOL_PATH = "statistics/pool";
     private static final String JDBC_PATH = "statistics/jdbc";
-    private static final String[] XA_ATTRIBUTES = {
-            "XACommitAverageTime",
-            "XACommitCount",
-            "XACommitMaxTime",
-            "XACommitTotalTime",
-            "XAEndAverageTime",
-            "XAEndCount",
-            "XAEndMaxTime",
-            "XAEndTotalTime",
-            "XAForgetAverageTime",
-            "XAForgetCount",
-            "XAForgetMaxTime",
-            "XAForgetTotalTime",
-            "XAPrepareAverageTime",
-            "XAPrepareCount",
-            "XAPrepareMaxTime",
-            "XAPrepareTotalTime",
-            "XARecoverAverageTime",
-            "XARecoverCount",
-            "XARecoverMaxTime",
-            "XARecoverTotalTime",
-            "XARollbackAverageTime",
-            "XARollbackCount",
-            "XARollbackMaxTime",
-            "XARollbackTotalTime",
-            "XAStartAverageTime",
-            "XAStartCount",
-            "XAStartMaxTime",
-            "XAStartTotalTime"
-    };
 
     private final MetadataRegistry metadataRegistry;
     private final Resources resources;
-    private DataSourcePresenter presenter;
+    private DataSourceXAPresenter presenter;
     private HTMLElement header;
     private Form<ModelNode> poolForm;
     private Form<ModelNode> jdbcForm;
 
     @Inject
-    public DataSourceView(MetadataRegistry metadataRegistry, Resources resources) {
+    public DataSourceXAView(MetadataRegistry metadataRegistry, Resources resources) {
         this.metadataRegistry = metadataRegistry;
         this.resources = resources;
     }
@@ -104,25 +74,24 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
         // until the DS name is known and replace the wildcards with the DS name.
         Metadata poolMeta;
         Metadata jdbcMeta;
-        poolMeta = metadataRegistry.lookup(DATA_SOURCE_POOL_TEMPLATE.replaceWildcards(presenter.getDataSource()));
-        jdbcMeta = metadataRegistry.lookup(DATA_SOURCE_JDBC_TEMPLATE.replaceWildcards(presenter.getDataSource()));
+        poolMeta = metadataRegistry.lookup(XA_DATA_SOURCE_POOL_TEMPLATE.replaceWildcards(presenter.getDataSource()));
+        jdbcMeta = metadataRegistry.lookup(XA_DATA_SOURCE_JDBC_TEMPLATE.replaceWildcards(presenter.getDataSource()));
 
-        Tabs tabs = new Tabs(Ids.DATA_SOURCE_RUNTIME_TAB_CONTAINER);
+        Tabs tabs = new Tabs(Ids.XA_DATA_SOURCE_RUNTIME_TAB_CONTAINER);
 
-        poolForm = new ModelNodeForm.Builder<>(Ids.DATA_SOURCE_RUNTIME_POOL_FORM, poolMeta)
-                .readOnly()
-                .includeRuntime()
-                .exclude(STATISTICS_ENABLED)
-                .exclude(XA_ATTRIBUTES)
-                .build();
-        tabs.add(Ids.DATA_SOURCE_RUNTIME_POOL_TAB, Names.POOL, poolForm.element());
-
-        jdbcForm = new ModelNodeForm.Builder<>(Ids.DATA_SOURCE_RUNTIME_JDBC_FORM, jdbcMeta)
+        poolForm = new ModelNodeForm.Builder<>(Ids.XA_DATA_SOURCE_RUNTIME_POOL_FORM, poolMeta)
                 .readOnly()
                 .includeRuntime()
                 .exclude(STATISTICS_ENABLED)
                 .build();
-        tabs.add(Ids.DATA_SOURCE_RUNTIME_JDBC_TAB, Names.JDBC, jdbcForm.element());
+        tabs.add(Ids.XA_DATA_SOURCE_RUNTIME_POOL_TAB, Names.POOL, poolForm.element());
+
+        jdbcForm = new ModelNodeForm.Builder<>(Ids.XA_DATA_SOURCE_RUNTIME_JDBC_FORM, jdbcMeta)
+                .readOnly()
+                .includeRuntime()
+                .exclude(STATISTICS_ENABLED)
+                .build();
+        tabs.add(Ids.XA_DATA_SOURCE_RUNTIME_JDBC_TAB, Names.JDBC, jdbcForm.element());
 
         HTMLElement root = row()
                 .add(column()
@@ -139,7 +108,7 @@ public class DataSourceView extends HalViewImpl implements DataSourcePresenter.M
     }
 
     @Override
-    public void setPresenter(DataSourcePresenter presenter) {
+    public void setPresenter(DataSourceXAPresenter presenter) {
         this.presenter = presenter;
     }
 
