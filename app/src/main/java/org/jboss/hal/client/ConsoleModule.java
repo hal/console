@@ -310,6 +310,11 @@ public class ConsoleModule extends AbstractPresenterModule {
                 org.jboss.hal.client.runtime.subsystem.datasource.DataSourceView.class,
                 org.jboss.hal.client.runtime.subsystem.datasource.DataSourcePresenter.MyProxy.class);
 
+        bindPresenter(org.jboss.hal.client.runtime.subsystem.datasource.DataSourceXAPresenter.class,
+                org.jboss.hal.client.runtime.subsystem.datasource.DataSourceXAPresenter.MyView.class,
+                org.jboss.hal.client.runtime.subsystem.datasource.DataSourceXAView.class,
+                org.jboss.hal.client.runtime.subsystem.datasource.DataSourceXAPresenter.MyProxy.class);
+
         bindPresenter(org.jboss.hal.client.deployment.DeploymentPresenter.class,
                 org.jboss.hal.client.deployment.DeploymentPresenter.MyView.class,
                 org.jboss.hal.client.deployment.DeploymentView.class,

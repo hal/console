@@ -38,19 +38,19 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.DATA_SOURCE_ADDRESS;
-import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.DATA_SOURCE_JDBC_ADDRESS;
-import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.DATA_SOURCE_POOL_ADDRESS;
-import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.DATA_SOURCE_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_JDBC_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_POOL_ADDRESS;
+import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DATASOURCES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
-import static org.jboss.hal.meta.token.NameTokens.DATA_SOURCE_RUNTIME;
+import static org.jboss.hal.meta.token.NameTokens.DATA_SOURCE_XA_RUNTIME;
 
-public class DataSourcePresenter
-        extends ApplicationFinderPresenter<DataSourcePresenter.MyView, DataSourcePresenter.MyProxy> {
+public class DataSourceXAPresenter
+        extends ApplicationFinderPresenter<DataSourceXAPresenter.MyView, DataSourceXAPresenter.MyProxy> {
 
     private final FinderPathFactory finderPathFactory;
     private final Dispatcher dispatcher;
@@ -59,7 +59,7 @@ public class DataSourcePresenter
     private String name;
 
     @Inject
-    public DataSourcePresenter(EventBus eventBus,
+    public DataSourceXAPresenter(EventBus eventBus,
             MyView view,
             MyProxy myProxy,
             Finder finder,
@@ -91,17 +91,17 @@ public class DataSourcePresenter
     public FinderPath finderPath() {
         return finderPathFactory.runtimeServerPath()
                 .append(Ids.RUNTIME_SUBSYSTEM, DATASOURCES, resources.constants().monitor(), Names.DATASOURCES)
-                .append(Ids.DATA_SOURCE_RUNTIME, Ids.dataSourceRuntime(name, false), Names.DATASOURCE, name);
+                .append(Ids.DATA_SOURCE_RUNTIME, Ids.dataSourceRuntime(name, true), Names.DATASOURCE, name);
     }
 
     @Override
     protected void reload() {
-        ResourceAddress address = DATA_SOURCE_TEMPLATE.resolve(statementContext, name);
+        ResourceAddress address = XA_DATA_SOURCE_TEMPLATE.resolve(statementContext, name);
         Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
                 .param(INCLUDE_RUNTIME, true)
                 .param(RECURSIVE, true)
                 .build();
-        dispatcher.execute(operation, result -> getView().update(new DataSource(name, result, false)));
+        dispatcher.execute(operation, result -> getView().update(new DataSource(name, result, true)));
     }
 
     String getDataSource() {
@@ -110,14 +110,14 @@ public class DataSourcePresenter
 
     // @formatter:off
     @ProxyCodeSplit
-    @NameToken(DATA_SOURCE_RUNTIME)
+    @NameToken(DATA_SOURCE_XA_RUNTIME)
     @Requires({ DATA_SOURCE_ADDRESS, XA_DATA_SOURCE_ADDRESS,
-            DATA_SOURCE_POOL_ADDRESS,
-            DATA_SOURCE_JDBC_ADDRESS })
-    public interface MyProxy extends ProxyPlace<DataSourcePresenter> {
+            XA_DATA_SOURCE_POOL_ADDRESS,
+            XA_DATA_SOURCE_JDBC_ADDRESS })
+    public interface MyProxy extends ProxyPlace<DataSourceXAPresenter> {
     }
 
-    public interface MyView extends HalView, HasPresenter<DataSourcePresenter> {
+    public interface MyView extends HalView, HasPresenter<DataSourceXAPresenter> {
         void setup();
 
         void update(DataSource dataSource);

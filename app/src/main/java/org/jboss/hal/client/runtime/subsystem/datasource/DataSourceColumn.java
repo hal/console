@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.finder.Finder;
@@ -49,7 +48,6 @@ import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
-
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
@@ -58,7 +56,6 @@ import elemental2.promise.Promise;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
-
 import static org.jboss.elemento.Elements.span;
 import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.DATA_SOURCE_ADDRESS;
 import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.DATA_SOURCE_DEPLOYMENT_ADDRESS;
@@ -71,7 +68,6 @@ import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates
 import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_DEPLOYMENT_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_SUBDEPLOYMENT_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.XA_DATA_SOURCE_TEMPLATE;
-import static org.jboss.hal.client.runtime.subsystem.datasource.DataSourcePresenter.XA_PARAM;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES_ONLY;
@@ -298,11 +294,17 @@ public class DataSourceColumn extends FinderColumn<DataSource> {
                 List<ItemAction<DataSource>> actions = new ArrayList<>();
                 if (dataSource.isEnabled()) {
                     if (!dataSource.fromDeployment() && dataSource.isStatisticsEnabled()) {
-                        PlaceRequest placeRequest = places.selectedServer(NameTokens.DATA_SOURCE_RUNTIME)
-                                .with(NAME, dataSource.getName())
-                                .with(XA_PARAM, String.valueOf(dataSource.isXa()))
-                                .build();
-                        actions.add(itemActionFactory.view(placeRequest));
+                        if (dataSource.isXa()) {
+                            PlaceRequest placeRequest = places.selectedServer(NameTokens.DATA_SOURCE_XA_RUNTIME)
+                                    .with(NAME, dataSource.getName())
+                                    .build();
+                            actions.add(itemActionFactory.view(placeRequest));
+                        } else {
+                            PlaceRequest placeRequest = places.selectedServer(NameTokens.DATA_SOURCE_RUNTIME)
+                                    .with(NAME, dataSource.getName())
+                                    .build();
+                            actions.add(itemActionFactory.view(placeRequest));
+                        }
                     }
                     actions.add(new ItemAction.Builder<DataSource>().title(resources.constants().test())
                             .handler(item -> testConnection(item))
