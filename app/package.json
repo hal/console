@@ -30,7 +30,7 @@
     "process": "^0.11.10"
   },
   "dependencies": {
-    "ace-builds": "^1.33.2",
+    "ace-builds": "^1.34.0",
     "bootstrap": "~3.4.1",
     "bootstrap-select": "^1.13.18",
     "bootstrap-switch": "~3.3.5",
