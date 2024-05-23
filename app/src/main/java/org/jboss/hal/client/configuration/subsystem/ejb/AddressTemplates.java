@@ -23,6 +23,9 @@ interface AddressTemplates {
     String EJB_SUBSYSTEM_ADDRESS = "/{selected.profile}/subsystem=ejb3";
     String THREAD_POOL_ADDRESS = EJB_SUBSYSTEM_ADDRESS + "/thread-pool=*";
     String REMOTING_PROFILE_ADDRESS = EJB_SUBSYSTEM_ADDRESS + "/remoting-profile=*";
+    String REMOTING_EJB_RECEIVER_ADDRESS = REMOTING_PROFILE_ADDRESS + "/remoting-ejb-receiver=*";
+    String REMOTE_HTTP_CONNECTION_ADDRESS = REMOTING_PROFILE_ADDRESS + "/remote-http-connection=*";
+    String RER_CHANNEL_CREATION_OPTIONS_ADDRESS = REMOTING_EJB_RECEIVER_ADDRESS + "/channel-creation-options=*";
 
     // bean pools
     String BEAN_POOL_ADDRESS = EJB_SUBSYSTEM_ADDRESS + "/strict-max-bean-instance-pool=*";
@@ -45,6 +48,9 @@ interface AddressTemplates {
     AddressTemplate EJB_SUBSYSTEM_TEMPLATE = AddressTemplate.of(EJB_SUBSYSTEM_ADDRESS);
     AddressTemplate THREAD_POOL_TEMPLATE = AddressTemplate.of(THREAD_POOL_ADDRESS);
     AddressTemplate REMOTING_PROFILE_TEMPLATE = AddressTemplate.of(REMOTING_PROFILE_ADDRESS);
+    AddressTemplate REMOTING_EJB_RECEIVER_TEMPLATE = AddressTemplate.of(REMOTING_EJB_RECEIVER_ADDRESS);
+    AddressTemplate REMOTE_HTTP_CONNECTION_TEMPLATE = AddressTemplate.of(REMOTE_HTTP_CONNECTION_ADDRESS);
+    AddressTemplate RER_CHANNEL_CREATION_OPTIONS_TEMPLATE = AddressTemplate.of(RER_CHANNEL_CREATION_OPTIONS_ADDRESS);
 
     AddressTemplate BEAN_POOL_TEMPLATE = AddressTemplate.of(BEAN_POOL_ADDRESS);
 
