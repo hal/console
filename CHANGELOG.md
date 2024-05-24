@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- [HAL-1970](https://issues.redhat.com/browse/HAL-1970) - Exception when viewing datasources in Management Console
+
 ## [3.6.18] - 2024-03-15
 
 ### Fixed
