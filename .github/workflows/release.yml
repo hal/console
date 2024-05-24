@@ -3,10 +3,9 @@ name: Release HAL
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
 
 jobs:
-
   deploy:
     name: Deploy Maven Artifacts
     runs-on: ubuntu-latest
@@ -88,34 +87,6 @@ jobs:
         id: standalone-latest
         if: steps.check-latest.outputs.latest == 'true'
         run: $MVN package --projects standalone --also-make -P native,prod,theme-hal -Dquarkus.container-image.build=true -Dquarkus.container-image.push=true -Dquarkus.container-image.image=quay.io/halconsole/hal:latest '-Dquarkus.container-image.labels."org.opencontainers.image.revision"='$GITHUB_SHA -Dquarkus.native.remote-container-build=true
-
-  publish:
-    name: Publish to GitHub Pages
-    needs: deploy
-    runs-on: ubuntu-latest
-    env:
-      MVN: ./mvnw --show-version --batch-mode
-    steps:
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v4
-      - name: Set up JDK
-        id: setup-jdk
-        uses: actions/setup-java@v4
-        with:
-          java-version: 11
-          distribution: temurin
-          cache: maven
-      - name: Package
-        id: package
-        run: $MVN package -P prod,theme-hal
-      - name: Publish
-        id: publish
-        uses: JamesIves/github-pages-deploy-action@v4.5.0
-        with:
-          branch: gh-pages
-          folder: ./app/target/gh-pages
-          clean: true
 
   release:
     name: Create GitHub Release
