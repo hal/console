@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.datasource.DataSource;
 import org.jboss.hal.core.finder.Finder;
@@ -48,6 +49,7 @@ import org.jboss.hal.spi.AsyncColumn;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
+
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
@@ -56,6 +58,7 @@ import elemental2.promise.Promise;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
+
 import static org.jboss.elemento.Elements.span;
 import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.DATA_SOURCE_ADDRESS;
 import static org.jboss.hal.client.runtime.subsystem.datasource.AddressTemplates.DATA_SOURCE_DEPLOYMENT_ADDRESS;
