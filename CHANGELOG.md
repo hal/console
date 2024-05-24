@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.6.19] - 2024-05-24
+
 ### Fixed
 
 - [HAL-1970](https://issues.redhat.com/browse/HAL-1970) - Exception when viewing datasources in Management Console
@@ -580,7 +582,8 @@ Release process failed. Do not use this release!
 - for dependency upgrades
 -->
 
-[Unreleased]: https://github.com/hal/console/compare/v3.6.18...HEAD
+[Unreleased]: https://github.com/hal/console/compare/v3.6.19...HEAD
+[3.6.19]: https://github.com/hal/console/compare/v3.6.18...v3.6.19
 [3.6.18]: https://github.com/hal/console/compare/v3.6.17...v3.6.18
 [3.6.17]: https://github.com/hal/console/compare/v3.6.16...v3.6.17
 [3.6.16]: https://github.com/hal/console/compare/v3.6.15...v3.6.16
