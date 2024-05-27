@@ -121,7 +121,7 @@
         <version.formatter.plugin>2.23.0</version.formatter.plugin>
         <version.frontend.plugin>1.15.0</version.frontend.plugin>
         <version.gwt.plugin>1.1.0</version.gwt.plugin>
-        <version.impsort.plugin>1.9.0</version.impsort.plugin>
+        <version.impsort.plugin>1.10.0</version.impsort.plugin>
         <version.keepachangelog>2.1.1</version.keepachangelog>
         <version.license.plugin>4.5</version.license.plugin>
         <version.nexus.staging.plugin>1.6.13</version.nexus.staging.plugin>
