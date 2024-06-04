@@ -18,14 +18,25 @@ package org.jboss.hal.client.homepage;
 import org.jboss.elemento.IsElement;
 import org.jboss.hal.config.Build;
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.config.Version;
 import org.jboss.hal.resources.Resources;
 
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 
-import static org.jboss.elemento.Elements.*;
-import static org.jboss.hal.resources.CSS.*;
-import static org.jboss.hal.resources.Urls.*;
+import static org.jboss.elemento.Elements.a;
+import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.h;
+import static org.jboss.elemento.Elements.img;
+import static org.jboss.elemento.Elements.li;
+import static org.jboss.elemento.Elements.p;
+import static org.jboss.elemento.Elements.ul;
+import static org.jboss.hal.resources.CSS.eapHomeCol;
+import static org.jboss.hal.resources.CSS.eapHomeModule;
+import static org.jboss.hal.resources.CSS.eapHomeModuleCol;
+import static org.jboss.hal.resources.CSS.eapHomeModuleContainer;
+import static org.jboss.hal.resources.CSS.eapHomeModuleHeader;
+import static org.jboss.hal.resources.CSS.eapHomeModuleIcon;
 
 class HomepageHelp implements IsElement<HTMLDivElement> {
 
@@ -52,23 +63,21 @@ class HomepageHelp implements IsElement<HTMLDivElement> {
                 .element();
 
         if (environment.getHalBuild() == Build.COMMUNITY) {
-            generalResources.appendChild(helpLink(WILDFLY_HOMEPAGE,
-                    resources.constants().homepageHelpWildFlyHomeText()));
-            generalResources.appendChild(helpLink(WILDFLY_DOCUMENTATION,
-                    resources.constants().homepageHelpWilfdflyDocumentationText()));
-            generalResources.appendChild(helpLink(WILDSCRIBE_GITHUB_IO,
-                    resources.constants().homepageHelpModelReferenceText()));
-            generalResources.appendChild(helpLink(WILDFLY_ISSUES,
-                    resources.constants().homepageHelpWildflyIssuesText()));
-            generalResources.appendChild(helpLink(WILDFLY_NEWS, resources.constants().homepageHelpLatestNews()));
+            // Strings for community are not localized
+            int major = Version.parseVersion(environment.getInstanceInfo().productVersion()).getMajor();
+            generalResources.appendChild(helpLink("https://www.wildfly.org", "WildFly Home"));
+            generalResources.appendChild(helpLink("https://docs.wildfly.org" + "/" + major, "WildFly Documentation"));
+            generalResources.appendChild(helpLink("https://docs.wildfly.org" + "/" + major + "/wildscribe",
+                    "Model Reference Documentation"));
+            generalResources.appendChild(helpLink("https://wildfly.org/news/", "Latest News"));
+            generalResources.appendChild(helpLink("https://issues.jboss.org/browse/WFLY", "Browse Issues"));
 
-            getHelp.appendChild(helpLink(JBOSS_ORG_DEVELOPER_MATERIALS,
-                    resources.constants().homepageHelpTutorialsText()));
-            getHelp.appendChild(helpLink(JBOSS_COMMUNITY_DISCUSSIONS,
-                    resources.constants().homepageHelpUserForumsText()));
-            getHelp.appendChild(helpLink(WILDFLY_IRC, resources.constants().homepageHelpIrcText()));
-            getHelp.appendChild(helpLink(WILDFLY_DEV_MAILING_LIST,
-                    resources.constants().homepageHelpDevelopersMailingListText()));
+            getHelp.appendChild(helpLink("https://www.wildfly.org/get-started/", "Getting Started"));
+            getHelp.appendChild(helpLink("https://www.wildfly.org/guides/", "Guides"));
+            getHelp.appendChild(helpLink("https://groups.google.com/forum/#!forum/wildfly", "Join the Forum"));
+            getHelp.appendChild(helpLink("https://wildfly.zulipchat.com/", "Join Zulip Chat"));
+            getHelp.appendChild(helpLink("https://lists.jboss.org/archives/list/wildfly-dev@lists.jboss.org/",
+                    "Developers Mailing List"));
         } else {
             generalResources.appendChild(helpLink(resources.constants().homepageHelpEapDocumentationLink(),
                     resources.constants().homepageHelpEapDocumentationText()));
