@@ -7,6 +7,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- [HAL-1975](https://issues.redhat.com/browse/HAL-1975): Add functionality to configure remoting-ejb-receiver of a
+  remoting-profile
+
 ## [3.7.0] - 2024-02-15
 
 ### Fixed
