@@ -266,7 +266,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String homepageHelpAdminGuideText();
     String homepageHelpConsultingLink();
     String homepageHelpConsultingText();
-    String homepageHelpDevelopersMailingListText();
     String homepageHelpEapCommunityLink();
     String homepageHelpEapCommunityText();
     String homepageHelpEapConfigurationsLink();
@@ -275,13 +274,10 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String homepageHelpEapDocumentationText();
     String homepageHelpGeneralResources();
     String homepageHelpGetHelp();
-    String homepageHelpIrcText();
     String homepageHelpKnowledgebaseLink();
     String homepageHelpKnowledgebaseText();
-    String homepageHelpLatestNews();
     String homepageHelpLearnMoreEapLink();
     String homepageHelpLearnMoreEapText();
-    String homepageHelpModelReferenceText();
     String homepageHelpNeedHelp();
     String homepageHelpTrainingLink();
     String homepageHelpTrainingText();
@@ -290,9 +286,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String homepageHelpTutorialsLink();
     String homepageHelpTutorialsText();
     String homepageHelpUserForumsText();
-    String homepageHelpWildFlyHomeText();
-    String homepageHelpWildflyIssuesText();
-    String homepageHelpWilfdflyDocumentationText();
     String homepageNewToEap();
     String homepagePatchingDomainStep2();
     String homepagePatchingSection();

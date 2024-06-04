@@ -17,18 +17,8 @@ package org.jboss.hal.resources;
 
 public interface Urls {
 
-    String EXTENSION_DOCUMENTATION = "https://github.com/hal/hal.next/wiki/Extensions";
-    String JBOSS_ORG_DEVELOPER_MATERIALS = "http://www.jboss.org/developer-materials/";
-    String JBOSS_COMMUNITY_DISCUSSIONS = "https://community.jboss.org/en/wildfly?view=discussions";
     String KEYCLOAK = "https://www.keycloak.org";
     String LOGOUT = "/logout";
     String MANAGEMENT = "/management";
     String UPLOAD = "/management-upload";
-    String WILDFLY_HOMEPAGE = "https://www.wildfly.org";
-    String WILDFLY_ISSUES = "https://issues.jboss.org/browse/WFLY";
-    String WILDFLY_NEWS = "https://wildfly.org/news/";
-    String WILDFLY_IRC = "irc://freenode.org/#wildfly";
-    String WILDFLY_DEV_MAILING_LIST = "https://lists.jboss.org/mailman/listinfo/wildfly-dev";
-    String WILDFLY_DOCUMENTATION = "https://docs.wildfly.org";
-    String WILDSCRIBE_GITHUB_IO = "https://wildscribe.github.io/index.html";
 }
