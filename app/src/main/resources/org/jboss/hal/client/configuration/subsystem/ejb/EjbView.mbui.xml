@@ -48,26 +48,6 @@
                           name-resolver="${form.getModel().getName()}"/>
                 </metadata>
             </sub-item>
-
-            <sub-item id="ejb3-remoting-profile-item" title="Remoting Profile">
-                <metadata address="/{selected.profile}/subsystem=ejb3/remoting-profile=*">
-                    <h1>Remoting Profile</h1>
-                    <p>${metadata.getDescription().getDescription()}</p>
-                    <table id="ejb3-remoting-profile-table" title="Remoting Profile"
-                           form-ref="ejb3-remoting-profile-form">
-                        <actions>
-                            <action handler-ref="add-resource"/>
-                            <action handler-ref="remove-resource" scope="selected"
-                                    name-resolver="${table.selectedRow().getName()}"/>
-                        </actions>
-                        <columns>
-                            <column name="name" value="${row.getName()}"/>
-                        </columns>
-                    </table>
-                    <form id="ejb3-remoting-profile-form" title="Remoting Profile" auto-save="true" reset="true"
-                          name-resolver="${form.getModel().getName()}"/>
-                </metadata>
-            </sub-item>
         </item>
 
         <item id="ejb3-bean-pool-item" title="Bean Pool" icon="pficon pficon-repository">

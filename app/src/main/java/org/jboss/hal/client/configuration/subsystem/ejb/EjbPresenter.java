@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.client.configuration.subsystem.ejb;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.jboss.hal.core.CrudOperations;
@@ -27,6 +29,7 @@ import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ResourceAddress;
+import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.spi.Requires;
@@ -38,6 +41,9 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 
 import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.EJB_SUBSYSTEM_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.EJB_SUBSYSTEM_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.REMOTING_EJB_RECEIVER_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.REMOTING_PROFILE_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.RER_CHANNEL_CREATION_OPTIONS_TEMPLATE;
 
 public class EjbPresenter
         extends MbuiPresenter<EjbPresenter.MyView, EjbPresenter.MyProxy>
@@ -79,7 +85,41 @@ public class EjbPresenter
 
     @Override
     protected void reload() {
-        crud.readRecursive(EJB_SUBSYSTEM_TEMPLATE, result -> getView().update(result));
+        crud.read(EJB_SUBSYSTEM_TEMPLATE, 1, result -> getView().update(result));
+    }
+
+    public void loadRemotingProfileChild(String remotingProfileName, String childType) {
+        crud.readRecursive(REMOTING_PROFILE_TEMPLATE.resolve(statementContext, remotingProfileName),
+                result -> getView().updateRemotingProfileChild(remotingProfileName, childType, result));
+    }
+
+    public void addRemotingProfileChild(String id, String label, String remotingProfileName, String childType,
+            AddressTemplate template) {
+        crud.add(id, label, template.replaceWildcards(remotingProfileName),
+                (name, address) -> loadRemotingProfileChild(remotingProfileName, childType));
+    }
+
+    public void removeRemotingProfileChild(String label, String name, String remotingProfileName, String childType,
+            AddressTemplate template) {
+        crud.remove(label, name, template.replaceWildcards(remotingProfileName),
+                () -> loadRemotingProfileChild(remotingProfileName, childType));
+    }
+
+    public void loadRerChannelCreationOptions(String remotingProfileName, String ejbReceiverName) {
+        crud.readRecursive(
+                REMOTING_EJB_RECEIVER_TEMPLATE.resolve(statementContext, remotingProfileName, ejbReceiverName),
+                result -> getView().updateRerChannelCreationOptions(ejbReceiverName, result));
+    }
+
+    public void addRerChannelCreationOptions(String id, String label, String remotingProfileName, String ejbReceiverName) {
+        crud.add(id, label, RER_CHANNEL_CREATION_OPTIONS_TEMPLATE.replaceWildcards(remotingProfileName, ejbReceiverName),
+                List.of(ModelDescriptionConstants.VALUE),
+                (name, address) -> loadRerChannelCreationOptions(remotingProfileName, ejbReceiverName));
+    }
+
+    public void removeRerChannelCreationOptions(String label, String name, String remotingProfileName, String ejbReceiverName) {
+        crud.remove(label, name, RER_CHANNEL_CREATION_OPTIONS_TEMPLATE.replaceWildcards(remotingProfileName, ejbReceiverName),
+                () -> loadRerChannelCreationOptions(remotingProfileName, ejbReceiverName));
     }
 
     // @formatter:off
@@ -91,6 +131,8 @@ public class EjbPresenter
 
     public interface MyView extends MbuiView<EjbPresenter> {
         void update(ModelNode payload);
+        void updateRemotingProfileChild(String remotingProfileName, String childType, ModelNode payload);
+        void updateRerChannelCreationOptions(String ejbReceiverName, ModelNode payload);
     }
     // @formatter:on
 }

@@ -15,11 +15,18 @@
  */
 package org.jboss.hal.client.configuration.subsystem.ejb;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.annotation.PostConstruct;
 
+import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.ballroom.Pages;
 import org.jboss.hal.ballroom.VerticalNavigation;
 import org.jboss.hal.ballroom.autocomplete.ReadChildrenAutoComplete;
 import org.jboss.hal.ballroom.form.Form;
+import org.jboss.hal.ballroom.table.InlineAction;
 import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.mbui.MbuiContext;
@@ -48,7 +55,10 @@ import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.
 import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.CACHE_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.MDB_DELIVERY_GROUP_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.PASSIVATION_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.REMOTE_HTTP_CONNECTION_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.REMOTING_EJB_RECEIVER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.REMOTING_PROFILE_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.RER_CHANNEL_CREATION_OPTIONS_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.SERVICE_ASYNC_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.SERVICE_IDENTITY_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.ejb.AddressTemplates.SERVICE_IIOP_TEMPLATE;
@@ -62,6 +72,8 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT_SLSB_INSTANCE_
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PASSIVATION_STORE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVICE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 import static org.jboss.hal.resources.CSS.fontAwesome;
@@ -85,8 +97,14 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
     @MbuiElement("ejb3-thread-pool-table") Table<NamedNode> threadPoolTable;
     @MbuiElement("ejb3-thread-pool-form") Form<NamedNode> threadPoolForm;
 
-    @MbuiElement("ejb3-remoting-profile-table") Table<NamedNode> remotingProfileTable;
-    @MbuiElement("ejb3-remoting-profile-form") Form<NamedNode> remotingProfileForm;
+    Table<NamedNode> remotingProfileTable;
+    Form<NamedNode> remotingProfileForm;
+
+    RemotingProfileSubpage ejbReceiverPage;
+    RemotingProfileSubpage httpConnectionPage;
+
+    Table<NamedNode> channelCreationOptionsTable;
+    Form<NamedNode> channelCreationOptionsForm;
 
     @MbuiElement("ejb3-bean-pool-table") Table<NamedNode> beanPoolTable;
     @MbuiElement("ejb3-bean-pool-form") Form<NamedNode> beanPoolForm;
@@ -109,8 +127,15 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
     Table<NamedNode> appSecurityDomainTable;
     Form<NamedNode> appSecurityDomainForm;
 
+    private final LabelBuilder labelBuilder;
+    private Pages remotingProfilePages;
+    private String selectedRemotingProfile;
+    private String selectedEjbReceiver;
+    private Map<String, RemotingProfileSubpage> subPages;
+
     EjbView(MbuiContext mbuiContext) {
         super(mbuiContext);
+        labelBuilder = new LabelBuilder();
     }
 
     @PostConstruct
@@ -166,6 +191,114 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
         cacheForm.getFormItem(PASSIVATION_STORE)
                 .registerSuggestHandler(new ReadChildrenAutoComplete(dispatcher, statementContext,
                         PASSIVATION_TEMPLATE));
+
+        // ------------------------------- remoting profile
+
+        String rpId = REMOTING_PROFILE_TEMPLATE.lastName();
+        String rpTypeLabel = labelBuilder.label(rpId);
+        ejbReceiverPage = new RemotingProfileSubpage(REMOTING_EJB_RECEIVER_TEMPLATE);
+        httpConnectionPage = new RemotingProfileSubpage(REMOTE_HTTP_CONNECTION_TEMPLATE);
+
+        Metadata remotingProfileMetadata = mbuiContext.metadataRegistry().lookup(REMOTING_PROFILE_TEMPLATE);
+        String remotingProfileTableId = Ids.build(rpId, Ids.TABLE);
+        remotingProfileTable = new ModelNodeTable.Builder<NamedNode>(remotingProfileTableId, remotingProfileMetadata)
+                .button(mbuiContext.tableButtonFactory().add(Ids.build(remotingProfileTableId, Ids.ADD),
+                        rpTypeLabel,
+                        REMOTING_PROFILE_TEMPLATE,
+                        (name, address) -> presenter.reload()))
+                .button(mbuiContext.tableButtonFactory().remove(rpTypeLabel, REMOTING_PROFILE_TEMPLATE,
+                        table -> table.selectedRow().getName(),
+                        () -> presenter.reload()))
+                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .column(ejbReceiverPage.makeInlineAction(), "20em")
+                .column(httpConnectionPage.makeInlineAction(), "20em")
+                .build();
+
+        remotingProfileForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(rpId, Ids.FORM),
+                remotingProfileMetadata)
+                .onSave((form, changedValues) -> {
+                    String name = form.getModel().getName();
+                    saveForm(rpTypeLabel, name,
+                            REMOTING_PROFILE_TEMPLATE.resolve(statementContext(), name), changedValues,
+                            remotingProfileMetadata);
+                })
+                .prepareReset(form -> {
+                    String name = form.getModel().getName();
+                    resetForm(rpTypeLabel, name,
+                            REMOTING_PROFILE_TEMPLATE.resolve(statementContext(), name), form, remotingProfileMetadata);
+                })
+                .build();
+
+        HTMLElement remotingProfileItemElement = section()
+                .add(h(1).textContent(rpTypeLabel))
+                .add(p().textContent(remotingProfileMetadata.getDescription().getDescription()))
+                .add(remotingProfileTable)
+                .add(remotingProfileForm)
+                .element();
+
+        subPages = new HashMap<>();
+
+        String rpPageId = Ids.build(rpId, Ids.PAGE);
+        remotingProfilePages = new Pages(Ids.build(rpId, Ids.PAGES), rpPageId, remotingProfileItemElement);
+
+        ejbReceiverPage.addToPages(remotingProfilePages, rpPageId, rpTypeLabel);
+        subPages.put(ejbReceiverPage.getChildType(), ejbReceiverPage);
+
+        httpConnectionPage.addToPages(remotingProfilePages, rpPageId, rpTypeLabel);
+        subPages.put(httpConnectionPage.getChildType(), httpConnectionPage);
+
+        // ----------------------- remoting-ejb-receiver/channel-creation-options
+
+        String ccoId = RER_CHANNEL_CREATION_OPTIONS_TEMPLATE.lastName();
+        String ccoTypeLabel = labelBuilder.label(ccoId);
+        Metadata channelCreationOptionsMetadata = mbuiContext.metadataRegistry().lookup(RER_CHANNEL_CREATION_OPTIONS_TEMPLATE);
+        String channelCreationOptionsTableId = Ids.build(ccoId, Ids.TABLE);
+        channelCreationOptionsTable = new ModelNodeTable.Builder<NamedNode>(channelCreationOptionsTableId,
+                channelCreationOptionsMetadata)
+                .button(mbuiContext.tableButtonFactory().add(RER_CHANNEL_CREATION_OPTIONS_TEMPLATE,
+                        table -> presenter.addRerChannelCreationOptions(Ids.build(channelCreationOptionsTableId, Ids.ADD),
+                                ccoTypeLabel, selectedRemotingProfile, selectedEjbReceiver)))
+                .button(mbuiContext.tableButtonFactory().remove(RER_CHANNEL_CREATION_OPTIONS_TEMPLATE,
+                        table -> presenter.removeRerChannelCreationOptions(ccoTypeLabel, table.selectedRow().getName(),
+                                selectedRemotingProfile, selectedEjbReceiver)))
+                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .columns(TYPE, VALUE)
+                .build();
+
+        channelCreationOptionsForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(rpId, Ids.FORM),
+                channelCreationOptionsMetadata)
+                .onSave((form, changedValues) -> {
+                    String name = form.getModel().getName();
+                    saveForm(ccoTypeLabel, name,
+                            RER_CHANNEL_CREATION_OPTIONS_TEMPLATE.resolve(statementContext(), selectedRemotingProfile,
+                                    selectedEjbReceiver, name),
+                            changedValues,
+                            channelCreationOptionsMetadata);
+                })
+                .prepareReset(form -> {
+                    String name = form.getModel().getName();
+                    resetForm(ccoTypeLabel, name,
+                            RER_CHANNEL_CREATION_OPTIONS_TEMPLATE.resolve(statementContext(), selectedRemotingProfile,
+                                    selectedEjbReceiver, name),
+                            form,
+                            channelCreationOptionsMetadata);
+                })
+                .build();
+
+        HTMLElement channelCreationOptionsItemElement = section()
+                .add(h(1).textContent(ccoTypeLabel))
+                .add(p().textContent(channelCreationOptionsMetadata.getDescription().getDescription()))
+                .add(channelCreationOptionsTable)
+                .add(channelCreationOptionsForm)
+                .element();
+
+        String rerLabel = labelBuilder.label(ejbReceiverPage.getChildType());
+        remotingProfilePages.addPage(ejbReceiverPage.getPageId(), Ids.build(ejbReceiverPage.getChildType(), ccoId, Ids.PAGE),
+                () -> rerLabel + ": " + selectedEjbReceiver, () -> ccoTypeLabel, channelCreationOptionsItemElement);
+
+        navigation.insertSecondary("ejb3-container-item", Ids.build(rpId, Ids.ITEM), null,
+                rpTypeLabel,
+                remotingProfilePages.element());
     }
 
     @Override
@@ -174,6 +307,17 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
         appSecurityDomainTable.attach();
         appSecurityDomainForm.attach();
         appSecurityDomainTable.bindForm(appSecurityDomainForm);
+
+        remotingProfileTable.attach();
+        remotingProfileForm.attach();
+        remotingProfileTable.bindForm(remotingProfileForm);
+
+        ejbReceiverPage.attach();
+        httpConnectionPage.attach();
+
+        channelCreationOptionsTable.attach();
+        channelCreationOptionsForm.attach();
+        channelCreationOptionsTable.bindForm(channelCreationOptionsForm);
     }
 
     @Override
@@ -181,6 +325,15 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
         super.detach();
         appSecurityDomainForm.detach();
         appSecurityDomainTable.detach();
+
+        remotingProfileForm.detach();
+        remotingProfileTable.detach();
+
+        ejbReceiverPage.detach();
+        httpConnectionPage.detach();
+
+        channelCreationOptionsForm.detach();
+        channelCreationOptionsTable.detach();
     }
 
     // ------------------------------------------------------ update from DMR
@@ -218,6 +371,127 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
             appSecurityDomainTable.update(
                     asNamedNodes(failSafePropertyList(payload, APP_SEC_DOMAIN_TEMPLATE.lastName())));
             appSecurityDomainForm.clear();
+        }
+    }
+
+    @Override
+    public void updateRemotingProfileChild(String name, String childType, ModelNode payload) {
+        selectedRemotingProfile = name;
+        RemotingProfileSubpage subPage = subPages.get(childType);
+        subPage.update(payload);
+        remotingProfilePages.showPage(subPage.getPageId());
+    }
+
+    @Override
+    public void updateRerChannelCreationOptions(String name, ModelNode payload) {
+        selectedEjbReceiver = name;
+        String cco = RER_CHANNEL_CREATION_OPTIONS_TEMPLATE.lastName();
+        channelCreationOptionsTable.update(asNamedNodes(failSafePropertyList(payload, cco)));
+        remotingProfilePages.showPage(Ids.build(ejbReceiverPage.getChildType(), cco, Ids.PAGE));
+    }
+
+    // ------------------------ child resource helper class
+
+    private class RemotingProfileSubpage {
+
+        private String childType;
+        private String label;
+        private String pageId;
+        private Table<NamedNode> table;
+        private Form<NamedNode> form;
+        private HTMLElement section;
+
+        public RemotingProfileSubpage(AddressTemplate template) {
+            childType = template.lastName();
+            label = labelBuilder.label(childType);
+            pageId = Ids.build(REMOTING_PROFILE_TEMPLATE.lastName(), childType, Ids.PAGE);
+            Metadata metadata = mbuiContext.metadataRegistry().lookup(template);
+            String mainId = Ids.build(Ids.EJB3, childType);
+            String tableId = Ids.build(mainId, Ids.TABLE);
+
+            String ER_TYPE = REMOTING_EJB_RECEIVER_TEMPLATE.lastName();
+            String HC_TYPE = REMOTE_HTTP_CONNECTION_TEMPLATE.lastName();
+            List<String> columnNames = null;
+            if (childType.equals(ER_TYPE)) {
+                columnNames = List.of("connect-timeout", "outbound-connection-ref");
+            } else if (childType.equals(HC_TYPE)) {
+                columnNames = List.of("uri");
+            }
+
+            ModelNodeTable.Builder<NamedNode> builder = new ModelNodeTable.Builder<NamedNode>(tableId, metadata)
+                    .button(mbuiContext.tableButtonFactory().add(template,
+                            table -> presenter.addRemotingProfileChild(Ids.build(mainId, Ids.ADD), label,
+                                    selectedRemotingProfile, childType,
+                                    template)))
+                    .button(mbuiContext.tableButtonFactory().remove(template,
+                            table -> presenter.removeRemotingProfileChild(label, table.selectedRow().getName(),
+                                    selectedRemotingProfile, childType, template)))
+                    .column(NAME, (cell, t, row, meta) -> row.getName())
+                    .columns(columnNames);
+
+            if (childType.equals(ER_TYPE)) {
+                String ccoLabel = labelBuilder.label(RER_CHANNEL_CREATION_OPTIONS_TEMPLATE.lastName());
+                builder.column(
+                        new InlineAction<>(ccoLabel,
+                                row -> presenter.loadRerChannelCreationOptions(selectedRemotingProfile, row.getName())),
+                        "20em");
+            }
+
+            table = builder.build();
+
+            form = new ModelNodeForm.Builder<NamedNode>(Ids.build(mainId, Ids.FORM), metadata)
+                    .onSave((form, changedValues) -> {
+                        String name = form.getModel().getName();
+                        saveForm(label, name,
+                                template.resolve(statementContext(), selectedRemotingProfile, name), changedValues,
+                                metadata);
+                    })
+                    .prepareReset(form -> {
+                        String name = form.getModel().getName();
+                        resetForm(label, name,
+                                template.resolve(statementContext(), selectedRemotingProfile, name), form,
+                                metadata);
+                    })
+                    .build();
+
+            section = section()
+                    .add(h(1).textContent(label))
+                    .add(p().textContent(metadata.getDescription().getDescription()))
+                    .add(table)
+                    .add(form)
+                    .element();
+        }
+
+        public String getChildType() {
+            return childType;
+        }
+
+        public String getPageId() {
+            return pageId;
+        }
+
+        public void addToPages(Pages pages, String mainPageId, String mainLabel) {
+            pages.addPage(mainPageId, pageId, () -> mainLabel + ": " + selectedRemotingProfile, () -> label, section);
+        }
+
+        public InlineAction<NamedNode> makeInlineAction() {
+            return new InlineAction<>(label, row -> presenter.loadRemotingProfileChild(row.getName(), childType));
+        }
+
+        public void update(ModelNode payload) {
+            table.update(asNamedNodes(failSafePropertyList(payload, childType)));
+            form.clear();
+        }
+
+        public void attach() {
+            table.attach();
+            form.attach();
+            table.bindForm(form);
+        }
+
+        public void detach() {
+            form.detach();
+            table.detach();
         }
     }
 }
