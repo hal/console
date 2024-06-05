@@ -517,6 +517,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String results();
     String resume();
     String revert();
+    String revertTo();
     String revertUpdatePreviousState();
     String review();
     String revoke();

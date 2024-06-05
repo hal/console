@@ -164,9 +164,10 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
             @Override
             public List<ItemAction<UpdateItem>> actions() {
                 List<ItemAction<UpdateItem>> actions = new ArrayList<>();
-                if (item.getUpdateKind() == UpdateItem.UpdateType.UPDATE) {
+                if ((!item.equals(getCurrentItems().get(0)) && (item.getUpdateKind() == UpdateItem.UpdateType.UPDATE
+                        || item.getUpdateKind() == UpdateItem.UpdateType.INSTALL))) {
                     actions.add(new ItemAction.Builder<UpdateItem>()
-                            .title(resources.constants().revert())
+                            .title(resources.constants().revertTo())
                             .handler(itm -> revert(itm))
                             .constraint(Constraint.executable(INSTALLER_TEMPLATE, PREPARE_REVERT))
                             .build());
