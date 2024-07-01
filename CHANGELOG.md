@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.7.1] - 2024-07-01
+
 ### Added
 
 - [HAL-1833](https://issues.redhat.com/browse/HAL-1833) Link of Update documentation links on the homepage of the console
@@ -596,68 +598,69 @@ Release process failed. Do not use this release!
 - for dependency upgrades
 -->
 
-[Unreleased]: https://github.com/hal/console/compare/v3.7.0...HEAD
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[Unreleased]: https://github.com/hal/console/compare/v3.7.1...HEAD
+[3.7.1]: https://github.com/hal/console/compare/v3.7.0...v3.7.1
 [3.7.0]: https://github.com/hal/console/compare/v3.6.17...v3.7.0
-
 [3.6.17]: https://github.com/hal/console/compare/v3.6.16...v3.6.17
-
 [3.6.16]: https://github.com/hal/console/compare/v3.6.15...v3.6.16
-
 [3.6.15]: https://github.com/hal/console/compare/v3.6.14...v3.6.15
-
 [3.6.14]: https://github.com/hal/console/compare/v3.6.13...v3.6.14
-
 [3.6.13]: https://github.com/hal/console/compare/v3.6.12...v3.6.13
-
 [3.6.12]: https://github.com/hal/console/compare/v3.6.11...v3.6.12
-
 [3.6.11]: https://github.com/hal/console/compare/v3.6.10...v3.6.11
-
 [3.6.10]: https://github.com/hal/console/compare/v3.6.9...v3.6.10
-
 [3.6.9]: https://github.com/hal/console/compare/v3.6.8...v3.6.9
-
 [3.6.8]: https://github.com/hal/console/compare/v3.6.7...v3.6.8
-
 [3.6.7]: https://github.com/hal/console/compare/v3.6.6...v3.6.7
-
 [3.6.6]: https://github.com/hal/console/compare/v3.6.5...v3.6.6
-
 [3.6.5]: https://github.com/hal/console/compare/v3.6.4...v3.6.5
-
 [3.6.4]: https://github.com/hal/console/compare/v3.6.3...v3.6.4
-
 [3.6.3]: https://github.com/hal/console/compare/v3.6.2...v3.6.3
-
 [3.6.2]: https://github.com/hal/console/compare/v3.6.1...v3.6.2
-
 [3.6.1]: https://github.com/hal/console/compare/v3.6.0...v3.6.1
-
 [3.6.0]: https://github.com/hal/console/compare/v3.5.12...v3.6.0
-
 [3.5.12]: https://github.com/hal/console/compare/v3.5.11...v3.5.12
-
 [3.5.11]: https://github.com/hal/console/compare/v3.5.10...v3.5.11
-
 [3.5.10]: https://github.com/hal/console/compare/v3.5.9...v3.5.10
-
 [3.5.9]: https://github.com/hal/console/compare/v3.5.8...v3.5.9
-
 [3.5.8]: https://github.com/hal/console/compare/v3.5.7...v3.5.8
-
 [3.5.7]: https://github.com/hal/console/compare/v3.5.6...v3.5.7
-
 [3.5.6]: https://github.com/hal/console/compare/v3.5.5...v3.5.6
-
 [3.5.5]: https://github.com/hal/console/compare/v3.5.4...v3.5.5
-
 [3.5.4]: https://github.com/hal/console/compare/v3.5.3...v3.5.4
-
 [3.5.3]: https://github.com/hal/console/compare/v3.5.2...v3.5.3
-
 [3.5.2]: https://github.com/hal/console/compare/v3.5.1...v3.5.2
-
 [3.5.1]: https://github.com/hal/console/compare/v3.5.0...v3.5.1
-
 [3.5.0]: https://github.com/hal/console/compare/vTemplate...v3.5.0
