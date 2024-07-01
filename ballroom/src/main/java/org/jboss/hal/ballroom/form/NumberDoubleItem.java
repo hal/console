@@ -135,7 +135,7 @@ public class NumberDoubleItem extends AbstractFormItem<Double> {
     private static class NumberReadOnlyAppearance extends ReadOnlyAppearance<Double> {
 
         NumberReadOnlyAppearance() {
-            super(EnumSet.of(DEFAULT, DEPRECATED, EXPRESSION, HINT, RESTRICTED));
+            super(EnumSet.of(DEFAULT, DEPRECATED, EXPRESSION, HINT, RESTRICTED, STABILITY));
         }
 
         @Override

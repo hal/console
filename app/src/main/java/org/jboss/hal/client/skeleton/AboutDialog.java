@@ -30,11 +30,37 @@ import com.google.common.collect.ImmutableMap;
 import elemental2.dom.HTMLElement;
 
 import static elemental2.dom.DomGlobal.document;
-import static org.jboss.elemento.Elements.*;
+import static org.jboss.elemento.Elements.button;
+import static org.jboss.elemento.Elements.dd;
+import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.dl;
+import static org.jboss.elemento.Elements.dt;
+import static org.jboss.elemento.Elements.h;
+import static org.jboss.elemento.Elements.img;
+import static org.jboss.elemento.Elements.span;
 import static org.jboss.hal.ballroom.dialog.Modal.$;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEFINED;
-import static org.jboss.hal.resources.CSS.*;
-import static org.jboss.hal.resources.UIConstants.*;
+import static org.jboss.hal.resources.CSS.aboutModalPf;
+import static org.jboss.hal.resources.CSS.close;
+import static org.jboss.hal.resources.CSS.dlHorizontal;
+import static org.jboss.hal.resources.CSS.fade;
+import static org.jboss.hal.resources.CSS.in;
+import static org.jboss.hal.resources.CSS.modal;
+import static org.jboss.hal.resources.CSS.modalBody;
+import static org.jboss.hal.resources.CSS.modalContent;
+import static org.jboss.hal.resources.CSS.modalDialog;
+import static org.jboss.hal.resources.CSS.modalFooter;
+import static org.jboss.hal.resources.CSS.modalHeader;
+import static org.jboss.hal.resources.CSS.pfIcon;
+import static org.jboss.hal.resources.CSS.productVersionsPf;
+import static org.jboss.hal.resources.UIConstants.DIALOG;
+import static org.jboss.hal.resources.UIConstants.DISMISS;
+import static org.jboss.hal.resources.UIConstants.HASH;
+import static org.jboss.hal.resources.UIConstants.HIDDEN;
+import static org.jboss.hal.resources.UIConstants.LABEL;
+import static org.jboss.hal.resources.UIConstants.LABELLED_BY;
+import static org.jboss.hal.resources.UIConstants.ROLE;
+import static org.jboss.hal.resources.UIConstants.TABINDEX;
 
 class AboutDialog {
 
@@ -54,7 +80,8 @@ class AboutDialog {
                     .put(resources.constants().managementVersion(),
                             failSafe(environment.getManagementVersion().toString()))
                     .put(resources.constants().consoleVersion(), failSafe(environment.getHalVersion().toString()))
-                    .put(resources.constants().operationMode(), failSafe(environment.getOperationMode().name()));
+                    .put(resources.constants().operationMode(), failSafe(environment.getOperationMode().name()))
+                    .put(resources.constants().stabilityLevel(), failSafe(environment.getStabilityLevel().name()));
             if (!endpoints.isSameOrigin()) {
                 builder.put(resources.constants().connectedTo(), failSafe(endpoints.dmr()));
             }

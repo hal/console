@@ -18,7 +18,9 @@ package org.jboss.hal.ballroom.form;
 import java.util.Set;
 
 import org.jboss.elemento.Elements;
+import org.jboss.hal.ballroom.StabilityLabel;
 import org.jboss.hal.ballroom.form.AbstractFormItem.ExpressionContext;
+import org.jboss.hal.config.StabilityLevel;
 import org.jboss.hal.dmr.Deprecation;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.UIConstants;
@@ -33,6 +35,7 @@ import elemental2.dom.HTMLInputElement;
 import static org.jboss.elemento.Elements.button;
 import static org.jboss.elemento.Elements.div;
 import static org.jboss.elemento.Elements.i;
+import static org.jboss.elemento.Elements.insertFirst;
 import static org.jboss.elemento.Elements.label;
 import static org.jboss.elemento.Elements.span;
 import static org.jboss.elemento.EventType.bind;
@@ -109,8 +112,8 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
     }
 
     /**
-     * Sets the {@link #attached} flag to {@code true}. If you override this method, make sure to call {@code
-     * super.attach()} first!
+     * Sets the {@link #attached} flag to {@code true}. If you override this method, make sure to call {@code super.attach()}
+     * first!
      */
     @Override
     public void attach() {
@@ -182,6 +185,9 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
                 break;
             case SENSITIVE:
                 applySensitive();
+                break;
+            case STABILITY:
+                applyStability((StabilityLevel) context);
                 break;
             case SUGGESTIONS:
                 applySuggestions((SuggestHandler) context);
@@ -294,6 +300,12 @@ public abstract class EditingAppearance<T> extends AbstractAppearance<T> {
         }
         inputGroup.appendChild(peekContainer);
         mask();
+    }
+
+    void applyStability(StabilityLevel stability) {
+        if (labelElement != null) {
+            insertFirst(labelElement, new StabilityLabel(stability).element());
+        }
     }
 
     void applySuggestions(SuggestHandler suggestHandler) {

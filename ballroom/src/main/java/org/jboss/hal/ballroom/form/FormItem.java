@@ -18,6 +18,7 @@ package org.jboss.hal.ballroom.form;
 import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.form.EncryptExpressionEvent.EncryptExpressionHandler;
 import org.jboss.hal.ballroom.form.ResolveExpressionEvent.ResolveExpressionHandler;
+import org.jboss.hal.config.StabilityLevel;
 import org.jboss.hal.dmr.Deprecation;
 
 import com.google.gwt.user.client.ui.Focusable;
@@ -95,4 +96,6 @@ public interface FormItem<T> extends Attachable, HasEnabled, Focusable, HasName,
     boolean isDeprecated();
 
     void setDeprecated(Deprecation deprecation);
+
+    void setStability(StabilityLevel stability);
 }

@@ -1,0 +1,63 @@
+/*
+ *  Copyright 2022 Red Hat
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+.stability-experimental {
+  color: white;
+  background-color: var(--stability-experimental-color);
+
+  a, a:hover, a:visited, a:active {
+    color: white;
+  }
+}
+
+.stability-preview {
+  color: black;
+  background-color: var(--stability-preview-color);
+
+  a, a:hover, a:visited, a:active {
+    color: black;
+  }
+}
+
+.stability-banner {
+  display: block;
+  height: var(--stability-offset);
+  position: fixed;
+  text-align: center;
+  top: 0;
+  width: 100%;
+  z-index: 9999;
+
+  a {
+    text-decoration: none;
+  }
+
+}
+
+.stability-banner-text {
+  @media (min-width: 768px) {
+    padding-left: 150px;
+    padding-right: 150px;
+  }
+}
+
+.stability-banner-more-info {
+  padding: 0 10px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: auto;
+}

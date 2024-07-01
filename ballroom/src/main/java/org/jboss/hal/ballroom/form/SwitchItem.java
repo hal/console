@@ -74,7 +74,7 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
     private static class SwitchReadOnlyAppearance extends ReadOnlyAppearance<Boolean> {
 
         SwitchReadOnlyAppearance() {
-            super(EnumSet.of(DEFAULT, DEPRECATED, EXPRESSION, RESTRICTED));
+            super(EnumSet.of(DEFAULT, DEPRECATED, EXPRESSION, RESTRICTED, STABILITY));
         }
 
         @Override
@@ -99,7 +99,7 @@ public class SwitchItem extends AbstractFormItem<Boolean> {
         // ------------------------------------------------------ ui code
 
         SwitchEditingAppearance() {
-            super(EnumSet.of(DEFAULT, DEPRECATED, ENABLED, EXPRESSION, INVALID, REQUIRED, RESTRICTED),
+            super(EnumSet.of(DEFAULT, DEPRECATED, ENABLED, EXPRESSION, INVALID, REQUIRED, RESTRICTED, STABILITY),
                     input(checkbox).element());
 
             inputElement.classList.add(bootstrapSwitch);

@@ -23,6 +23,7 @@ import static org.jboss.hal.ballroom.form.Decoration.DEFAULT;
 import static org.jboss.hal.ballroom.form.Decoration.DEPRECATED;
 import static org.jboss.hal.ballroom.form.Decoration.REQUIRED;
 import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
+import static org.jboss.hal.ballroom.form.Decoration.STABILITY;
 
 public class StaticItem extends AbstractFormItem<String> {
 
@@ -45,7 +46,7 @@ public class StaticItem extends AbstractFormItem<String> {
     private static class StaticAppearance extends ReadOnlyAppearance<String> {
 
         StaticAppearance() {
-            super(EnumSet.of(DEFAULT, DEPRECATED, REQUIRED, RESTRICTED));
+            super(EnumSet.of(DEFAULT, DEPRECATED, REQUIRED, RESTRICTED, STABILITY));
         }
 
         @Override

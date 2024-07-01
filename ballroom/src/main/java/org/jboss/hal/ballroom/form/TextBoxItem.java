@@ -91,7 +91,7 @@ public class TextBoxItem extends AbstractFormItem<String> {
     private static class TextBoxReadOnlyAppearance extends ReadOnlyAppearance<String> {
 
         TextBoxReadOnlyAppearance() {
-            super(EnumSet.of(DEFAULT, DEPRECATED, EXPRESSION, HINT, RESTRICTED, SENSITIVE));
+            super(EnumSet.of(DEFAULT, DEPRECATED, EXPRESSION, HINT, RESTRICTED, SENSITIVE, STABILITY));
         }
 
         @Override

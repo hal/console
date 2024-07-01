@@ -44,11 +44,11 @@ h2.underline {
 }
 
 .layout-pf.layout-pf-fixed body {
-  padding-top: @hal-header-height;
+  padding-top: calc(var(--hal-header-height) + var(--stability-offset));
   @media (max-width: @screen-sm) {
-    padding-top: @hal-header-height-sm;
+    padding-top: calc(var(--hal-header-height-sm) + var(--stability-offset));
   }
-  padding-bottom: @hal-footer-height;
+  padding-bottom: var(--hal-footer-height);
 }
 
 .link {

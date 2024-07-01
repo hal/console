@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.core.modelbrowser;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -182,7 +183,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
         treeContainer = div().css(CSS.treeContainer).element();
         content = div().css(modelBrowserContent).element();
 
-        resourcePanel = new ResourcePanel(this, dispatcher, resources);
+        resourcePanel = new ResourcePanel(this, dispatcher, environment, resources);
         for (HTMLElement element : resourcePanel) {
             content.appendChild(element);
         }
@@ -315,7 +316,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
 
     private void onTreeSelection(SelectionContext<Context> context) {
         if ("ready".equals(context.action)) { // NON-NLS
-            // only (de)selection events please
+            // only (de)selection events, please
             return;
         }
 
@@ -586,7 +587,7 @@ public class ModelBrowser implements IsElement<HTMLElement> {
             this.node = child;
             this.text = child == null ? Names.MANAGEMENT_MODEL : child.text;
             this.filterText = parent == null || child == null ? null : parent.text + "=" + child.text;
-            this.parents = child == null ? emptyList() : asList(child.parents);
+            this.parents = child == null ? emptyList() : new ArrayList<>(asList(child.parents));
             if (!parents.isEmpty()) {
                 Collections.reverse(parents);
                 parents.remove(0); // get rif of the artificial root

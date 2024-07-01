@@ -43,6 +43,7 @@ import static org.jboss.hal.ballroom.form.Decoration.ENABLED;
 import static org.jboss.hal.ballroom.form.Decoration.INVALID;
 import static org.jboss.hal.ballroom.form.Decoration.REQUIRED;
 import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
+import static org.jboss.hal.ballroom.form.Decoration.STABILITY;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
@@ -77,7 +78,8 @@ class MultiValueListItem extends TagsItem<ModelNode> implements ModelNodeItem {
 
     MultiValueListItem(String attribute, String name, String value) {
         super(attribute, new LabelBuilder().label(attribute), MESSAGES.multiValueListHint(),
-                EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED), new MapMapping(name, value));
+                EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED, STABILITY),
+                new MapMapping(name, value));
     }
 
     @Override

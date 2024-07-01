@@ -687,6 +687,7 @@ public interface ModelDescriptionConstants {
     String PERIODIC_ROTATING_FILE_AUDIT_LOG = "periodic-rotating-file-audit-log";
     String PERIODIC_ROTATING_FILE_HANDLER = "periodic-rotating-file-handler";
     String PERIODIC_SIZE_ROTATING_FILE_HANDLER = "periodic-size-rotating-file-handler";
+    String PERMISSIBLE_STABILITY_LEVELS = "permissible-stability-levels";
     String PERMISSION = "permission";
     String PERMISSION_MAPPINGS = "permission-mappings";
     String PERMISSION_SET = "permission-set";
@@ -952,6 +953,7 @@ public interface ModelDescriptionConstants {
     String SQL = "sql";
     String SSL = "ssl";
     String SSL_CONTEXT = "ssl-context";
+    String STABILITY = "stability";
     String STACK = "stack";
     String STALE_CONNECTION_CHECKER_CLASS_NAME = "stale-connection-checker-class-name";
     String STANDALONE = "standalone";

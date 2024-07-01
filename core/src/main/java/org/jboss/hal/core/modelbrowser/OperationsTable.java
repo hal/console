@@ -19,7 +19,11 @@ import java.util.List;
 
 import org.jboss.elemento.HtmlContentBuilder;
 import org.jboss.elemento.IsElement;
+import org.jboss.hal.ballroom.StabilityLabel;
+import org.jboss.hal.config.Environment;
+import org.jboss.hal.config.StabilityLevel;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Resources;
@@ -39,10 +43,12 @@ import static org.jboss.elemento.Elements.th;
 import static org.jboss.elemento.Elements.thead;
 import static org.jboss.elemento.Elements.tr;
 import static org.jboss.elemento.Elements.ul;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPRECATED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REPLY_PROPERTIES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUEST_PROPERTIES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUIRED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STABILITY;
 import static org.jboss.hal.resources.CSS.operationParameter;
 import static org.jboss.hal.resources.CSS.table;
 import static org.jboss.hal.resources.CSS.tableBordered;
@@ -54,7 +60,7 @@ class OperationsTable implements IsElement {
     private final HTMLElement root;
     private final Resources resources;
 
-    OperationsTable(List<Property> operations, Resources resources) {
+    OperationsTable(List<Property> operations, Environment environment, Resources resources) {
         HTMLElement tbody;
 
         this.resources = resources;
@@ -70,15 +76,22 @@ class OperationsTable implements IsElement {
         for (Property property : Ordering.natural().onResultOf(Property::getName).sortedCopy(operations)) {
             ModelNode operation = property.getValue();
             String description = operation.hasDefined(DESCRIPTION) ? operation.get(DESCRIPTION).asString() : null;
+            boolean deprecated = operation.hasDefined(DEPRECATED) && operation.get(DEPRECATED).asBoolean();
+            StabilityLevel stabilityLevel = ModelNodeHelper.asEnumValue(operation, STABILITY, StabilityLevel::valueOf,
+                    environment.getHalBuild().defaultStability);
 
             // start a new table row
             HtmlContentBuilder<HTMLTableRowElement> builder = tr();
 
             // operation name & description
             SafeHtmlBuilder html = new SafeHtmlBuilder();
-            html.appendHtmlConstant("<strong>") // NON-NLS
+            if (environment.highlightStabilityLevel(stabilityLevel)) {
+                html.append(StabilityLabel.stabilityLevelHtml(stabilityLevel, false));
+            }
+            html.appendHtmlConstant(
+                    "<strong" + (deprecated ? " class=\"" + CSS.deprecated + "\" title=\"deprecated\"" : "") + ">")
                     .appendEscaped(property.getName())
-                    .appendHtmlConstant("</strong>"); // NON-NLS
+                    .appendHtmlConstant("</strong>");
             if (description != null) {
                 html.appendHtmlConstant("<br/>").appendEscaped(description); // NON-NLS
             }

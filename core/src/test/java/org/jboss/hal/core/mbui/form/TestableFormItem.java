@@ -21,6 +21,7 @@ import org.jboss.hal.ballroom.form.FormItem;
 import org.jboss.hal.ballroom.form.FormItemValidation;
 import org.jboss.hal.ballroom.form.ResolveExpressionEvent.ResolveExpressionHandler;
 import org.jboss.hal.ballroom.form.SuggestHandler;
+import org.jboss.hal.config.StabilityLevel;
 import org.jboss.hal.dmr.Deprecation;
 
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -269,6 +270,11 @@ public class TestableFormItem implements FormItem<String> {
 
     @Override
     public void fireEvent(GwtEvent<?> gwtEvent) {
+
+    }
+
+    @Override
+    public void setStability(StabilityLevel stability) {
 
     }
 }

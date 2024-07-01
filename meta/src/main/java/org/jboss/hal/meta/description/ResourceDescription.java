@@ -17,6 +17,7 @@ package org.jboss.hal.meta.description;
 
 import java.util.List;
 
+import org.jboss.hal.config.StabilityLevel;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.ModelType;
@@ -34,6 +35,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NILLABLE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.OPERATIONS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUIRED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUIRES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STABILITY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
 
 /** Contains the resource and attribute descriptions from the read-resource-description operation. */
@@ -58,6 +60,10 @@ public class ResourceDescription extends ModelNode {
     /** @return the resource description */
     public String getDescription() {
         return get(DESCRIPTION).asString();
+    }
+
+    public StabilityLevel getStability() {
+        return ModelNodeHelper.asEnumValue(this, STABILITY, StabilityLevel::valueOf, null);
     }
 
     public List<Property> getAttributes(String path) {

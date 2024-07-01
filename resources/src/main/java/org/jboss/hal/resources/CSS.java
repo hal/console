@@ -406,6 +406,10 @@ public interface CSS {
     String spinner = "spinner";
     String spinnerLg = "spinner-lg";
     String srOnly = "sr-only";
+    String stability = "stability";
+    String stabilityBanner = "stability-banner";
+    String stabilityBannerMoreInfo = "stability-banner-more-info";
+    String stabilityBannerText = "stability-banner-text";
     String standalone = "standalone";
     String static_ = "static";
     String stopCircleO = "stop-circle-o";
@@ -511,7 +515,7 @@ public interface CSS {
     }
 
     static HeightUnionType vh(int offset) {
-        return height("calc(100vh - " + offset + "px)"); // NON-NLS
+        return height("calc(100vh - " + offset + "px - var(--stability-offset))"); // NON-NLS
     }
 
     static HeightUnionType height(Object height) {

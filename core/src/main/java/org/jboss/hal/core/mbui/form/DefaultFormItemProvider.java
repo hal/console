@@ -35,6 +35,7 @@ import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
 import org.jboss.hal.ballroom.form.SuggestHandler;
 import org.jboss.hal.ballroom.form.SwitchItem;
 import org.jboss.hal.ballroom.form.TextBoxItem;
+import org.jboss.hal.config.StabilityLevel;
 import org.jboss.hal.core.Core;
 import org.jboss.hal.core.ui.TuplesListItem;
 import org.jboss.hal.dmr.Deprecation;
@@ -54,7 +55,24 @@ import static java.util.stream.Collectors.toList;
 
 import static org.jboss.hal.ballroom.form.NumberItem.MAX_SAFE_LONG;
 import static org.jboss.hal.ballroom.form.NumberItem.MIN_SAFE_LONG;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ACCESS_CONSTRAINTS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ACCESS_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ALLOWED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CAPABILITY_REFERENCE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPRECATED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.EXPRESSIONS_ALLOWED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MAX;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.METRIC;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MIN;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NILLABLE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PASSWORD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_ONLY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SENSITIVE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STABILITY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.UNIT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE_TYPE;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 
 class DefaultFormItemProvider implements FormItemProvider {
@@ -89,6 +107,7 @@ class DefaultFormItemProvider implements FormItemProvider {
         String unit = attributeDescription.hasDefined(UNIT) ? attributeDescription.get(UNIT).asString() : null;
         Deprecation deprecation = attributeDescription.hasDefined(DEPRECATED) ? new Deprecation(
                 attributeDescription.get(DEPRECATED)) : null;
+        StabilityLevel stability = ModelNodeHelper.asEnumValue(attributeDescription, STABILITY, StabilityLevel::valueOf, null);
 
         if (attributeDescription.hasDefined(TYPE)) {
             ModelType type = attributeDescription.get(TYPE).asType();
@@ -258,6 +277,10 @@ class DefaultFormItemProvider implements FormItemProvider {
                     // if the attribute is read-only and required, the form validation prevents to save the form
                     // remove the required constraint to allow the save operation.
                     formItem.setRequired(false);
+                }
+
+                if (Core.INSTANCE.environment().highlightStabilityLevel(stability)) {
+                    formItem.setStability(stability);
                 }
             }
         }

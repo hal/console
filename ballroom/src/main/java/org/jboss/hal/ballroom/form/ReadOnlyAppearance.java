@@ -18,7 +18,9 @@ package org.jboss.hal.ballroom.form;
 import java.util.Set;
 
 import org.jboss.elemento.Elements;
+import org.jboss.hal.ballroom.StabilityLabel;
 import org.jboss.hal.ballroom.form.AbstractFormItem.ExpressionContext;
+import org.jboss.hal.config.StabilityLevel;
 import org.jboss.hal.dmr.Deprecation;
 import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Ids;
@@ -29,6 +31,7 @@ import com.google.web.bindery.event.shared.HandlerRegistration;
 import elemental2.dom.HTMLElement;
 
 import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.insertFirst;
 import static org.jboss.elemento.Elements.label;
 import static org.jboss.elemento.Elements.p;
 import static org.jboss.elemento.Elements.span;
@@ -250,6 +253,13 @@ public abstract class ReadOnlyAppearance<T> extends AbstractAppearance<T> {
                     valueContainer.appendChild(peekLink);
                 }
                 mask();
+                break;
+
+            case STABILITY:
+                if (context instanceof StabilityLevel) {
+                    StabilityLevel stability = (StabilityLevel) context;
+                    insertFirst(labelElement, new StabilityLabel(stability));
+                }
                 break;
 
             // not supported

@@ -46,6 +46,7 @@ public class ResourceDescriptionDatabase extends AbstractDatabase<ResourceDescri
     public String name() {
         return Ids.build("hal-db-rd",
                 environment.getHalBuild().name(),
+                environment.getStabilityLevel().name(),
                 settings.get(Settings.Key.LOCALE).value(),
                 environment.getManagementVersion().toString());
     }

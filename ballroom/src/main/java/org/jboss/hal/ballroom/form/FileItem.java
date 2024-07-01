@@ -36,6 +36,7 @@ import static org.jboss.hal.ballroom.form.Decoration.ENABLED;
 import static org.jboss.hal.ballroom.form.Decoration.HINT;
 import static org.jboss.hal.ballroom.form.Decoration.INVALID;
 import static org.jboss.hal.ballroom.form.Decoration.REQUIRED;
+import static org.jboss.hal.ballroom.form.Decoration.STABILITY;
 import static org.jboss.hal.resources.CSS.*;
 
 public class FileItem extends AbstractFormItem<File> {
@@ -94,7 +95,7 @@ public class FileItem extends AbstractFormItem<File> {
         private final HTMLInputElement filename;
 
         FileEditingAppearance(HTMLInputElement inputElement) {
-            super(EnumSet.of(ENABLED, HINT, INVALID, REQUIRED), inputElement);
+            super(EnumSet.of(ENABLED, HINT, INVALID, REQUIRED, STABILITY), inputElement);
             Elements.setVisible(inputElement, false);
 
             inputGroup.appendChild(label().css(inputGroupBtn)

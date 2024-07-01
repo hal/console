@@ -53,7 +53,7 @@ abstract class SelectBoxEditingAppearance<T> extends AbstractAppearance<T> {
     boolean attached;
 
     SelectBoxEditingAppearance(HTMLSelectElement selectElement, List<String> options, boolean allowEmpty) {
-        super(EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED));
+        super(EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED, STABILITY));
 
         this.selectElement = selectElement;
         this.selectElement.classList.add(formControl);

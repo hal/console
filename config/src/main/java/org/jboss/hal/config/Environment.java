@@ -83,4 +83,30 @@ public interface Environment {
 
     /** @return whether HAL is run in production mode */
     boolean isProductionMode();
+
+    /**
+     * @return the stability level of the server.
+     */
+    StabilityLevel getStabilityLevel();
+
+    void setStabilityLevel(StabilityLevel stabilityLevel);
+
+    /**
+     * @return an array of all the stability levels supported by this server.
+     */
+    StabilityLevel[] getStabilityLevels();
+
+    void setStabilityLevels(StabilityLevel[] stabilityLevels);
+
+    /**
+     * @return {@code true} if the {@linkplain #getStabilityLevel() stability level} is lower than
+     *         {@link Build#defaultStability}, {@code false} otherwise.
+     */
+    boolean highlightStabilityLevel();
+
+    /**
+     * @return {@code true} if the specified stability level is lower than {@link Build#defaultStability}, {@code false}
+     *         otherwise.
+     */
+    boolean highlightStabilityLevel(StabilityLevel stabilityLevel);
 }

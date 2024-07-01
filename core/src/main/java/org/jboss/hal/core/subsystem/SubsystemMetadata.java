@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.core.subsystem;
 
+import org.jboss.hal.config.StabilityLevel;
+
 import com.google.gwt.resources.client.ExternalTextResource;
 
 public class SubsystemMetadata {
@@ -24,6 +26,7 @@ public class SubsystemMetadata {
     private final String subtitle;
     private final String token;
     private final String nextColumn;
+    private StabilityLevel stabilityLevel;
     private final ExternalTextResource externalTextResource;
     private final boolean generic;
 
@@ -68,6 +71,14 @@ public class SubsystemMetadata {
 
     public boolean isGeneric() {
         return generic;
+    }
+
+    public StabilityLevel getStabilityLevel() {
+        return stabilityLevel;
+    }
+
+    public void setStabilityLevel(StabilityLevel stabilityLevel) {
+        this.stabilityLevel = stabilityLevel;
     }
 
     public static class Builder {

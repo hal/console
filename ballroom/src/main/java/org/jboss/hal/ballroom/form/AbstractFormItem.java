@@ -27,6 +27,7 @@ import org.jboss.hal.ballroom.form.EncryptExpressionEvent.EncryptExpressionHandl
 import org.jboss.hal.ballroom.form.Form.State;
 import org.jboss.hal.ballroom.form.ResolveExpressionEvent.ResolveExpressionHandler;
 import org.jboss.hal.ballroom.wizard.Wizard;
+import org.jboss.hal.config.StabilityLevel;
 import org.jboss.hal.dmr.Deprecation;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -40,7 +41,17 @@ import elemental2.dom.HTMLElement;
 
 import static java.util.Collections.singletonList;
 
-import static org.jboss.hal.ballroom.form.Decoration.*;
+import static org.jboss.hal.ballroom.form.Decoration.DEFAULT;
+import static org.jboss.hal.ballroom.form.Decoration.DEPRECATED;
+import static org.jboss.hal.ballroom.form.Decoration.ENABLED;
+import static org.jboss.hal.ballroom.form.Decoration.EXPRESSION;
+import static org.jboss.hal.ballroom.form.Decoration.HINT;
+import static org.jboss.hal.ballroom.form.Decoration.INVALID;
+import static org.jboss.hal.ballroom.form.Decoration.REQUIRED;
+import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
+import static org.jboss.hal.ballroom.form.Decoration.SENSITIVE;
+import static org.jboss.hal.ballroom.form.Decoration.STABILITY;
+import static org.jboss.hal.ballroom.form.Decoration.SUGGESTIONS;
 import static org.jboss.hal.ballroom.form.FormItemValidation.ValidationRule.ALWAYS;
 
 /**
@@ -638,6 +649,15 @@ public abstract class AbstractFormItem<T> implements FormItem<T> {
             apply(DEPRECATED, deprecation);
         } else {
             unapply(DEPRECATED);
+        }
+    }
+
+    @Override
+    public void setStability(StabilityLevel stability) {
+        if (stability != null) {
+            apply(STABILITY, stability);
+        } else {
+            unapply(STABILITY);
         }
     }
 

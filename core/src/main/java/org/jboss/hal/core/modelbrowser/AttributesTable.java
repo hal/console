@@ -20,12 +20,18 @@ import java.util.List;
 import org.jboss.elemento.HtmlContentBuilder;
 import org.jboss.elemento.IsElement;
 import org.jboss.hal.ballroom.HelpTextBuilder;
+import org.jboss.hal.ballroom.StabilityLabel;
+import org.jboss.hal.config.Environment;
+import org.jboss.hal.config.StabilityLevel;
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.resources.CSS;
+import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Resources;
 
 import com.google.common.collect.Ordering;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -33,19 +39,37 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLTableRowElement;
 
-import static org.jboss.elemento.Elements.*;
 import static org.jboss.elemento.Elements.i;
 import static org.jboss.elemento.Elements.table;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.*;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.elemento.Elements.tbody;
+import static org.jboss.elemento.Elements.td;
+import static org.jboss.elemento.Elements.th;
+import static org.jboss.elemento.Elements.thead;
+import static org.jboss.elemento.Elements.tr;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ACCESS_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CONFIGURATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPRECATED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.METRIC;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.NILLABLE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_ONLY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_WRITE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNTIME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STABILITY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STORAGE;
+import static org.jboss.hal.resources.CSS.fontAwesome;
+import static org.jboss.hal.resources.CSS.pfIcon;
 import static org.jboss.hal.resources.CSS.table;
+import static org.jboss.hal.resources.CSS.tableBordered;
+import static org.jboss.hal.resources.CSS.tableStriped;
 import static org.jboss.hal.resources.UIConstants.NBSP;
 
 class AttributesTable implements IsElement {
 
+    private static final Constants CONSTANTS = GWT.create(Constants.class);
+
     private final HTMLElement root;
 
-    AttributesTable(List<Property> attributes, Resources resources) {
+    AttributesTable(List<Property> attributes, Environment environment, Resources resources) {
 
         HTMLElement tbody;
         this.root = table()
@@ -64,12 +88,17 @@ class AttributesTable implements IsElement {
             boolean required = attribute.hasDefined(NILLABLE) && !attribute.get(NILLABLE).asBoolean();
             boolean deprecated = attribute.hasDefined(DEPRECATED) && attribute.get(DEPRECATED).asBoolean();
             SafeHtml description = helpTextBuilder.helpText(property);
+            StabilityLevel stabilityLevel = ModelNodeHelper.asEnumValue(attribute, STABILITY, StabilityLevel::valueOf,
+                    environment.getHalBuild().defaultStability);
 
             // start a new table row
             HtmlContentBuilder<HTMLTableRowElement> builder = tr();
 
             // attribute name & description
             SafeHtmlBuilder html = new SafeHtmlBuilder();
+            if (environment.highlightStabilityLevel(stabilityLevel)) {
+                html.append(StabilityLabel.stabilityLevelHtml(stabilityLevel, false));
+            }
             html.appendHtmlConstant(
                     "<strong" + (deprecated ? " class=\"" + CSS.deprecated + "\" title=\"deprecated\"" : "") + ">")
                     .appendEscaped(property.getName())
