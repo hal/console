@@ -21,6 +21,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.jboss.hal.ballroom.LabelBuilder;
+import org.jboss.hal.config.Environment;
+import org.jboss.hal.config.StabilityLevel;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.ItemAction;
@@ -37,11 +39,14 @@ import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.AddressTemplate;
+import org.jboss.hal.meta.Metadata;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Column;
+import org.jboss.hal.spi.Requires;
 
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
@@ -53,6 +58,7 @@ import static java.util.Collections.singletonList;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 
+import static org.jboss.elemento.Elements.i;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_DESCRIPTION_OPERATION;
@@ -60,6 +66,9 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBSYSTEM;
 import static org.jboss.hal.meta.StatementContext.Expression.SELECTED_PROFILE;
 
 @Column(Ids.CONFIGURATION_SUBSYSTEM)
+// this has a negative impact on the performance (for the first selection),
+// but is necessary to get the stability of a subsystem
+@Requires(value = "/{selected.profile}/subsystem=*", recursive = false)
 public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
 
     private static final AddressTemplate SUBSYSTEM_TEMPLATE = AddressTemplate.of(SELECTED_PROFILE, "subsystem=*");
@@ -70,7 +79,9 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
     @Inject
     public SubsystemColumn(Finder finder,
             Dispatcher dispatcher,
+            Environment environment,
             Places places,
+            MetadataRegistry metadataRegistry,
             StatementContext statementContext,
             ItemActionFactory itemActionFactory,
             Subsystems subsystems,
@@ -97,9 +108,20 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
 
                     @Override
                     public String getFilterData() {
-                        return item.getSubtitle() != null ? item.getTitle() + " " + item.getSubtitle()
-                                : item
-                                        .getTitle();
+                        return item.getSubtitle() != null ? item.getTitle() + " " + item.getSubtitle() : item.getTitle();
+                    }
+
+                    @Override
+                    public HTMLElement getIcon() {
+                        StabilityLevel stabilityLevel = item.getStabilityLevel();
+                        if (environment.highlightStabilityLevel(stabilityLevel)) {
+                            return i().css(stabilityLevel.icon)
+                                    .title(resources.constants().stabilityLevel() + ": " + stabilityLevel.name().toLowerCase())
+                                    .style("color:var(--stability-" + stabilityLevel.name().toLowerCase() + "-color)")
+                                    .element();
+                        } else {
+                            return null;
+                        }
                     }
 
                     @Override
@@ -154,12 +176,17 @@ public class SubsystemColumn extends FinderColumn<SubsystemMetadata> {
                     if (emptySubsystem) {
                         continue;
                     }
+                    SubsystemMetadata subsystemMetadata;
                     if (subsystems.containsConfiguration(name)) {
-                        combined.add(subsystems.getConfiguration(name));
+                        subsystemMetadata = subsystems.getConfiguration(name);
                     } else {
                         String title = new LabelBuilder().label(name);
-                        combined.add(new SubsystemMetadata.Builder(name, title).generic().build());
+                        subsystemMetadata = new SubsystemMetadata.Builder(name, title).generic().build();
                     }
+                    AddressTemplate template = AddressTemplate.of("/{selected.profile}/subsystem=" + name);
+                    Metadata metadata = metadataRegistry.lookup(template);
+                    subsystemMetadata.setStabilityLevel(metadata.getDescription().getStability());
+                    combined.add(subsystemMetadata);
                 }
                 combined.sort(comparing(SubsystemMetadata::getTitle));
                 resolve.onInvoke(combined);

@@ -54,6 +54,7 @@ import static org.jboss.hal.ballroom.form.Decoration.ENABLED;
 import static org.jboss.hal.ballroom.form.Decoration.INVALID;
 import static org.jboss.hal.ballroom.form.Decoration.REQUIRED;
 import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
+import static org.jboss.hal.ballroom.form.Decoration.STABILITY;
 import static org.jboss.hal.ballroom.form.Decoration.SUGGESTIONS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NILLABLE;
@@ -91,7 +92,7 @@ public class TuplesListItem extends TagsItem<ModelNode> implements ModelNodeItem
     @SuppressWarnings("unchecked")
     private TuplesListItem(String name, String label, Metadata metadata, HTMLElement addButton, TuplesListMapping mapping) {
         super(name, label, MESSAGES.tuplesHint(String.join(",", getAttributeNames(metadata, true))),
-                EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED, SUGGESTIONS),
+                EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED, STABILITY, SUGGESTIONS),
                 mapping, addButton);
 
         Dialog addTupleDialog;

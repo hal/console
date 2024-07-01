@@ -27,6 +27,7 @@ import static org.jboss.elemento.Elements.a;
 import static org.jboss.hal.ballroom.form.Decoration.DEFAULT;
 import static org.jboss.hal.ballroom.form.Decoration.DEPRECATED;
 import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
+import static org.jboss.hal.ballroom.form.Decoration.STABILITY;
 
 public class URLItem extends TextBoxItem {
 
@@ -35,7 +36,7 @@ public class URLItem extends TextBoxItem {
         private HTMLAnchorElement anchorElement;
 
         URLReadOnlyAppearance() {
-            super(EnumSet.of(DEFAULT, DEPRECATED, RESTRICTED));
+            super(EnumSet.of(DEFAULT, DEPRECATED, RESTRICTED, STABILITY));
 
             HTMLElement parent = (HTMLElement) valueContainer.parentNode;
             Elements.removeChildrenFrom(parent);

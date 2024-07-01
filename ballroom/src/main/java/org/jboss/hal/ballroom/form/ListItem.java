@@ -32,7 +32,7 @@ public class ListItem extends TagsItem<List<String>> {
 
     public ListItem(String name, String label) {
         super(name, label, MESSAGES.listHint(),
-                EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED, SUGGESTIONS),
+                EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED, STABILITY, SUGGESTIONS),
                 new ListMapping());
     }
 

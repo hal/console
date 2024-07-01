@@ -67,7 +67,7 @@ public class NumberSelectItem extends AbstractFormItem<Long> {
     private static class NumberSelectReadOnlyAppearance extends ReadOnlyAppearance<Long> {
 
         NumberSelectReadOnlyAppearance() {
-            super(EnumSet.of(DEFAULT, DEPRECATED, HINT, RESTRICTED));
+            super(EnumSet.of(DEFAULT, DEPRECATED, HINT, RESTRICTED, STABILITY));
         }
 
         @Override
@@ -87,7 +87,7 @@ public class NumberSelectItem extends AbstractFormItem<Long> {
         private final HTMLElement root;
 
         NumberSelectEditingAppearance(long[] numbers) {
-            super(EnumSet.of(DEPRECATED, ENABLED, INVALID, REQUIRED));
+            super(EnumSet.of(DEPRECATED, ENABLED, INVALID, REQUIRED, STABILITY));
             this.buttons = new HashMap<>();
 
             root = div().css(formGroup)

@@ -71,7 +71,7 @@ public class ColumnRegistry {
     <C extends FinderColumn<T>, T> Promise<C> lookup(String id) {
         Set<String> resources = requiredResources.getResources(id);
         if (resolvedColumns.containsKey(id)) {
-            if (resources.stream().anyMatch(r -> r.contains("{selected."))) {
+            if (resources.stream().anyMatch(r -> r.contains("{selected.host}") || r.contains("{selected.server"))) {
                 // Column depends on a selection (e.g. selected.host/server). These columns are processed for the
                 // current selection only. If the column is already resolved, the resources need to be processed for
                 // the new selection

@@ -21,8 +21,11 @@ import java.util.List;
 
 import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.PatternFly;
+import org.jboss.hal.ballroom.StabilityLabel;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.tree.Node;
+import org.jboss.hal.config.Environment;
+import org.jboss.hal.config.StabilityLevel;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelType;
@@ -35,6 +38,7 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 import elemental2.dom.HTMLElement;
@@ -59,6 +63,7 @@ class ResourcePanel implements Iterable<HTMLElement> {
 
     private final ModelBrowser modelBrowser;
     private final Dispatcher dispatcher;
+    private final Environment environment;
     private final Resources resources;
     private final Iterable<HTMLElement> elements;
     private final HTMLElement description;
@@ -70,9 +75,11 @@ class ResourcePanel implements Iterable<HTMLElement> {
 
     ResourcePanel(ModelBrowser modelBrowser,
             Dispatcher dispatcher,
+            Environment environment,
             Resources resources) {
         this.modelBrowser = modelBrowser;
         this.dispatcher = dispatcher;
+        this.environment = environment;
         this.resources = resources;
 
         dataId = Ids.build(Ids.MODEL_BROWSER, RESOURCE, "data", Ids.TAB);
@@ -97,8 +104,17 @@ class ResourcePanel implements Iterable<HTMLElement> {
     }
 
     void update(Node<Context> node, ResourceAddress address, Metadata metadata) {
+        StabilityLevel stabilityLevel = metadata.getDescription().getStability();
+
         SafeHtml safeHtml = SafeHtmlUtils.fromSafeConstant(metadata.getDescription().getDescription());
-        Elements.innerHtml(this.description, safeHtml);
+        if (environment.highlightStabilityLevel(stabilityLevel)) {
+            SafeHtmlBuilder html = new SafeHtmlBuilder();
+            html.append(StabilityLabel.stabilityLevelHtml(stabilityLevel, false));
+            html.append(safeHtml);
+            Elements.innerHtml(this.description, html.toSafeHtml());
+        } else {
+            Elements.innerHtml(this.description, safeHtml);
+        }
 
         tabs.setContent(dataId, PLACE_HOLDER_ELEMENT);
         tabs.setContent(attributesId, PLACE_HOLDER_ELEMENT);
@@ -128,10 +144,10 @@ class ResourcePanel implements Iterable<HTMLElement> {
             });
 
             tabs.setContent(attributesId,
-                    new AttributesTable(metadata.getDescription().getAttributes(ATTRIBUTES), resources).element());
+                    new AttributesTable(metadata.getDescription().getAttributes(ATTRIBUTES), environment, resources).element());
             if (!metadata.getDescription().getOperations().isEmpty()) {
                 tabs.setContent(operationsId,
-                        new OperationsTable(metadata.getDescription().getOperations(), resources).element());
+                        new OperationsTable(metadata.getDescription().getOperations(), environment, resources).element());
             }
         }
     }

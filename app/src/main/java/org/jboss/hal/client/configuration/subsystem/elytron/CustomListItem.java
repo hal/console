@@ -43,6 +43,7 @@ import static org.jboss.hal.ballroom.form.Decoration.ENABLED;
 import static org.jboss.hal.ballroom.form.Decoration.INVALID;
 import static org.jboss.hal.ballroom.form.Decoration.REQUIRED;
 import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
+import static org.jboss.hal.ballroom.form.Decoration.STABILITY;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 
 /**
@@ -70,7 +71,7 @@ class CustomListItem extends TagsItem<ModelNode> implements ModelNodeItem {
 
     CustomListItem(String attribute, String propAttribute, String valueAttribute) {
         super(attribute, new LabelBuilder().label(attribute), MESSAGES.customListItemHint(propAttribute, valueAttribute),
-                EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED),
+                EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED, STABILITY),
                 new MapMapping(propAttribute, valueAttribute));
     }
 

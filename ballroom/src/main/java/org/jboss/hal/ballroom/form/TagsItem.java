@@ -35,6 +35,7 @@ import static org.jboss.elemento.InputType.text;
 import static org.jboss.hal.ballroom.form.Decoration.DEFAULT;
 import static org.jboss.hal.ballroom.form.Decoration.DEPRECATED;
 import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
+import static org.jboss.hal.ballroom.form.Decoration.STABILITY;
 import static org.jboss.hal.ballroom.form.Decoration.SUGGESTIONS;
 import static org.jboss.hal.resources.CSS.*;
 import static org.jboss.hal.resources.Ids.uniqueId;
@@ -90,7 +91,7 @@ public abstract class TagsItem<T> extends AbstractFormItem<T> {
     private class TagsReadOnlyAppearance extends ReadOnlyAppearance<T> {
 
         TagsReadOnlyAppearance() {
-            super(EnumSet.of(DEFAULT, DEPRECATED, RESTRICTED));
+            super(EnumSet.of(DEFAULT, DEPRECATED, RESTRICTED, STABILITY));
         }
 
         @Override

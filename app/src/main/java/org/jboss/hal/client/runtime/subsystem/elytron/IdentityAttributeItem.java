@@ -45,7 +45,7 @@ public class IdentityAttributeItem extends TagsItem<Map<String, List<String>>> {
 
     public IdentityAttributeItem(final String name, final String label) {
         super(name, label, MESSAGES.multiValueListHint(),
-                EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED),
+                EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED, STABILITY),
                 new MapMapping());
     }
 

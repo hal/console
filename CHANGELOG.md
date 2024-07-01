@@ -9,8 +9,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- [HAL-1975](https://issues.redhat.com/browse/HAL-1975): Add functionality to configure remoting-ejb-receiver of a
-  remoting-profile
+- [HAL-1833](https://issues.redhat.com/browse/HAL-1833) Link of Update documentation links on the homepage of the console
+- [HAL-1970](https://issues.redhat.com/browse/HAL-1970): Split runtime ds presenter/view into xa and non-xa version
+- [HAL-1975](https://issues.redhat.com/browse/HAL-1975): Add functionality to configure remoting-ejb-receiver of a remoting-profile
+- [HAL-1978](https://issues.redhat.com/browse/HAL-1978): Fix documentation links on homepage (WildFly)
+- [HAL-1979](https://issues.redhat.com/browse/HAL-1979):Support for stability levels in the console
+
+### Upgrades
+
+- Bump ACE editor to 1.35.0 in /app
+- Bump JBoss parent to 46
+- Bump Mockito to 5.12.0
+- Bump Parcel to 2.12.0
 
 ## [3.7.0] - 2024-02-15
 
@@ -33,8 +43,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - [HAL-1961](https://issues.redhat.com/browse/HAL-1961): fix progress bar width setting
 - [HAL-1960](https://issues.redhat.com/browse/HAL-1960): Mark variable parts in attributes in the DB wizards
 - [HAL-1953](https://issues.redhat.com/browse/HAL-1953): Unable to add unamanaged deployment for server group
-- [HAL-1952](https://issues.redhat.com/browse/HAL-1952): Adding string constants have been used directly in the Encrypt
-  Expression code in the ExpressionEncryptor class
+- [HAL-1952](https://issues.redhat.com/browse/HAL-1952): Adding string constants have been used directly in the Encrypt Expression code in the ExpressionEncryptor class
 - [HAL-1949](https://issues.redhat.com/browse/HAL-1949): Fix SSO address templates
 - [HAL-1947](https://issues.redhat.com/browse/HAL-1947): Fix timer-service attributes handling
 - [HAL-1945](https://issues.redhat.com/browse/HAL-1945): Fix notification badge visibility
@@ -588,35 +597,67 @@ Release process failed. Do not use this release!
 -->
 
 [Unreleased]: https://github.com/hal/console/compare/v3.7.0...HEAD
+
 [3.7.0]: https://github.com/hal/console/compare/v3.6.17...v3.7.0
+
 [3.6.17]: https://github.com/hal/console/compare/v3.6.16...v3.6.17
+
 [3.6.16]: https://github.com/hal/console/compare/v3.6.15...v3.6.16
+
 [3.6.15]: https://github.com/hal/console/compare/v3.6.14...v3.6.15
+
 [3.6.14]: https://github.com/hal/console/compare/v3.6.13...v3.6.14
+
 [3.6.13]: https://github.com/hal/console/compare/v3.6.12...v3.6.13
+
 [3.6.12]: https://github.com/hal/console/compare/v3.6.11...v3.6.12
+
 [3.6.11]: https://github.com/hal/console/compare/v3.6.10...v3.6.11
+
 [3.6.10]: https://github.com/hal/console/compare/v3.6.9...v3.6.10
+
 [3.6.9]: https://github.com/hal/console/compare/v3.6.8...v3.6.9
+
 [3.6.8]: https://github.com/hal/console/compare/v3.6.7...v3.6.8
+
 [3.6.7]: https://github.com/hal/console/compare/v3.6.6...v3.6.7
+
 [3.6.6]: https://github.com/hal/console/compare/v3.6.5...v3.6.6
+
 [3.6.5]: https://github.com/hal/console/compare/v3.6.4...v3.6.5
+
 [3.6.4]: https://github.com/hal/console/compare/v3.6.3...v3.6.4
+
 [3.6.3]: https://github.com/hal/console/compare/v3.6.2...v3.6.3
+
 [3.6.2]: https://github.com/hal/console/compare/v3.6.1...v3.6.2
+
 [3.6.1]: https://github.com/hal/console/compare/v3.6.0...v3.6.1
+
 [3.6.0]: https://github.com/hal/console/compare/v3.5.12...v3.6.0
+
 [3.5.12]: https://github.com/hal/console/compare/v3.5.11...v3.5.12
+
 [3.5.11]: https://github.com/hal/console/compare/v3.5.10...v3.5.11
+
 [3.5.10]: https://github.com/hal/console/compare/v3.5.9...v3.5.10
+
 [3.5.9]: https://github.com/hal/console/compare/v3.5.8...v3.5.9
+
 [3.5.8]: https://github.com/hal/console/compare/v3.5.7...v3.5.8
+
 [3.5.7]: https://github.com/hal/console/compare/v3.5.6...v3.5.7
+
 [3.5.6]: https://github.com/hal/console/compare/v3.5.5...v3.5.6
+
 [3.5.5]: https://github.com/hal/console/compare/v3.5.4...v3.5.5
+
 [3.5.4]: https://github.com/hal/console/compare/v3.5.3...v3.5.4
+
 [3.5.3]: https://github.com/hal/console/compare/v3.5.2...v3.5.3
+
 [3.5.2]: https://github.com/hal/console/compare/v3.5.1...v3.5.2
+
 [3.5.1]: https://github.com/hal/console/compare/v3.5.0...v3.5.1
+
 [3.5.0]: https://github.com/hal/console/compare/vTemplate...v3.5.0

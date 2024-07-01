@@ -447,6 +447,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     SafeHtml simpleProviderWarning();
     SafeHtml specifyParameters(String link);
     SafeHtml ssoAccessControlWarning();
+    SafeHtml stabilityLevelText(String name);
     SafeHtml staleStatistics();
     SafeHtml startDeliverySuccess(String name);
     SafeHtml startJobSuccess(String job, long id);

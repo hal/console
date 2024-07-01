@@ -30,5 +30,6 @@ public enum Decoration {
     REQUIRED, // null
     RESTRICTED, // null
     SENSITIVE, // null
+    STABILITY, // StabilityLevel
     SUGGESTIONS, // SuggestHandler
 }

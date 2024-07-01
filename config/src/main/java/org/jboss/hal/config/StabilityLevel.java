@@ -15,27 +15,29 @@
  */
 package org.jboss.hal.config;
 
-public enum Build {
+import static org.jboss.hal.resources.CSS.fontAwesome;
 
-    COMMUNITY(StabilityLevel.COMMUNITY),
+/**
+ * @see <a href=
+ *      "https://docs.wildfly.org/32/Admin_Guide.html#Feature_stability_levels">https://docs.wildfly.org/32/Admin_Guide.html#Feature_stability_levels</a>
+ */
+public enum StabilityLevel {
 
-    PRODUCT(StabilityLevel.DEFAULT);
+    // Keep the order!
 
-    public static Build parse(final String value) {
-        Build build = COMMUNITY;
-        if (value != null) {
-            try {
-                build = Build.valueOf(value.toUpperCase());
-            } catch (IllegalArgumentException ignore) {
-                // ignore
-            }
-        }
-        return build;
-    }
+    EXPERIMENTAL("experimental", fontAwesome("flask")),
 
-    public final StabilityLevel defaultStability;
+    PREVIEW("preview", fontAwesome("exclamation-triangle")),
 
-    Build(StabilityLevel defaultStability) {
-        this.defaultStability = defaultStability;
+    COMMUNITY("community", ""),
+
+    DEFAULT("default", "");
+
+    public final String label;
+    public final String icon;
+
+    StabilityLevel(String label, String icon) {
+        this.label = label;
+        this.icon = icon;
     }
 }

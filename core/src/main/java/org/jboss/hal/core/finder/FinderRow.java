@@ -70,24 +70,24 @@ import static org.jboss.hal.resources.Names.NOT_AVAILABLE;
 import static org.jboss.hal.resources.UIConstants.HASH;
 import static org.jboss.hal.resources.UIConstants.data;
 
-/** UI class for a single row in in a finder column. Only used internally in the finder. */
+/** UI class for a single row in a finder column. Only used internally in the finder. */
 class FinderRow<T> implements IsElement<HTMLLIElement> {
 
     private static final Constants CONSTANTS = GWT.create(Constants.class);
     private static final String PREVENT_SET_ITEMS = "preventSetItems";
     private static final int MAX_ACTION_TITLE_LENGTH = 16;
 
+    private final String id;
     private final Finder finder;
     private final FinderColumn<T> column;
     private final ItemDisplay<T> display;
     private final List<ItemAction<T>> actions;
     private final String nextColumn;
-    private ItemActionHandler<T> primaryAction;
+    private final HTMLLIElement root;
+    private final ItemActionHandler<T> primaryAction;
     private final PreviewContent<T> previewContent;
-    private String id;
     private T item;
 
-    private HTMLLIElement root;
     private HTMLElement folderElement;
     private HTMLElement buttonContainer;
 
@@ -157,13 +157,13 @@ class FinderRow<T> implements IsElement<HTMLLIElement> {
             root.appendChild(icon);
         }
 
-        HTMLElement itemElement;
-        if (display.element() != null) {
-            itemElement = display.element();
-        } else if (display.getTitle() != null) {
-            itemElement = span().css(itemText).textContent(display.getTitle()).element();
-        } else {
-            itemElement = span().css(itemText).textContent(NOT_AVAILABLE).element();
+        HTMLElement itemElement = display.element();
+        if (itemElement == null) {
+            if (display.getTitle() != null) {
+                itemElement = span().css(itemText).textContent(display.getTitle()).element();
+            } else {
+                itemElement = span().css(itemText).textContent(NOT_AVAILABLE).element();
+            }
         }
         if (display.getTooltip() != null && itemElement != null) {
             itemElement.title = display.getTooltip();

@@ -45,7 +45,7 @@ class RadioEditingAppearance extends AbstractAppearance<String> {
 
     RadioEditingAppearance(List<HTMLInputElement> elements, LinkedHashMap<String, String> options,
             boolean inline) {
-        super(EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED));
+        super(EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, STABILITY));
         this.inputElements = elements;
 
         root = div().css(formGroup)

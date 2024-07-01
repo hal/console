@@ -42,7 +42,7 @@ public class PermissionSetsItem extends TagsItem<ModelNode> implements ModelNode
 
     protected PermissionSetsItem() {
         super(PERMISSION_SETS, new LabelBuilder().label(PERMISSION_SETS), MESSAGES.listHint(),
-                EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED, SUGGESTIONS),
+                EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED, STABILITY, SUGGESTIONS),
                 new PermissionSetsMapping());
     }
 

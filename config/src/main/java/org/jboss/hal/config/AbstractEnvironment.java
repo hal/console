@@ -23,6 +23,7 @@ import static elemental2.dom.DomGlobal.window;
 import static org.jboss.hal.config.OperationMode.EMBEDDED;
 import static org.jboss.hal.config.OperationMode.SELF_CONTAINED;
 import static org.jboss.hal.config.OperationMode.STANDALONE;
+import static org.jboss.hal.config.StabilityLevel.COMMUNITY;
 
 /**
  * A base implementation for the environment.
@@ -46,6 +47,8 @@ public abstract class AbstractEnvironment implements Environment {
     private Version managementVersion;
     private AccessControlProvider accessControlProvider;
     private boolean sso;
+    private StabilityLevel stabilityLevel;
+    private StabilityLevel[] stabilityLevels;
 
     AbstractEnvironment(String halVersion, String halBuild, List<String> locales) {
         this.halVersion = org.jboss.hal.config.Version.parseVersion(halVersion);
@@ -63,6 +66,8 @@ public abstract class AbstractEnvironment implements Environment {
         this.domainController = null;
         this.managementVersion = Version.EMPTY_VERSION;
         this.accessControlProvider = AccessControlProvider.SIMPLE;
+        this.stabilityLevel = COMMUNITY;
+        this.stabilityLevels = StabilityLevel.values();
     }
 
     @Override
@@ -191,8 +196,40 @@ public abstract class AbstractEnvironment implements Environment {
     }
 
     @Override
+    public StabilityLevel getStabilityLevel() {
+        return stabilityLevel;
+    }
+
+    @Override
+    public void setStabilityLevel(StabilityLevel stabilityLevel) {
+        this.stabilityLevel = stabilityLevel;
+    }
+
+    @Override
+    public StabilityLevel[] getStabilityLevels() {
+        return stabilityLevels;
+    }
+
+    @Override
+    public void setStabilityLevels(StabilityLevel[] stabilityLevels) {
+        this.stabilityLevels = stabilityLevels;
+    }
+
+    @Override
+    public boolean highlightStabilityLevel() {
+        return highlightStabilityLevel(this.stabilityLevel);
+    }
+
+    @Override
+    public boolean highlightStabilityLevel(StabilityLevel stabilityLevel) {
+        return stabilityLevel != null &&
+                stabilityLevel.ordinal() < COMMUNITY.ordinal() && // only highlight preview and experimental
+                stabilityLevel.ordinal() < getHalBuild().defaultStability.ordinal();
+    }
+
+    @Override
     public String toString() {
         return "Environment(HAL " + halVersion + ", " + instanceInfo + ", management version " + managementVersion +
-                ", " + accessControlProvider.name().toLowerCase() + " provider)";
+                ", stability level " + stabilityLevel + ", " + accessControlProvider.name().toLowerCase() + " provider)";
     }
 }

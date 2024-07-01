@@ -18,10 +18,15 @@ package org.jboss.hal.client;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.jboss.elemento.Elements;
 import org.jboss.elemento.IsElement;
+import org.jboss.hal.client.skeleton.StabilityBanner;
+import org.jboss.hal.config.Environment;
 import org.jboss.hal.core.mvp.Slots;
 import org.jboss.hal.resources.Ids;
+import org.jboss.hal.resources.Resources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,13 +47,18 @@ public class RootView extends ViewImpl implements RootPresenter.MyView {
 
     private static final Logger logger = LoggerFactory.getLogger(RootView.class);
 
+    private final Environment environment;
+    private final Resources resources;
     private final Map<Object, HTMLElement> slots;
     private final HTMLElement rootContainer;
     private boolean initialized;
 
-    public RootView() {
-        slots = new HashMap<>();
-        rootContainer = div().id(Ids.ROOT_CONTAINER).css(containerFluid).element();
+    @Inject
+    public RootView(Environment environment, Resources resources) {
+        this.environment = environment;
+        this.resources = resources;
+        this.slots = new HashMap<>();
+        this.rootContainer = div().id(Ids.ROOT_CONTAINER).css(containerFluid).element();
         initWidget(widget(rootContainer));
     }
 
@@ -61,7 +71,12 @@ public class RootView extends ViewImpl implements RootPresenter.MyView {
                     : element(content.asWidget().getElement());
             slots.put(slot, element);
             if (!initialized && slots.containsKey(SLOT_HEADER_CONTENT) && slots.containsKey(SLOT_FOOTER_CONTENT)) {
-                // append all three building blocks to the document body
+                // append all building blocks to the document body
+                if (environment.highlightStabilityLevel()) {
+                    document.body.appendChild(new StabilityBanner(environment, resources).element());
+                } else {
+                    StabilityBanner.noStabilityLevelOffset();
+                }
                 document.body.appendChild(slots.get(SLOT_HEADER_CONTENT));
                 document.body.appendChild(rootContainer);
                 document.body.appendChild(slots.get(SLOT_FOOTER_CONTENT));

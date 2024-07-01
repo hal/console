@@ -28,6 +28,7 @@ import static org.jboss.elemento.Elements.select;
 import static org.jboss.hal.ballroom.form.Decoration.DEFAULT;
 import static org.jboss.hal.ballroom.form.Decoration.DEPRECATED;
 import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
+import static org.jboss.hal.ballroom.form.Decoration.STABILITY;
 
 public class SingleSelectBoxItem extends AbstractFormItem<String> {
 
@@ -95,7 +96,7 @@ public class SingleSelectBoxItem extends AbstractFormItem<String> {
     private static class SingleSelectBoxReadOnlyAppearance extends ReadOnlyAppearance<String> {
 
         SingleSelectBoxReadOnlyAppearance() {
-            super(EnumSet.of(DEFAULT, DEPRECATED, RESTRICTED));
+            super(EnumSet.of(DEFAULT, DEPRECATED, RESTRICTED, STABILITY));
         }
 
         @Override

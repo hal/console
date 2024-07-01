@@ -42,6 +42,7 @@ import static org.jboss.hal.ballroom.form.Decoration.ENABLED;
 import static org.jboss.hal.ballroom.form.Decoration.INVALID;
 import static org.jboss.hal.ballroom.form.Decoration.REQUIRED;
 import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
+import static org.jboss.hal.ballroom.form.Decoration.STABILITY;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 
 class RoleMapListItem extends TagsItem<ModelNode> implements ModelNodeItem {
@@ -50,7 +51,7 @@ class RoleMapListItem extends TagsItem<ModelNode> implements ModelNodeItem {
 
     public RoleMapListItem(final String name, final String label) {
         super(name, label, MESSAGES.multiValueListHint(),
-                EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED),
+                EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED, STABILITY),
                 new RoleMapListItem.MapMapping());
     }
 

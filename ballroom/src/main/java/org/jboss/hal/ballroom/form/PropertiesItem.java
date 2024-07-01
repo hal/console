@@ -51,7 +51,7 @@ public class PropertiesItem extends TagsItem<Map<String, String>> {
 
     public PropertiesItem(String name, String label, SafeHtml inputHelp) {
         super(name, label, inputHelp,
-                EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED, SUGGESTIONS),
+                EnumSet.of(DEFAULT, DEPRECATED, ENABLED, INVALID, REQUIRED, RESTRICTED, STABILITY, SUGGESTIONS),
                 new MapMapping());
     }
 

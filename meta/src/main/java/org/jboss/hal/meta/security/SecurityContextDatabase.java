@@ -71,6 +71,7 @@ public class SecurityContextDatabase extends AbstractDatabase<SecurityContext> {
                     provider,
                     roles,
                     environment.getHalBuild().name(),
+                    environment.getStabilityLevel().name(),
                     environment.getManagementVersion().toString());
         }
         return name;

@@ -35,9 +35,17 @@ public interface StatementContext {
          * <p>
          * Address templates which use this tuple must be prepared that it does not always resolve to the domain controller.
          */
-        DOMAIN_CONTROLLER("domain.controller", HOST), SELECTED_PROFILE("selected.profile", PROFILE), SELECTED_GROUP(
-                "selected.group", SERVER_GROUP), SELECTED_HOST("selected.host", HOST), SELECTED_SERVER_CONFIG(
-                        "selected.server-config", SERVER_CONFIG), SELECTED_SERVER("selected.server", SERVER);
+        DOMAIN_CONTROLLER("domain.controller", HOST),
+
+        SELECTED_PROFILE("selected.profile", PROFILE),
+
+        SELECTED_GROUP("selected.group", SERVER_GROUP),
+
+        SELECTED_HOST("selected.host", HOST),
+
+        SELECTED_SERVER_CONFIG("selected.server-config", SERVER_CONFIG),
+
+        SELECTED_SERVER("selected.server", SERVER);
 
         private final String name;
         private final String resource;

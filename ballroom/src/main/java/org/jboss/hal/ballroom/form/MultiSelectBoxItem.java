@@ -27,6 +27,7 @@ import static org.jboss.elemento.Elements.select;
 import static org.jboss.hal.ballroom.form.Decoration.DEFAULT;
 import static org.jboss.hal.ballroom.form.Decoration.DEPRECATED;
 import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
+import static org.jboss.hal.ballroom.form.Decoration.STABILITY;
 
 public class MultiSelectBoxItem extends AbstractFormItem<List<String>> {
 
@@ -58,7 +59,7 @@ public class MultiSelectBoxItem extends AbstractFormItem<List<String>> {
     private static class MultiSelectBoxReadOnlyAppearance extends ReadOnlyAppearance<List<String>> {
 
         MultiSelectBoxReadOnlyAppearance() {
-            super(EnumSet.of(DEFAULT, DEPRECATED, RESTRICTED));
+            super(EnumSet.of(DEFAULT, DEPRECATED, RESTRICTED, STABILITY));
         }
 
         @Override
