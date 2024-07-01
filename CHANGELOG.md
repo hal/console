@@ -7,8 +7,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [3.7.1] - 2024-07-01
-
 ### Added
 
 - [HAL-1833](https://issues.redhat.com/browse/HAL-1833) Link of Update documentation links on the homepage of the console
@@ -23,6 +21,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Bump JBoss parent to 46
 - Bump Mockito to 5.12.0
 - Bump Parcel to 2.12.0
+
+## [3.7.1] - 2024-07-01
+
+Release process failed. Do not use this release!
 
 ## [3.7.0] - 2024-02-15
 
