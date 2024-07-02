@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.7.4] - 2024-07-02
+
 ### Added
 
 - [HAL-1833](https://issues.redhat.com/browse/HAL-1833) Link of Update documentation links on the homepage of the console
@@ -640,7 +642,8 @@ Release process failed. Do not use this release!
 
 
 
-[Unreleased]: https://github.com/hal/console/compare/v3.7.3...HEAD
+[Unreleased]: https://github.com/hal/console/compare/v3.7.4...HEAD
+[3.7.4]: https://github.com/hal/console/compare/v3.7.3...v3.7.4
 [3.7.3]: https://github.com/hal/console/compare/v3.7.2...v3.7.3
 [3.7.2]: https://github.com/hal/console/compare/v3.7.1...v3.7.2
 [3.7.1]: https://github.com/hal/console/compare/v3.7.0...v3.7.1
