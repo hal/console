@@ -7,8 +7,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [3.7.3] - 2024-07-02
-
 ### Added
 
 - [HAL-1833](https://issues.redhat.com/browse/HAL-1833) Link of Update documentation links on the homepage of the console
@@ -19,10 +17,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Upgrades
 
-- Bump ACE editor to 1.35.0 in /app
+- Bump ACE editor to 1.35.2 in /app
 - Bump JBoss parent to 46
 - Bump Mockito to 5.12.0
 - Bump Parcel to 2.12.0
+
+## [3.7.3] - 2024-07-02
+
+Release process failed. Do not use this release!
 
 ## [3.7.2] - 2024-07-01
 
