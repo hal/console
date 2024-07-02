@@ -15,11 +15,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - [HAL-1970](https://issues.redhat.com/browse/HAL-1970): Split runtime ds presenter/view into xa and non-xa version
 - [HAL-1975](https://issues.redhat.com/browse/HAL-1975): Add functionality to configure remoting-ejb-receiver of a remoting-profile
 - [HAL-1978](https://issues.redhat.com/browse/HAL-1978): Fix documentation links on homepage (WildFly)
-- [HAL-1979](https://issues.redhat.com/browse/HAL-1979):Support for stability levels in the console
+- [HAL-1979](https://issues.redhat.com/browse/HAL-1979): Support for stability levels in the console
 
 ### Upgrades
 
-- Bump ACE editor to 1.35.2 in /app
+- Bump ACE editor to 1.35.2
 - Bump JBoss parent to 46
 - Bump Mockito to 5.12.0
 - Bump Parcel to 2.12.0
