@@ -141,6 +141,7 @@ public interface ModelDescriptionConstants {
     String CHANNEL_CHANGES = "channel-changes";
     String CHANNEL_NAME = "channel-name";
     String CHANNEL_REMOVE = "channel-remove";
+    String CHANNEL_VERSIONS = "channel-versions";
     String CHANNELS = "channels";
     String CHECK = "check";
     String CHECKS = "checks";
