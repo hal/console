@@ -15,7 +15,10 @@
  */
 package org.jboss.hal.client.installer;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
@@ -31,6 +34,14 @@ class UpdateItem extends NamedNode {
 
     UpdateItem(final ModelNode node) {
         super(node.get(HASH).asString(), node);
+    }
+
+    List<String> getVersions() {
+        if (this.has("channel-versions")) {
+            return this.get("channel-versions").asList().stream().map(ModelNode::asString).collect(Collectors.toList());
+        } else {
+            return Collections.emptyList();
+        }
     }
 
     Date getTimestamp() {

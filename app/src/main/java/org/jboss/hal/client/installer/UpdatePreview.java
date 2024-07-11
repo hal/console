@@ -97,6 +97,13 @@ class UpdatePreview extends PreviewContent<UpdateItem> {
         attributes.append(model -> new PreviewAttribute(new LabelBuilder().label(TIMESTAMP),
                 Format.mediumDateTime(updateItem.getTimestamp())));
         attributes.append(TYPE);
+        attributes.append(model -> {
+            final HTMLUListElement list = ul().element();
+            for (String version : model.getVersions()) {
+                list.appendChild(li().textContent(version).element());
+            }
+            return new PreviewAttribute(new LabelBuilder().label(CHANNEL_VERSIONS), list);
+        });
         previewBuilder()
                 .addAll(attributes)
                 .add(tabs)
