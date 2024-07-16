@@ -23,17 +23,14 @@ import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.mvp.Places;
 import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
-import org.jboss.hal.resources.Resources;
 
 public class AccessControlTokens {
 
     private final Places places;
-    private final Resources resources;
 
     @Inject
-    public AccessControlTokens(final Places places, final Resources resources) {
+    public AccessControlTokens(final Places places) {
         this.places = places;
-        this.resources = resources;
     }
 
     public String principal(Principal principal) {
@@ -48,26 +45,28 @@ public class AccessControlTokens {
         String browseByItemId;
         String principalColumnId;
         if (principal.getType() == Principal.Type.USER) {
-            browseByItemId = Ids.asId(resources.constants().users());
+            browseByItemId = Ids.ACCESS_CONTROL_BROWSE_BY_USERS;
             principalColumnId = Ids.USER;
         } else {
-            browseByItemId = Ids.asId(resources.constants().groups());
+            browseByItemId = Ids.ACCESS_CONTROL_BROWSE_BY_GROUPS;
             principalColumnId = Ids.GROUP;
         }
 
-        return new FinderPath()
-                .append(Ids.ACCESS_CONTROL_BROWSE_BY, browseByItemId)
-                .append(principalColumnId, principal.getId());
+        return getPath(browseByItemId, principalColumnId, principal.getId());
     }
 
     private FinderPath rolePath(Role role) {
-        return new FinderPath()
-                .append(Ids.ACCESS_CONTROL_BROWSE_BY, Ids.asId(resources.constants().roles()))
-                .append(Ids.ROLE, role.getId());
+        return getPath(Ids.ACCESS_CONTROL_BROWSE_BY_ROLES, Ids.ROLE, role.getId());
     }
 
     private String token(FinderPath path) {
         PlaceRequest placeRequest = places.finderPlace(NameTokens.ACCESS_CONTROL, path).build();
         return places.historyToken(placeRequest);
+    }
+
+    private FinderPath getPath(String browseById, String typeId, String name) {
+        return new FinderPath()
+                .append(Ids.ACCESS_CONTROL_BROWSE_BY, browseById)
+                .append(typeId, name);
     }
 }

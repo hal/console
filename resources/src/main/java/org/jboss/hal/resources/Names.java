@@ -79,6 +79,7 @@ public interface Names {
     String CONNECTORS = "Connectors";
     String CONSUMERS = "Consumers";
     String CONSOLE_ACTION_HANDLER = "Console ActionHandler";
+    String CONTENT_REPOSITORY = "Content Repository";
     String CONTEXT = "Context";
     String CONTEXT_ROOT = "Context Root";
     String CONTEXT_ROOTS = "Context Roots";
