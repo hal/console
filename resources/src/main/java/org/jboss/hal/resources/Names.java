@@ -77,6 +77,7 @@ public interface Names {
     String CONSUMERS = "Consumers";
     String CONSOLE_ACCESS_LOG = "Console Access Log";
     String CONSOLE_ACTION_HANDLER = "Console ActionHandler";
+    String CONTENT_REPOSITORY = "Content Repository";
     String CONTEXT = "Context";
     String CONTEXT_ROOT = "Context Root";
     String CONTEXT_ROOTS = "Context Roots";

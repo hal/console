@@ -55,7 +55,7 @@ public class BrowseByColumn extends StaticItemColumn {
     public BrowseByColumn(Finder finder, Resources resources) {
         super(finder, Ids.DEPLOYMENT_BROWSE_BY, resources.constants().browseBy(),
                 Arrays.asList(
-                        new StaticItem.Builder(resources.constants().contentRepository())
+                        new StaticItem.Builder(Names.CONTENT_REPOSITORY)
                                 .onPreview(new ContentRepositoryPreview(resources))
                                 .nextColumn(Ids.CONTENT)
                                 .build(),
