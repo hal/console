@@ -135,7 +135,7 @@ class TourSetup {
         // place requests for domain mode
         PlaceRequest deploymentsContentRepository = places.finderPlace(NameTokens.DEPLOYMENTS,
                 new FinderPath().append(Ids.DEPLOYMENT_BROWSE_BY,
-                        Ids.asId(resources.constants().contentRepository())))
+                        Ids.asId(Names.CONTENT_REPOSITORY)))
                 .build();
         PlaceRequest profiles = places.finderPlace(NameTokens.CONFIGURATION,
                 new FinderPath().append(Ids.CONFIGURATION, Ids.asId(Names.PROFILES))).build();

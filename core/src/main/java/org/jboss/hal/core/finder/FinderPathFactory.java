@@ -78,7 +78,7 @@ public class FinderPathFactory {
             return deployment(content);
         } else {
             return new FinderPath()
-                    .append(Ids.DEPLOYMENT_BROWSE_BY, Ids.asId(resources.constants().contentRepository()),
+                    .append(Ids.DEPLOYMENT_BROWSE_BY, Ids.asId(Names.CONTENT_REPOSITORY),
                             resources.constants().browseBy(), resources.constants().contentRepository())
                     .append(Ids.CONTENT, Ids.content(content),
                             resources.constants().content(), content);
