@@ -101,7 +101,7 @@ class AttributesTable implements IsElement {
                         break;
                 }
             } else {
-                builder.innerHtml(SafeHtmlUtils.fromSafeConstant(NBSP));
+                storageTd.innerHTML = SafeHtmlUtils.fromSafeConstant(NBSP).asString();
             }
 
             // access type
@@ -123,7 +123,7 @@ class AttributesTable implements IsElement {
                         break;
                 }
             } else {
-                builder.innerHtml(SafeHtmlUtils.fromSafeConstant(NBSP));
+                accessTypeTd.innerHTML = SafeHtmlUtils.fromSafeConstant(NBSP).asString();
             }
 
             tbody.appendChild(builder.element());

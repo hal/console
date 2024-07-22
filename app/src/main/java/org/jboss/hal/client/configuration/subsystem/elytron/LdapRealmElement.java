@@ -74,11 +74,13 @@ public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, Has
                 .build();
 
         ldapRealmForm = new ModelNodeForm.Builder<NamedNode>(id(FORM), metadata)
+                .exclude(IDENTITY_MAPPING + ".*")
                 .onSave((form, changedValues) -> presenter.saveLdapRealm(form, changedValues))
                 .build();
 
         Metadata imMetadata = metadata.forComplexAttribute(IDENTITY_MAPPING);
         identityMappingForm = new ModelNodeForm.Builder<>(id(IDENTITY_MAPPING, FORM), imMetadata)
+                .exclude(USER_PASSWORD_MAPPER + ".*", OTP_CREDENTIAL_MAPPER + ".*", X509_CREDENTIAL_MAPPER + ".*")
                 .customFormItem(NEW_IDENTITY_ATTRIBUTES, (ad) -> new MultiValueListItem(NEW_IDENTITY_ATTRIBUTES))
                 .onSave((form, changedValues) -> presenter.saveIdentityMapping(selectedLdapRealm, changedValues))
                 .prepareReset(form -> presenter.resetIdentityMapping(selectedLdapRealm, form))

@@ -18,8 +18,10 @@ package org.jboss.hal.core.mbui;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -129,8 +131,22 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
         }
         table = builder.tableBuilder.build();
 
+        Set<String> excludeComplexAttributes = new HashSet<>();
+        builder.metadata.getDescription().getAttributes(ATTRIBUTES).forEach(prop -> {
+            String name = prop.getName();
+            int pos = name.indexOf('.');
+            if (pos != -1) {
+                String parentName = name.substring(0, pos);
+                if (builder.coAttributes.containsKey(parentName) ||
+                        builder.coAttributeForms.containsKey(parentName)) {
+                    excludeComplexAttributes.add(name.substring(0, pos) + ".*");
+                }
+            }
+        });
+
         ModelNodeForm.Builder formBuilder = new ModelNodeForm.Builder<NamedNode>(Ids.build(builder.baseId, Ids.FORM),
                 builder.metadata)
+                .exclude(excludeComplexAttributes)
                 .prepareReset(f -> builder.mbuiContext.crud()
                         .reset(builder.type, f.getModel().getName(), builder.metadata.getTemplate(), f,
                                 builder.metadata, builder.crudCallback))
