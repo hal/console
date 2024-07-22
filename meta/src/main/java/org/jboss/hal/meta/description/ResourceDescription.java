@@ -16,6 +16,8 @@
 package org.jboss.hal.meta.description;
 
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.jboss.hal.config.StabilityLevel;
 import org.jboss.hal.dmr.ModelNode;
@@ -26,6 +28,7 @@ import org.jboss.hal.dmr.Property;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ACCESS_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ALTERNATIVES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTE_GROUP;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT;
@@ -36,7 +39,10 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.OPERATIONS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUIRED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUIRES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.STABILITY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STORAGE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.STRING;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE_TYPE;
 
 /** Contains the resource and attribute descriptions from the read-resource-description operation. */
 /*
@@ -52,6 +58,8 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
  * description.requestProperties().required();
  */
 public class ResourceDescription extends ModelNode {
+
+    private Set<String> flattened = new TreeSet<>();
 
     public ResourceDescription(ModelNode payload) {
         set(payload);
@@ -69,6 +77,38 @@ public class ResourceDescription extends ModelNode {
     public List<Property> getAttributes(String path) {
         ModelNode attributes = ModelNodeHelper.failSafeGet(this, path);
         if (attributes.isDefined()) {
+            List<Property> list = attributes.asPropertyList();
+            if (flattened.contains(path)) {
+                return list;
+            }
+
+            flattened.add(path);
+            for (Property p : list) {
+                ModelNode parentValue = p.getValue();
+                if (parentValue.hasDefined(TYPE) && parentValue.get(TYPE).asType().equals(ModelType.OBJECT)
+                        && !parentValue.get(VALUE_TYPE).asString().equalsIgnoreCase(STRING)) {
+                    for (Property nested : parentValue.get(VALUE_TYPE).asPropertyList()) {
+                        ModelNode nestedValue = nested.getValue();
+                        // inherit from parent
+                        if (parentValue.hasDefined(DEPRECATED)) {
+                            nestedValue.get(DEPRECATED).set(parentValue.get(DEPRECATED));
+                        }
+                        if (parentValue.hasDefined(ATTRIBUTE_GROUP)) {
+                            nestedValue.get(ATTRIBUTE_GROUP).set(parentValue.get(ATTRIBUTE_GROUP));
+                        }
+                        nestedValue.get(STORAGE).set(parentValue.get(STORAGE));
+                        nestedValue.get(ACCESS_TYPE).set(parentValue.get(ACCESS_TYPE));
+                        // "required"/"nillable" has to depend on parent value
+                        boolean combined = parentValue.get(NILLABLE).asBoolean()
+                                || nestedValue.get(NILLABLE).asBoolean();
+                        nestedValue.get(NILLABLE).set(combined);
+                        combined = parentValue.get(REQUIRED).asBoolean()
+                                && nestedValue.get(REQUIRED).asBoolean();
+                        nestedValue.get(REQUIRED).set(combined);
+                        attributes.get(p.getName() + "." + nested.getName()).set(nestedValue);
+                    }
+                }
+            }
             return attributes.asPropertyList();
         }
         return emptyList();

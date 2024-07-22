@@ -27,11 +27,9 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.resources.CSS;
-import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Resources;
 
 import com.google.common.collect.Ordering;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -64,8 +62,6 @@ import static org.jboss.hal.resources.CSS.tableStriped;
 import static org.jboss.hal.resources.UIConstants.NBSP;
 
 class AttributesTable implements IsElement {
-
-    private static final Constants CONSTANTS = GWT.create(Constants.class);
 
     private final HTMLElement root;
 
@@ -130,7 +126,7 @@ class AttributesTable implements IsElement {
                         break;
                 }
             } else {
-                builder.innerHtml(SafeHtmlUtils.fromSafeConstant(NBSP));
+                storageTd.innerHTML = SafeHtmlUtils.fromSafeConstant(NBSP).asString();
             }
 
             // access type
@@ -152,7 +148,7 @@ class AttributesTable implements IsElement {
                         break;
                 }
             } else {
-                builder.innerHtml(SafeHtmlUtils.fromSafeConstant(NBSP));
+                accessTypeTd.innerHTML = SafeHtmlUtils.fromSafeConstant(NBSP).asString();
             }
 
             tbody.appendChild(builder.element());

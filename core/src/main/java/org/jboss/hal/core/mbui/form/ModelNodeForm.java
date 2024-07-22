@@ -137,26 +137,9 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
             // 1. the ones specified in 'builder.includes'
             // 2. the remaining from 'filteredProperties'
             for (String include : builder.includes) {
-                // nested property like 'file.path'?
-                int dotIndex = include.lastIndexOf('.');
-                if (dotIndex != -1) {
-                    String parents = include.substring(0, dotIndex);
-                    String attribute = include.substring(dotIndex + 1);
-                    Metadata nested = metadata.forComplexAttribute(parents, true);
-                    // nested metadata *always* use ATTRIBUTES
-                    Property property = nested.getDescription().findAttribute(ATTRIBUTES, attribute);
-                    if (property != null) {
-                        Property fixedNameProperty = new Property(include, property.getValue());
-                        if (new PropertyFilter(builder).test(fixedNameProperty)) {
-                            properties.add(fixedNameProperty);
-                            dataMapping.addAttributeDescription(fixedNameProperty.getName(), fixedNameProperty.getValue());
-                        }
-                    }
-                } else {
-                    Property removed = filteredByName.remove(include);
-                    if (removed != null) {
-                        properties.add(removed);
-                    }
+                Property removed = filteredByName.remove(include);
+                if (removed != null) {
+                    properties.add(removed);
                 }
             }
             properties.addAll(filteredByName.values());
@@ -688,7 +671,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
             if (!excludes.isEmpty() && !readOnly && verifyExcludes) {
                 List<Property> requiredAttributes = metadata.getDescription().getRequiredAttributes(attributePath);
                 for (Property attribute : requiredAttributes) {
-                    if (excludes.contains(attribute.getName())) {
+                    if (excludes.contains(attribute.getName()) && attribute.getName().indexOf('.') == -1) {
                         throw new IllegalStateException(
                                 "Required attribute " + attribute.getName() + " must not be excluded from " + formId());
                     }
