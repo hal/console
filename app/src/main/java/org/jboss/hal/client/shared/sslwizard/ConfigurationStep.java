@@ -168,7 +168,7 @@ public class ConfigurationStep extends AbstractConfiguration {
         boolean valid = form.save();
         if (valid) {
             // set default values, as metadata comes from an artifical resource description (ssl-mgmt-wizard.dmr)
-            description.getAttributes(ATTRIBUTES).forEach(p -> {
+            description.attributes().forEach(p -> {
                 FormItem formItem = getFormItem(p.getName());
                 if (p.getValue().hasDefined(DEFAULT) && formItem != null && formItem.isEmpty()) {
                     model.get(p.getName()).set(p.getValue().get(DEFAULT));

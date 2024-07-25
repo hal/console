@@ -32,7 +32,6 @@ import elemental2.dom.HTMLElement;
 import static org.jboss.elemento.Elements.h;
 import static org.jboss.elemento.Elements.p;
 import static org.jboss.elemento.Elements.section;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SALT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SET_PASSWORD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
@@ -70,7 +69,7 @@ public class ReviewPasswordStep extends WizardStep<PasswordContext, PasswordStat
         String id = Ids.build(template.lastName(), SET_PASSWORD, "review", FORM);
         ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(id, passwordMetadata)
                 .readOnly();
-        passwordMetadata.getDescription().getAttributes(ATTRIBUTES).forEach(attr -> {
+        passwordMetadata.getDescription().attributes().forEach(attr -> {
             if (ModelType.BYTES.equals(attr.getValue().get(TYPE).asType())) {
                 builder.customFormItem(attr.getName(),
                         desc -> new TextBoxItem(attr.getName(), labelBuilder.label(attr.getName())));

@@ -132,7 +132,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
         table = builder.tableBuilder.build();
 
         Set<String> excludeComplexAttributes = new HashSet<>();
-        builder.metadata.getDescription().getAttributes(ATTRIBUTES).forEach(prop -> {
+        builder.metadata.getDescription().attributes().forEach(prop -> {
             String name = prop.getName();
             int pos = name.indexOf('.');
             if (pos != -1) {
@@ -166,9 +166,9 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
             for (String complexAttribute : builder.coAttributes.keySet()) {
                 // is the complex attribute *itself* required?
                 boolean requiredComplexAttribute = false;
-                Property attribute = builder.metadata.getDescription().findAttribute(ATTRIBUTES, complexAttribute);
-                if (attribute != null) {
-                    requiredComplexAttribute = failSafeBoolean(attribute.getValue(), REQUIRED);
+                ModelNode attribute = builder.metadata.getDescription().attributes().get(complexAttribute);
+                if (attribute.isDefined()) {
+                    requiredComplexAttribute = failSafeBoolean(attribute, REQUIRED);
                 }
 
                 Callback callback;
@@ -176,7 +176,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
                 Metadata metadata = builder.metadata.forComplexAttribute(complexAttribute);
 
                 // does the complex attribute *contain* required attributes?
-                List<Property> requiredAttributes = metadata.getDescription().getRequiredAttributes(ATTRIBUTES);
+                List<Property> requiredAttributes = metadata.getDescription().attributes().required();
                 if (requiredAttributes.isEmpty()) {
                     callback = () -> builder.mbuiContext.ca().add(selectedResource, complexAttribute, type,
                             metadata.getTemplate(), null, builder.crudCallback);

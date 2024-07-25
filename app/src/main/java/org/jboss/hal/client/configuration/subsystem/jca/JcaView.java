@@ -257,11 +257,10 @@ public class JcaView extends HalViewImpl implements JcaPresenter.MyView {
         Metadata srtMetadata = metadataRegistry.lookup(WORKMANAGER_SRT_TEMPLATE);
 
         // short-running-thread is required for a distributed workmanager
-        Property maxThreadsDesc = srtMetadata.getDescription().findAttribute(ATTRIBUTES, MAX_THREADS);
-        Property queueLengthDesc = srtMetadata.getDescription().findAttribute(ATTRIBUTES, QUEUE_LENGTH);
-        ModelNode addOpDwm = dwmMetadata.getDescription().get(OPERATIONS).get(ADD).get(REQUEST_PROPERTIES);
-        addOpDwm.get(MAX_THREADS).set(maxThreadsDesc.getValue());
-        addOpDwm.get(QUEUE_LENGTH).set(queueLengthDesc.getValue());
+        Property maxThreadsDesc = srtMetadata.getDescription().attributes().property(MAX_THREADS);
+        Property queueLengthDesc = srtMetadata.getDescription().attributes().property(QUEUE_LENGTH);
+        dwmMetadata.getDescription().requestProperties().add(maxThreadsDesc);
+        dwmMetadata.getDescription().requestProperties().add(queueLengthDesc);
         dwmMetadata.makeWritable(MAX_THREADS);
         dwmMetadata.makeWritable(QUEUE_LENGTH);
 

@@ -333,10 +333,9 @@ public class ServerView extends HalViewImpl implements MyView {
     private Metadata getRolesReplyMetadata(Metadata metadata) {
         ModelNode payload = new ModelNode();
         ResourceDescription description = metadata.getDescription();
-        payload.get(DESCRIPTION).set(failSafeGet(description,
-                String.join("/", OPERATIONS, GET_ROLES, DESCRIPTION)));
-        payload.get(ATTRIBUTES).set(failSafeGet(description,
-                String.join("/", OPERATIONS, GET_ROLES, REPLY_PROPERTIES, VALUE_TYPE)));
+        payload.get(DESCRIPTION).set(description.operations().description(GET_ROLES));
+        payload.get(ATTRIBUTES).set(failSafeGet(description.operations().get(GET_ROLES),
+                String.join("/", REPLY_PROPERTIES, VALUE_TYPE)));
         return new Metadata(metadata.getTemplate(), () -> SecurityContext.READ_ONLY, new ResourceDescription(payload),
                 metadata.getCapabilities());
     }

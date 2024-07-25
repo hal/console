@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.core.modelbrowser;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.jboss.elemento.HtmlContentBuilder;
 import org.jboss.elemento.IsElement;
@@ -65,7 +65,7 @@ class AttributesTable implements IsElement {
 
     private final HTMLElement root;
 
-    AttributesTable(List<Property> attributes, Environment environment, Resources resources) {
+    AttributesTable(Collection<Property> attributes, Environment environment, Resources resources) {
 
         HTMLElement tbody;
         this.root = table()

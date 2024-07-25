@@ -74,7 +74,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
         // there are several attributes with no attribute-group
         // wee add them under "attributes" tab
         List<String> attrs = new ArrayList<>();
-        metadata.getDescription().getAttributes(ATTRIBUTES).forEach(p -> {
+        metadata.getDescription().attributes().forEach(p -> {
             if (!p.getValue().hasDefined("attribute-group")) {
                 attrs.add(p.getName());
             }
