@@ -66,10 +66,10 @@ public class BootErrorsElement implements IsElement<HTMLElement>, Attachable {
 
         // repackage the description and the value-type of the boot errors reply properties
         Metadata managementMetadata = metadataRegistry.lookup(template);
-        ModelNode description = ModelNodeHelper.failSafeGet(managementMetadata.getDescription(),
-                String.join("/", OPERATIONS, READ_BOOT_ERRORS, DESCRIPTION));
-        ModelNode attributes = ModelNodeHelper.failSafeGet(managementMetadata.getDescription(),
-                String.join("/", OPERATIONS, READ_BOOT_ERRORS, REPLY_PROPERTIES, VALUE_TYPE));
+        String description = managementMetadata.getDescription().operations().description(READ_BOOT_ERRORS);
+        ModelNode attributes = ModelNodeHelper.failSafeGet(
+                managementMetadata.getDescription().operations().get(READ_BOOT_ERRORS),
+                String.join("/", REPLY_PROPERTIES, VALUE_TYPE));
         ModelNode modelNode = new ModelNode();
         modelNode.get(DESCRIPTION).set(description);
         modelNode.get(ATTRIBUTES).set(attributes);

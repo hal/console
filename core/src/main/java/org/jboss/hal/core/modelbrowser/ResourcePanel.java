@@ -120,10 +120,10 @@ class ResourcePanel implements Iterable<HTMLElement> {
             });
 
             tabs.setContent(attributesId,
-                    new AttributesTable(metadata.getDescription().getAttributes(ATTRIBUTES), resources).element());
-            if (!metadata.getDescription().getOperations().isEmpty()) {
+                    new AttributesTable(metadata.getDescription().attributes(), resources).element());
+            if (!metadata.getDescription().operations().isEmpty()) {
                 tabs.setContent(operationsId,
-                        new OperationsTable(metadata.getDescription().getOperations(), resources).element());
+                        new OperationsTable(metadata.getDescription().operations(), resources).element());
             }
         }
     }

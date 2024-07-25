@@ -45,7 +45,6 @@ import elemental2.dom.HTMLElement;
 import static java.util.stream.Collectors.toList;
 
 import static com.google.common.collect.Lists.asList;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 
 /**
  * A form which groups attributes on different tabs. Each group will include the attributes specified by the {@linkplain Builder
@@ -336,7 +335,7 @@ public class GroupedForm<T extends ModelNode> implements Form<T> {
         public Builder<T> attributeGroup(String id, String name, String title) {
             assertNoCurrentGroup();
             currentGroup = new Group(id, title);
-            List<Property> attributes = metadata.getDescription().getAttributes(ATTRIBUTES, name);
+            List<Property> attributes = metadata.getDescription().attributes().group(name);
             include(attributes.stream().map(Property::getName).sorted().collect(toList()));
             return this;
         }

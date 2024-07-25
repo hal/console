@@ -21,7 +21,7 @@ import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.ModelNodeHelper;
+import org.jboss.hal.meta.AttributeCollection;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.resources.Ids;
@@ -35,17 +35,15 @@ public class AddUnmanagedDialog {
     private final AddResourceDialog dialog;
 
     public AddUnmanagedDialog(Metadata metadata, Resources resources, AddResourceDialog.Callback callback) {
-        ModelNode rp = ModelNodeHelper.failSafeGet(metadata.getDescription(),
-                String.join("/", OPERATIONS, ADD, REQUEST_PROPERTIES));
-        ModelNode vt = ModelNodeHelper.failSafeGet(rp, CONTENT + "/" + VALUE_TYPE);
+        AttributeCollection rp = metadata.getDescription().requestProperties();
         // the "path" attribute requires "archive", but archive may be false, that is a directory deployment
         // but the validation will not let pass, so remove the "requires" and manually set the value if user sets it
-        vt.get(PATH).remove(REQUIRES);
+        rp.get(CONTENT + "." + PATH).remove(REQUIRES);
         ModelNode attributes = new ModelNode();
         attributes.get(RUNTIME_NAME).set(rp.get(RUNTIME_NAME));
-        attributes.get(PATH).set(vt.get(PATH));
-        attributes.get(RELATIVE_TO).set(vt.get(RELATIVE_TO));
-        attributes.get(ARCHIVE).set(vt.get(ARCHIVE));
+        attributes.get(PATH).set(rp.get(CONTENT + "." + PATH));
+        attributes.get(RELATIVE_TO).set(rp.get(CONTENT + "." + RELATIVE_TO));
+        attributes.get(ARCHIVE).set(rp.get(CONTENT + "." + ARCHIVE));
         ModelNode description = new ModelNode();
         description.get(ATTRIBUTES).set(attributes);
 

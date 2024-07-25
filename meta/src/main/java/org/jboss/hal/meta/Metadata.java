@@ -80,9 +80,9 @@ public class Metadata {
 
     /** Copies attributes from this description to the specified metadata */
     public void copyAttribute(String attribute, Metadata destination) {
-        Property p = getDescription().findAttribute(ATTRIBUTES, attribute);
-        if (p != null) {
-            destination.getDescription().get(ATTRIBUTES).get(attribute).set(p.getValue());
+        Property p = getDescription().attributes().property(attribute);
+        if (p.getValue().isDefined()) {
+            destination.getDescription().attributes().add(p);
         }
     }
 
@@ -133,13 +133,13 @@ public class Metadata {
 
     private Metadata nested(Metadata metadata, String name, boolean prefixLabel) {
         ModelNode payload = new ModelNode();
-        payload.get(DESCRIPTION).set(failSafeGet(metadata.description, ATTRIBUTES + "/" + name + "/" + DESCRIPTION));
-        payload.get(REQUIRED).set(failSafeGet(metadata.description, ATTRIBUTES + "/" + name + "/" + REQUIRED));
-        payload.get(NILLABLE).set(failSafeGet(metadata.description, ATTRIBUTES + "/" + name + "/" + NILLABLE));
+        ModelNode complexAttribute = metadata.description.attributes().get(name);
+        payload.get(DESCRIPTION).set(failSafeGet(complexAttribute, DESCRIPTION));
+        payload.get(REQUIRED).set(failSafeGet(complexAttribute, REQUIRED));
+        payload.get(NILLABLE).set(failSafeGet(complexAttribute, NILLABLE));
 
-        Property complexAttribute = metadata.description.findAttribute(ATTRIBUTES, name);
-        if (complexAttribute != null && complexAttribute.getValue().hasDefined(VALUE_TYPE)) {
-            complexAttribute.getValue().get(VALUE_TYPE).asPropertyList().forEach(nestedProperty -> {
+        if (complexAttribute.isDefined() && complexAttribute.hasDefined(VALUE_TYPE)) {
+            complexAttribute.get(VALUE_TYPE).asPropertyList().forEach(nestedProperty -> {
                 // The nested name is *always* just the nested property name,
                 // since it's used when building the DMR operations
                 String nestedName = nestedProperty.getName();
@@ -186,8 +186,8 @@ public class Metadata {
 
     public Metadata forOperation(String name) {
         ModelNode payload = new ModelNode();
-        payload.get(DESCRIPTION).set(failSafeGet(description, OPERATIONS + "/" + name + "/" + DESCRIPTION));
-        payload.get(ATTRIBUTES).set(failSafeGet(description, OPERATIONS + "/" + name + "/" + REQUEST_PROPERTIES));
+        payload.get(DESCRIPTION).set(description.operations().description(name));
+        payload.get(ATTRIBUTES).set(description.operations().get(name).get(REQUEST_PROPERTIES));
 
         SecurityContext parentContext = this.securityContext.get();
         SecurityContext operationContext = new SecurityContext(new ModelNode()) {
