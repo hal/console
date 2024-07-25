@@ -48,7 +48,6 @@ import static org.jboss.hal.client.configuration.subsystem.datasource.JdbcDriver
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.XA_DATASOURCE_CLASS;
-import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.flow.Flow.sequential;
 
 class PropertiesStep extends WizardStep<Context, State> {
@@ -76,10 +75,9 @@ class PropertiesStep extends WizardStep<Context, State> {
         dummy = new ModelNode().setEmptyObject();
         propertiesItem = new PropertiesItem(VALUE);
         propertiesItem.setRequired(true);
-        ModelNode propertiesDescription = failSafeGet(metadata.getDescription(),
-                "attributes/value/description"); // NON-NLS
+        String propertiesDescription = metadata.getDescription().attributes().description(VALUE);
         form = new ModelNodeForm.Builder<>(Ids.DATA_SOURCE_PROPERTIES_FORM, Metadata.empty())
-                .unboundFormItem(propertiesItem, 0, SafeHtmlUtils.fromString(propertiesDescription.asString()))
+                .unboundFormItem(propertiesItem, 0, SafeHtmlUtils.fromString(propertiesDescription))
                 .build();
         propsAutoComplete = new StaticAutoComplete(Collections.emptyList());
         propertiesItem.registerSuggestHandler(propsAutoComplete);

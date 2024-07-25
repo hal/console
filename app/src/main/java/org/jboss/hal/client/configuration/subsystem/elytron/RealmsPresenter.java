@@ -79,7 +79,6 @@ import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTempla
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.SIMPLE_REGEX_REALM_MAPPER_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.TOKEN_REALM_ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ALLOW_BLANK_PASSWORD;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTE_MAPPING;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DIRECT_VERIFICATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DIR_CONTEXT;
@@ -413,7 +412,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
         Metadata metadata = metadataRegistry.lookup(LDAP_REALM_TEMPLATE)
                 .forComplexAttribute(IDENTITY_MAPPING)
                 .forComplexAttribute(complexAttribute);
-        boolean requiredAttributes = !metadata.getDescription().getRequiredAttributes(ATTRIBUTES).isEmpty();
+        boolean requiredAttributes = !metadata.getDescription().attributes().required().isEmpty();
         ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(id, metadata)
                 .addOnly();
         if (requiredAttributes) {

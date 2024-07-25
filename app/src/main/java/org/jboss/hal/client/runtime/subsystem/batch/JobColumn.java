@@ -70,7 +70,6 @@ import static org.jboss.hal.client.runtime.subsystem.batch.AddressTemplates.BATC
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ACCESS_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ALLOWED;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.BATCH_JBERET;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPLOYMENT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.JOB;
@@ -235,12 +234,12 @@ public class JobColumn extends FinderColumn<JobNode> {
         Metadata operationMetadata = metadata.forOperation(START_JOB);
         if (xmlNames > 1) {
             operationMetadata.getDescription()
-                    .get(ATTRIBUTES)
+                    .attributes()
                     .get(JOB_XML_NAME)
                     .get(ALLOWED).set(job.get(JOB_XML_NAMES));
         } else {
             operationMetadata.getDescription()
-                    .get(ATTRIBUTES)
+                    .attributes()
                     .get(JOB_XML_NAME)
                     .get(ACCESS_TYPE).set(READ_ONLY);
         }
