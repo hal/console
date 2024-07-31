@@ -23,7 +23,6 @@ import org.jboss.hal.ballroom.form.SwitchItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.form.RequireAtLeastOneAttributeValidation;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
@@ -36,7 +35,6 @@ import static java.util.Arrays.asList;
 import static org.jboss.elemento.Elements.asHtmlElement;
 import static org.jboss.elemento.Elements.htmlElements;
 import static org.jboss.elemento.Elements.stream;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESET_ALL_MESSAGE_COUNTERS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESET_ALL_MESSAGE_COUNTER_HISTORIES;
 import static org.jboss.hal.resources.CSS.halFormInput;
@@ -58,17 +56,15 @@ class ResetServerDialog {
         LabelBuilder labelBuilder = new LabelBuilder();
 
         String l1 = labelBuilder.label(RESET_ALL_MESSAGE_COUNTERS);
-        Property p1 = metadata.getDescription().findOperation(RESET_ALL_MESSAGE_COUNTERS);
-        if (p1 != null && p1.getValue().hasDefined(DESCRIPTION)) {
-            l1 = p1.getValue().get(DESCRIPTION).asString();
-            l1 = Strings.sanitize(l1);
+        String d1 = metadata.getDescription().operations().description(RESET_ALL_MESSAGE_COUNTERS);
+        if (!d1.equals("undefined")) {
+            l1 = Strings.sanitize(d1);
         }
 
         String l2 = labelBuilder.label(RESET_ALL_MESSAGE_COUNTER_HISTORIES);
-        Property p2 = metadata.getDescription().findOperation(RESET_ALL_MESSAGE_COUNTER_HISTORIES);
-        if (p2 != null && p2.getValue().hasDefined(DESCRIPTION)) {
-            l2 = p2.getValue().get(DESCRIPTION).asString();
-            l2 = Strings.sanitize(l2);
+        String d2 = metadata.getDescription().operations().description(RESET_ALL_MESSAGE_COUNTER_HISTORIES);
+        if (d2.equals("undefined")) {
+            l2 = Strings.sanitize(d2);
         }
 
         Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.RESET_MESSAGE_COUNTERS, Metadata.empty())

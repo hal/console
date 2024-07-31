@@ -113,7 +113,6 @@ import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTempla
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.TRUST_MANAGER_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.SYSLOG_AUDIT_LOG;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ALIAS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CAPABILITY_REFERENCE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CLASS_NAME;
@@ -122,7 +121,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.CREATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CREDENTIAL_REFERENCE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CREDENTIAL_STORE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT_REALM;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.EXPRESSION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.FLAG;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INDEX;
@@ -319,7 +317,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
     void addCredentialStore() {
         Metadata metadata = metadataRegistry.lookup(CREDENTIAL_STORE_TEMPLATE);
         SafeHtml typeHelp = SafeHtmlUtils.fromString(
-                metadata.getDescription().get(ATTRIBUTES).get(TYPE).get(DESCRIPTION).asString());
+                metadata.getDescription().attributes().description(TYPE));
         Metadata crMetadata = metadata.forComplexAttribute(CREDENTIAL_REFERENCE, true);
         crMetadata.copyComplexAttributeAttributes(asList(STORE, ALIAS, TYPE, CLEAR_TEXT), metadata);
         TextBoxItem typeItem = new TextBoxItem("type-", resources.constants().type());
@@ -393,9 +391,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
         Metadata metadata = metadataRegistry.lookup(SECURITY_DOMAIN_TEMPLATE);
         // emulate capability-reference on default-realm
         String capabilityReference = metadata.getDescription()
-                .findAttribute(ATTRIBUTES + "/" + REALMS + "/" + VALUE_TYPE, REALM)
-                .getValue()
-                .get(CAPABILITY_REFERENCE)
+                .attributes().get(REALMS).get(VALUE_TYPE, REALM, CAPABILITY_REFERENCE)
                 .asString();
 
         String id = Ids.build(Ids.ELYTRON_SECURITY_DOMAIN, Ids.ADD);
@@ -441,12 +437,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
         String crTypeLabel = new LabelBuilder().label(crType);
         TextBoxItem crTypeItem = new TextBoxItem(crType, crTypeLabel);
         SafeHtml crTypeItemHelp = SafeHtmlUtils.fromString(metadata.getDescription()
-                .get(ATTRIBUTES)
-                .get(CREDENTIAL_REFERENCE)
-                .get(VALUE_TYPE)
-                .get(TYPE)
-                .get(DESCRIPTION)
-                .asString());
+                .attributes().description(CREDENTIAL_REFERENCE + "." + TYPE));
 
         ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
                 .addOnly()

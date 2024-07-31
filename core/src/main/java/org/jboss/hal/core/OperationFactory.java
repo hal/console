@@ -33,7 +33,6 @@ import org.jboss.hal.dmr.Composite;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Operation;
-import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.description.ResourceDescription;
@@ -47,7 +46,6 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.EXPRESSIONS_ALLOWED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
@@ -104,7 +102,7 @@ public class OperationFactory {
                     Object value = changeSet.get(name);
                     return !isNullOrEmpty(value);
                 })
-                .collect(toMap(identity(), name -> resourceDescription.findAlternatives(ATTRIBUTES, name)));
+                .collect(toMap(identity(), name -> resourceDescription.attributes().alternatives(name)));
         allAlternatives.forEach((attribute, alternatives) -> {
 
             logger.debug("Alternatives resolution for {} -> [{}]", attribute, String.join(", ", alternatives));
@@ -114,14 +112,14 @@ public class OperationFactory {
 
                 // the easy part: no conflicts
                 alternatives.forEach(alternative -> {
-                    boolean alternativeDoesntExist = resourceDescription.findAttribute(ATTRIBUTES, alternative) == null;
-                    if (resourceDescription.isDeprecated(ATTRIBUTES, alternative) || alternativeDoesntExist) {
+                    boolean alternativeDoesntExist = !resourceDescription.attributes().get(alternative).isDefined();
+                    if (resourceDescription.attributes().isDeprecated(alternative) || alternativeDoesntExist) {
                         logger.debug("Skip undefine operations for deprecated or non-existent alternative {}",
                                 alternative);
                     } else {
                         logger.debug("Add undefine operations for alternative {}", alternative);
                         operations.putIfAbsent(alternative, undefineAttribute(address, alternative));
-                        List<String> requires = resourceDescription.findRequires(ATTRIBUTES, alternative);
+                        List<String> requires = resourceDescription.attributes().requiredBy(alternative);
                         if (!requires.isEmpty()) {
                             logger.debug("Add undefine operations for attributes which require {}: [{}]", alternative,
                                     String.join(", ", requires));
@@ -147,7 +145,7 @@ public class OperationFactory {
             logger.debug("Try to resolve conflicts between alternatives [{}]", String.join(", ", conflicts));
             Map<Boolean, List<String>> resolution = conflicts.stream().collect(groupingBy(conflict -> {
                 Object value = changeSet.get(conflict);
-                return isNullOrEmpty(value) || resourceDescription.isDefaultValue(ATTRIBUTES, conflict, value);
+                return isNullOrEmpty(value) || resourceDescription.attributes().isDefaultValue(conflict, value);
             }));
             List<String> undefine = resolution.getOrDefault(true, Collections.emptyList());
             List<String> write = resolution.getOrDefault(false, Collections.emptyList());
@@ -163,7 +161,7 @@ public class OperationFactory {
                 operations.putIfAbsent(u, undefineAttribute(address, u));
                 localChanges.remove(u);
                 // process requires of the current undefine attribute
-                List<String> requires = resourceDescription.findRequires(ATTRIBUTES, u);
+                List<String> requires = resourceDescription.attributes().requiredBy(u);
                 requires.forEach(ur -> {
                     operations.putIfAbsent(ur, undefineAttribute(address, ur));
                     localChanges.remove(ur);
@@ -173,7 +171,7 @@ public class OperationFactory {
             write.forEach(w -> {
                 operations.putIfAbsent(w, writeAttribute(address, w, changeSet.get(w), resourceDescription, true));
                 localChanges.remove(w);
-                List<String> writeAlternatives = resourceDescription.findAlternatives(ATTRIBUTES, w);
+                List<String> writeAlternatives = resourceDescription.attributes().alternatives(w);
                 // process alternatives of the current write attribute
                 writeAlternatives.forEach(wa -> {
                     operations.putIfAbsent(wa, undefineAttribute(address, wa));
@@ -270,7 +268,7 @@ public class OperationFactory {
     private Operation writeAttribute(ResourceAddress address, String name, Object value,
             ResourceDescription resourceDescription, boolean useUndefineForDefault) {
         if (isNullOrEmpty(value) ||
-                (useUndefineForDefault && resourceDescription.isDefaultValue(ATTRIBUTES, name, value))) {
+                (useUndefineForDefault && resourceDescription.attributes().isDefaultValue(name, value))) {
             return undefineAttribute(address, name);
 
         } else {
@@ -297,10 +295,9 @@ public class OperationFactory {
     private ModelNode asValueNode(String name, Object value, ResourceDescription resourceDescription) {
         ModelNode valueNode = new ModelNode();
 
-        Property attribute = resourceDescription.findAttribute(ATTRIBUTES, name);
-        if (attribute != null) {
+        ModelNode attributeDescription = resourceDescription.attributes().get(name);
+        if (attributeDescription.isDefined()) {
             String stringValue = String.valueOf(value);
-            ModelNode attributeDescription = attribute.getValue();
             ModelType type = attributeDescription.get(TYPE).asType();
             if (attributeDescription.hasDefined(EXPRESSIONS_ALLOWED) &&
                     attributeDescription.get(EXPRESSIONS_ALLOWED).asBoolean() &&
