@@ -21,6 +21,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.jboss.elemento.HtmlContentBuilder;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.core.finder.ColumnAction;
@@ -38,6 +39,7 @@ import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.security.Constraint;
+import org.jboss.hal.resources.CSS;
 import org.jboss.hal.resources.Icons;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
@@ -56,7 +58,10 @@ import elemental2.promise.Promise;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 
+import static org.jboss.elemento.Elements.br;
 import static org.jboss.elemento.Elements.p;
+import static org.jboss.elemento.Elements.small;
+import static org.jboss.elemento.Elements.span;
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_ADDRESS;
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ARTIFACT_CHANGES;
@@ -72,6 +77,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UPDATES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.USE_DEFAULT_LOCAL_CACHE;
 import static org.jboss.hal.resources.CSS.fontAwesome;
+import static org.jboss.hal.resources.CSS.itemText;
 import static org.jboss.hal.resources.CSS.pfIcon;
 
 @AsyncColumn(Ids.UPDATE_MANAGER_UPDATE)
@@ -158,7 +164,17 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
 
             @Override
             public HTMLElement element() {
-                return ItemDisplay.withSubtitle(item.getName(), Format.mediumDateTime(item.getTimestamp()));
+                final HtmlContentBuilder<HTMLElement> builder = span().css(itemText)
+                        .add(span().textContent(item.getName()));
+
+                for (String s : item.getVersions()) {
+                    builder.add(br()).add(small().css(CSS.marginLeft5).add(s));
+                }
+
+                return builder
+                        .add(small().css(CSS.subtitle, CSS.marginLeft5).title(Format.mediumDateTime(item.getTimestamp()))
+                                .textContent(Format.mediumDateTime(item.getTimestamp())))
+                        .element();
             }
 
             @Override
