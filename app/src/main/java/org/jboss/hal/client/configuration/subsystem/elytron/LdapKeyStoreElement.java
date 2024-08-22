@@ -65,6 +65,7 @@ class LdapKeyStoreElement implements IsElement<HTMLElement>, Attachable, HasPres
                 .build();
 
         attributes = new ModelNodeForm.Builder<NamedNode>(id(FORM), metadata)
+                .exclude(NEW_ITEM_TEMPLATE + ".*")
                 .onSave(((form, changedValues) -> presenter.saveLdapKeyStore(form.getModel().getName(), changedValues)))
                 .build();
 

@@ -79,7 +79,6 @@ import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTempla
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.SIMPLE_REGEX_REALM_MAPPER_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.TOKEN_REALM_ADDRESS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ALLOW_BLANK_PASSWORD;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTE_MAPPING;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DIRECT_VERIFICATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DIR_CONTEXT;
@@ -92,7 +91,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PATH;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PRINCIPAL_QUERY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROPERTIES_REALM;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.RDN_IDENTIFIER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_ATTRIBUTE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RELATIVE_TO;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
@@ -379,31 +377,24 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
 
     void addLdapRealm() {
         Metadata metadata = metadataRegistry.lookup(LDAP_REALM_TEMPLATE);
-        Metadata imMetadata = metadata.forComplexAttribute(IDENTITY_MAPPING, true);
-        imMetadata.copyComplexAttributeAttributes(asList(RDN_IDENTIFIER, SEARCH_BASE_DN, USE_RECURSIVE_SEARCH),
-                metadata);
 
         NameItem nameItem = new NameItem();
         String id = Ids.build(Ids.ELYTRON_LDAP_REALM, Ids.ADD);
         Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
                 .addOnly()
                 .unboundFormItem(nameItem, 0)
-                .include(DIR_CONTEXT, DIRECT_VERIFICATION, ALLOW_BLANK_PASSWORD, RDN_IDENTIFIER, SEARCH_BASE_DN,
-                        USE_RECURSIVE_SEARCH)
+                .include(DIR_CONTEXT, DIRECT_VERIFICATION, ALLOW_BLANK_PASSWORD, IDENTITY_MAPPING + "." + SEARCH_BASE_DN,
+                        IDENTITY_MAPPING + "." + USE_RECURSIVE_SEARCH)
                 .build();
 
         new AddResourceDialog(resources.messages().addResourceTitle(Names.LDAP_REALM), form,
                 (name, model) -> {
                     if (model != null) {
-                        move(model, RDN_IDENTIFIER, IDENTITY_MAPPING + "/" + RDN_IDENTIFIER);
-                        move(model, SEARCH_BASE_DN, IDENTITY_MAPPING + "/" + SEARCH_BASE_DN);
                         // workaround for "WFLYCTL0380: Attribute 'identity-mapping.search-base-dn' needs to be set or
                         // passed before attribute 'identity-mapping.use-recursive-search' can be correctly set"
                         // only pass USE_RECURSIVE_SEARCH if true (not default-value)
-                        if (failSafeBoolean(model, USE_RECURSIVE_SEARCH)) {
-                            move(model, USE_RECURSIVE_SEARCH, IDENTITY_MAPPING + "/" + USE_RECURSIVE_SEARCH);
-                        } else {
-                            model.remove(USE_RECURSIVE_SEARCH);
+                        if (!failSafeBoolean(model, IDENTITY_MAPPING + "/" + USE_RECURSIVE_SEARCH)) {
+                            model.get(IDENTITY_MAPPING).remove(USE_RECURSIVE_SEARCH);
                         }
                     }
                     ResourceAddress address = LDAP_REALM_TEMPLATE.resolve(statementContext, nameItem.getValue());
@@ -421,7 +412,7 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
         Metadata metadata = metadataRegistry.lookup(LDAP_REALM_TEMPLATE)
                 .forComplexAttribute(IDENTITY_MAPPING)
                 .forComplexAttribute(complexAttribute);
-        boolean requiredAttributes = !metadata.getDescription().getRequiredAttributes(ATTRIBUTES).isEmpty();
+        boolean requiredAttributes = !metadata.getDescription().attributes().required().isEmpty();
         ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(id, metadata)
                 .addOnly();
         if (requiredAttributes) {

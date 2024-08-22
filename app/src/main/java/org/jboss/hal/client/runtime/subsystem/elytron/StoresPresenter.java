@@ -98,8 +98,6 @@ import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.SE
 import static org.jboss.hal.client.runtime.subsystem.elytron.AddressTemplates.SECRET_KEY_CREDENTIAL_STORE_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD_ALIAS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ALIAS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.CAPABILITY_REFERENCE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CERTIFICATE_AUTHORITY_ACCOUNT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHANGE_ALIAS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
@@ -747,10 +745,8 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
             // the capability reference the /profile=* resource and the template attached to the metadata
             // points to the {selected.host}/{selected.server}, so we need to register the template to the profile
             String capability = metadata.getDescription()
-                    .get(ATTRIBUTES)
-                    .get(CERTIFICATE_AUTHORITY_ACCOUNT)
-                    .get(CAPABILITY_REFERENCE)
-                    .asString();
+                    .attributes()
+                    .capabilityReference(CERTIFICATE_AUTHORITY_ACCOUNT);
             form.getFormItem(CERTIFICATE_AUTHORITY_ACCOUNT)
                     .registerSuggestHandler(
                             new SuggestCapabilitiesAutoComplete(dispatcher, statementContext, capability,
@@ -792,10 +788,8 @@ public class StoresPresenter extends ApplicationFinderPresenter<StoresPresenter.
             // the capability reference the /profile=* resource and the template attached to the metadata
             // points to the {selected.host}/{selected.server}, so we need to register the template to the profile
             String capability = metadata.getDescription()
-                    .get(ATTRIBUTES)
-                    .get(CERTIFICATE_AUTHORITY_ACCOUNT)
-                    .get(CAPABILITY_REFERENCE)
-                    .asString();
+                    .attributes()
+                    .capabilityReference(CERTIFICATE_AUTHORITY_ACCOUNT);
             form.getFormItem(CERTIFICATE_AUTHORITY_ACCOUNT)
                     .registerSuggestHandler(
                             new SuggestCapabilitiesAutoComplete(dispatcher, statementContext, capability,

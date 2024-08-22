@@ -29,7 +29,6 @@ import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
-import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.meta.Metadata;
@@ -49,9 +48,7 @@ import static org.jboss.elemento.Elements.p;
 import static org.jboss.elemento.Elements.setVisible;
 import static org.jboss.hal.client.configuration.subsystem.microprofile.AddressTemplates.CONFIG_SOURCE_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CLASS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DIR;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MODULE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ORDINAL;
@@ -192,11 +189,7 @@ class AddConfigSourceWizard {
                     .build();
             registerAttachable(form);
 
-            Property operation = metadata.getDescription().findOperation(ADD);
-            String description = "";
-            if (operation != null) {
-                description = operation.getValue().get(DESCRIPTION).asString();
-            }
+            String description = metadata.getDescription().operations().description(ADD);
 
             root = div()
                     .add(p().textContent(description))
@@ -293,10 +286,9 @@ class AddConfigSourceWizard {
             id = Ids.build(Ids.MICRO_PROFILE_CONFIG_SOURCE, attribute, Ids.FORM);
             metadata = configSourceMeta;
             description = p().textContent(metadata.getDescription()
-                    .findAttribute(ATTRIBUTES, PROPERTIES)
-                    .getValue()
-                    .get(DESCRIPTION)
-                    .asString()).element();
+                    .attributes()
+                    .description(PROPERTIES))
+                    .element();
             form = new ModelNodeForm.Builder<>(id, configSourceMeta)
                     .include(attribute)
                     .onSave((f, changedValues) -> {
@@ -375,10 +367,7 @@ class AddConfigSourceWizard {
             registerAttachable(form);
 
             String attributeDescription = metadata.getDescription()
-                    .findAttribute(ATTRIBUTES, ORDINAL)
-                    .getValue()
-                    .get(DESCRIPTION)
-                    .asString();
+                    .attributes().description(ORDINAL);
             root = div()
                     .add(p().textContent(attributeDescription))
                     .add(form).element();

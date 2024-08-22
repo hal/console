@@ -56,7 +56,15 @@ class PropertyFilter implements Predicate<Property> {
             if (emptyIncludes() && builder.excludes.isEmpty()) {
                 filter = builder.requiredOnly ? required : (p) -> true;
             } else if (!builder.excludes.isEmpty()) {
-                filter = p -> !builder.excludes.contains(p.getName());
+                filter = p -> {
+                    boolean result = !builder.excludes.contains(p.getName());
+                    int pos = p.getName().indexOf('.');
+                    if (pos != -1) {
+                        String wildcard = p.getName().substring(0, pos) + ".*";
+                        result = result && !builder.excludes.contains(wildcard);
+                    }
+                    return result;
+                };
             } else {
                 filter = p -> builder.includes.contains(p.getName());
             }

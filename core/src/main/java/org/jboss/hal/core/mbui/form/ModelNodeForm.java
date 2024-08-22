@@ -46,6 +46,7 @@ import org.jboss.hal.core.NameI18n;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
+import org.jboss.hal.meta.AttributeCollection;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.jboss.hal.meta.security.AuthorisationDecision;
@@ -77,12 +78,9 @@ import static org.jboss.hal.ballroom.form.Form.State.EMPTY;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ACCESS_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.OPERATIONS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_WRITE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUEST_PROPERTIES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUIRED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUIRES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
@@ -102,12 +100,12 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
     private final Supplier<org.jboss.hal.dmr.Operation> ping;
     private final Map<String, ModelNode> attributeDescriptions;
     private final ResourceDescription resourceDescription;
-    private final String attributePath;
+    private final boolean isFromRequestProperties;
     private final Metadata metadata;
 
     protected ModelNodeForm(Builder<T> builder) {
         super(builder.id, builder.stateMachine(),
-                new ModelNodeMapping<>(builder.metadata.getDescription().getAttributes(builder.attributePath)),
+                new ModelNodeMapping<>(getAttributes(builder.metadata.getDescription(), builder.isFromRequestProperties)),
                 builder.emptyState);
 
         this.addOnly = builder.addOnly;
@@ -119,11 +117,11 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         this.prepareReset = builder.prepareReset;
         this.prepareRemove = builder.prepareRemove;
         this.resourceDescription = builder.metadata.getDescription();
-        this.attributePath = builder.attributePath;
+        this.isFromRequestProperties = builder.isFromRequestProperties;
         this.metadata = builder.metadata;
 
         List<Property> properties = new ArrayList<>();
-        List<Property> filteredProperties = resourceDescription.getAttributes(attributePath)
+        List<Property> filteredProperties = getAttributes(resourceDescription, isFromRequestProperties)
                 .stream()
                 .filter(new PropertyFilter(builder))
                 .collect(toList());
@@ -137,26 +135,9 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
             // 1. the ones specified in 'builder.includes'
             // 2. the remaining from 'filteredProperties'
             for (String include : builder.includes) {
-                // nested property like 'file.path'?
-                int dotIndex = include.lastIndexOf('.');
-                if (dotIndex != -1) {
-                    String parents = include.substring(0, dotIndex);
-                    String attribute = include.substring(dotIndex + 1);
-                    Metadata nested = metadata.forComplexAttribute(parents, true);
-                    // nested metadata *always* use ATTRIBUTES
-                    Property property = nested.getDescription().findAttribute(ATTRIBUTES, attribute);
-                    if (property != null) {
-                        Property fixedNameProperty = new Property(include, property.getValue());
-                        if (new PropertyFilter(builder).test(fixedNameProperty)) {
-                            properties.add(fixedNameProperty);
-                            dataMapping.addAttributeDescription(fixedNameProperty.getName(), fixedNameProperty.getValue());
-                        }
-                    }
-                } else {
-                    Property removed = filteredByName.remove(include);
-                    if (removed != null) {
-                        properties.add(removed);
-                    }
+                Property removed = filteredByName.remove(include);
+                if (removed != null) {
+                    properties.add(removed);
                 }
             }
             properties.addAll(filteredByName.values());
@@ -248,7 +229,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
             }
 
             // alternatives
-            List<String> alternatives = resourceDescription.findAlternatives(attributePath, name);
+            List<String> alternatives = getAttributes(resourceDescription, isFromRequestProperties).alternatives(name);
             HashSet<String> uniqueAlternatives = new HashSet<>(alternatives);
             uniqueAlternatives.add(name);
             uniqueAlternatives.removeAll(processedAlternatives);
@@ -392,8 +373,8 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
             ModelNode attributeDescription = attributeDescriptions.get(name);
             if (attributeDescription != null) {
                 if (attributeDescription.hasDefined(DEFAULT)) {
-                    emptyOrDefault = resourceDescription.isDefaultValue(attributePath, name,
-                            value) || formItem.isEmpty();
+                    emptyOrDefault = getAttributes(resourceDescription, isFromRequestProperties).isDefaultValue(name, value)
+                            || formItem.isEmpty();
                 } else if (attributeDescription.get(TYPE).asType() == ModelType.BOOLEAN) {
                     emptyOrDefault = value == null || !(Boolean) value;
                 } else {
@@ -404,6 +385,11 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
             }
         }
         return emptyOrDefault;
+    }
+
+    private static AttributeCollection getAttributes(ResourceDescription resourceDescription,
+            boolean isFromRequestProperties) {
+        return isFromRequestProperties ? resourceDescription.requestProperties() : resourceDescription.attributes();
     }
 
     // ------------------------------------------------------ inner classes
@@ -435,7 +421,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         boolean omitNoAttributesWarning;
         Supplier<org.jboss.hal.dmr.Operation> ping;
         EmptyState emptyState;
-        String attributePath;
+        boolean isFromRequestProperties;
         SaveCallback<T> saveCallback;
         CancelCallback<T> cancelCallback;
         PrepareReset<T> prepareReset;
@@ -460,7 +446,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
             this.hideDeprecated = true;
             this.verifyExcludes = true;
             this.omitNoAttributesWarning = false;
-            this.attributePath = ATTRIBUTES;
+            this.isFromRequestProperties = false;
         }
 
         public Builder<T> include(String[] attributes) {
@@ -500,7 +486,6 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         @EsReturn("FormBuilder")
         public Builder<T> addOnly() {
             this.addOnly = true;
-            this.attributePath = ATTRIBUTES;
             return this;
         }
 
@@ -511,7 +496,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         @EsReturn("FormBuilder")
         public Builder<T> fromRequestProperties() {
             this.addOnly = true;
-            this.attributePath = OPERATIONS + "/" + ADD + "/" + REQUEST_PROPERTIES;
+            this.isFromRequestProperties = true;
             return this;
         }
 
@@ -686,9 +671,10 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
             }
 
             if (!excludes.isEmpty() && !readOnly && verifyExcludes) {
-                List<Property> requiredAttributes = metadata.getDescription().getRequiredAttributes(attributePath);
+                Iterable<Property> requiredAttributes = (getAttributes(metadata.getDescription(), isFromRequestProperties))
+                        .required();
                 for (Property attribute : requiredAttributes) {
-                    if (excludes.contains(attribute.getName())) {
+                    if (excludes.contains(attribute.getName()) && attribute.getName().indexOf('.') == -1) {
                         throw new IllegalStateException(
                                 "Required attribute " + attribute.getName() + " must not be excluded from " + formId());
                     }

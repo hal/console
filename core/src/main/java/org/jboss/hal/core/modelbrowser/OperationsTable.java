@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.core.modelbrowser;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.jboss.elemento.HtmlContentBuilder;
@@ -60,7 +61,7 @@ class OperationsTable implements IsElement {
     private final HTMLElement root;
     private final Resources resources;
 
-    OperationsTable(List<Property> operations, Environment environment, Resources resources) {
+    OperationsTable(Collection<Property> operations, Environment environment, Resources resources) {
         HTMLElement tbody;
 
         this.resources = resources;
