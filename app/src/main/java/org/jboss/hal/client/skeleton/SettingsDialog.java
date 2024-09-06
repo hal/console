@@ -29,7 +29,6 @@ import org.jboss.hal.config.Settings.Key;
 import org.jboss.hal.core.mbui.dialog.ModifyResourceDialog;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
@@ -42,7 +41,6 @@ import static java.util.Comparator.naturalOrder;
 import static elemental2.dom.DomGlobal.window;
 import static org.jboss.hal.config.Settings.Key.*;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ALLOWED;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT;
 
 class SettingsDialog {
@@ -65,11 +63,11 @@ class SettingsDialog {
         multipleLocales = locales.size() > 1;
 
         Metadata metadata = Metadata.staticDescription(RESOURCES.settings());
-        defaultPollTime = metadata.getDescription().get(ATTRIBUTES).get(POLL_TIME.key()).get(DEFAULT).asInt();
+        defaultPollTime = metadata.getDescription().attributes().get(POLL_TIME.key()).get(DEFAULT).asInt();
         if (multipleLocales) {
-            Property locale = metadata.getDescription().findAttribute(ATTRIBUTES, LOCALE.key());
-            if (locale != null && locale.getValue().hasDefined(ALLOWED)) {
-                locales.forEach(l -> locale.getValue().get(ALLOWED).add(l));
+            ModelNode locale = metadata.getDescription().attributes().get(LOCALE.key());
+            if (locale != null && locale.hasDefined(ALLOWED)) {
+                locales.forEach(l -> locale.get(ALLOWED).add(l));
             }
         }
         List<String> attributes = new ArrayList<>();

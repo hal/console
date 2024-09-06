@@ -18,8 +18,10 @@ package org.jboss.hal.core.mbui;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -129,8 +131,22 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
         }
         table = builder.tableBuilder.build();
 
+        Set<String> excludeComplexAttributes = new HashSet<>();
+        builder.metadata.getDescription().attributes().forEach(prop -> {
+            String name = prop.getName();
+            int pos = name.indexOf('.');
+            if (pos != -1) {
+                String parentName = name.substring(0, pos);
+                if (builder.coAttributes.containsKey(parentName) ||
+                        builder.coAttributeForms.containsKey(parentName)) {
+                    excludeComplexAttributes.add(name.substring(0, pos) + ".*");
+                }
+            }
+        });
+
         ModelNodeForm.Builder formBuilder = new ModelNodeForm.Builder<NamedNode>(Ids.build(builder.baseId, Ids.FORM),
                 builder.metadata)
+                .exclude(excludeComplexAttributes)
                 .prepareReset(f -> builder.mbuiContext.crud()
                         .reset(builder.type, f.getModel().getName(), builder.metadata.getTemplate(), f,
                                 builder.metadata, builder.crudCallback))
@@ -150,9 +166,9 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
             for (String complexAttribute : builder.coAttributes.keySet()) {
                 // is the complex attribute *itself* required?
                 boolean requiredComplexAttribute = false;
-                Property attribute = builder.metadata.getDescription().findAttribute(ATTRIBUTES, complexAttribute);
-                if (attribute != null) {
-                    requiredComplexAttribute = failSafeBoolean(attribute.getValue(), REQUIRED);
+                ModelNode attribute = builder.metadata.getDescription().attributes().get(complexAttribute);
+                if (attribute.isDefined()) {
+                    requiredComplexAttribute = failSafeBoolean(attribute, REQUIRED);
                 }
 
                 Callback callback;
@@ -160,7 +176,7 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
                 Metadata metadata = builder.metadata.forComplexAttribute(complexAttribute);
 
                 // does the complex attribute *contain* required attributes?
-                List<Property> requiredAttributes = metadata.getDescription().getRequiredAttributes(ATTRIBUTES);
+                List<Property> requiredAttributes = metadata.getDescription().attributes().required();
                 if (requiredAttributes.isEmpty()) {
                     callback = () -> builder.mbuiContext.ca().add(selectedResource, complexAttribute, type,
                             metadata.getTemplate(), null, builder.crudCallback);

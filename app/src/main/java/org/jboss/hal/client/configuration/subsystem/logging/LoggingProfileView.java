@@ -226,6 +226,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
 
         jsonFormatterForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(LOGGING_PROFILE, JSON, FORMATTER, FORM),
                 jsonMetadata)
+                .exclude(KEY_OVERRIDES + ".*")
                 .onSave((form, changedValues) -> mbuiContext.crud().save(jsonLabel, form.getModel().getName(),
                         jsonTemplate.replaceWildcards(presenter.getLoggingProfile()), changedValues,
                         () -> presenter.reload()))
@@ -297,6 +298,7 @@ public abstract class LoggingProfileView extends MbuiViewImpl<LoggingProfilePres
 
         xmlFormatterForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(LOGGING_PROFILE, XML, FORMATTER, FORM),
                 xmlMetadata)
+                .exclude(KEY_OVERRIDES + ".*")
                 .onSave((form, changedValues) -> mbuiContext.crud().save(xmlLabel, form.getModel().getName(),
                         xmlTemplate.replaceWildcards(presenter.getLoggingProfile()), changedValues,
                         () -> presenter.reload()))

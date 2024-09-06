@@ -47,7 +47,6 @@ import static org.jboss.elemento.Elements.p;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.client.runtime.subsystem.ejb.AddressTemplates.ejbDeploymentTemplate;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NEXT_TIMEOUT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TIMERS;
@@ -86,7 +85,7 @@ public class EjbView extends HalViewImpl implements EjbPresenter.MyView {
         Metadata scheduleMetadata = timersMetadata.forComplexAttribute("schedule");
 
         // methods come in a property list, we need to add an identifier to the table
-        methodsMetadata.getDescription().get(ATTRIBUTES).get(NAME);
+        methodsMetadata.getDescription().attributes().add(new Property(NAME, new ModelNode().set(NAME)));
 
         methodsTable = new ModelNodeTable.Builder<>("ejb-bean-methods-table", methodsMetadata)
                 .columns("name", "execution-time", "invocations", "wait-time")

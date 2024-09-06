@@ -39,7 +39,6 @@ import com.google.common.collect.Maps;
 import elemental2.dom.HTMLElement;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ACCESS_TYPE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_CLASS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_CLASS_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DRIVER_NAME;
@@ -86,15 +85,15 @@ class DriverStep extends WizardStep<Context, State> {
 
     private Metadata adjustMetadata(Metadata metadata) {
         ModelNode newAttributes = new ModelNode();
-        for (Property property : metadata.getDescription().get(ATTRIBUTES).asPropertyList()) {
+        for (Property property : metadata.getDescription().attributes()) {
             ModelNode value = property.getValue().clone();
             value.get(ACCESS_TYPE).set(READ_WRITE);
             value.get(NILLABLE).set(!DRIVER_XA_DATASOURCE_CLASS_NAME.equals(property.getName()));
             newAttributes.get(property.getName()).set(value);
         }
 
-        metadata.getDescription().remove(ATTRIBUTES);
-        metadata.getDescription().get(ATTRIBUTES).set(newAttributes);
+        metadata.getDescription().attributes().clear();
+        metadata.getDescription().attributes().addAll(newAttributes.asPropertyList());
         return metadata;
     }
 

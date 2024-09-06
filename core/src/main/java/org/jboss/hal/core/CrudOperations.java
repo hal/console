@@ -63,13 +63,11 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_ALIASES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.OPERATIONS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE_DEPTH;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOVE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUEST_PROPERTIES;
 
 /**
  * Contains generic CRUD methods to add, read, update and remove (singleton) resources. Some methods just execute the underlying
@@ -264,8 +262,7 @@ public class CrudOperations {
         metadataProcessor.lookup(template, progress.get(), new SuccessfulMetadataCallback(eventBus, resources) {
             @Override
             public void onMetadata(Metadata metadata) {
-                boolean hasRequiredAttributes = !metadata.getDescription()
-                        .getRequiredAttributes(OPERATIONS + "/" + ADD + "/" + REQUEST_PROPERTIES).isEmpty();
+                boolean hasRequiredAttributes = !metadata.getDescription().requestProperties().required().isEmpty();
                 if (hasRequiredAttributes || !Iterables.isEmpty(attributes)) {
                     // no unbound name item!
                     ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(id, metadata)
@@ -297,8 +294,7 @@ public class CrudOperations {
      */
     public void addSingleton(String id, String type, Metadata metadata, AddressTemplate template,
             AddSingletonCallback callback) {
-        boolean hasRequiredAttributes = !metadata.getDescription()
-                .getRequiredAttributes(OPERATIONS + "/" + ADD + "/" + REQUEST_PROPERTIES).isEmpty();
+        boolean hasRequiredAttributes = !metadata.getDescription().requestProperties().required().isEmpty();
         if (hasRequiredAttributes) {
             // no unbound name item!
             ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(id, metadata)

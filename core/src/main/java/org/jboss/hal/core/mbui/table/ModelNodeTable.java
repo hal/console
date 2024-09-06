@@ -38,7 +38,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import static org.jboss.hal.ballroom.table.RefreshMode.RESET;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.resources.UIConstants.HASH;
 import static org.jboss.hal.resources.UIConstants.data;
@@ -155,8 +154,8 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
 
         /** Adds a column which maps to the specified attribute. */
         public Builder<T> column(String attribute) {
-            Property attributeDescription = metadata.getDescription().findAttribute(ATTRIBUTES, attribute);
-            if (attributeDescription != null) {
+            Property attributeDescription = metadata.getDescription().attributes().property(attribute);
+            if (attributeDescription.getValue().isDefined()) {
                 Column<T> column = columnFactory.createColumn(attributeDescription);
                 return column(column);
             } else {
