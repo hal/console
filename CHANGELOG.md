@@ -7,15 +7,27 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- [HAL-1987](https://issues.redhat.com/browse/HAL-1987): Internal error and broken navigation on switching Elytron realms
+- [HAL-1985](https://issues.redhat.com/browse/HAL-1985): Complex attributes cannot be edited when flattened
+- [HAL-1984](https://issues.redhat.com/browse/HAL-1984): Localized item title causes error in navigation
+- [HAL-1983](https://issues.redhat.com/browse/HAL-1983): Update the Installer history screen to include the combination of manifest names/versions in the list
+
+### Upgrades
+
+- Bump ACE editor to 1.36.2
+- Bump Mockito to 5.13.0
+
 ## [3.7.4] - 2024-07-02
 
 ### Added
 
-- [HAL-1833](https://issues.redhat.com/browse/HAL-1833) Link of Update documentation links on the homepage of the console
-- [HAL-1970](https://issues.redhat.com/browse/HAL-1970): Split runtime ds presenter/view into xa and non-xa version
-- [HAL-1975](https://issues.redhat.com/browse/HAL-1975): Add functionality to configure remoting-ejb-receiver of a remoting-profile
-- [HAL-1978](https://issues.redhat.com/browse/HAL-1978): Fix documentation links on homepage (WildFly)
 - [HAL-1979](https://issues.redhat.com/browse/HAL-1979): Support for stability levels in the console
+- [HAL-1978](https://issues.redhat.com/browse/HAL-1978): Fix documentation links on homepage (WildFly)
+- [HAL-1975](https://issues.redhat.com/browse/HAL-1975): Add functionality to configure remoting-ejb-receiver of a remoting-profile
+- [HAL-1970](https://issues.redhat.com/browse/HAL-1970): Split runtime ds presenter/view into xa and non-xa version
+- [HAL-1833](https://issues.redhat.com/browse/HAL-1833) Link of Update documentation links on the homepage of the console
 
 ### Upgrades
 
