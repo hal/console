@@ -56,6 +56,8 @@ public interface Names {
     String CACHE_CONTAINER = "Cache Container";
     String CACHING_REALM = "Caching Realm";
     String CATEGORY = "Category";
+    String CERTIFICATE = "Certificate";
+    String CERTIFICATES = "Certificates";
     String CHANNEL = "Channel";
     String CHANNELS = "Channels";
     String CLIENT_CONFIGURATION = "Client Configuration";

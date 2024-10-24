@@ -15,20 +15,30 @@
  */
 package org.jboss.hal.client.installer;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.resources.client.ClientBundle;
-import com.google.gwt.resources.client.TextResource;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.NamedNode;
 
-interface UpdateManagerResources extends ClientBundle {
+public class CertificateInfo extends NamedNode {
 
-    UpdateManagerResources INSTANCE = GWT.create(UpdateManagerResources.class);
+    protected static final String TRUSTED = "TRUSTED";
 
-    @Source("artifactChange.base64")
-    TextResource artifactChange();
+    CertificateInfo(final ModelNode node) {
+        super(node.get("key-id").asString(), node);
+    }
 
-    @Source("channelChange.base64")
-    TextResource channelChange();
+    String getKeyID() {
+        return get("key-id").asString();
+    }
 
-    @Source("certificate.base64")
-    TextResource componentCertificate();
+    public String getFingerprint() {
+        return get("fingerprint").asString();
+    }
+
+    public String getDescription() {
+        return get("description").asString();
+    }
+
+    public String getStatus() {
+        return get("status").asString();
+    }
 }

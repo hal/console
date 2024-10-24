@@ -15,20 +15,6 @@
  */
 package org.jboss.hal.client.installer;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.resources.client.ClientBundle;
-import com.google.gwt.resources.client.TextResource;
-
-interface UpdateManagerResources extends ClientBundle {
-
-    UpdateManagerResources INSTANCE = GWT.create(UpdateManagerResources.class);
-
-    @Source("artifactChange.base64")
-    TextResource artifactChange();
-
-    @Source("channelChange.base64")
-    TextResource channelChange();
-
-    @Source("certificate.base64")
-    TextResource componentCertificate();
+enum ImportComponentCertificateState {
+    UPLOAD_CERTIFICATE, CONFIRM_CERTIFICATE
 }

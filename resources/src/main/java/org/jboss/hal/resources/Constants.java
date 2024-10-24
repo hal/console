@@ -95,6 +95,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String committed();
     String completed();
     String completedExecutions();
+    String updateCertificates();
+    String componentCertificateImported();
     String composite();
     String configuration();
     String configurationChanges();
@@ -490,6 +492,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String remoteAddress();
     String remove();
     String removeAlias();
+    String removeComponentCertificate();
     String removeContent();
     String removeIdentity();
     String rename();

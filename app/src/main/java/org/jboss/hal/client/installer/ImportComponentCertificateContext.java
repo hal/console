@@ -15,20 +15,26 @@
  */
 package org.jboss.hal.client.installer;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.resources.client.ClientBundle;
-import com.google.gwt.resources.client.TextResource;
+import elemental2.dom.File;
 
-interface UpdateManagerResources extends ClientBundle {
+class ImportComponentCertificateContext {
 
-    UpdateManagerResources INSTANCE = GWT.create(UpdateManagerResources.class);
+    private CertificateInfo certificate;
+    private File file;
 
-    @Source("artifactChange.base64")
-    TextResource artifactChange();
+    public void setImportedCertificate(CertificateInfo certificate) {
+        this.certificate = certificate;
+    }
 
-    @Source("channelChange.base64")
-    TextResource channelChange();
+    public CertificateInfo getImportedCertificate() {
+        return certificate;
+    }
 
-    @Source("certificate.base64")
-    TextResource componentCertificate();
+    public void setFile(File file) {
+        this.file = file;
+    }
+
+    public File getFile() {
+        return file;
+    }
 }
