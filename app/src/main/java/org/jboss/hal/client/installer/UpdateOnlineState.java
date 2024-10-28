@@ -17,5 +17,5 @@ package org.jboss.hal.client.installer;
 
 enum UpdateOnlineState {
 
-    LIST_UPDATES, PREPARE_SERVER, APPLY_UPDATE
+    LIST_UPDATES, PREPARE_SERVER, APPLY_UPDATE, IMPORT_CERTIFICATES
 }

@@ -15,9 +15,11 @@
  */
 package org.jboss.hal.client.installer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.Operation;
 
 import static java.util.Collections.emptyList;
 
@@ -28,6 +30,10 @@ class UpdateManagerContext {
     UpdateItem updateItem;
     List<ModelNode> updates;
     String workDir;
+    List<String> missingCerts;
+    List<CertificateInfo> missingCertInfos;
+    Operation listOperation;
+    String nodeType;
 
     UpdateManagerContext() {
         this(emptyList(), null);
@@ -40,5 +46,21 @@ class UpdateManagerContext {
     UpdateManagerContext(final List<ModelNode> updates, final UpdateItem updateItem) {
         this.updateItem = updateItem;
         this.updates = updates;
+    }
+
+    public UpdateManagerContext(List<String> missingCerts, List<CertificateInfo> missingCertInfos,
+            Operation listOperation, String nodeType) {
+        this.missingCerts = missingCerts;
+        this.missingCertInfos = missingCertInfos;
+        this.listOperation = listOperation;
+        this.nodeType = nodeType;
+        // updates list will be modified later - don't use emptyList()
+        this.updates = new ArrayList<>();
+    }
+
+    public UpdateManagerContext(UpdateItem updateItem, List<String> missingCerts, List<CertificateInfo> missingCertInfos,
+            Operation listOperation, String nodeType) {
+        this(missingCerts, missingCertInfos, listOperation, nodeType);
+        this.updateItem = updateItem;
     }
 }

@@ -79,7 +79,9 @@ class ImportComponentCertificateWizard {
         });
 
         builder.onFinish((wizard, ctx) -> {
-            column.refresh(CLEAR_SELECTION);
+            if (column != null) {
+                column.refresh(CLEAR_SELECTION);
+            }
             wizard.showSuccess(resources.constants().componentCertificateImported(),
                     resources.messages().componentCertificateImportedDescription());
         });

@@ -133,8 +133,10 @@ public interface ModelDescriptionConstants {
     String CERT_FILE = "cert-file";
     String CERTIFICATE_AUTHORITY = "certificate-authority";
     String CERTIFICATE_AUTHORITY_ACCOUNT = "certificate-authority-account";
+    String CERTIFICATE_CONTENT = "certificate-content";
     String CERTIFICATE_DETAILS = "certificate-details";
     String CERTIFICATE_IMPORT = "certificate-import";
+    String CERTIFICATE_INFO = "certificate-info";
     String CERTIFICATE_PARSE = "certificate-parse";
     String CERTIFICATE_REMOVE = "certificate-remove";
     String CHAINED_PRINCIPAL_TRANSFORMER = "chained-principal-transformer";
@@ -1041,6 +1043,7 @@ public interface ModelDescriptionConstants {
     String TRUST_MANAGER = "trust-manager";
     String TRUST_MODULE = "trust-module";
     String TYPE = "type";
+    String UNACCEPTED_CERTIFICATE="unaccepted-certificates";
     String UNDEFINE_ATTRIBUTE_OPERATION = "undefine-attribute";
     String UNDEFINED = "undefined";
     String UNDEPLOY = "undeploy";

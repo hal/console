@@ -384,6 +384,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String minute();
     String minutes();
     String missCount();
+    String missingComponentCertificates();
     String modelBrowser();
     String monitor();
     String move();

@@ -60,20 +60,20 @@ class ConfirmComponentCertificateStep
         this.statementContext = statementContext;
         this.resources = resources;
 
-        table = new ModelNodeForm.Builder<CertificateInfo>(Ids.build(Ids.UPDATE_MANAGER_LIST_UPDATES),
+        certificateForm = new ModelNodeForm.Builder<CertificateInfo>(Ids.build(Ids.UPDATE_MANAGER_LIST_UPDATES),
                 Metadata.staticDescription(UpdateManagerResources.INSTANCE.componentCertificate()))
                 .readOnly()
                 .build();
-        registerAttachable(table);
+        registerAttachable(certificateForm);
 
         root = div()
                 .add(div().css(marginBottomLarge).innerHtml(resources.messages().importComponentCertificateConfirmation()))
-                .add(table)
+                .add(certificateForm)
                 .element();
     }
 
     private final HTMLElement root;
-    private final ModelNodeForm<CertificateInfo> table;
+    private final ModelNodeForm<CertificateInfo> certificateForm;
 
     @Override
     public HTMLElement element() {
@@ -82,7 +82,7 @@ class ConfirmComponentCertificateStep
 
     @Override
     protected void onShow(final ImportComponentCertificateContext context) {
-        table.view(context.getImportedCertificate());
+        certificateForm.view(context.getImportedCertificate());
     }
 
     @Override
