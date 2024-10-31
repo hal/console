@@ -15,7 +15,6 @@
  */
 package org.jboss.hal.client.bootstrap;
 
-import org.jboss.elemento.Elements;
 import org.jboss.hal.client.logging.LogConfiguration;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.resources.Names;
@@ -24,8 +23,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.gwt.core.client.GWT;
 import com.gwtplatform.mvp.client.PreBootstrapper;
-
-import static elemental2.dom.DomGlobal.document;
 
 public class HalPreBootstrapper implements PreBootstrapper {
 
@@ -38,10 +35,7 @@ public class HalPreBootstrapper implements PreBootstrapper {
             LoadingPanel.get().off();
             String errorMessage = e != null ? e.getMessage() : Names.NOT_AVAILABLE;
             logger.error("Uncaught bootstrap error: {}", errorMessage);
-            if (!document.body.hasChildNodes()) {
-                Elements.removeChildrenFrom(document.body);
-                document.body.appendChild(new BootstrapFailed(errorMessage, Endpoints.INSTANCE).element());
-            }
+            BootstrapFailed.generalBootstrapError(errorMessage, Endpoints.INSTANCE);
         });
     }
 }

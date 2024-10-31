@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.client.bootstrap;
 
-import org.jboss.elemento.IsElement;
+import org.jboss.elemento.Elements;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.resources.UIConstants;
 
@@ -59,20 +59,20 @@ import static org.jboss.hal.resources.CSS.pfIcon;
 import static org.jboss.hal.resources.CSS.row;
 import static org.jboss.hal.resources.UIConstants.TARGET;
 
-public class BootstrapFailed implements IsElement<HTMLDivElement> {
+public class BootstrapFailed {
 
     private static final String ADD_ALLOWED_ORIGIN = "/core-service=management/" +
             "management-interface=http-interface" +
             ":list-add(name=allowed-origins,value=" + Endpoints.getBaseUrl();
 
-    private final HTMLDivElement root;
+    private static void appendToBody(HTMLDivElement errorView) {
+        document.documentElement.classList.add(bootstrapError);
+        Elements.removeChildrenFrom(document.body);
+        document.body.appendChild(errorView);
+    }
 
-    public BootstrapFailed(String error, Endpoints endpoints) {
-        HTMLElement errorHolder;
-        HTMLElement allowedOriginServer;
-        HTMLElement allowedOriginConfig;
-
-        root = div()
+    private static HTMLDivElement errorView(final String heading, final String error, final HTMLElement content) {
+        return div()
                 .add(nav().css(navbar, navbarDefault, navbarFixedTop, navbarPf)
                         .attr(UIConstants.ROLE, "navigation")
                         .add(div().css(navbarHeader)
@@ -84,63 +84,101 @@ public class BootstrapFailed implements IsElement<HTMLDivElement> {
                 .add(div().css(containerFluid)
                         .add(div().css(row)
                                 .add(div().css(column(12, columnLg, columnMd, columnSm))
-                                        .add(h(1, "Bootstrap Error"))
+                                        .add(h(1, heading))
                                         .add(div().css(alert, alertDanger, marginTopLarge)
                                                 .add(span().css(pfIcon(errorCircleO)))
-                                                .add(errorHolder = span()
-                                                        .textContent("You don't have permission to access this page.")
+                                                .add(span()
+                                                        .textContent(error)
                                                         .element()))
                                         .add(div()
                                                 .add(p().textContent("The management console could not be loaded."))
-                                                .add(ul()
-                                                        .add(li()
-                                                                .add(p()
-                                                                        .add("Make sure the server is ")
-                                                                        .add(strong().textContent("up and running"))
-                                                                        .add(". Please check the log files for possible errors during startup.")))
-                                                        .add(li()
-                                                                .add(p()
-                                                                        .add("Verify you have ")
-                                                                        .add(strong().textContent("added users"))
-                                                                        .add(" which are able to access the admin console."))
-                                                                .add(p()
-                                                                        .add("To add a new user execute the ")
-                                                                        .add(code().textContent("add-user.sh"))
-                                                                        .add(" script within the bin folder of your installation and enter the requested information.")))
-                                                        .add(allowedOriginServer = li()
-                                                                .add(p()
-                                                                        .add("Check that the management endpoint at ")
-                                                                        .add(a(endpoints.dmr())
-                                                                                .attr(TARGET, "_blank")
-                                                                                .textContent(endpoints.dmr()))
-                                                                        .add(" is available."))
-                                                                .element())
-                                                        .add(allowedOriginConfig = li()
-                                                                .add(p()
-                                                                        .add("Make sure you've added " + Endpoints.getBaseUrl()
-                                                                                + " as ")
-                                                                        .add(strong().textContent("allowed origin"))
-                                                                        .add(" and reload the server. Use one of the following CLI commands to add allowed origins:"))
-                                                                .add(ul()
-                                                                        .add(li()
-                                                                                .add(p().textContent("Standalone:"))
-                                                                                .add(pre().textContent(
-                                                                                        ADD_ALLOWED_ORIGIN)))
-                                                                        .add(li()
-                                                                                .add(p().textContent("Domain:"))
-                                                                                .add(pre().textContent(
-                                                                                        "/host=primary" + ADD_ALLOWED_ORIGIN))))
-                                                                .element()))))))
+                                                .add(content)))))
                 .element();
-
-        errorHolder.textContent = error;
-        setVisible(allowedOriginServer, !endpoints.isSameOrigin());
-        setVisible(allowedOriginConfig, !endpoints.isSameOrigin());
-        document.documentElement.classList.add(bootstrapError);
     }
 
-    @Override
-    public HTMLDivElement element() {
-        return root;
+    public static void generalBootstrapError(final String error, Endpoints endpoints) {
+        HTMLElement allowedOriginServer;
+        HTMLElement allowedOriginConfig;
+
+        HTMLElement content = ul()
+                .add(li()
+                        .add(p()
+                                .add("Make sure the server is ")
+                                .add(strong().textContent("up and running"))
+                                .add(". Please check the log files for possible errors during startup.")))
+                .add(li()
+                        .add(p()
+                                .add("Verify you have ")
+                                .add(strong().textContent("added users"))
+                                .add(" which are able to access the admin console."))
+                        .add(p()
+                                .add("To add a new user execute the ")
+                                .add(code().textContent("add-user.sh"))
+                                .add(" script within the bin folder of your installation and enter the requested information.")))
+                .add(allowedOriginServer = li()
+                        .add(p()
+                                .add("Check that the management endpoint at ")
+                                .add(a(endpoints.dmr())
+                                        .attr(TARGET, "_blank")
+                                        .textContent(endpoints.dmr()))
+                                .add(" is available."))
+                        .element())
+                .add(allowedOriginConfig = li()
+                        .add(p()
+                                .add("Make sure you've added " + Endpoints.getBaseUrl()
+                                        + " as ")
+                                .add(strong().textContent("allowed origin"))
+                                .add(" and reload the server. Use one of the following CLI commands to add allowed origins:"))
+                        .add(ul()
+                                .add(li()
+                                        .add(p().textContent("Standalone:"))
+                                        .add(pre().textContent(
+                                                ADD_ALLOWED_ORIGIN)))
+                                .add(li()
+                                        .add(p().textContent("Domain:"))
+                                        .add(pre().textContent(
+                                                "/host=primary" + ADD_ALLOWED_ORIGIN))))
+                        .element())
+                .element();
+
+        HTMLDivElement root = errorView("Bootstrap Error", error, content);
+        setVisible(allowedOriginServer, !endpoints.isSameOrigin());
+        setVisible(allowedOriginConfig, !endpoints.isSameOrigin());
+        appendToBody(root);
+    }
+
+    public static void rbacProviderFailed(final String error) {
+        HTMLElement content = ul()
+                .add(li()
+                        .add(p()
+                                .add("If you changed your access control provider to ")
+                                .add(strong().textContent("RBAC"))
+                                .add(", make sure that your configuration has current user mapped to one of the ")
+                                .add(strong().textContent("RBAC roles"))
+                                .add(", preferably with at least one in the Administrator or SuperUser role."))
+                        .add(li()
+                                .add(p()
+                                        .add("If you have started with one of the standard xml configurations shipped with WildFly,")
+                                        .add(" the \"$local\" user should be mapped to the \"SuperUser\" role and the \"local\" authentication scheme should be enabled. ")
+                                        .add("This should allow a user running the CLI on the same system as the WildFly process to have full administrative permissions. ")
+                                        .add("Remote CLI users and web-based admin console users will have no permissions.")))
+
+                        .add(li()
+                                .add(p()
+                                        .add("You should map at least one user besides \"$local\". ")
+                                        .add("Try to use CLI or shut the installation down and edit the xml configuration."))))
+                .element();
+
+        appendToBody(errorView("Access Provider Error", error, content));
+    }
+
+    public static void operationTimedOut(final String error) {
+        HTMLElement content = ul()
+                .add(li()
+                        .add(p()
+                                .add("Check the status of your domain, one or more hosts are unresponsive.")))
+                .element();
+
+        appendToBody(errorView("Bootstrap Error", error, content));
     }
 }
