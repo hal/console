@@ -55,7 +55,6 @@ import static org.jboss.hal.ballroom.form.Decoration.INVALID;
 import static org.jboss.hal.ballroom.form.Decoration.REQUIRED;
 import static org.jboss.hal.ballroom.form.Decoration.RESTRICTED;
 import static org.jboss.hal.ballroom.form.Decoration.SUGGESTIONS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NILLABLE;
 import static org.jboss.hal.resources.CSS.btn;
 import static org.jboss.hal.resources.CSS.btnDefault;
@@ -132,7 +131,7 @@ public class TuplesListItem extends TagsItem<ModelNode> implements ModelNodeItem
     }
 
     public static String[] getAttributeNames(Metadata metadata, boolean markRequired) {
-        return metadata.getDescription().get(ATTRIBUTES).asPropertyList().stream()
+        return metadata.getDescription().attributes().stream()
                 .map(prop -> prop.getName()
                         + (markRequired && prop.getValue().hasDefined(NILLABLE) && !prop.getValue().get(NILLABLE).asBoolean()
                                 ? "*"

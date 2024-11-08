@@ -74,7 +74,7 @@ public class ConfigurePasswordStep extends WizardStep<PasswordContext, PasswordS
         String id = Ids.build(template.lastName(), SET_PASSWORD, FORM);
         ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(id, passwordMetadata)
                 .onSave((form1, changedValues) -> this.changedValues = changedValues);
-        passwordMetadata.getDescription().getAttributes(ATTRIBUTES).forEach(attr -> {
+        passwordMetadata.getDescription().attributes().forEach(attr -> {
             if (ModelType.BYTES.equals(attr.getValue().get(TYPE).asType())) {
                 builder.customFormItem(attr.getName(), desc -> {
                     TextBoxItem saltItem = new TextBoxItem(attr.getName(), labelBuilder.label(attr.getName()));

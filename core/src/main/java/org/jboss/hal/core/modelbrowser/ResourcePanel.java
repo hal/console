@@ -15,7 +15,6 @@
  */
 package org.jboss.hal.core.modelbrowser;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -25,7 +24,6 @@ import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.dmr.ModelNode;
-import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.dmr.ResourceAddress;
@@ -43,11 +41,7 @@ import static org.jboss.elemento.Elements.p;
 import static org.jboss.hal.core.modelbrowser.ModelBrowser.PLACE_HOLDER_ELEMENT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.OBJECT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.STRING;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE_TYPE;
 import static org.jboss.hal.resources.CSS.lead;
 
 /**
@@ -111,9 +105,7 @@ class ResourcePanel implements Iterable<HTMLElement> {
                     .param(INCLUDE_RUNTIME, true)
                     .build();
             dispatcher.execute(operation, result -> {
-                List<String> plainObjects = new ArrayList<>();
-                flattenDescription(metadata.getDescription().get(ATTRIBUTES), plainObjects);
-                flattenModel(result, plainObjects);
+                flattenModel(metadata.getDescription().get(ATTRIBUTES).asPropertyList(), result);
                 ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(
                         Ids.build(Ids.MODEL_BROWSER, node.id, Ids.FORM), metadata)
                         .includeRuntime()
@@ -128,10 +120,10 @@ class ResourcePanel implements Iterable<HTMLElement> {
             });
 
             tabs.setContent(attributesId,
-                    new AttributesTable(metadata.getDescription().getAttributes(ATTRIBUTES), resources).element());
-            if (!metadata.getDescription().getOperations().isEmpty()) {
+                    new AttributesTable(metadata.getDescription().attributes(), resources).element());
+            if (!metadata.getDescription().operations().isEmpty()) {
                 tabs.setContent(operationsId,
-                        new OperationsTable(metadata.getDescription().getOperations(), resources).element());
+                        new OperationsTable(metadata.getDescription().operations(), resources).element());
             }
         }
     }
@@ -146,29 +138,15 @@ class ResourcePanel implements Iterable<HTMLElement> {
         }
     }
 
-    private void flattenDescription(ModelNode model, List<String> plainObjects) {
-        for (Property p : model.asPropertyList()) {
-            if (p.getValue().get(TYPE).asString().equalsIgnoreCase(OBJECT)
-                    && !p.getValue().get(VALUE_TYPE).asString().equalsIgnoreCase(STRING)) {
-
-                model.remove(p.getName());
-
-                for (Property nested : p.getValue().get(VALUE_TYPE).asPropertyList()) {
-                    model.get(p.getName() + "." + nested.getName()).set(nested.getValue());
-                }
-            } else if (p.getValue().get(TYPE).asString().equalsIgnoreCase(OBJECT)) {
-                plainObjects.add(p.getName());
-            }
-        }
-    }
-
-    private void flattenModel(ModelNode model, List<String> plainObjects) {
-        for (Property p : model.asPropertyList()) {
-            if (p.getValue().getType() == ModelType.OBJECT && !plainObjects.contains(p.getName())) {
-                model.remove(p.getName());
-
-                for (Property nested : p.getValue().asPropertyList()) {
-                    model.get(p.getName() + "." + nested.getName()).set(nested.getValue());
+    private void flattenModel(List<Property> attributes, ModelNode model) {
+        for (Property attr : attributes) {
+            if (attr.getName().contains(".")) {
+                String parentName = attr.getName().substring(0, attr.getName().indexOf('.'));
+                if (model.hasDefined(parentName)) {
+                    ModelNode value = model.remove(parentName);
+                    for (Property nested : value.asPropertyList()) {
+                        model.get(parentName + "." + nested.getName()).set(nested.getValue());
+                    }
                 }
             }
         }

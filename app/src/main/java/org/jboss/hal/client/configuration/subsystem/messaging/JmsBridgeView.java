@@ -58,7 +58,7 @@ public class JmsBridgeView extends HalViewImpl implements JmsBridgePresenter.MyV
         List<String> attributes = new ArrayList<>();
         List<String> sourceAttrs = new ArrayList<>();
         List<String> targetAttrs = new ArrayList<>();
-        jmsBridgeMetadata.getDescription().getAttributes(ATTRIBUTES).forEach(p -> {
+        jmsBridgeMetadata.getDescription().attributes().forEach(p -> {
             if (p.getName().startsWith(SOURCE)) {
                 sourceAttrs.add(p.getName());
             } else if (p.getName().startsWith(TARGET)) {
