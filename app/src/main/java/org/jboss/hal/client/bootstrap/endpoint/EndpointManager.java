@@ -19,7 +19,6 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
-import org.jboss.elemento.Elements;
 import org.jboss.hal.client.bootstrap.BootstrapFailed;
 import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.config.keycloak.Keycloak;
@@ -35,7 +34,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import elemental2.dom.XMLHttpRequest;
 
-import static elemental2.dom.DomGlobal.document;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.URL;
 import static org.jboss.hal.dmr.dispatch.Dispatcher.HttpMethod.GET;
@@ -130,12 +128,11 @@ public class EndpointManager {
                     }
                     break;
                 case 403:
-                    RbacProviderFailed.appendToBody("Status " + status + " - " + xhr.statusText);
+                    BootstrapFailed.rbacProviderFailed("Status " + status + " - " + xhr.statusText);
                     break;
                 case 503:
-                    Elements.removeChildrenFrom(document.body);
-                    document.body.appendChild(new BootstrapFailed("Status " + status + " - " + xhr.statusText,
-                            Endpoints.INSTANCE).element());
+                    BootstrapFailed.generalBootstrapError("Status " + status + " - " + xhr.statusText,
+                            Endpoints.INSTANCE);
                     break;
                 default:
                     logger.info("Unable to serve HAL from '{}'. Please select a management interface.",
@@ -145,9 +142,7 @@ public class EndpointManager {
             }
         };
         xhr.onerror = (event) -> {
-            Elements.removeChildrenFrom(document.body);
-            document.body.appendChild(
-                    new BootstrapFailed("Failed connecting to a management interface", Endpoints.INSTANCE).element());
+            BootstrapFailed.generalBootstrapError("Failed connecting to a management interface", Endpoints.INSTANCE);
             return null;
         };
         xhr.open(GET.name(), managementEndpoint, true);
