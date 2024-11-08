@@ -18,10 +18,10 @@ package org.jboss.hal.client.bootstrap;
 import javax.inject.Inject;
 
 import org.jboss.hal.client.bootstrap.endpoint.EndpointManager;
-import org.jboss.hal.client.bootstrap.endpoint.RbacProviderFailed;
 import org.jboss.hal.client.bootstrap.tasks.BootstrapTasks;
 import org.jboss.hal.client.bootstrap.tasks.InitializationTasks;
 import org.jboss.hal.client.bootstrap.tasks.InitializedTask;
+import org.jboss.hal.config.Endpoints;
 import org.jboss.hal.core.ExceptionHandler;
 import org.jboss.hal.dmr.dispatch.Dispatcher.ResponseStatus;
 import org.jboss.hal.flow.Flow;
@@ -84,13 +84,18 @@ public class HalBootstrapper implements Bootstrapper {
                         return null;
                     })
                     .catch_(error -> {
-                        ResponseStatus responseStatus = ResponseStatus.fromStatusText(error.toString());
+                        LoadingPanel.get().off();
+                        String errorString = error.toString();
+                        ResponseStatus responseStatus = ResponseStatus.fromStatusText(errorString);
                         if (responseStatus.notAllowed()) {
-                            RbacProviderFailed.appendToBody(
+                            BootstrapFailed.rbacProviderFailed(
                                     "Status " + responseStatus.statusCode() + " - " + responseStatus.statusText());
+                        } else if (errorString.contains("WFLYCTL0409")) {
+                            BootstrapFailed.operationTimedOut(errorString);
+                        } else {
+                            BootstrapFailed.generalBootstrapError(errorString, Endpoints.INSTANCE);
                         }
                         logger.error("Bootstrap error: {}", error);
-                        LoadingPanel.get().off();
                         return null;
                     });
         });
