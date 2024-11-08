@@ -35,7 +35,9 @@ import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Progress;
+import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.security.Constraint;
@@ -65,7 +67,10 @@ import static org.jboss.elemento.Elements.span;
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_ADDRESS;
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ARTIFACT_CHANGES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CERTIFICATE_CONTENT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CERTIFICATE_INFO;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CLEAN;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CONTENT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HISTORY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HISTORY_FROM_REVISION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.LIST_UPDATES;
@@ -74,8 +79,9 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.PREPARE_UPDATES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REVISION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TIMESTAMP;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.UNACCEPTED_CERTIFICATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UPDATES;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.USE_DEFAULT_LOCAL_CACHE;
+import static org.jboss.hal.flow.Flow.sequential;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.itemText;
 import static org.jboss.hal.resources.CSS.pfIcon;
@@ -220,13 +226,70 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
 
     private void updateOnline() {
         progress.reset();
-        Operation operation = new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext), LIST_UPDATES)
-                .param(USE_DEFAULT_LOCAL_CACHE, true)
+
+        // if there are unaccepted licences - open import Wizard (with additional explanation step and no import)
+        // afterwards go on to check if there are any updates and either show the dialog or update wizard
+
+        Operation listUpdateOp = new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext), LIST_UPDATES)
                 .build();
-        dispatcher.execute(operation,
-                result -> {
-                    List<ModelNode> updates = result.get(UPDATES).asList();
-                    if (updates.isEmpty()) {
+
+        prepareUpdateWizard(listUpdateOp, (missingCerts, missingCertInfos, updates) -> {
+            if (!missingCerts.isEmpty()) {
+                new UpdateOnlineWizard(eventBus, dispatcher, statementContext, resources, listUpdateOp, missingCerts,
+                        missingCertInfos).show(this);
+            } else {
+                new UpdateOnlineWizard(eventBus, dispatcher, statementContext, resources, updates).show(this);
+            }
+        }, UPDATES);
+
+        progress.finish();
+
+    }
+
+    private void prepareUpdateWizard(Operation listUpdateOp, WizardBuilder wizardBuilder, String updateType) {
+        Operation licenseCheckOp = new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext),
+                UNACCEPTED_CERTIFICATE)
+                .build();
+
+        List<ModelNode> updates = new ArrayList<>();
+        List<String> missingCerts = new ArrayList<>();
+        List<CertificateInfo> missingCertInfos = new ArrayList<>();
+        List<Task<FlowContext>> tasks = List.of(
+                (flowContext) -> {
+                    return dispatcher.execute(licenseCheckOp).then(
+                            result -> {
+                                for (ModelNode node : result.asList()) {
+                                    missingCerts.add(node.get(CERTIFICATE_CONTENT).asString());
+                                    missingCertInfos.add(new CertificateInfo(node.get(CERTIFICATE_INFO)));
+                                }
+                                return Promise.resolve(flowContext);
+                            }).catch_((error) -> {
+                                progress.finish();
+                                MessageEvent.fire(eventBus,
+                                        Message.error(resources.messages().lastOperationFailed(), error.toString()));
+                                return Promise.resolve(flowContext);
+                            });
+                },
+                (flowContext) -> {
+                    // get the list of updates if no certificates are missing
+                    if (missingCerts.isEmpty()) {
+                        return dispatcher.execute(listUpdateOp).then(
+                                result -> {
+                                    updates.addAll(result.get(updateType).asList());
+                                    return Promise.resolve(flowContext);
+                                }).catch_((error) -> {
+                                    progress.finish();
+                                    MessageEvent.fire(eventBus,
+                                            Message.error(resources.messages().lastOperationFailed(), error.toString()));
+                                    return Promise.resolve(flowContext);
+                                });
+                    } else {
+                        return Promise.resolve(flowContext);
+                    }
+                },
+                (flowContext) -> {
+                    // build and show the wizard
+                    if (missingCerts.isEmpty() && updates.isEmpty()) {
                         Dialog dialog = new Dialog.Builder(resources.constants().noUpdates())
                                 .add(p().innerHtml(resources.messages().noUpdatesFound()).element())
                                 .closeOnEsc(true)
@@ -235,13 +298,14 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
                                 .build();
                         dialog.show();
                     } else {
-                        new UpdateOnlineWizard(eventBus, dispatcher, statementContext, resources, updates).show(this);
+                        wizardBuilder.build(missingCerts, missingCertInfos, updates);
                     }
                     progress.finish();
-                }, (op, error) -> {
-                    progress.finish();
-                    MessageEvent.fire(eventBus, Message.error(resources.messages().lastOperationFailed()));
+                    return Promise.resolve(flowContext);
                 });
+
+        sequential(new FlowContext(Progress.NOOP), tasks)
+                .catch_(Promise::reject);
     }
 
     private void updateOffline() {
@@ -263,20 +327,18 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
                 HISTORY_FROM_REVISION)
                 .param(REVISION, updateItem.getName())
                 .build();
-        dispatcher.execute(operation,
-                result -> {
-                    List<ModelNode> updates = result.get(ARTIFACT_CHANGES).asList();
-                    if (updates.isEmpty()) {
-                        Dialog dialog = new Dialog.Builder(resources.constants().noUpdates())
-                                .add(p().innerHtml(resources.messages().noUpdatesFound()).element())
-                                .closeOnEsc(true)
-                                .closeOnly()
-                                .size(Dialog.Size.SMALL)
-                                .build();
-                        dialog.show();
-                    } else {
-                        new RevertWizard(eventBus, dispatcher, statementContext, resources, updateItem, updates).show(this);
-                    }
-                }, (op, error) -> MessageEvent.fire(eventBus, Message.error(resources.messages().lastOperationFailed())));
+
+        prepareUpdateWizard(operation, (missingCerts, missingCertInfos, updates) -> {
+            if (!missingCerts.isEmpty()) {
+                new RevertWizard(eventBus, dispatcher, statementContext, resources, updateItem, operation, missingCerts,
+                        missingCertInfos).show(this);
+            } else {
+                new RevertWizard(eventBus, dispatcher, statementContext, resources, updateItem, updates).show(this);
+            }
+        }, ARTIFACT_CHANGES);
+    }
+
+    interface WizardBuilder {
+        void build(List<String> missingCerts, List<CertificateInfo> missingCertInfos, List<ModelNode> updates);
     }
 }
