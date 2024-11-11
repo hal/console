@@ -62,6 +62,20 @@ public class CredentialReference {
     private final ComplexAttributeOperations ca;
     private final Resources resources;
 
+    public static final String[] ATTRIBUTES = new String[] {
+            STORE,
+            ALIAS,
+            TYPE,
+            CLEAR_TEXT
+    };
+
+    public static final String[] ATTRIBUTES_PREFIXED = new String[] {
+            CREDENTIAL_REFERENCE + "." + STORE,
+            CREDENTIAL_REFERENCE + "." + ALIAS,
+            CREDENTIAL_REFERENCE + "." + TYPE,
+            CREDENTIAL_REFERENCE + "." + CLEAR_TEXT
+    };
+
     @Inject
     public CredentialReference(EventBus eventBus, Dispatcher dispatcher, ComplexAttributeOperations ca,
             Resources resources) {
