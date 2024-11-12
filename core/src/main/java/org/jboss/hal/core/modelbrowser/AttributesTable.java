@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.core.modelbrowser;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.jboss.elemento.HtmlContentBuilder;
 import org.jboss.elemento.IsElement;
@@ -45,7 +45,7 @@ class AttributesTable implements IsElement {
 
     private final HTMLElement root;
 
-    AttributesTable(List<Property> attributes, Resources resources) {
+    AttributesTable(Collection<Property> attributes, Resources resources) {
 
         HTMLElement tbody;
         this.root = table()
@@ -101,7 +101,7 @@ class AttributesTable implements IsElement {
                         break;
                 }
             } else {
-                builder.innerHtml(SafeHtmlUtils.fromSafeConstant(NBSP));
+                storageTd.innerHTML = SafeHtmlUtils.fromSafeConstant(NBSP).asString();
             }
 
             // access type
@@ -123,7 +123,7 @@ class AttributesTable implements IsElement {
                         break;
                 }
             } else {
-                builder.innerHtml(SafeHtmlUtils.fromSafeConstant(NBSP));
+                accessTypeTd.innerHTML = SafeHtmlUtils.fromSafeConstant(NBSP).asString();
             }
 
             tbody.appendChild(builder.element());

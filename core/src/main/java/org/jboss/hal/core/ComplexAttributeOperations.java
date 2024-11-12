@@ -173,8 +173,7 @@ public class ComplexAttributeOperations {
             @Override
             public void onMetadata(Metadata metadata) {
                 Metadata caMetadata = metadata.forComplexAttribute(complexAttribute);
-                boolean requiredAttributes = !caMetadata.getDescription()
-                        .getRequiredAttributes(ATTRIBUTE_GROUP)
+                boolean requiredAttributes = !caMetadata.getDescription().attributes().required()
                         .isEmpty();
                 ModelNodeForm.Builder<ModelNode> builder = new ModelNodeForm.Builder<>(id, caMetadata)
                         .addOnly();

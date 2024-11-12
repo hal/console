@@ -28,6 +28,7 @@ import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.ModelType;
 import org.jboss.hal.dmr.Property;
+import org.jboss.hal.meta.AttributeCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,15 +45,10 @@ import static org.jboss.hal.dmr.ModelType.INT;
 class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(ModelNodeMapping.class);
-    private final List<Property> attributeDescriptions;
+    private final AttributeCollection attributeDescriptions;
 
-    ModelNodeMapping(List<Property> attributeDescriptions) {
+    ModelNodeMapping(AttributeCollection attributeDescriptions) {
         this.attributeDescriptions = attributeDescriptions;
-    }
-
-    @Override
-    public void addAttributeDescription(final String name, final ModelNode attributeDescription) {
-        attributeDescriptions.add(new Property(name, attributeDescription));
     }
 
     @Override
@@ -72,8 +68,8 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
                 value = model.get(name);
             }
             if (value.isDefined()) {
-                ModelNode attributeDescription = findAttribute(name);
-                if (attributeDescription == null) {
+                ModelNode attributeDescription = attributeDescriptions.get(name);
+                if (!attributeDescription.isDefined()) {
                     logger.error("{}: Unable to populate form item '{}': No attribute description found in\n{}",
                             id, name, attributeDescriptions);
                     continue;
@@ -210,8 +206,8 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
             String name = formItem.getName();
 
             if (formItem.isModified()) {
-                ModelNode attributeDescription = findAttribute(name);
-                if (attributeDescription == null) {
+                ModelNode attributeDescription = attributeDescriptions.get(name);
+                if (!attributeDescription.isDefined()) {
                     logger.error("{}: Unable to persist attribute '{}': No attribute description found in\n{}",
                             id, name, attributeDescriptions);
                     continue;
@@ -330,15 +326,6 @@ class ModelNodeMapping<T extends ModelNode> extends DefaultMapping<T> {
         if (model.isDefined()) {
             model.remove(attribute);
         }
-    }
-
-    private ModelNode findAttribute(String name) {
-        for (Property property : attributeDescriptions) {
-            if (name.equals(property.getName())) {
-                return property.getValue();
-            }
-        }
-        return null;
     }
 
     private String id(Form<T> form) {

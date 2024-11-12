@@ -30,7 +30,6 @@ import org.jboss.hal.core.mbui.form.ModelNodeForm;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
 import org.jboss.hal.core.mbui.table.TableButtonFactory;
 import org.jboss.hal.core.mvp.HasPresenter;
-import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Property;
 import org.jboss.hal.meta.Metadata;
@@ -52,7 +51,6 @@ import static org.jboss.hal.client.configuration.subsystem.webservice.HandlerCha
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROPERTY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
-import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
 
 /** Element to configure client and endpoint configurations. */
@@ -83,10 +81,10 @@ class ConfigElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
                 .column(inlineActions)
                 .build();
 
-        ModelNode propertyDescription = failSafeGet(metadata.getDescription(), "children/property/description");
+        String propertyDescription = metadata.getDescription().children().description(PROPERTY);
         propertiesItem = new PropertiesItem(PROPERTY);
         form = new ModelNodeForm.Builder<NamedNode>(Ids.build(configType.baseId, Ids.FORM), metadata)
-                .unboundFormItem(propertiesItem, 0, SafeHtmlUtils.fromString(propertyDescription.asString()))
+                .unboundFormItem(propertiesItem, 0, SafeHtmlUtils.fromString(propertyDescription))
                 .onSave((form, changedValues) -> presenter.saveConfig(form, changedValues, PROPERTY))
                 .prepareReset(form -> presenter.resetConfig(form))
                 .build();

@@ -66,6 +66,7 @@ public class ApplicationSecurityDomainView extends HalViewImpl implements Applic
                 .singleton(() -> presenter.checkSingleSignOn(),
                         () -> presenter.addSingleSignOn())
                 .onSave((f, changedValues) -> presenter.saveSingleSignOn(changedValues))
+                .exclude(CREDENTIAL_REFERENCE + ".*")
                 .prepareReset(f -> presenter.resetSingleSignOn(f))
                 .prepareRemove(f -> presenter.removeSingleSignOn(f))
                 .build();

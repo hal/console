@@ -24,6 +24,7 @@ import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.core.ComplexAttributeOperations;
 import org.jboss.hal.core.CrudOperations;
+import org.jboss.hal.core.elytron.CredentialReference;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -61,7 +62,6 @@ import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTempl
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.APPLICATION_SECURITY_DOMAIN_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SELECTED_APPLICATION_SECURITY_DOMAIN_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SELECTED_SINGLE_SIGN_ON_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ALIAS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CLEAR_TEXT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CREDENTIAL_REFERENCE;
@@ -71,9 +71,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SETTING;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.STORE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDERTOW;
-import static org.jboss.hal.dmr.ModelNodeHelper.move;
 import static org.jboss.hal.meta.SelectionAwareStatementContext.SELECTION_KEY;
 
 public class ApplicationSecurityDomainPresenter extends
@@ -192,27 +190,19 @@ public class ApplicationSecurityDomainPresenter extends
 
     void addSingleSignOn() {
         Metadata metadata = metadataRegistry.lookup(SELECTED_SINGLE_SIGN_ON_TEMPLATE);
-        Metadata crMetadata = metadata.forComplexAttribute(CREDENTIAL_REFERENCE, true);
-        crMetadata.copyComplexAttributeAttributes(asList(STORE, ALIAS, TYPE, CLEAR_TEXT), metadata);
 
         ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(Ids.UNDERTOW_SINGLE_SIGN_ON_ADD, metadata)
                 .addOnly()
                 .requiredOnly()
-                .include(KEY_ALIAS, KEY_STORE, STORE, ALIAS, TYPE, CLEAR_TEXT)
+                .include(KEY_ALIAS, KEY_STORE)
+                .include(CredentialReference.ATTRIBUTES_PREFIXED)
                 .unsorted()
                 .build();
-        form.addFormValidation(new RequireAtLeastOneAttributeValidation<>(asList(STORE, CLEAR_TEXT), resources));
+        form.addFormValidation(new RequireAtLeastOneAttributeValidation<>(
+                asList(CREDENTIAL_REFERENCE + "." + STORE, CREDENTIAL_REFERENCE + "." + CLEAR_TEXT), resources));
 
         AddResourceDialog dialog = new AddResourceDialog(resources.messages().addResourceTitle(Names.SINGLE_SIGN_ON),
                 form, (name, model) -> {
-
-                    if (model != null) {
-                        move(model, STORE, CREDENTIAL_REFERENCE + "/" + STORE);
-                        move(model, ALIAS, CREDENTIAL_REFERENCE + "/" + ALIAS);
-                        move(model, TYPE, CREDENTIAL_REFERENCE + "/" + TYPE);
-                        move(model, CLEAR_TEXT, CREDENTIAL_REFERENCE + "/" + CLEAR_TEXT);
-                    }
-
                     ResourceAddress address = SELECTED_SINGLE_SIGN_ON_TEMPLATE.resolve(statementContext);
                     crud.addSingleton(Names.SINGLE_SIGN_ON, address, model, a -> reload());
                 });
