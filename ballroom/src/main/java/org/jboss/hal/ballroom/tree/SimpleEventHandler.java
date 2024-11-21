@@ -15,23 +15,12 @@
  */
 package org.jboss.hal.ballroom.tree;
 
-import jsinterop.annotations.JsMethod;
-import jsinterop.annotations.JsType;
+import elemental2.dom.Event;
+import jsinterop.annotations.JsFunction;
 
-import static jsinterop.annotations.JsPackage.GLOBAL;
+@JsFunction
+@FunctionalInterface
+public interface SimpleEventHandler {
 
-@JsType(isNative = true)
-class Bridge<T> {
-
-    @JsMethod(namespace = GLOBAL, name = "$")
-    static native <T> Bridge<T> select(String selector);
-
-    native void jstree(Options<T> options);
-
-    @SuppressWarnings("SameParameterValue")
-    native Api<T> jstree(boolean _true);
-
-    native void on(String event, SimpleEventHandler handler);
-
-    native <E> void on(String event, EventHandler<E> handler);
+    void onEvent(Event event);
 }
