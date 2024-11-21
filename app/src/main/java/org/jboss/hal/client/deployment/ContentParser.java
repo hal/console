@@ -24,9 +24,9 @@ import java.util.function.Function;
 import org.jboss.hal.ballroom.tree.Node;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.resources.Ids;
-
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 import elemental2.core.JsArray;
 
@@ -77,11 +77,12 @@ class ContentParser {
 
     private ContentEntry contentEntry(ModelNode node) {
         String path = node.get(PATH).asString();
-        Iterable<String> segments = Splitter.on('/').omitEmptyStrings().split(path);
+        String safePath = SafeHtmlUtils.htmlEscape(path);
+        Iterable<String> segments = Splitter.on('/').omitEmptyStrings().split(safePath);
 
         ContentEntry contentEntry = new ContentEntry();
         contentEntry.name = Iterables.getLast(segments);
-        contentEntry.path = path;
+        contentEntry.path = safePath;
         contentEntry.depth = Iterables.size(segments);
         contentEntry.directory = node.hasDefined(DIRECTORY) && node.get(DIRECTORY).asBoolean();
         contentEntry.fileSize = node.hasDefined(FILE_SIZE) ? node.get(FILE_SIZE).asLong() : 0;
