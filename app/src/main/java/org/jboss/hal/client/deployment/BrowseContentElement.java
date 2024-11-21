@@ -512,7 +512,6 @@ class BrowseContentElement implements IsElement<HTMLElement>, Attachable {
         });
         form.setSaveCallback((f, model) -> {
             String path = targetPathItem.getValue();
-            String safePath = SafeHtmlUtils.htmlEscape(path);
             ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content.getName());
 
             ModelNode contentNode = new ModelNode();
@@ -521,7 +520,7 @@ class BrowseContentElement implements IsElement<HTMLElement>, Attachable {
             } else {
                 contentNode.get(INPUT_STREAM_INDEX).set(0);
             }
-            contentNode.get(TARGET_PATH).set(safePath);
+            contentNode.get(TARGET_PATH).set(path);
             Operation operation = new Operation.Builder(address, ADD_CONTENT)
                     .param(CONTENT, new ModelNode().add(contentNode))
                     .build();
@@ -536,7 +535,7 @@ class BrowseContentElement implements IsElement<HTMLElement>, Attachable {
                         // returns encoded SafeHtml.
                         MessageEvent.fire(eventBus,
                                 Message.success(resources.messages().newContentSuccess(content.getName(), path)));
-                        tree.selectNode(NODE_ID.apply(safePath));
+                        tree.selectNode(NODE_ID.apply(path));
                         return null;
                     });
         });
@@ -634,7 +633,8 @@ class BrowseContentElement implements IsElement<HTMLElement>, Attachable {
         if (selection != null) {
             String path = selection.data.path;
             DialogFactory.buildConfirmation(resources.constants().removeContent(),
-                    resources.messages().removeContentQuestion(content.getName(), path), null, Dialog.Size.MEDIUM,
+                    resources.messages().removeContentQuestion(content.getName(), SafeHtmlUtils.fromTrustedString(path)), null,
+                    Dialog.Size.MEDIUM,
                     () -> {
                         ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content.getName());
                         Operation operation = new Operation.Builder(address, REMOVE_CONTENT)
@@ -645,7 +645,9 @@ class BrowseContentElement implements IsElement<HTMLElement>, Attachable {
                                 .then(__ -> awaitTreeReady())
                                 .then(__ -> {
                                     MessageEvent.fire(eventBus, Message.success(
-                                            resources.messages().removeContentSuccess(content.getName(), path)));
+                                            resources.messages()
+                                                    .removeContentSuccess(content.getName(),
+                                                            SafeHtmlUtils.fromTrustedString(path))));
                                     noSelection();
                                     return null;
                                 });
