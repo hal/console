@@ -59,7 +59,6 @@ import org.jboss.hal.resources.Strings;
 import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
-
 import com.google.common.collect.Sets;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.web.bindery.event.shared.EventBus;
@@ -72,11 +71,10 @@ import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLImageElement;
 import elemental2.promise.Promise;
 
-import static java.lang.Math.max;
-import static java.util.Collections.emptyList;
-
 import static com.google.common.base.Strings.nullToEmpty;
 import static elemental2.dom.DomGlobal.window;
+import static java.lang.Math.max;
+import static java.util.Collections.emptyList;
 import static org.jboss.elemento.Elements.a;
 import static org.jboss.elemento.Elements.button;
 import static org.jboss.elemento.Elements.div;
@@ -514,6 +512,7 @@ class BrowseContentElement implements IsElement<HTMLElement>, Attachable {
         });
         form.setSaveCallback((f, model) -> {
             String path = targetPathItem.getValue();
+            String safePath = SafeHtmlUtils.htmlEscape(path);
             ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content.getName());
 
             ModelNode contentNode = new ModelNode();
@@ -522,7 +521,7 @@ class BrowseContentElement implements IsElement<HTMLElement>, Attachable {
             } else {
                 contentNode.get(INPUT_STREAM_INDEX).set(0);
             }
-            contentNode.get(TARGET_PATH).set(path);
+            contentNode.get(TARGET_PATH).set(safePath);
             Operation operation = new Operation.Builder(address, ADD_CONTENT)
                     .param(CONTENT, new ModelNode().add(contentNode))
                     .build();
@@ -533,9 +532,11 @@ class BrowseContentElement implements IsElement<HTMLElement>, Attachable {
             promise.then(__ -> browseContent())
                     .then(__ -> awaitTreeReady())
                     .then(__ -> {
+                        // It's safe to use `path` instead of `safePath` in `newContentSuccess()`, because the method
+                        // returns encoded SafeHtml.
                         MessageEvent.fire(eventBus,
                                 Message.success(resources.messages().newContentSuccess(content.getName(), path)));
-                        tree.selectNode(NODE_ID.apply(path));
+                        tree.selectNode(NODE_ID.apply(safePath));
                         return null;
                     });
         });
@@ -757,7 +758,7 @@ class BrowseContentElement implements IsElement<HTMLElement>, Attachable {
         setVisible(previewContainer, false);
         adjustEditorHeight();
 
-        editorStatus.textContent = contentEntry.name + " - " + Format.humanReadableFileSize(contentEntry.fileSize);
+        editorStatus.innerHTML = contentEntry.name + " - " + Format.humanReadableFileSize(contentEntry.fileSize);
         loadContent(contentEntry, result -> {
             editor.setModeFromPath(contentEntry.name);
             editor.getEditor().getSession().setValue(result);
@@ -847,10 +848,10 @@ class BrowseContentElement implements IsElement<HTMLElement>, Attachable {
 
     private File file(String name, String content) {
         ConstructorContentsArrayUnionType contents = ConstructorContentsArrayUnionType.of(content);
-        return new File(new ConstructorContentsArrayUnionType[] { contents }, name);
+        return new File(new ConstructorContentsArrayUnionType[]{contents}, name);
     }
 
     private Promise<Void> awaitTreeReady() {
-        return new Promise<>((resolve, reject) -> tree.onReady((event, __) -> resolve.onInvoke((Void) null)));
+        return new Promise<>((resolve, reject) -> tree.onReady(e -> resolve.onInvoke((Void) null)));
     }
 }

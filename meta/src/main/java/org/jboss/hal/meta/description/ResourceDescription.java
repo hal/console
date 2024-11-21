@@ -87,7 +87,9 @@ public class ResourceDescription extends ModelNode {
                     ModelNode parentValue = p.getValue();
                     // process also on LIST type if we're in request attributes.
                     boolean isRequestProperties = path.endsWith(REQUEST_PROPERTIES);
-                    if (parentValue.hasDefined(TYPE) && (parentValue.get(TYPE).asType().equals(ModelType.OBJECT) || (isRequestProperties && parentValue.get(TYPE).asType().equals(ModelType.LIST)))
+                    if (parentValue.hasDefined(TYPE)
+                            && (parentValue.get(TYPE).asType().equals(ModelType.OBJECT)
+                                    || (isRequestProperties && parentValue.get(TYPE).asType().equals(ModelType.LIST)))
                             && !parentValue.get(VALUE_TYPE).asString().equalsIgnoreCase(STRING)) {
                         for (Property nested : parentValue.get(VALUE_TYPE).asPropertyList()) {
                             ModelNode nestedValue = nested.getValue();
