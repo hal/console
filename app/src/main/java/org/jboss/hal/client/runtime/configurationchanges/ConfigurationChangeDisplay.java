@@ -25,7 +25,6 @@ import org.jboss.hal.ballroom.listview.ItemDisplay;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
-
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -109,8 +108,9 @@ class ConfigurationChangeDisplay implements ItemDisplay<ConfigurationChange> {
                 boolean allowedProperties = !(prop.getName().equals(OPERATION) || prop.getName()
                         .equals(ADDRESS) || prop.getName().equals(OPERATION_HEADERS));
                 if (allowedProperties) {
+                    String safeValue = SafeHtmlUtils.htmlEscape(prop.getValue().asString());
                     html.append(SafeHtmlUtils.fromTrustedString(
-                            "&nbsp;&nbsp;&nbsp;&nbsp;" + prop.getName() + COLON + prop.getValue() + "<br/>"));
+                            "&nbsp;&nbsp;&nbsp;&nbsp;" + prop.getName() + COLON + safeValue + "<br/>"));
                 }
             });
         });

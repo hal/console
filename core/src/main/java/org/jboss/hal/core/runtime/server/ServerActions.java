@@ -26,7 +26,6 @@ import java.util.function.Predicate;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-
 import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.dialog.BlockingDialog;
@@ -71,7 +70,6 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Strings;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -80,9 +78,8 @@ import com.google.web.bindery.event.shared.EventBus;
 import elemental2.dom.HTMLElement;
 import elemental2.promise.Promise;
 
-import static java.util.Collections.emptyList;
-
 import static elemental2.dom.DomGlobal.setTimeout;
+import static java.util.Collections.emptyList;
 import static org.jboss.elemento.Elements.a;
 import static org.jboss.elemento.Elements.p;
 import static org.jboss.elemento.Elements.span;
@@ -389,7 +386,7 @@ public class ServerActions implements Timeouts {
         }
 
         metadataProcessor.lookup(serverConfigTemplate(server), progress.get()).then(metadata -> {
-            String id = Ids.build(SUSPEND, server.getName(), Ids.FORM);
+            String id = Ids.build(SUSPEND, server.getName(), FORM);
             Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, SUSPEND).build();
 
             Dialog dialog = DialogFactory.buildConfirmation(
@@ -457,7 +454,7 @@ public class ServerActions implements Timeouts {
     public void stop(Server server) {
         metadataProcessor.lookup(serverConfigTemplate(server), progress.get())
                 .then(metadata -> {
-                    String id = Ids.build(STOP, server.getName(), Ids.FORM);
+                    String id = Ids.build(STOP, server.getName(), FORM);
                     Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, STOP)
                             .include(SUSPEND_TIMEOUT)
                             .build();
@@ -604,9 +601,9 @@ public class ServerActions implements Timeouts {
             @Override
             public void onSuccess(ServerUrl url) {
                 Elements.removeChildrenFrom(element);
-                element.appendChild(a(url.getUrl())
+                element.appendChild(a(url.getUrl().asString())
                         .apply(a -> a.target = server.getId())
-                        .textContent(url.getUrl()).element());
+                        .innerHtml(url.getUrl()).element());
                 String icon;
                 String tooltip;
                 if (url.isCustom()) {
@@ -703,7 +700,7 @@ public class ServerActions implements Timeouts {
                 dialog.show();
                 form.edit(new ModelNode());
                 if (serverUrl != null) {
-                    urlItem.setValue(serverUrl.getUrl());
+                    urlItem.setValue(serverUrl.getUrl().asString());
                 }
             }
         });
