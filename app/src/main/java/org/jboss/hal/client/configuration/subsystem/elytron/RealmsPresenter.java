@@ -101,7 +101,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.USE_RECURSIVE_SEARCH;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeBoolean;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
-import static org.jboss.hal.dmr.ModelNodeHelper.move;
 
 public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, RealmsPresenter.MyProxy>
         implements SupportsExpertMode {
@@ -383,8 +382,8 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
         Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
                 .addOnly()
                 .unboundFormItem(nameItem, 0)
-                .include(DIR_CONTEXT, DIRECT_VERIFICATION, ALLOW_BLANK_PASSWORD, IDENTITY_MAPPING + "." + SEARCH_BASE_DN,
-                        IDENTITY_MAPPING + "." + USE_RECURSIVE_SEARCH)
+                .include(DIR_CONTEXT, DIRECT_VERIFICATION, ALLOW_BLANK_PASSWORD, IDENTITY_MAPPING + DOT + SEARCH_BASE_DN,
+                        IDENTITY_MAPPING + DOT + USE_RECURSIVE_SEARCH)
                 .build();
 
         new AddResourceDialog(resources.messages().addResourceTitle(Names.LDAP_REALM), form,
@@ -517,23 +516,17 @@ public class RealmsPresenter extends MbuiPresenter<RealmsPresenter.MyView, Realm
 
     void addPropertiesRealm() {
         Metadata metadata = metadataRegistry.lookup(PROPERTIES_REALM_TEMPLATE);
-        Metadata upMetadata = metadata.forComplexAttribute(USERS_PROPERTIES, true);
-        upMetadata.copyComplexAttributeAttributes(asList(PATH, RELATIVE_TO), metadata);
 
         String id = Ids.build(Ids.ELYTRON_PROPERTIES_REALM, Ids.ADD);
         NameItem nameItem = new NameItem();
         Form<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
                 .addOnly()
                 .unboundFormItem(nameItem, 0)
-                .include(PATH, RELATIVE_TO, GROUPS_ATTRIBUTE)
+                .include(USERS_PROPERTIES + DOT + PATH, USERS_PROPERTIES + DOT + RELATIVE_TO, GROUPS_ATTRIBUTE)
                 .build();
-        form.getFormItem(RELATIVE_TO).registerSuggestHandler(new PathsAutoComplete());
+        form.getFormItem(USERS_PROPERTIES + DOT + RELATIVE_TO).registerSuggestHandler(new PathsAutoComplete());
 
         new AddResourceDialog(resources.messages().addResourceTitle(Names.PROPERTIES_REALM), form, (name, model) -> {
-            if (model != null) {
-                move(model, PATH, USERS_PROPERTIES + "/" + PATH);
-                move(model, RELATIVE_TO, USERS_PROPERTIES + "/" + RELATIVE_TO);
-            }
             ResourceAddress address = PROPERTIES_REALM_TEMPLATE.resolve(statementContext, nameItem.getValue());
             crud.add(Names.PROPERTIES_REALM, name, address, model,
                     (n, a) -> reload(PROPERTIES_REALM, nodes -> getView().updateResourceElement(PROPERTIES_REALM, nodes)));
