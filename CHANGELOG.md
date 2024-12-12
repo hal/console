@@ -7,6 +7,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+[HAL-1996](https://issues.redhat.com/browse/HAL-1996): Fix placeholder value handling
+[HAL-1993](https://issues.redhat.com/browse/HAL-1993): Use SASL authentication in tests for domain
+[HAL-1991](https://issues.redhat.com/browse/HAL-1991): Fix error in AddUnmanagedDialog, it should also process on List type for request attributes.
+[HAL-1990](https://issues.redhat.com/browse/HAL-1990): Remove unnecessary copying of complex attributes
+[HAL-1989](https://issues.redhat.com/browse/HAL-1989): Display an error message when bootstrapping fails, consolidate error displays
+
+### Upgrades
+
+- Bump ACE editor to 1.36.4
+- Bump Frontend Maven Plugin to 1.15.1
+- Bump JBoss parent to 47
+- Bump Mockito to 5.14.1
+
 ## [3.7.5] - 2024-09-18
 
 ### Fixed
