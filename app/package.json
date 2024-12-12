@@ -20,18 +20,17 @@
     "prod": "parcel build --public-url \"./\" --dist-dir target/bundle"
   },
   "devDependencies": {
-    "@parcel/plugin": "^2.13.2",
-    "@parcel/reporter-cli": "^2.13.2",
-    "@parcel/transformer-less": "^2.13.2",
+    "@parcel/reporter-cli": "^2.12.0",
+    "@parcel/transformer-less": "^2.12.0",
     "copyfiles": "^2.4.1",
-    "parcel": "^2.13.2",
+    "parcel": "^2.12.0",
+    "@parcel/plugin": "^2.12.0",
     "parcel-resolver-ignore": "^2.2.0",
     "parcel-resolver-theme": "file:local_modules/parcel-resolver-theme",
-    "process": "^0.11.10",
-    "svgo": "^3.3.2"
+    "process": "^0.11.10"
   },
   "dependencies": {
-    "ace-builds": "^1.36.5",
+    "ace-builds": "^1.36.2",
     "bootstrap": "~3.4.1",
     "bootstrap-select": "^1.13.18",
     "bootstrap-switch": "~3.3.5",
