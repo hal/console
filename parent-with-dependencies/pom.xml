@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <!--
   ~ Copyright 2015-2016 Red Hat, Inc, and individual contributors.
   ~
@@ -14,9 +14,11 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"
+>
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -51,7 +53,6 @@
         <junit.version>4.12</junit.version>
         <mockito.version>2.18.3</mockito.version>
         <node.version>v8.16.0</node.version>
-        <npm.version>6.9.0</npm.version>
         <rx.gwt>0.4</rx.gwt>
         <slf4j.version>1.7.25</slf4j.version>
         <slf4j-gwt.version>1.7.7.1</slf4j-gwt.version>
@@ -60,7 +61,7 @@
     </properties>
 
     <!-- Do not declare any build settings here! Declare them in hal-parent. -->
-    <build/>
+    <build />
 
     <dependencyManagement>
         <dependencies>
