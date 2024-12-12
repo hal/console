@@ -38,10 +38,14 @@ class ListUpdatesStep<S extends Enum<S>> extends WizardStep<UpdateManagerContext
 
     private final HTMLElement root;
     private final Table<ModelNode> table;
+    private final String noUpdatesErrorTitle;
+    private final SafeHtml noUpdatesErrorMsg;
 
     ListUpdatesStep(final String title,
             final SafeHtml tableDescription,
-            final SafeHtml stepsDescription) {
+            final SafeHtml stepsDescription,
+            final String noUpdatesErrorTitle,
+            final SafeHtml noUpdatesErrorMsg) {
         super(title);
 
         table = new ModelNodeTable.Builder<ModelNode>(Ids.build(Ids.UPDATE_MANAGER_LIST_UPDATES),
@@ -55,6 +59,9 @@ class ListUpdatesStep<S extends Enum<S>> extends WizardStep<UpdateManagerContext
                 .add(table)
                 .add(div().css(marginTopLarge).innerHtml(stepsDescription))
                 .element();
+
+        this.noUpdatesErrorTitle = noUpdatesErrorTitle;
+        this.noUpdatesErrorMsg = noUpdatesErrorMsg;
     }
 
     @Override
@@ -64,7 +71,11 @@ class ListUpdatesStep<S extends Enum<S>> extends WizardStep<UpdateManagerContext
 
     @Override
     protected void onShow(final UpdateManagerContext context) {
-        table.update(context.updates);
+        if (context.updates.isEmpty()) {
+            wizard().showError(noUpdatesErrorTitle, noUpdatesErrorMsg, true);
+        } else {
+            table.update(context.updates);
+        }
     }
 
     @Override
