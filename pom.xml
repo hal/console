@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <!--
   ~ Copyright 2015-2016 Red Hat, Inc, and individual contributors.
   ~
@@ -14,9 +14,11 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"
+>
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -102,7 +104,7 @@
         <plugin.degraph.version>3.0.1</plugin.degraph.version>
         <plugin.docker.version>0.30.0</plugin.docker.version>
         <plugin.download.version>1.3.0</plugin.download.version>
-        <plugin.frontend.version>1.6</plugin.frontend.version>
+        <plugin.frontend.version>1.15.1</plugin.frontend.version>
         <plugin.gwt.version>1.0-rc-9</plugin.gwt.version>
         <plugin.processor.version>3.3.2</plugin.processor.version>
         <plugin.reports.version>2.9</plugin.reports.version>
