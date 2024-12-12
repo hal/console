@@ -30,11 +30,11 @@ import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.Form.FinishRemove;
 import org.jboss.hal.ballroom.form.Form.FinishReset;
 import org.jboss.hal.ballroom.form.FormItem;
-import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.ballroom.form.ValidationResult;
 import org.jboss.hal.core.ComplexAttributeOperations;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.configuration.PathsAutoComplete;
+import org.jboss.hal.core.elytron.CredentialReference;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderPath;
 import org.jboss.hal.core.finder.FinderPathFactory;
@@ -67,7 +67,6 @@ import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.web.bindery.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
@@ -112,8 +111,6 @@ import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTempla
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.SYSLOG_AUDIT_LOG_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.elytron.AddressTemplates.TRUST_MANAGER_ADDRESS;
 import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.SYSLOG_AUDIT_LOG;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ALIAS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CAPABILITY_REFERENCE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CLASS_NAME;
@@ -122,7 +119,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.CREATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CREDENTIAL_REFERENCE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CREDENTIAL_STORE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT_REALM;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.EXPRESSION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.FLAG;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INDEX;
@@ -158,7 +154,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.WRITE_ATTRIBUTE_OPERATION;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
-import static org.jboss.hal.dmr.ModelNodeHelper.move;
 import static org.jboss.hal.flow.Flow.sequential;
 
 public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter.MyView, OtherSettingsPresenter.MyProxy>
@@ -318,29 +313,25 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
 
     void addCredentialStore() {
         Metadata metadata = metadataRegistry.lookup(CREDENTIAL_STORE_TEMPLATE);
-        SafeHtml typeHelp = SafeHtmlUtils.fromString(
-                metadata.getDescription().get(ATTRIBUTES).get(TYPE).get(DESCRIPTION).asString());
-        Metadata crMetadata = metadata.forComplexAttribute(CREDENTIAL_REFERENCE, true);
-        crMetadata.copyComplexAttributeAttributes(asList(STORE, ALIAS, TYPE, CLEAR_TEXT), metadata);
-        TextBoxItem typeItem = new TextBoxItem("type-", resources.constants().type());
 
         String id = Ids.build(Ids.ELYTRON_CREDENTIAL_STORE, Ids.ADD);
         NameItem nameItem = new NameItem();
         ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
                 .addOnly()
                 .unboundFormItem(nameItem, 0)
-                .include(CREATE, PATH, RELATIVE_TO, STORE, ALIAS, TYPE, CLEAR_TEXT)
-                .unboundFormItem(typeItem, 3, typeHelp)
+                .include(CREATE, TYPE, PATH, RELATIVE_TO)
+                .include(CredentialReference.ATTRIBUTES_PREFIXED)
                 .unsorted()
                 .build();
         form.getFormItem(RELATIVE_TO).registerSuggestHandler(new PathsAutoComplete());
-        form.addFormValidation(new RequireAtLeastOneAttributeValidation<>(asList(STORE, CLEAR_TEXT), resources));
+        form.addFormValidation(new RequireAtLeastOneAttributeValidation<>(
+                asList(CREDENTIAL_REFERENCE + "." + STORE, CREDENTIAL_REFERENCE + "." + CLEAR_TEXT), resources));
         form.addFormValidation(form1 -> {
             ValidationResult result = ValidationResult.OK;
-            String typeValue = typeItem.getValue();
+            String typeValue = form1.<String> getFormItem(TYPE).getValue();
             FormItem<String> locationAttr = form1.getFormItem(PATH);
             boolean invalidLocation = locationAttr.isEmpty() &&
-                    (typeItem.isEmpty() || Collections.binarySearch(FILE_BASED_CS, typeValue) > -1);
+                    (form1.getFormItem(TYPE).isEmpty() || Collections.binarySearch(FILE_BASED_CS, typeValue) > -1);
             if (invalidLocation) {
                 form1.getFormItem(PATH).showError(resources.constants().requiredField());
                 result = ValidationResult.invalid(resources.messages().pathRequired());
@@ -349,15 +340,6 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
         });
 
         new AddResourceDialog(resources.messages().addResourceTitle(Names.CREDENTIAL_STORE), form, (name, model) -> {
-            if (model != null) {
-                move(model, STORE, CREDENTIAL_REFERENCE + "/" + STORE);
-                move(model, ALIAS, CREDENTIAL_REFERENCE + "/" + ALIAS);
-                move(model, TYPE, CREDENTIAL_REFERENCE + "/" + TYPE);
-                move(model, CLEAR_TEXT, CREDENTIAL_REFERENCE + "/" + CLEAR_TEXT);
-            }
-            if (!typeItem.isEmpty()) {
-                model.get(TYPE).set(typeItem.getValue());
-            }
             ResourceAddress address = CREDENTIAL_STORE_TEMPLATE.resolve(statementContext, nameItem.getValue());
             crud.add(Names.CREDENTIAL_STORE, name, address, model,
                     (n, a) -> reload(CREDENTIAL_STORE, nodes -> getView().updateResourceElement(CREDENTIAL_STORE, nodes)));
@@ -393,9 +375,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
         Metadata metadata = metadataRegistry.lookup(SECURITY_DOMAIN_TEMPLATE);
         // emulate capability-reference on default-realm
         String capabilityReference = metadata.getDescription()
-                .findAttribute(ATTRIBUTES + "/" + REALMS + "/" + VALUE_TYPE, REALM)
-                .getValue()
-                .get(CAPABILITY_REFERENCE)
+                .attributes().get(REALMS).get(VALUE_TYPE, REALM, CAPABILITY_REFERENCE)
                 .asString();
 
         String id = Ids.build(Ids.ELYTRON_SECURITY_DOMAIN, Ids.ADD);
@@ -429,44 +409,22 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
 
     void addKeyStore() {
         Metadata metadata = metadataRegistry.lookup(KEY_STORE_TEMPLATE);
-        Metadata crMetadata = metadata.forComplexAttribute(CREDENTIAL_REFERENCE, true);
-        crMetadata.copyComplexAttributeAttributes(asList(STORE, ALIAS, CLEAR_TEXT), metadata);
 
         String id = Ids.build(Ids.ELYTRON_KEY_STORE, Ids.ADD);
         NameItem nameItem = new NameItem();
 
-        // there is a special handling for "type" attribute, as this attribute name exists in key-store and
-        // credential-reference complex attribute. We must create an unbound form item for credential-reference-type
-        String crType = "credential-reference-type";
-        String crTypeLabel = new LabelBuilder().label(crType);
-        TextBoxItem crTypeItem = new TextBoxItem(crType, crTypeLabel);
-        SafeHtml crTypeItemHelp = SafeHtmlUtils.fromString(metadata.getDescription()
-                .get(ATTRIBUTES)
-                .get(CREDENTIAL_REFERENCE)
-                .get(VALUE_TYPE)
-                .get(TYPE)
-                .get(DESCRIPTION)
-                .asString());
-
         ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
                 .addOnly()
                 .unboundFormItem(nameItem, 0)
-                .include(TYPE, PATH, RELATIVE_TO, STORE, ALIAS, CLEAR_TEXT)
-                .unboundFormItem(crTypeItem, 7, crTypeItemHelp)
+                .include(TYPE, PATH, RELATIVE_TO)
+                .include(CredentialReference.ATTRIBUTES_PREFIXED)
                 .unsorted()
                 .build();
         form.getFormItem(RELATIVE_TO).registerSuggestHandler(new PathsAutoComplete());
-        form.addFormValidation(new RequireAtLeastOneAttributeValidation<>(asList(STORE, CLEAR_TEXT), resources));
+        form.addFormValidation(new RequireAtLeastOneAttributeValidation<>(
+                asList(CREDENTIAL_REFERENCE + "." + STORE, CREDENTIAL_REFERENCE + "." + CLEAR_TEXT), resources));
 
         new AddResourceDialog(resources.messages().addResourceTitle(Names.KEY_STORE), form, (name, model) -> {
-            if (model != null) {
-                move(model, STORE, CREDENTIAL_REFERENCE + "/" + STORE);
-                move(model, ALIAS, CREDENTIAL_REFERENCE + "/" + ALIAS);
-                move(model, CLEAR_TEXT, CREDENTIAL_REFERENCE + "/" + CLEAR_TEXT);
-                if (!crTypeItem.isEmpty()) {
-                    model.get(CREDENTIAL_REFERENCE).get(TYPE).set(crTypeItem.getValue());
-                }
-            }
             ResourceAddress address = KEY_STORE_TEMPLATE.resolve(statementContext, nameItem.getValue());
             crud.add(Names.KEY_STORE, name, address, model,
                     (n, a) -> reload(KEY_STORE, nodes -> getView().updateResourceElement(KEY_STORE, nodes)));
@@ -477,26 +435,19 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
 
     void addKeyManager() {
         Metadata metadata = metadataRegistry.lookup(KEY_MANAGER_TEMPLATE);
-        Metadata crMetadata = metadata.forComplexAttribute(CREDENTIAL_REFERENCE, true);
-        crMetadata.copyComplexAttributeAttributes(asList(STORE, ALIAS, TYPE, CLEAR_TEXT), metadata);
 
         String id = Ids.build(Ids.ELYTRON_KEY_MANAGER, Ids.ADD);
         NameItem nameItem = new NameItem();
         ModelNodeForm<ModelNode> form = new ModelNodeForm.Builder<>(id, metadata)
                 .addOnly()
                 .unboundFormItem(nameItem, 0)
-                .include(STORE, ALIAS, TYPE, CLEAR_TEXT)
+                .include(CredentialReference.ATTRIBUTES_PREFIXED)
                 .unsorted()
                 .build();
-        form.addFormValidation(new RequireAtLeastOneAttributeValidation<>(asList(STORE, CLEAR_TEXT), resources));
+        form.addFormValidation(new RequireAtLeastOneAttributeValidation<>(
+                asList(CREDENTIAL_REFERENCE + "." + STORE, CREDENTIAL_REFERENCE + "." + CLEAR_TEXT), resources));
 
         new AddResourceDialog(resources.messages().addResourceTitle(Names.KEY_MANAGER), form, (name, model) -> {
-            if (model != null) {
-                move(model, STORE, CREDENTIAL_REFERENCE + "/" + STORE);
-                move(model, ALIAS, CREDENTIAL_REFERENCE + "/" + ALIAS);
-                move(model, TYPE, CREDENTIAL_REFERENCE + "/" + TYPE);
-                move(model, CLEAR_TEXT, CREDENTIAL_REFERENCE + "/" + CLEAR_TEXT);
-            }
             ResourceAddress address = KEY_MANAGER_TEMPLATE.resolve(statementContext, nameItem.getValue());
             crud.add(Names.KEY_MANAGER, name, address, model,
                     (n, a) -> reload(KEY_MANAGER, nodes -> getView().updateResourceElement(KEY_MANAGER, nodes)));
@@ -651,6 +602,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
 
     void addJaspiConfiguration() {
         Metadata metadata = metadataRegistry.lookup(AddressTemplates.JASPI_CONFIGURATION_TEMPLATE);
+        // server-auth-modules is a LIST, needs to be copied
         Metadata metaServerAuth = metadata.forComplexAttribute(SERVER_AUTH_MODULES, true);
         metaServerAuth.copyComplexAttributeAttributes(asList(CLASS_NAME, MODULE, FLAG), metadata);
         String id = Ids.build(Ids.ELYTRON_JASPI, Ids.ADD);

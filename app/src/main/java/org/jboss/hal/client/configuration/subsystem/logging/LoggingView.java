@@ -143,6 +143,7 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
 
         jsonFormatterForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(LOGGING, JSON, FORMATTER, FORM),
                 jsonMetadata)
+                .exclude(KEY_OVERRIDES + ".*")
                 .onSave((form, changedValues) -> mbuiContext.crud().save(jsonLabel, form.getModel().getName(),
                         JSON_FORMATTER_TEMPLATE, changedValues, () -> presenter.reload()))
                 .prepareReset(form -> mbuiContext.crud().reset(jsonLabel, jsonFormatterTable.selectedRow().getName(),
@@ -203,6 +204,7 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
                 .build();
 
         xmlFormatterForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(LOGGING, XML, FORMATTER, FORM), xmlMetadata)
+                .exclude(KEY_OVERRIDES + ".*")
                 .onSave((form, changedValues) -> mbuiContext.crud().save(xmlLabel, form.getModel().getName(),
                         XML_FORMATTER_TEMPLATE, changedValues, () -> presenter.reload()))
                 .prepareReset(form -> mbuiContext.crud().reset(xmlLabel, xmlFormatterTable.selectedRow().getName(),

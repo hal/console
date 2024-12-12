@@ -28,8 +28,6 @@ import org.jboss.hal.meta.description.ResourceDescription;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ACCESS_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ALTERNATIVES;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPRECATED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NILLABLE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_ONLY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUIRES;
@@ -42,19 +40,18 @@ public class FormHelper {
 
         // collect all attributes from the 'requires' list of this attribute
         TreeSet<String> requires = new TreeSet<>();
-        ModelNode attributesDescription = description.get(ATTRIBUTES);
         attributes.forEach(attribute -> {
-            ModelNode attributeDescription = attributesDescription.get(attribute);
+            ModelNode attributeDescription = description.attributes().get(attribute);
             if (attributeDescription != null && attributeDescription.hasDefined(REQUIRES)) {
                 failSafeList(attributeDescription, REQUIRES).forEach(node -> requires.add(node.asString()));
             }
         });
 
-        List<String> deprecated = attributes.stream().filter(attribute -> attributesDescription.get(attribute).has(DEPRECATED))
+        List<String> deprecated = attributes.stream().filter(description.attributes()::isDeprecated)
                 .collect(Collectors.toList());
 
         return attributes.stream()
-                .map(attribute -> description.findAttribute(ATTRIBUTES, attribute))
+                .map(attribute -> description.attributes().property(attribute))
                 .filter(prop -> Objects.nonNull(prop)
                         && !requires.contains(prop.getName())
                         && isNillable(prop.getValue())

@@ -74,9 +74,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.CACHE_CONTAINER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT_CACHE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT_REMOTE_CLUSTER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.OPERATIONS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REMOTE_CACHE_CONTAINER;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUEST_PROPERTIES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDINGS;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafeGet;
@@ -225,11 +223,8 @@ public class CacheContainerColumn extends FinderColumn<CacheContainer> {
         Metadata rcMetadata = metadataRegistry.lookup(REMOTE_CLUSTER_TEMPLATE);
 
         // add nested 'socket-bindings' attribute from 'remote-cluster' resource to top level metadata
-        String path = OPERATIONS + "/" + ADD + "/" + REQUEST_PROPERTIES;
-        Property socketBindingsDescription = rcMetadata.getDescription().findAttribute(path, SOCKET_BINDINGS);
-        failSafeGet(rccMetadata.getDescription(), path)
-                .get(SOCKET_BINDINGS)
-                .set(socketBindingsDescription.getValue());
+        Property socketBindingsDescription = rcMetadata.getDescription().requestProperties().property(SOCKET_BINDINGS);
+        rccMetadata.getDescription().requestProperties().add(socketBindingsDescription);
         ModelNode socketBindingsPermissions = failSafeGet(rcMetadata.getSecurityContext(),
                 ATTRIBUTES + "/" + SOCKET_BINDINGS);
         failSafeGet(rccMetadata.getSecurityContext(), ATTRIBUTES)

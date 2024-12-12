@@ -36,7 +36,6 @@ import jsinterop.base.JsPropertyMap;
 import static java.util.Collections.emptyList;
 
 import static elemental2.core.Global.JSON;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE_TYPE;
 import static org.jboss.hal.dmr.ModelType.BIG_INTEGER;
@@ -89,13 +88,12 @@ public final class Json {
 
     private static ModelNode iterateMap(JsPropertyMap<Object> map, Metadata metadata, Map<String, String> mappping) {
         ModelNode node = new ModelNode();
-        List<Property> attributeDescriptions = metadata.getDescription().getAttributes(ATTRIBUTES);
 
         map.forEach(jsonName -> {
             String dmrName = mappping.get(jsonName);
             if (dmrName != null) {
-                ModelNode attributeDescription = findAttributeDescription(dmrName, attributeDescriptions);
-                if (attributeDescription != null) {
+                ModelNode attributeDescription = metadata.getDescription().attributes().get(dmrName);
+                if (attributeDescription.isDefined()) {
                     if (map.has(jsonName)) {
                         Any any = map.getAsAny(jsonName);
                         ModelNode value = anyValue(jsonName, dmrName, attributeDescription, any);
