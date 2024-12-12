@@ -50,12 +50,14 @@ import org.jboss.hal.meta.token.NameTokens;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 import elemental2.dom.HTMLElement;
 
 import static java.util.stream.Collectors.toList;
+
 import static org.jboss.elemento.Elements.a;
 import static org.jboss.elemento.Elements.asHtmlElement;
 import static org.jboss.elemento.Elements.h;

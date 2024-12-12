@@ -18,6 +18,7 @@ package org.jboss.hal.client.bootstrap.tasks;
 import java.util.Objects;
 
 import javax.inject.Inject;
+
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.StabilityLevel;
 import org.jboss.hal.dmr.ModelNode;

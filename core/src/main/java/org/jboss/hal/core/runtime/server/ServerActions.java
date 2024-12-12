@@ -26,6 +26,7 @@ import java.util.function.Predicate;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+
 import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.dialog.BlockingDialog;
@@ -70,6 +71,7 @@ import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Strings;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -78,8 +80,9 @@ import com.google.web.bindery.event.shared.EventBus;
 import elemental2.dom.HTMLElement;
 import elemental2.promise.Promise;
 
-import static elemental2.dom.DomGlobal.setTimeout;
 import static java.util.Collections.emptyList;
+
+import static elemental2.dom.DomGlobal.setTimeout;
 import static org.jboss.elemento.Elements.a;
 import static org.jboss.elemento.Elements.p;
 import static org.jboss.elemento.Elements.span;
