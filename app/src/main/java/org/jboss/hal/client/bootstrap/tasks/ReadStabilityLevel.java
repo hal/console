@@ -18,7 +18,6 @@ package org.jboss.hal.client.bootstrap.tasks;
 import java.util.Objects;
 
 import javax.inject.Inject;
-
 import org.jboss.hal.config.Environment;
 import org.jboss.hal.config.StabilityLevel;
 import org.jboss.hal.dmr.ModelNode;
@@ -28,6 +27,8 @@ import org.jboss.hal.flow.FlowContext;
 import org.jboss.hal.flow.Task;
 import org.jboss.hal.meta.AddressTemplate;
 import org.jboss.hal.meta.StatementContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import elemental2.promise.Promise;
 
@@ -39,6 +40,8 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.STABILITY;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 
 public class ReadStabilityLevel implements Task<FlowContext> {
+
+    private static final Logger logger = LoggerFactory.getLogger(ReadStabilityLevel.class);
 
     private final Environment environment;
     private final StatementContext statementContext;
@@ -53,6 +56,7 @@ public class ReadStabilityLevel implements Task<FlowContext> {
 
     @Override
     public Promise<FlowContext> apply(FlowContext context) {
+        StabilityLevel defaultStabilityLevel = environment.getHalBuild().defaultStability;
         if (environment.isStandalone()) {
             AddressTemplate template = AddressTemplate.of("core-service=server-environment");
             Operation operation = new Operation.Builder(template.resolve(statementContext), READ_RESOURCE_OPERATION)
@@ -61,7 +65,7 @@ public class ReadStabilityLevel implements Task<FlowContext> {
                     .build();
             return dispatcher.execute(operation)
                     .then(result -> {
-                        environment.setStabilityLevel(readStabilityLevel(result));
+                        environment.setStabilityLevel(readStabilityLevel(result, defaultStabilityLevel));
                         environment.setStabilityLevels(readStabilityLevels(result));
                         return context.resolve();
                     });
@@ -73,15 +77,27 @@ public class ReadStabilityLevel implements Task<FlowContext> {
                     .build();
             return dispatcher.execute(operation)
                     .then(result -> {
-                        environment.setStabilityLevel(readStabilityLevel(result));
-                        environment.setStabilityLevels(readStabilityLevels(result));
+                        if (result.isDefined()) {
+                            environment.setStabilityLevel(readStabilityLevel(result, defaultStabilityLevel));
+                            environment.setStabilityLevels(readStabilityLevels(result));
+                        } else {
+                            logger.warn("Unable to read stability level. Fall back to: {}", defaultStabilityLevel);
+                            environment.setStabilityLevel(defaultStabilityLevel);
+                            environment.setStabilityLevels(new StabilityLevel[0]);
+                        }
+                        return context.resolve();
+                    })
+                    .catch_(error -> {
+                        logger.warn("Unable to read stability level. Fall back to: {}", defaultStabilityLevel);
+                        environment.setStabilityLevel(defaultStabilityLevel);
+                        environment.setStabilityLevels(new StabilityLevel[0]);
                         return context.resolve();
                     });
         }
     }
 
-    private StabilityLevel readStabilityLevel(ModelNode modelNode) {
-        return asEnumValue(modelNode, STABILITY, StabilityLevel::valueOf, environment.getHalBuild().defaultStability);
+    private StabilityLevel readStabilityLevel(ModelNode modelNode, StabilityLevel defaultStabilityLevel) {
+        return asEnumValue(modelNode, STABILITY, StabilityLevel::valueOf, defaultStabilityLevel);
     }
 
     private StabilityLevel[] readStabilityLevels(ModelNode modelNode) {
