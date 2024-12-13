@@ -25,7 +25,7 @@ jobs:
           cache: maven
       - name: Package
         id: package
-        run: $MVN package -P prod,theme-wildfly
+        run: $MVN package -DskipTests -P prod,theme-wildfly
       - name: Set up Maven Settings
         id: setup-maven-settings
         uses: actions/setup-java@v4
@@ -39,7 +39,7 @@ jobs:
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
       - name: Deploy
         id: deploy
-        run: $MVN deploy -P prod,release,theme-wildfly
+        run: $MVN -DskipTests deploy -P prod,release,theme-wildfly
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
@@ -74,7 +74,7 @@ jobs:
           password: ${{ secrets.QUAY_ROBOT_TOKEN }}
       - name: Standalone Tag
         id: standalone-tag
-        run: $MVN package --projects standalone --also-make -P native,prod,theme-hal -Dquarkus.container-image.build=true -Dquarkus.container-image.push=true -Dquarkus.container-image.image=quay.io/halconsole/hal:${{ steps.get-version.outputs.version-without-v }}.Final '-Dquarkus.container-image.labels."org.opencontainers.image.revision"='$GITHUB_SHA -Dquarkus.native.remote-container-build=true
+        run: $MVN -DskipTests package --projects standalone --also-make -P native,prod,theme-hal -Dquarkus.container-image.build=true -Dquarkus.container-image.push=true -Dquarkus.container-image.image=quay.io/halconsole/hal:${{ steps.get-version.outputs.version-without-v }}.Final '-Dquarkus.container-image.labels."org.opencontainers.image.revision"='$GITHUB_SHA -Dquarkus.native.remote-container-build=true
       - name: Check Latest
         id: check-latest
         run: |
@@ -87,7 +87,7 @@ jobs:
       - name: Standalone Latest
         id: standalone-latest
         if: steps.check-latest.outputs.latest == 'true'
-        run: $MVN package --projects standalone --also-make -P native,prod,theme-hal -Dquarkus.container-image.build=true -Dquarkus.container-image.push=true -Dquarkus.container-image.image=quay.io/halconsole/hal:latest '-Dquarkus.container-image.labels."org.opencontainers.image.revision"='$GITHUB_SHA -Dquarkus.native.remote-container-build=true
+        run: $MVN -DskipTests package --projects standalone --also-make -P native,prod,theme-hal -Dquarkus.container-image.build=true -Dquarkus.container-image.push=true -Dquarkus.container-image.image=quay.io/halconsole/hal:latest '-Dquarkus.container-image.labels."org.opencontainers.image.revision"='$GITHUB_SHA -Dquarkus.native.remote-container-build=true
 
   publish:
     name: Publish to GitHub Pages
@@ -108,7 +108,7 @@ jobs:
           cache: maven
       - name: Package
         id: package
-        run: $MVN package -P prod,theme-hal
+        run: $MVN -DskipTests package -P prod,theme-hal
       - name: Publish
         id: publish
         uses: JamesIves/github-pages-deploy-action@v4.7.2

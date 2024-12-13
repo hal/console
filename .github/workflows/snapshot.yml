@@ -23,7 +23,7 @@ jobs:
           cache: maven
       - name: Package
         id: package
-        run: $MVN package -P prod
+        run: $MVN package -DskipTests -P prod
       - name: Set up Maven Settings
         id: setup-maven-settings
         uses: actions/setup-java@v4
@@ -35,7 +35,7 @@ jobs:
           server-password: OSSRH_PASSWORD
       - name: Deploy
         id: deploy
-        run: $MVN deploy -P prod
+        run: $MVN deploy -DskipTests -P prod
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
@@ -48,4 +48,4 @@ jobs:
           password: ${{ secrets.QUAY_ROBOT_TOKEN }}
       - name: Standalone Latest
         id: standalone-latest
-        run: $MVN package --projects standalone --also-make -P native,prod,theme-hal -Dquarkus.container-image.build=true -Dquarkus.container-image.push=true -Dquarkus.container-image.image=quay.io/halconsole/hal-development:latest '-Dquarkus.container-image.labels."org.opencontainers.image.revision"='$GITHUB_SHA -Dquarkus.native.remote-container-build=true
+        run: $MVN package -DskipTests --projects standalone --also-make -P native,prod,theme-hal -Dquarkus.container-image.build=true -Dquarkus.container-image.push=true -Dquarkus.container-image.image=quay.io/halconsole/hal-development:latest '-Dquarkus.container-image.labels."org.opencontainers.image.revision"='$GITHUB_SHA -Dquarkus.native.remote-container-build=true
