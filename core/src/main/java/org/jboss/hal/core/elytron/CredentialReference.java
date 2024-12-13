@@ -69,11 +69,17 @@ public class CredentialReference {
             CLEAR_TEXT
     };
 
+    private static final String DOT = ".";
+    private static final String STORE_PREFIXED = CREDENTIAL_REFERENCE + DOT + STORE;
+    private static final String ALIAS_PREFIXED = CREDENTIAL_REFERENCE + DOT + ALIAS;
+    private static final String TYPE_PREFIXED = CREDENTIAL_REFERENCE + DOT + TYPE;
+    private static final String CLEAR_TEXT_PREFIXED = CREDENTIAL_REFERENCE + DOT + CLEAR_TEXT;
+
     public static final String[] ATTRIBUTES_PREFIXED = new String[] {
-            CREDENTIAL_REFERENCE + "." + STORE,
-            CREDENTIAL_REFERENCE + "." + ALIAS,
-            CREDENTIAL_REFERENCE + "." + TYPE,
-            CREDENTIAL_REFERENCE + "." + CLEAR_TEXT
+            STORE_PREFIXED,
+            ALIAS_PREFIXED,
+            TYPE_PREFIXED,
+            CLEAR_TEXT_PREFIXED
     };
 
     @Inject
@@ -177,7 +183,7 @@ public class CredentialReference {
 
         ModelNodeForm.Builder<ModelNode> formBuilder = new ModelNodeForm.Builder<>(
                 Ids.build(baseId, credentialReferenceName, Ids.FORM), crMetadata)
-                .include(STORE, ALIAS, CLEAR_TEXT, TYPE)
+                .include(ATTRIBUTES)
                 .unsorted()
                 .singleton(ping == null ? defaultPing : ping, noCredentialReference)
                 .onSave(((f, changedValues) -> {
@@ -302,19 +308,25 @@ public class CredentialReference {
      * </ul>
      * See also https://docs.wildfly.org/25/WildFly_Elytron_Security.html#automatic-updates-of-credential-stores
      */
-    private static class CrFormValuesValidation implements FormValidation<ModelNode> {
+    public static class CrFormValuesValidation implements FormValidation<ModelNode> {
 
         private final Resources resources;
+        private final boolean prefixed;
 
-        private CrFormValuesValidation(Resources resources) {
+        public CrFormValuesValidation(Resources resources) {
+            this(resources, false);
+        }
+
+        public CrFormValuesValidation(Resources resources, boolean prefixed) {
             this.resources = resources;
+            this.prefixed = prefixed;
         }
 
         @Override
         public ValidationResult validate(Form<ModelNode> form) {
-            FormItem<Object> storeItem = form.getFormItem(STORE);
-            FormItem<Object> aliasItem = form.getFormItem(ALIAS);
-            FormItem<Object> clearTextItem = form.getFormItem(CLEAR_TEXT);
+            FormItem<Object> storeItem = form.getFormItem(prefixed ? STORE_PREFIXED : STORE);
+            FormItem<Object> aliasItem = form.getFormItem(prefixed ? ALIAS_PREFIXED : ALIAS);
+            FormItem<Object> clearTextItem = form.getFormItem(prefixed ? CLEAR_TEXT_PREFIXED : CLEAR_TEXT);
             if (!clearTextItem.isEmpty() && storeItem.isEmpty() && aliasItem.isEmpty()) {
                 // clear-text only not recommended mode
                 return ValidationResult.OK;

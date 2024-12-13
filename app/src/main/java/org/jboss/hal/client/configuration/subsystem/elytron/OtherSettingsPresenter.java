@@ -43,7 +43,6 @@ import org.jboss.hal.core.mbui.MbuiView;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
-import org.jboss.hal.core.mbui.form.RequireAtLeastOneAttributeValidation;
 import org.jboss.hal.core.mvp.SupportsExpertMode;
 import org.jboss.hal.dmr.ModelDescriptionConstants;
 import org.jboss.hal.dmr.ModelNode;
@@ -114,9 +113,7 @@ import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResour
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CAPABILITY_REFERENCE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CLASS_NAME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.CLEAR_TEXT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CREATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.CREDENTIAL_REFERENCE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CREDENTIAL_STORE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT_REALM;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.EXPRESSION;
@@ -148,7 +145,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SECRET_KEY_CREDENTIAL_
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SECURITY_DOMAIN;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_AUTH_MODULES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_SSL_SNI_CONTEXT;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.STORE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE_TYPE;
@@ -324,8 +320,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                 .unsorted()
                 .build();
         form.getFormItem(RELATIVE_TO).registerSuggestHandler(new PathsAutoComplete());
-        form.addFormValidation(new RequireAtLeastOneAttributeValidation<>(
-                asList(CREDENTIAL_REFERENCE + "." + STORE, CREDENTIAL_REFERENCE + "." + CLEAR_TEXT), resources));
+        form.addFormValidation(new CredentialReference.CrFormValuesValidation(resources, true));
         form.addFormValidation(form1 -> {
             ValidationResult result = ValidationResult.OK;
             String typeValue = form1.<String> getFormItem(TYPE).getValue();
@@ -421,8 +416,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                 .unsorted()
                 .build();
         form.getFormItem(RELATIVE_TO).registerSuggestHandler(new PathsAutoComplete());
-        form.addFormValidation(new RequireAtLeastOneAttributeValidation<>(
-                asList(CREDENTIAL_REFERENCE + "." + STORE, CREDENTIAL_REFERENCE + "." + CLEAR_TEXT), resources));
+        form.addFormValidation(new CredentialReference.CrFormValuesValidation(resources, true));
 
         new AddResourceDialog(resources.messages().addResourceTitle(Names.KEY_STORE), form, (name, model) -> {
             ResourceAddress address = KEY_STORE_TEMPLATE.resolve(statementContext, nameItem.getValue());
@@ -444,8 +438,7 @@ public class OtherSettingsPresenter extends MbuiPresenter<OtherSettingsPresenter
                 .include(CredentialReference.ATTRIBUTES_PREFIXED)
                 .unsorted()
                 .build();
-        form.addFormValidation(new RequireAtLeastOneAttributeValidation<>(
-                asList(CREDENTIAL_REFERENCE + "." + STORE, CREDENTIAL_REFERENCE + "." + CLEAR_TEXT), resources));
+        form.addFormValidation(new CredentialReference.CrFormValuesValidation(resources, true));
 
         new AddResourceDialog(resources.messages().addResourceTitle(Names.KEY_MANAGER), form, (name, model) -> {
             ResourceAddress address = KEY_MANAGER_TEMPLATE.resolve(statementContext, nameItem.getValue());

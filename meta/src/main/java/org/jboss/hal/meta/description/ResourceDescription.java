@@ -15,8 +15,10 @@
  */
 package org.jboss.hal.meta.description;
 
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import org.jboss.hal.config.StabilityLevel;
 import org.jboss.hal.dmr.ModelNode;
@@ -29,6 +31,7 @@ import static java.util.Collections.emptyList;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ACCESS_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ALTERNATIVES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTE_GROUP;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILDREN;
@@ -38,6 +41,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.NILLABLE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.OPERATIONS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUEST_PROPERTIES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUIRED;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REQUIRES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.STABILITY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.STORAGE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.STRING;
@@ -47,6 +51,8 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE_TYPE;
 /** Contains the resource and attribute descriptions from the read-resource-description operation. */
 
 public class ResourceDescription extends ModelNode {
+
+    private static final String DOT = ".";
 
     private Map<String, AttributeCollection> map = new TreeMap<>();
 
@@ -84,6 +90,7 @@ public class ResourceDescription extends ModelNode {
         if (attributes.isDefined()) {
             if (!map.containsKey(path)) {
                 for (Property p : attributes.asPropertyList()) {
+                    String parentName = p.getName();
                     ModelNode parentValue = p.getValue();
                     // process also on LIST type if we're in request attributes.
                     boolean isRequestProperties = path.endsWith(REQUEST_PROPERTIES);
@@ -109,7 +116,24 @@ public class ResourceDescription extends ModelNode {
                             combined = parentValue.get(REQUIRED).asBoolean()
                                     && nestedValue.get(REQUIRED).asBoolean();
                             nestedValue.get(REQUIRED).set(combined);
-                            attributes.get(p.getName() + "." + nested.getName()).set(nestedValue);
+
+                            ModelNode requires = nestedValue.remove(REQUIRES);
+                            if (requires != null) {
+                                List<ModelNode> requiredNames = requires.asList().stream()
+                                        .map(node -> new ModelNode().set(parentName + DOT + node.asString()))
+                                        .collect(Collectors.toList());
+                                nestedValue.get(REQUIRES).set(requiredNames);
+                            }
+
+                            ModelNode alternatives = nestedValue.remove(ALTERNATIVES);
+                            if (alternatives != null) {
+                                List<ModelNode> alternativesNames = alternatives.asList().stream()
+                                        .map(node -> new ModelNode().set(parentName + DOT + node.asString()))
+                                        .collect(Collectors.toList());
+                                nestedValue.get(ALTERNATIVES).set(alternativesNames);
+                            }
+
+                            attributes.get(parentName + DOT + nested.getName()).set(nestedValue);
                         }
                     }
                 }
