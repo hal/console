@@ -16,8 +16,8 @@ jobs:
         id: setup-jdk
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
-          distribution: 'temurin'
+          java-version: 17
+          distribution: temurin
           cache: maven
       - name: Build WildFly
         id: build-wildfly
