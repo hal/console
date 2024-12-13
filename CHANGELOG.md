@@ -7,8 +7,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [3.7.6] - 2024-12-13
-
 ### Fixed
 
 [HAL-1996](https://issues.redhat.com/browse/HAL-1996): Fix placeholder value handling
@@ -23,6 +21,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Bump Frontend Maven Plugin to 1.15.1
 - Bump JBoss parent to 47
 - Bump Mockito to 5.14.1
+
+## [3.7.6] - 2024-12-13
+
+Release process failed. Do not use this release!
 
 ## [3.7.5] - 2024-09-18
 
