@@ -7,8 +7,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [3.7.6] - 2024-12-13
-
 ### Fixed
 
 [HAL-1996](https://issues.redhat.com/browse/HAL-1996): Fix placeholder value handling
@@ -641,40 +639,7 @@ Release process failed. Do not use this release!
 - for dependency upgrades
 -->
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-[Unreleased]: https://github.com/hal/console/compare/v3.7.6...HEAD
-[3.7.6]: https://github.com/hal/console/compare/v3.7.5...v3.7.6
+[Unreleased]: https://github.com/hal/console/compare/v3.7.5...HEAD
 [3.7.5]: https://github.com/hal/console/compare/v3.7.4...v3.7.5
 [3.7.4]: https://github.com/hal/console/compare/v3.7.3...v3.7.4
 [3.7.3]: https://github.com/hal/console/compare/v3.7.2...v3.7.3
