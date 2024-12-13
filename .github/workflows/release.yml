@@ -20,17 +20,17 @@ jobs:
         id: setup-jdk
         uses: actions/setup-java@v4
         with:
-          java-version: 17
+          java-version: 11
           distribution: temurin
           cache: maven
       - name: Package
         id: package
-        run: $MVN package -DskipTests -P prod,theme-wildfly
+        run: $MVN package -P prod,theme-wildfly
       - name: Set up Maven Settings
         id: setup-maven-settings
         uses: actions/setup-java@v4
         with: # running setup-java again overwrites the settings.xml
-          java-version: 17
+          java-version: 11
           distribution: temurin
           server-id: ossrh
           server-username: OSSRH_USERNAME
@@ -39,7 +39,7 @@ jobs:
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
       - name: Deploy
         id: deploy
-        run: $MVN -DskipTests deploy -P prod,release,theme-wildfly
+        run: $MVN deploy -P prod,release,theme-wildfly
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
@@ -62,7 +62,7 @@ jobs:
         id: setup-jdk
         uses: actions/setup-java@v4
         with:
-          java-version: 17
+          java-version: 11
           distribution: temurin
           cache: maven
       - name: Login to Quay.io
@@ -74,7 +74,7 @@ jobs:
           password: ${{ secrets.QUAY_ROBOT_TOKEN }}
       - name: Standalone Tag
         id: standalone-tag
-        run: $MVN -DskipTests package --projects standalone --also-make -P native,prod,theme-hal -Dquarkus.container-image.build=true -Dquarkus.container-image.push=true -Dquarkus.container-image.image=quay.io/halconsole/hal:${{ steps.get-version.outputs.version-without-v }}.Final '-Dquarkus.container-image.labels."org.opencontainers.image.revision"='$GITHUB_SHA -Dquarkus.native.remote-container-build=true
+        run: $MVN package --projects standalone --also-make -P native,prod,theme-hal -Dquarkus.container-image.build=true -Dquarkus.container-image.push=true -Dquarkus.container-image.image=quay.io/halconsole/hal:${{ steps.get-version.outputs.version-without-v }}.Final '-Dquarkus.container-image.labels."org.opencontainers.image.revision"='$GITHUB_SHA -Dquarkus.native.remote-container-build=true
       - name: Check Latest
         id: check-latest
         run: |
@@ -103,12 +103,12 @@ jobs:
         id: setup-jdk
         uses: actions/setup-java@v4
         with:
-          java-version: 17
+          java-version: 11
           distribution: temurin
           cache: maven
       - name: Package
         id: package
-        run: $MVN -DskipTests package -P prod,theme-hal
+        run: $MVN package -P prod,theme-hal
       - name: Publish
         id: publish
         uses: JamesIves/github-pages-deploy-action@v4.7.2
