@@ -59,6 +59,7 @@ import org.jboss.hal.resources.Strings;
 import org.jboss.hal.resources.UIConstants;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
+
 import com.google.common.collect.Sets;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.web.bindery.event.shared.EventBus;
@@ -71,10 +72,10 @@ import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLImageElement;
 import elemental2.promise.Promise;
 
-import static com.google.common.base.Strings.nullToEmpty;
-import static elemental2.dom.DomGlobal.window;
 import static java.lang.Math.max;
 import static java.util.Collections.emptyList;
+import static com.google.common.base.Strings.nullToEmpty;
+import static elemental2.dom.DomGlobal.window;
 import static org.jboss.elemento.Elements.a;
 import static org.jboss.elemento.Elements.button;
 import static org.jboss.elemento.Elements.div;

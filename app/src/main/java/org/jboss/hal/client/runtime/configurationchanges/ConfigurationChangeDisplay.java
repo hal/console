@@ -25,6 +25,7 @@ import org.jboss.hal.ballroom.listview.ItemDisplay;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Resources;
+
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
