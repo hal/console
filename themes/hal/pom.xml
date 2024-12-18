@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-theme-parent</artifactId>
-        <version>3.6.21.Final</version>
+        <version>3.6.22-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
