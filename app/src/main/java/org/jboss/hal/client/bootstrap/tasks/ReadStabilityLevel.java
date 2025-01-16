@@ -66,8 +66,16 @@ public class ReadStabilityLevel implements Task<FlowContext> {
                     .build();
             return dispatcher.execute(operation)
                     .then(result -> {
-                        environment.setStabilityLevel(readStabilityLevel(result, defaultStabilityLevel));
-                        environment.setStabilityLevels(readStabilityLevels(result));
+                        if (result.isDefined()) {
+                            environment.setStabilityLevel(readStabilityLevel(result, defaultStabilityLevel));
+                            environment.setStabilityLevels(readStabilityLevels(result));
+                        } else {
+                            fallback(defaultStabilityLevel);
+                        }
+                        return context.resolve();
+                    })
+                    .catch_(error -> {
+                        fallback(defaultStabilityLevel);
                         return context.resolve();
                     });
         } else {
@@ -82,16 +90,12 @@ public class ReadStabilityLevel implements Task<FlowContext> {
                             environment.setStabilityLevel(readStabilityLevel(result, defaultStabilityLevel));
                             environment.setStabilityLevels(readStabilityLevels(result));
                         } else {
-                            logger.warn("Unable to read stability level. Fall back to: {}", defaultStabilityLevel);
-                            environment.setStabilityLevel(defaultStabilityLevel);
-                            environment.setStabilityLevels(new StabilityLevel[0]);
+                            fallback(defaultStabilityLevel);
                         }
                         return context.resolve();
                     })
                     .catch_(error -> {
-                        logger.warn("Unable to read stability level. Fall back to: {}", defaultStabilityLevel);
-                        environment.setStabilityLevel(defaultStabilityLevel);
-                        environment.setStabilityLevels(new StabilityLevel[0]);
+                        fallback(defaultStabilityLevel);
                         return context.resolve();
                     });
         }
@@ -106,5 +110,11 @@ public class ReadStabilityLevel implements Task<FlowContext> {
                 .map(node -> asEnumValue(node, StabilityLevel::valueOf, null))
                 .filter(Objects::nonNull)
                 .toArray(StabilityLevel[]::new);
+    }
+
+    private void fallback(StabilityLevel defaultStabilityLevel) {
+        logger.warn("Unable to read stability level. Fall back to: {}", defaultStabilityLevel);
+        environment.setStabilityLevel(defaultStabilityLevel);
+        environment.setStabilityLevels(new StabilityLevel[0]);
     }
 }
