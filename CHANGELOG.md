@@ -7,6 +7,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+[HAL-2007](https://issues.redhat.com/browse/HAL-2007): Fix utilization bar if current > total
+[HAL-2004](https://issues.redhat.com/browse/HAL-2004): Fix malformed address template
+[HAL-2003](https://issues.redhat.com/browse/HAL-2003): consolidate credential-reference handling
+Make stability level bootstrap task failsafe
+
+### Upgrades
+
+- Bump ACE editor to 1.37.5
+
 ## [3.7.7] - 2024-12-13
 
 ### Fixed
