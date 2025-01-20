@@ -53,7 +53,7 @@ import static org.jboss.hal.resources.UIConstants.TOOLTIP;
  * percentage of that resource that has been utilized.
  *
  * @see <a href=
- * "https://www.patternfly.org/pattern-library/data-visualization/utilization-bar-chart/">https://www.patternfly.org/pattern-library/data-visualization/utilization-bar-chart/</a>
+ *      "https://www.patternfly.org/pattern-library/data-visualization/utilization-bar-chart/">https://www.patternfly.org/pattern-library/data-visualization/utilization-bar-chart/</a>
  */
 public class Utilization implements IsElement {
 
@@ -79,11 +79,11 @@ public class Utilization implements IsElement {
         this.total = 0;
 
         String[] containerCss = inline
-                ? new String[]{progressContainer, progressDescriptionLeft, progressLabelRight}
-                : new String[]{progressContainer};
+                ? new String[] { progressContainer, progressDescriptionLeft, progressLabelRight }
+                : new String[] { progressContainer };
         String[] progressCss = inline
-                ? new String[]{progress}
-                : new String[]{progress, progressLabelTopRight};
+                ? new String[] { progress }
+                : new String[] { progress, progressLabelTopRight };
 
         root = div().css(containerCss)
                 .add(div().css(progressDescription)
