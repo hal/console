@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.7.8] - 2025-01-20
+
 ### Fixed
 
 [HAL-2007](https://issues.redhat.com/browse/HAL-2007): Fix utilization bar if current > total
@@ -656,7 +658,8 @@ Release process failed. Do not use this release!
 - for dependency upgrades
 -->
 
-[Unreleased]: https://github.com/hal/console/compare/v3.7.7...HEAD
+[Unreleased]: https://github.com/hal/console/compare/v3.7.8...HEAD
+[3.7.8]: https://github.com/hal/console/compare/v3.7.7...v3.7.8
 [3.7.7]: https://github.com/hal/console/compare/v3.7.6...v3.7.7
 [3.7.6]: https://github.com/hal/console/compare/v3.7.5...v3.7.6
 [3.7.5]: https://github.com/hal/console/compare/v3.7.4...v3.7.5
