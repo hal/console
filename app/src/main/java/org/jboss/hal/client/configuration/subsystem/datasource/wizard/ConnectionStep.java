@@ -33,14 +33,10 @@ import elemental2.dom.HTMLElement;
 
 import static java.util.Arrays.asList;
 
-import static org.jboss.hal.dmr.ModelDescriptionConstants.ALIAS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.AUTHENTICATION_CONTEXT;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.CLEAR_TEXT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CONNECTION_URL;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CREDENTIAL_REFERENCE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PASSWORD;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.STORE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.USER_NAME;
 import static org.jboss.hal.dmr.ModelNodeHelper.move;
 
@@ -48,7 +44,7 @@ class ConnectionStep extends WizardStep<Context, State> {
 
     private final ModelNodeForm<ModelNode> form;
 
-    private List<String> credRefAttrs = asList(STORE, ALIAS, CLEAR_TEXT, TYPE);
+    private List<String> credRefAttrs = asList(CredentialReference.ATTRIBUTES);
     private List<String> otherAttrs = asList(USER_NAME, PASSWORD, AUTHENTICATION_CONTEXT);
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
