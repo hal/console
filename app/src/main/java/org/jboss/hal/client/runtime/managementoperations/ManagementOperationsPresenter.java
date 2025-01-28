@@ -97,7 +97,7 @@ public class ManagementOperationsPresenter extends
     private static final String WILDCARD = "*";
     private static final String WFLYDM_0089 = "WFLYDM0089";
     public static final String MANAGEMENT_OPERATIONS_ADDRESS = "/core-service=management/service=management-operations";
-    static final String ACTIVE_OPERATIONS_ADDRESS = "{domain.controller}/" + MANAGEMENT_OPERATIONS_ADDRESS
+    static final String ACTIVE_OPERATIONS_ADDRESS = "{domain.controller}" + MANAGEMENT_OPERATIONS_ADDRESS
             + "/active-operation=*";
     private static final AddressTemplate MANAGEMENT_OPERATIONS_TEMPLATE = AddressTemplate.of(MANAGEMENT_OPERATIONS_ADDRESS);
     static final AddressTemplate ACTIVE_OPERATIONS_TEMPLATE = AddressTemplate.of(ACTIVE_OPERATIONS_ADDRESS);
