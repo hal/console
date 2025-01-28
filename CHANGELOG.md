@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.6.22] - 2025-01-28
+
 ## [3.6.21] - 2024-12-18
 
 ## [3.6.20] - 2024-11-15
@@ -586,7 +588,8 @@ Release process failed. Do not use this release!
 - for dependency upgrades
 -->
 
-[Unreleased]: https://github.com/hal/console/compare/v3.6.21...HEAD
+[Unreleased]: https://github.com/hal/console/compare/v3.6.22...HEAD
+[3.6.22]: https://github.com/hal/console/compare/v3.6.21...v3.6.22
 [3.6.21]: https://github.com/hal/console/compare/v3.6.20...v3.6.21
 [3.6.20]: https://github.com/hal/console/compare/v3.6.19...v3.6.20
 [3.6.19]: https://github.com/hal/console/compare/v3.6.18...v3.6.19
