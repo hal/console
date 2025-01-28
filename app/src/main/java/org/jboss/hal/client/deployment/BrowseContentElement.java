@@ -74,6 +74,7 @@ import elemental2.promise.Promise;
 
 import static java.lang.Math.max;
 import static java.util.Collections.emptyList;
+
 import static com.google.common.base.Strings.nullToEmpty;
 import static elemental2.dom.DomGlobal.window;
 import static org.jboss.elemento.Elements.a;
@@ -852,7 +853,7 @@ class BrowseContentElement implements IsElement<HTMLElement>, Attachable {
 
     private File file(String name, String content) {
         ConstructorContentsArrayUnionType contents = ConstructorContentsArrayUnionType.of(content);
-        return new File(new ConstructorContentsArrayUnionType[]{contents}, name);
+        return new File(new ConstructorContentsArrayUnionType[] { contents }, name);
     }
 
     private Promise<Void> awaitTreeReady() {
