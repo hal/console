@@ -173,6 +173,8 @@ import org.jboss.hal.client.runtime.subsystem.messaging.JmsQueuePresenter;
 import org.jboss.hal.client.runtime.subsystem.messaging.JmsQueueView;
 import org.jboss.hal.client.runtime.subsystem.microprofile.health.MicroProfileHealthPresenter;
 import org.jboss.hal.client.runtime.subsystem.microprofile.health.MicroProfileHealthView;
+import org.jboss.hal.client.runtime.subsystem.resourceadapter.ChildResourcePresenter;
+import org.jboss.hal.client.runtime.subsystem.resourceadapter.ChildResourceView;
 import org.jboss.hal.client.skeleton.FooterPresenter;
 import org.jboss.hal.client.skeleton.FooterView;
 import org.jboss.hal.client.skeleton.HeaderPresenter;
@@ -599,6 +601,16 @@ public class ConsoleModule extends AbstractPresenterModule {
                 ResourceAdapterPresenter.MyView.class,
                 Mbui_ResourceAdapterView.class,
                 ResourceAdapterPresenter.MyProxy.class);
+
+        bindPresenter(org.jboss.hal.client.runtime.subsystem.resourceadapter.ResourceAdapterPresenter.class,
+                org.jboss.hal.client.runtime.subsystem.resourceadapter.ResourceAdapterPresenter.MyView.class,
+                org.jboss.hal.client.runtime.subsystem.resourceadapter.ResourceAdapterView.class,
+                org.jboss.hal.client.runtime.subsystem.resourceadapter.ResourceAdapterPresenter.MyProxy.class);
+
+        bindPresenter(ChildResourcePresenter.class,
+                ChildResourcePresenter.MyView.class,
+                ChildResourceView.class,
+                ChildResourcePresenter.MyProxy.class);
 
         bindPresenter(RhcpPresenter.class,
                 RhcpPresenter.MyView.class,
