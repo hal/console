@@ -716,6 +716,7 @@ public interface ModelDescriptionConstants {
     String PRIMARY = "primary";
     String PRIMARY_OWNER = "primary-owner";
     String PRINCIPAL_QUERY = "principal-query";
+    String PRINCIPAL_TRANSFORMER = "principal-transformer";
     String PRINCIPALS = "principals";
     String PRIORITY = "priority";
     String PROBE_OPERATION = "probe";
@@ -849,7 +850,9 @@ public interface ModelDescriptionConstants {
     String REVISION = "revision";
     String REVOKE_CERTIFICATE = "revoke-certificate";
     String ROLE = "role";
+    String ROLE_DECODER = "role-decoder";
     String ROLE_MAP = "role-map";
+    String ROLE_MAPPER = "role-mapper";
     String ROLE_MAPPING = "role-mapping";
     String ROLES = "roles";
     String ROLLBACK_OPERATION = "rollback";

@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.client.configuration.subsystem.elytron;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -74,9 +75,12 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT_REALM;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.FLAG;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MODULE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PERMISSIONS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PRINCIPAL_TRANSFORMER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REALM;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REALMS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RELATIVE_TO;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ROLE_DECODER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ROLE_MAPPER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_AUTH_MODULES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SSL_CONTEXT;
 
@@ -200,7 +204,8 @@ public class OtherSettingsView extends HalViewImpl implements OtherSettingsPrese
                         ad -> new SingleSelectBoxItem(DEFAULT_REALM, labelBuilder.label(DEFAULT_REALM),
                                 Collections.emptyList(), false))
                 .onAdd(() -> presenter.addSecurityDomain())
-                .setComplexListAttribute(REALMS, REALM)
+                .setComplexListAttribute(REALMS, REALM,
+                        Arrays.asList(PRINCIPAL_TRANSFORMER, ROLE_DECODER, ROLE_MAPPER))
                 .build();
         // user cannot modify realm name of the inner complext object list if it is referenced in default-realm attribute
         securityDomainElement.getFormComplexList().getFormItem(REALM).setEnabled(false);
