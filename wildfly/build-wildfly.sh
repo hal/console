@@ -177,7 +177,7 @@ else
   else
     if [[ "$WILDFLY_MAJOR_VERSION" -gt "32" ]]; then
       WILDFLY_VERSION=$WILDFLY_VERSION-jdk21
-    else [[ "$WILDFLY_MAJOR_VERSION" -gt "26" ]]; then
+    elif [[ "$WILDFLY_MAJOR_VERSION" -gt "26" ]]; then
       WILDFLY_VERSION=$WILDFLY_VERSION-jdk17
     else
       WILDFLY_VERSION=$WILDFLY_VERSION
