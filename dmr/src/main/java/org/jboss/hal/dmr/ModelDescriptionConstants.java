@@ -314,6 +314,7 @@ public interface ModelDescriptionConstants {
     String ELYTRON_ENABLED = "elytron-enabled";
     String EMPTY = "empty";
     String ENABLED = "enabled";
+    String ENABLING = "enabling";
     String ENABLED_TIME = "enabled-time";
     String ENCRYPTION = "encryption";
     String END_TIME = "end-time";
