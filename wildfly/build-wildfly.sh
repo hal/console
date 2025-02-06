@@ -171,13 +171,17 @@ else
     TAG_VERSION=$WILDFLY_VERSION
   fi
 
-  # Images for WildFly 23 and below are in Docker Hub
   if [[ "$WILDFLY_MAJOR_VERSION" -lt "24" ]]; then
+    # Images for WildFly 23 and below are in Docker Hub
     BASE=docker.io/jboss/wildfly
-  fi
-  # Use JDK suffix for for WildFly 27 and above
-  if [[ "$WILDFLY_MAJOR_VERSION" -gt "26" ]]; then
-    WILDFLY_VERSION=$WILDFLY_VERSION-jdk11
+  else
+    if [[ "$WILDFLY_MAJOR_VERSION" -gt "32" ]]; then
+      WILDFLY_VERSION=$WILDFLY_VERSION-jdk21
+    else [[ "$WILDFLY_MAJOR_VERSION" -gt "26" ]]; then
+      WILDFLY_VERSION=$WILDFLY_VERSION-jdk17
+    else
+      WILDFLY_VERSION=$WILDFLY_VERSION
+    fi
   fi
 
   msg
