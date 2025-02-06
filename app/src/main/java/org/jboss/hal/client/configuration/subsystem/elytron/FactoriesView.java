@@ -31,10 +31,30 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
-import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.*;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.AGGREGATE_HTTP_SERVER_MECHANISM_FACTORY;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.AGGREGATE_PRINCIPAL_TRANSFORMER;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.AGGREGATE_SASL_SERVER_FACTORY;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.CHAINED_PRINCIPAL_TRANSFORMER;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.CONFIGURABLE_HTTP_SERVER_MECHANISM_FACTORY;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.CONFIGURABLE_SASL_SERVER_FACTORY;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.CONSTANT_PRINCIPAL_TRANSFORMER;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.CUSTOM_CREDENTIAL_SECURITY_FACTORY;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.CUSTOM_PRINCIPAL_TRANSFORMER;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.HTTP_AUTHENTICATION_FACTORY;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.KERBEROS_SECURITY_FACTORY;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.MECHANISM_PROVIDER_FILTERING_SASL_SERVER_FACTORY;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.PROVIDER_HTTP_SERVER_MECHANISM_FACTORY;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.PROVIDER_SASL_SERVER_FACTORY;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.REGEX_PRINCIPAL_TRANSFORMER;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.REGEX_VALIDATING_PRINCIPAL_TRANSFORMER;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.SASL_AUTHENTICATION_FACTORY;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.SERVICE_LOADER_HTTP_SERVER_MECHANISM_FACTORY;
+import static org.jboss.hal.client.configuration.subsystem.elytron.ElytronResource.SERVICE_LOADER_SASL_SERVER_FACTORY;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ENABLING;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.FILTERS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PATTERN_FILTER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PREDEFINED_FILTER;
@@ -80,7 +100,7 @@ public class FactoriesView extends HalViewImpl implements FactoriesPresenter.MyV
                         () -> presenter.reload(CONFIGURABLE_HTTP_SERVER_MECHANISM_FACTORY.resource,
                                 nodes -> updateResourceElement(CONFIGURABLE_HTTP_SERVER_MECHANISM_FACTORY.resource,
                                         nodes)))
-                        .setComplexListAttribute(FILTERS, PATTERN_FILTER,
+                        .setComplexListAttribute(FILTERS, PATTERN_FILTER, singletonList(ENABLING),
                                 modelNode -> Ids.build(modelNode.get(PATTERN_FILTER).asString()))
                         .build(),
                 primaryIdHttpFactories,
