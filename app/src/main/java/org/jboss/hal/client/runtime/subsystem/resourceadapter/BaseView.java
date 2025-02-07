@@ -54,8 +54,10 @@ public abstract class BaseView<P extends BasePresenter<?, ?>> extends HalViewImp
     private final Resources resources;
     private P presenter;
     private HTMLElement header;
+    private HTMLElement container;
     private Form<ModelNode> poolForm;
     private Form<ModelNode> extendedForm;
+    private boolean isSetUp = false;
 
     @Inject
     public BaseView(MetadataRegistry metadataRegistry, Resources resources) {
@@ -113,18 +115,25 @@ public abstract class BaseView<P extends BasePresenter<?, ?>> extends HalViewImp
             registerAttachable(poolForm);
         }
 
-        HTMLElement root = row()
-                .add(column()
-                        .add(header = h(1).textContent("RA resource").element())
-                        .add(extendedMeta != null ? p().css(clearfix)
-                                .add(a().css(clickable, pullRight).on(click, event -> refresh())
-                                        .add(span().css(fontAwesome("refresh"), marginRight5))
-                                        .add(span().textContent(resources.constants().refresh())))
-                                : null)
-                        .add(statsElement))
-                .element();
+        if (!isSetUp) {
+            HTMLElement root = row()
+                    .add(column()
+                            .add(header = h(1).textContent("RA resource").element())
+                            .add(p().css(clearfix)
+                                    .add(a().css(clickable, pullRight).on(click, event -> refresh())
+                                            .add(span().css(fontAwesome("refresh"), marginRight5))
+                                            .add(span().textContent(resources.constants().refresh()))))
+                            .add(container = statsElement))
+                    .element();
 
-        initElement(root);
+            initElement(root);
+            isSetUp = true;
+        } else {
+            // if the view is already attached overwriting a variable does not change the DOM,
+            // but 'replaceWith' doesn't change the object reference so we still need to do it
+            container.replaceWith(statsElement);
+            container = statsElement;
+        }
     }
 
     @Override
