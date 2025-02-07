@@ -309,6 +309,7 @@ public interface Names {
     String RESOLVERS = "Resolvers";
     String RESOURCE = "Resource";
     String RESOURCE_ADAPTER = "Resource Adapter";
+    String RESOURCE_ADAPTERS = "Resource Adapters";
     String RESOURCE_PATHS = "Resource Paths";
     String RESPONSE_HEADER = "Response Header";
     String REST_RESOURCE = "REST Resource";
