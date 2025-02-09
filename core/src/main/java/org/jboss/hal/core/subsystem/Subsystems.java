@@ -172,7 +172,7 @@ public class Subsystems {
                 .token(NameTokens.REQUEST_CONTROLLER)
                 .preview(resources.previews().configurationRequestController())
                 .build());
-        addConfiguration(new SubsystemMetadata.Builder(RESOURCE_ADAPTERS, "Resource Adapters")
+        addConfiguration(new SubsystemMetadata.Builder(RESOURCE_ADAPTERS, Names.RESOURCE_ADAPTERS)
                 .nextColumn(Ids.RESOURCE_ADAPTER)
                 .preview(resources.previews().configurationResourceAdapters())
                 .build());
@@ -257,6 +257,10 @@ public class Subsystems {
         addRuntime(new SubsystemMetadata.Builder(MICROPROFILE_HEALTH_SMALLRYE, Names.MICROPROFILE_HEALTH)
                 .subtitle(Names.SMALLRYE)
                 .token(NameTokens.MICRO_PROFILE_HEALTH)
+                .build());
+        addRuntime(new SubsystemMetadata.Builder(RESOURCE_ADAPTERS, Names.RESOURCE_ADAPTERS)
+                .nextColumn(Ids.RESOURCE_ADAPTER_RUNTIME)
+                .preview(resources.previews().runtimeResourceAdapters())
                 .build());
         addRuntime(new SubsystemMetadata.Builder(TRANSACTIONS, Names.TRANSACTION)
                 .token(NameTokens.TRANSACTIONS_RUNTIME)
