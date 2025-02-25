@@ -103,6 +103,8 @@ public interface NameTokens {
     String REPLICATED_CACHE = ModelDescriptionConstants.REPLICATED_CACHE;
     String REQUEST_CONTROLLER = ModelDescriptionConstants.REQUEST_CONTROLLER;
     String RESOURCE_ADAPTER = ModelDescriptionConstants.RESOURCE_ADAPTER;
+    String RESOURCE_ADAPTER_CHILD_RUNTIME = ModelDescriptionConstants.RESOURCE_ADAPTER + "-child" + RUNTIME_SUFFIX;
+    String RESOURCE_ADAPTER_RUNTIME = ModelDescriptionConstants.RESOURCE_ADAPTER + RUNTIME_SUFFIX;
     String RUNTIME = "runtime";
     String SCATTERED_CACHE = ModelDescriptionConstants.SCATTERED_CACHE;
     String SECURITY_CONFIGURATION = "security";

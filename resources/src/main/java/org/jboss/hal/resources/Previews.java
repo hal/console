@@ -339,6 +339,9 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/runtime/mod-cluster.html")
     ExternalTextResource runtimeModCluster();
 
+    @Source("previews/runtime/resource-adapters.html")
+    ExternalTextResource runtimeResourceAdapters();
+
     @Source("previews/runtime/security-elytron.html")
     ExternalTextResource runtimeSecurityElytron();
 

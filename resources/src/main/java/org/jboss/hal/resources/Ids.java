@@ -667,6 +667,9 @@ public interface Ids {
     String RESOURCE_ADAPTER_ADMIN_OBJECT_ADD = "resource-adapter-admin-object-add";
     String RESOURCE_ADAPTER_CONNECTION_DEFINITION_ADD = "resource-adapter-connection-definition-add";
     String RESOURCE_ADAPTER_FORM = "resource-adapter-form";
+    String RESOURCE_ADAPTER_CHILD_RUNTIME = "ra-child-runtime";
+    String RESOURCE_ADAPTER_CHILD_RUNTIME_TAB_CONTAINER = "ra-runtime-tab-container";
+    String RESOURCE_ADAPTER_RUNTIME = "ra-runtime";
     String REST_RESOURCE = "rest-rsc";
     String REST_RESOURCE_PATH_PARAM_FORM = "rest-rsc-path-param-form";
     String REST_RESOURCE_REFRESH = "rest-rsc-refresh";
@@ -995,6 +998,14 @@ public interface Ids {
 
     static String resourceAdapter(String name) {
         return build("ra", name);
+    }
+
+    static String resourceAdapterRuntime(String name) {
+        return build("rar", name);
+    }
+
+    static String resourceAdapterChildRuntime(String ra, String name) {
+        return build("rar", ra, name);
     }
 
     static String restResource(String deployment, String subdeployment, String name) {
