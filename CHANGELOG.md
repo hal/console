@@ -9,10 +9,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-- [HAL-2006](https://issues.redhat.com/browse/HAL-2006): Add runtime view for Resource Adapters statistics
-- [HAL-2014](https://issues.redhat.com/browse/HAL-2014): Optional fields missing in the Add Realms form
 - [HAL-2015](https://issues.redhat.com/browse/HAL-2015): Enabling missing in the Add Filters pop-up
+- [HAL-2014](https://issues.redhat.com/browse/HAL-2014): Optional fields missing in the Add Realms form
 - [HAL-2010](https://issues.redhat.com/browse/HAL-2010): Fix runtime view updating
+- [HAL-2006](https://issues.redhat.com/browse/HAL-2006): Add runtime view for Resource Adapters statistics
 
 ### Upgrades
 
