@@ -7,14 +7,26 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- [HAL-2006](https://issues.redhat.com/browse/HAL-2006): Add runtime view for Resource Adapters statistics
+- [HAL-2014](https://issues.redhat.com/browse/HAL-2014): Optional fields missing in the Add Realms form
+- [HAL-2015](https://issues.redhat.com/browse/HAL-2015): Enabling missing in the Add Filters pop-up
+- [HAL-2010](https://issues.redhat.com/browse/HAL-2010): Fix runtime view updating
+
+### Upgrades
+
+- Bump JBoss Parent POM to 48
+- Bump ACE editor to 1.39.0
+
 ## [3.7.8] - 2025-01-20
 
 ### Fixed
 
-[HAL-2007](https://issues.redhat.com/browse/HAL-2007): Fix utilization bar if current > total
-[HAL-2004](https://issues.redhat.com/browse/HAL-2004): Fix malformed address template
-[HAL-2003](https://issues.redhat.com/browse/HAL-2003): consolidate credential-reference handling
-Make stability level bootstrap task failsafe
+- [HAL-2007](https://issues.redhat.com/browse/HAL-2007): Fix utilization bar if current > total
+- [HAL-2004](https://issues.redhat.com/browse/HAL-2004): Fix malformed address template
+- [HAL-2003](https://issues.redhat.com/browse/HAL-2003): consolidate credential-reference handling
+- Make stability level bootstrap task failsafe
 
 ### Upgrades
 
@@ -24,11 +36,11 @@ Make stability level bootstrap task failsafe
 
 ### Fixed
 
-[HAL-1996](https://issues.redhat.com/browse/HAL-1996): Fix placeholder value handling
-[HAL-1993](https://issues.redhat.com/browse/HAL-1993): Use SASL authentication in tests for domain
-[HAL-1991](https://issues.redhat.com/browse/HAL-1991): Fix error in AddUnmanagedDialog, it should also process on List type for request attributes.
-[HAL-1990](https://issues.redhat.com/browse/HAL-1990): Remove unnecessary copying of complex attributes
-[HAL-1989](https://issues.redhat.com/browse/HAL-1989): Display an error message when bootstrapping fails, consolidate error displays
+- [HAL-1996](https://issues.redhat.com/browse/HAL-1996): Fix placeholder value handling
+- [HAL-1993](https://issues.redhat.com/browse/HAL-1993): Use SASL authentication in tests for domain
+- [HAL-1991](https://issues.redhat.com/browse/HAL-1991): Fix error in AddUnmanagedDialog, it should also process on List type for request attributes.
+- [HAL-1990](https://issues.redhat.com/browse/HAL-1990): Remove unnecessary copying of complex attributes
+- [HAL-1989](https://issues.redhat.com/browse/HAL-1989): Display an error message when bootstrapping fails, consolidate error displays
 
 ### Upgrades
 
