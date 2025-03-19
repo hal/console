@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.7.9] - 2025-03-19
+
 ### Fixed
 
 - [HAL-2015](https://issues.redhat.com/browse/HAL-2015): Enabling missing in the Add Filters pop-up
@@ -670,7 +672,8 @@ Release process failed. Do not use this release!
 - for dependency upgrades
 -->
 
-[Unreleased]: https://github.com/hal/console/compare/v3.7.8...HEAD
+[Unreleased]: https://github.com/hal/console/compare/v3.7.9...HEAD
+[3.7.9]: https://github.com/hal/console/compare/v3.7.8...v3.7.9
 [3.7.8]: https://github.com/hal/console/compare/v3.7.7...v3.7.8
 [3.7.7]: https://github.com/hal/console/compare/v3.7.6...v3.7.7
 [3.7.6]: https://github.com/hal/console/compare/v3.7.5...v3.7.6
