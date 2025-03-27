@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.7.10] - 2025-03-27
+
 ### Fixed
 
 - Make `Version.parseVersion(String)` lenient
@@ -676,7 +678,8 @@ Release process failed. Do not use this release!
 - for dependency upgrades
 -->
 
-[Unreleased]: https://github.com/hal/console/compare/v3.7.9...HEAD
+[Unreleased]: https://github.com/hal/console/compare/v3.7.10...HEAD
+[3.7.10]: https://github.com/hal/console/compare/v3.7.9...v3.7.10
 [3.7.9]: https://github.com/hal/console/compare/v3.7.8...v3.7.9
 [3.7.8]: https://github.com/hal/console/compare/v3.7.7...v3.7.8
 [3.7.7]: https://github.com/hal/console/compare/v3.7.6...v3.7.7
