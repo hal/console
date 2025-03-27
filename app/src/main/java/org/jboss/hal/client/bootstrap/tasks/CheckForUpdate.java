@@ -46,16 +46,6 @@ public class CheckForUpdate implements InitializedTask {
         this.eventBus = eventBus;
     }
 
-    private String getVersionFromResponse(String responseText) {
-        JSONObject data = new JSONObject(JsonUtils.safeEval(responseText));
-        String version = data.get("tag_name").toString();
-        version = version.substring(1, version.length() - 1);
-        if (version.startsWith("v")) {
-            version = version.substring(1);
-        }
-        return version;
-    }
-
     @Override
     public void run() {
         // only check for community updates
@@ -80,5 +70,15 @@ public class CheckForUpdate implements InitializedTask {
             xhr.open(GET.name(), METADATA_URL, true);
             xhr.send();
         }
+    }
+
+    private String getVersionFromResponse(String responseText) {
+        JSONObject data = new JSONObject(JsonUtils.safeEval(responseText));
+        String version = data.get("tag_name").toString();
+        version = version.substring(1, version.length() - 1);
+        if (version.startsWith("v")) {
+            version = version.substring(1);
+        }
+        return version;
     }
 }

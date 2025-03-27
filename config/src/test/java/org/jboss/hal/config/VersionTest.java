@@ -15,8 +15,9 @@
  */
 package org.jboss.hal.config;
 
-import org.junit.Assert;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class VersionTest {
 
@@ -24,77 +25,77 @@ public class VersionTest {
     public void parseEap() {
         String input = "3.0.2.Final-redhat-1";
         Version version = org.jboss.hal.config.Version.parseVersion(input);
-        Assert.assertEquals(version.getMajor(), 3);
-        Assert.assertEquals(version.getMinor(), 0);
-        Assert.assertEquals(version.getMicro(), 2);
-        Assert.assertEquals(version.getQualifier(), "Final-redhat-1");
+        assertEquals(3, version.getMajor());
+        assertEquals(0, version.getMinor());
+        assertEquals(2, version.getMicro());
+        assertEquals("Final-redhat-1", version.getQualifier());
     }
 
     @Test
     public void parseSnapshot() {
         String input = "3.0.1-SNAPSHOT";
         Version version = org.jboss.hal.config.Version.parseVersion(input);
-        Assert.assertEquals(version.getMajor(), 3);
-        Assert.assertEquals(version.getMinor(), 0);
-        Assert.assertEquals(version.getMicro(), 1);
-        Assert.assertEquals(version.getQualifier(), "SNAPSHOT");
+        assertEquals(3, version.getMajor());
+        assertEquals(0, version.getMinor());
+        assertEquals(1, version.getMicro());
+        assertEquals("SNAPSHOT", version.getQualifier());
     }
 
     @Test
     public void parseOnlyNumbers() {
         String input = "3.0.1";
         Version version = org.jboss.hal.config.Version.parseVersion(input);
-        Assert.assertEquals(version.getMajor(), 3);
-        Assert.assertEquals(version.getMinor(), 0);
-        Assert.assertEquals(version.getMicro(), 1);
-        Assert.assertEquals(version.getQualifier(), "");
+        assertEquals(3, version.getMajor());
+        assertEquals(0, version.getMinor());
+        assertEquals(1, version.getMicro());
+        assertEquals("", version.getQualifier());
     }
 
     @Test
     public void parseFinalVersion() {
         String input = "3.0.1.Final";
         Version version = org.jboss.hal.config.Version.parseVersion(input);
-        Assert.assertEquals(version.getMajor(), 3);
-        Assert.assertEquals(version.getMinor(), 0);
-        Assert.assertEquals(version.getMicro(), 1);
-        Assert.assertEquals(version.getQualifier(), "Final");
+        assertEquals(3, version.getMajor());
+        assertEquals(0, version.getMinor());
+        assertEquals(1, version.getMicro());
+        assertEquals("Final", version.getQualifier());
     }
 
     @Test
     public void newSnapshot() {
         Version version = new Version(3, 0, 1, "SNAPSHOT");
-        Assert.assertEquals(version.getMajor(), 3);
-        Assert.assertEquals(version.getMinor(), 0);
-        Assert.assertEquals(version.getMicro(), 1);
-        Assert.assertEquals(version.getQualifier(), "SNAPSHOT");
+        assertEquals(3, version.getMajor());
+        assertEquals(0, version.getMinor());
+        assertEquals(1, version.getMicro());
+        assertEquals("SNAPSHOT", version.getQualifier());
     }
 
     @Test
     public void newOnlyNumbers() {
         Version version = new Version(3, 0, 1);
-        Assert.assertEquals(version.getMajor(), 3);
-        Assert.assertEquals(version.getMinor(), 0);
-        Assert.assertEquals(version.getMicro(), 1);
-        Assert.assertEquals(version.getQualifier(), "");
+        assertEquals(3, version.getMajor());
+        assertEquals(0, version.getMinor());
+        assertEquals(1, version.getMicro());
+        assertEquals("", version.getQualifier());
     }
 
     @Test
     public void newFinalVersion() {
         String input = "3.0.1.Final";
         Version version = new Version(input);
-        Assert.assertEquals(version.getMajor(), 3);
-        Assert.assertEquals(version.getMinor(), 0);
-        Assert.assertEquals(version.getMicro(), 1);
-        Assert.assertEquals(version.getQualifier(), "Final");
+        assertEquals(3, version.getMajor());
+        assertEquals(0, version.getMinor());
+        assertEquals(1, version.getMicro());
+        assertEquals("Final", version.getQualifier());
     }
 
     @Test
     public void emptyVersion() {
         Version version = Version.parseVersion("");
-        Assert.assertEquals(version.getMajor(), 0);
-        Assert.assertEquals(version.getMinor(), 0);
-        Assert.assertEquals(version.getMicro(), 0);
-        Assert.assertEquals(version.getQualifier(), "");
+        assertEquals(0, version.getMajor());
+        assertEquals(0, version.getMinor());
+        assertEquals(0, version.getMicro());
+        assertEquals("", version.getQualifier());
     }
 
 }

@@ -50,11 +50,8 @@ public class Version implements Comparable<Version> {
      * See <code>Version(String)</code> for the format of the version string.
      *
      * @param version String representation of the version identifier. Leading and trailing whitespace will be ignored.
-     *
      * @return A <code>Version</code> object representing the version identifier. If <code>version</code> is <code>null</code>
-     *         or the empty string then <code>EMPTY_VERSION</code> will be returned.
-     *
-     * @throws IllegalArgumentException If <code>version</code> is improperly formatted.
+     * or the empty string or cannot be parsed then <code>EMPTY_VERSION</code> will be returned.
      */
     public static Version parseVersion(String version) {
         if (version == null) {
@@ -62,11 +59,15 @@ public class Version implements Comparable<Version> {
         }
 
         version = version.trim();
-        if (version.length() == 0) {
+        if (version.isEmpty()) {
             return EMPTY_VERSION;
         }
 
-        return new Version(version);
+        try {
+            return new Version(version);
+        } catch (IllegalArgumentException e) {
+            return EMPTY_VERSION;
+        }
     }
 
     private final int major;
@@ -83,7 +84,6 @@ public class Version implements Comparable<Version> {
      * @param major Major component of the version identifier.
      * @param minor Minor component of the version identifier.
      * @param micro Micro component of the version identifier.
-     *
      * @throws IllegalArgumentException If the numerical components are negative.
      */
     public Version(int major, int minor, int micro) {
@@ -93,12 +93,11 @@ public class Version implements Comparable<Version> {
     /**
      * Creates a version identifier from the specifed components.
      *
-     * @param major Major component of the version identifier.
-     * @param minor Minor component of the version identifier.
-     * @param micro Micro component of the version identifier.
+     * @param major     Major component of the version identifier.
+     * @param minor     Minor component of the version identifier.
+     * @param micro     Micro component of the version identifier.
      * @param qualifier Qualifier component of the version identifier. If <code>null</code> is specified, then the qualifier
-     *        will be set to the empty string.
-     *
+     *                  will be set to the empty string.
      * @throws IllegalArgumentException If the numerical components are negative or the qualifier string is invalid.
      */
     public Version(int major, int minor, int micro, String qualifier) {
@@ -128,11 +127,10 @@ public class Version implements Comparable<Version> {
      * digit ::= [0..9]
      * alpha ::= [a..zA..Z]
      * </pre>
-     *
+     * <p>
      * There must be no whitespace in version.
      *
      * @param version String representation of the version identifier.
-     *
      * @throws IllegalArgumentException If <code>version</code> is improperly formatted.
      */
     public Version(String version) {
@@ -247,7 +245,7 @@ public class Version implements Comparable<Version> {
      */
     public String toString() {
         String base = major + SEPARATOR + minor + SEPARATOR + micro;
-        if (qualifier.length() == 0) {
+        if (qualifier.isEmpty()) {
             return base;
         } else {
             return base + SEPARATOR + qualifier;
@@ -271,9 +269,8 @@ public class Version implements Comparable<Version> {
      * qualifier component is equal (using <code>String.equals</code>).
      *
      * @param object The <code>Version</code> object to be compared.
-     *
      * @return <code>true</code> if <code>object</code> is a <code>Version</code> and is equal to this object;
-     *         <code>false</code> otherwise.
+     * <code>false</code> otherwise.
      */
     public boolean equals(Object object) {
         if (object == this) { // quicktest
@@ -304,10 +301,8 @@ public class Version implements Comparable<Version> {
      * qualifier component is equal (using <code>String.compareTo</code>).
      *
      * @param other The <code>Version</code> object to be compared.
-     *
      * @return A negative integer, zero, or a positive integer if this object is less than, equal to, or greater than the
-     *         specified <code>Version</code> object.
-     *
+     * specified <code>Version</code> object.
      * @throws ClassCastException If the specified object is not a <code>Version</code>.
      */
     public int compareTo(Version other) {
@@ -337,9 +332,7 @@ public class Version implements Comparable<Version> {
      * Checks if this version is greater than the other version.
      *
      * @param other the other version to compare to
-     *
      * @return {@code true} if this version is greater than the other version or {@code false} otherwise
-     *
      * @see #compareTo(Version other)
      */
     public boolean greaterThan(Version other) {
@@ -350,9 +343,7 @@ public class Version implements Comparable<Version> {
      * Checks if this version is greater than or equal to the other version.
      *
      * @param other the other version to compare to
-     *
      * @return {@code true} if this version is greater than or equal to the other version or {@code false} otherwise
-     *
      * @see #compareTo(Version other)
      */
     public boolean greaterThanOrEqualTo(Version other) {
@@ -363,9 +354,7 @@ public class Version implements Comparable<Version> {
      * Checks if this version is less than the other version.
      *
      * @param other the other version to compare to
-     *
      * @return {@code true} if this version is less than the other version or {@code false} otherwise
-     *
      * @see #compareTo(Version other)
      */
     public boolean lessThan(Version other) {
@@ -376,9 +365,7 @@ public class Version implements Comparable<Version> {
      * Checks if this version is less than or equal to the other version.
      *
      * @param other the other version to compare to
-     *
      * @return {@code true} if this version is less than or equal to the other version or {@code false} otherwise
-     *
      * @see #compareTo(Version other)
      */
     public boolean lessThanOrEqualTo(Version other) {
