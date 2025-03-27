@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- Make `Version.parseVersion(String)` lenient
+
 ## [3.7.9] - 2025-03-19
 
 ### Fixed
