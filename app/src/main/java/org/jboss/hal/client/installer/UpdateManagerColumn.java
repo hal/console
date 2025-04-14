@@ -44,6 +44,11 @@ public class UpdateManagerColumn extends StaticItemColumn {
                         .nextColumn(Ids.UPDATE_MANAGER_CHANNEL)
                         .onPreview(new PreviewContent<>(resources.constants().channelDetails(),
                                 resources.previews().updateManagerChannels()))
+                        .build(),
+                new StaticItem.Builder(Names.CERTIFICATES)
+                        .nextColumn(Ids.UPDATE_MANAGER_CERTIFICATE)
+                        .onPreview(new PreviewContent<>(resources.constants().updateCertificates(),
+                                resources.previews().updateManagerCertificates()))
                         .build()));
     }
 }
