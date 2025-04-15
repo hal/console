@@ -237,7 +237,9 @@ public class ServerGroupActions {
     }
 
     public void resume(ServerGroup serverGroup) {
-        List<Server> suspendedServers = serverGroup.getServers(Server::isSuspended);
+        // Suspended state is not available (only data from server-config is),
+        // So let's use the started state from server-config, which is good enough here.
+        List<Server> suspendedServers = serverGroup.getServers(Server::isStarted);
         if (!suspendedServers.isEmpty()) {
             prepare(serverGroup, suspendedServers, RESUME);
             Operation operation = new Operation.Builder(serverGroup.getAddress(), RESUME_SERVERS).build();
