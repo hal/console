@@ -30,7 +30,19 @@ import elemental2.dom.HTMLElement;
 
 import static org.jboss.elemento.Elements.div;
 import static org.jboss.elemento.Elements.span;
-import static org.jboss.hal.resources.CSS.*;
+import static org.jboss.hal.resources.CSS.progress;
+import static org.jboss.hal.resources.CSS.progressBar;
+import static org.jboss.hal.resources.CSS.progressBarDanger;
+import static org.jboss.hal.resources.CSS.progressBarRemaining;
+import static org.jboss.hal.resources.CSS.progressBarSuccess;
+import static org.jboss.hal.resources.CSS.progressBarWarning;
+import static org.jboss.hal.resources.CSS.progressContainer;
+import static org.jboss.hal.resources.CSS.progressDescription;
+import static org.jboss.hal.resources.CSS.progressDescriptionLeft;
+import static org.jboss.hal.resources.CSS.progressLabelRight;
+import static org.jboss.hal.resources.CSS.progressLabelTopRight;
+import static org.jboss.hal.resources.CSS.srOnly;
+import static org.jboss.hal.resources.CSS.width;
 import static org.jboss.hal.resources.UIConstants.PROGRESSBAR;
 import static org.jboss.hal.resources.UIConstants.ROLE;
 import static org.jboss.hal.resources.UIConstants.TOGGLE;
@@ -106,45 +118,43 @@ public class Utilization implements IsElement {
     }
 
     public void update(long current, long total) {
-        if (current <= total) {
-            this.total = total;
-            double currentPercent = Math.round(((double) current) / ((double) total) * 100.0);
-            long remaining = total - current;
-            double remainingPercent = 100.0 - currentPercent;
-
-            valueBar.setAttribute(aria(VALUE_NOW), String.valueOf(current));
-            valueBar.setAttribute(aria(VALUE_MAX), String.valueOf(total));
-            valueBar.style.width = width(currentPercent + "%");
-            Tooltip.element(valueBar).setTitle(MESSAGES.used(currentPercent));
-            // noinspection HardCodedStringLiteral
-            valueElement.innerHTML = new SafeHtmlBuilder()
-                    .appendHtmlConstant("<strong>")
-                    .appendEscaped(MESSAGES.currentOfTotal(current, total))
-                    .appendHtmlConstant("</strong>")
-                    .appendEscaped(" " + unit)
-                    .toSafeHtml().asString();
-
-            remainingBar.setAttribute(aria(VALUE_NOW), String.valueOf(remaining));
-            remainingBar.setAttribute(aria(VALUE_MAX), String.valueOf(total));
-            remainingBar.style.width = width(remainingPercent + "%");
-            Tooltip.element(remainingBar).setTitle(MESSAGES.available(remainingPercent));
-            remainingElement.textContent = MESSAGES.available(remainingPercent);
-
-            if (thresholds) {
-                valueBar.classList.remove(progressBarDanger);
-                valueBar.classList.remove(progressBarWarning);
-                valueBar.classList.remove(progressBarSuccess);
-                if (currentPercent > 90) {
-                    valueBar.classList.add(progressBarDanger);
-                } else if (currentPercent > 75) {
-                    valueBar.classList.add(progressBarWarning);
-                } else {
-                    valueBar.classList.add(progressBarSuccess);
-                }
-            }
-
-        } else {
+        if (current > total) {
             logger.error("Invalid values for utilization bar chart: current > total ({} > {})", current, total);
+        }
+        this.total = total;
+        double currentPercent = Math.round(((double) current) / ((double) total) * 100.0);
+        long remaining = total - current;
+        double remainingPercent = 100.0 - currentPercent;
+
+        valueBar.setAttribute(aria(VALUE_NOW), String.valueOf(current));
+        valueBar.setAttribute(aria(VALUE_MAX), String.valueOf(total));
+        valueBar.style.width = width(currentPercent + "%");
+        Tooltip.element(valueBar).setTitle(MESSAGES.used(currentPercent));
+        // noinspection HardCodedStringLiteral
+        valueElement.innerHTML = new SafeHtmlBuilder()
+                .appendHtmlConstant("<strong>")
+                .appendEscaped(MESSAGES.currentOfTotal(current, total))
+                .appendHtmlConstant("</strong>")
+                .appendEscaped(" " + unit)
+                .toSafeHtml().asString();
+
+        remainingBar.setAttribute(aria(VALUE_NOW), String.valueOf(remaining));
+        remainingBar.setAttribute(aria(VALUE_MAX), String.valueOf(total));
+        remainingBar.style.width = width(remainingPercent + "%");
+        Tooltip.element(remainingBar).setTitle(MESSAGES.available(remainingPercent));
+        remainingElement.textContent = MESSAGES.available(remainingPercent);
+
+        if (thresholds) {
+            valueBar.classList.remove(progressBarDanger);
+            valueBar.classList.remove(progressBarWarning);
+            valueBar.classList.remove(progressBarSuccess);
+            if (currentPercent > 90) {
+                valueBar.classList.add(progressBarDanger);
+            } else if (currentPercent > 75) {
+                valueBar.classList.add(progressBarWarning);
+            } else {
+                valueBar.classList.add(progressBarSuccess);
+            }
         }
     }
 
