@@ -469,6 +469,7 @@ class BrowseContentElement implements IsElement, Attachable {
         });
         form.setSaveCallback((f, model) -> {
             String path = targetPathItem.getValue();
+            String safePath = SafeHtmlUtils.htmlEscape(path);
             ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content.getName());
 
             ModelNode contentNode = new ModelNode();
@@ -477,7 +478,7 @@ class BrowseContentElement implements IsElement, Attachable {
             } else {
                 contentNode.get(INPUT_STREAM_INDEX).set(0);
             }
-            contentNode.get(TARGET_PATH).set(path);
+            contentNode.get(TARGET_PATH).set(safePath);
             Operation operation = new Operation.Builder(address, ADD_CONTENT)
                     .param(CONTENT, new ModelNode().add(contentNode))
                     .build();
@@ -490,7 +491,7 @@ class BrowseContentElement implements IsElement, Attachable {
                     .subscribe(() -> {
                         MessageEvent.fire(eventBus,
                                 Message.success(resources.messages().newContentSuccess(content.getName(), path)));
-                        tree.selectNode(NODE_ID.apply(path));
+                        tree.selectNode(NODE_ID.apply(safePath));
                     });
         });
 
@@ -583,7 +584,8 @@ class BrowseContentElement implements IsElement, Attachable {
         if (selection != null) {
             String path = selection.data.path;
             DialogFactory.buildConfirmation(resources.constants().removeContent(),
-                    resources.messages().removeContentQuestion(content.getName(), path), null, Dialog.Size.MEDIUM,
+                    resources.messages().removeContentQuestion(content.getName(), SafeHtmlUtils.fromTrustedString(path)), null,
+                    Dialog.Size.MEDIUM,
                     () -> {
                         ResourceAddress address = new ResourceAddress().add(DEPLOYMENT, content.getName());
                         Operation operation = new Operation.Builder(address, REMOVE_CONTENT)
@@ -595,7 +597,9 @@ class BrowseContentElement implements IsElement, Attachable {
                                 .andThen(awaitTreeReady())
                                 .subscribe(() -> {
                                     MessageEvent.fire(eventBus, Message.success(
-                                            resources.messages().removeContentSuccess(content.getName(), path)));
+                                            resources.messages()
+                                                    .removeContentSuccess(content.getName(),
+                                                            SafeHtmlUtils.fromTrustedString(path))));
                                     noSelection();
                                 });
                     }).show();
@@ -707,7 +711,7 @@ class BrowseContentElement implements IsElement, Attachable {
         setVisible(previewContainer, false);
         adjustEditorHeight();
 
-        editorStatus.textContent = contentEntry.name + " - " + Format.humanReadableFileSize(contentEntry.fileSize);
+        editorStatus.innerHTML = contentEntry.name + " - " + Format.humanReadableFileSize(contentEntry.fileSize);
         loadContent(contentEntry, result -> {
             editor.setModeFromPath(contentEntry.name);
             editor.getEditor().getSession().setValue(result);
@@ -802,6 +806,6 @@ class BrowseContentElement implements IsElement, Attachable {
     }
 
     private Completable awaitTreeReady() {
-        return Completable.fromEmitter(emitter -> tree.onReady((event, any) -> emitter.onCompleted()));
+        return Completable.fromEmitter(emitter -> tree.onReady((event) -> emitter.onCompleted()));
     }
 }

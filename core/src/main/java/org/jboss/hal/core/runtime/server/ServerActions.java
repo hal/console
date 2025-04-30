@@ -369,7 +369,7 @@ public class ServerActions implements Timeouts {
                 new MetadataProcessor.MetadataCallback() {
                     @Override
                     public void onMetadata(Metadata metadata) {
-                        String id = Ids.build(SUSPEND, server.getName(), Ids.FORM);
+                        String id = Ids.build(SUSPEND, server.getName(), FORM);
                         Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, SUSPEND).build();
 
                         Dialog dialog = DialogFactory.buildConfirmation(
@@ -442,7 +442,7 @@ public class ServerActions implements Timeouts {
                 new MetadataProcessor.MetadataCallback() {
                     @Override
                     public void onMetadata(Metadata metadata) {
-                        String id = Ids.build(STOP, server.getName(), Ids.FORM);
+                        String id = Ids.build(STOP, server.getName(), FORM);
                         Form<ModelNode> form = new OperationFormBuilder<>(id, metadata, STOP)
                                 .include(TIMEOUT).build();
 
@@ -576,9 +576,9 @@ public class ServerActions implements Timeouts {
             @Override
             public void onSuccess(ServerUrl url) {
                 Elements.removeChildrenFrom(element);
-                element.appendChild(a(url.getUrl())
+                element.appendChild(a(url.getUrl().asString())
                         .apply(a -> a.target = server.getId())
-                        .textContent(url.getUrl()).element());
+                        .innerHtml(url.getUrl()).element());
                 String icon;
                 String tooltip;
                 if (url.isCustom()) {
@@ -676,7 +676,7 @@ public class ServerActions implements Timeouts {
                 dialog.show();
                 form.edit(new ModelNode());
                 if (serverUrl != null) {
-                    urlItem.setValue(serverUrl.getUrl());
+                    urlItem.setValue(serverUrl.getUrl().asString());
                 }
             }
         });

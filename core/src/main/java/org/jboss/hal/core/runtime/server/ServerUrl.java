@@ -15,6 +15,9 @@
  */
 package org.jboss.hal.core.runtime.server;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+
 public class ServerUrl {
 
     private final String url;
@@ -30,8 +33,8 @@ public class ServerUrl {
         return "ServerUrl(" + url + '\'' + ", custom=" + custom + ')';
     }
 
-    public String getUrl() {
-        return url;
+    public SafeHtml getUrl() {
+        return SafeHtmlUtils.fromString(url);
     }
 
     public boolean isCustom() {

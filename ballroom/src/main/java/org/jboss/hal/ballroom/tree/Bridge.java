@@ -26,10 +26,12 @@ class Bridge<T> {
     @JsMethod(namespace = GLOBAL, name = "$")
     static native <T> Bridge<T> select(String selector);
 
-    native void jstree(Options options);
+    native void jstree(Options<T> options);
 
     @SuppressWarnings("SameParameterValue")
     native Api<T> jstree(boolean _true);
+
+    native void on(String event, SimpleEventHandler handler);
 
     native <E> void on(String event, EventHandler<E> handler);
 }
