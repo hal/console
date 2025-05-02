@@ -30,9 +30,10 @@ public class ServerUrlStorage {
         storage = WebStorageWindow.of(window).localStorage;
     }
 
-    String load(String host, String server) {
+    ServerUrl load(String host, String server) {
         if (storage != null) {
-            return storage.getItem(id(host, server));
+            String payload = storage.getItem(id(host, server));
+            return ServerUrl.fromPayload(payload);
         }
         return null;
     }
@@ -41,9 +42,9 @@ public class ServerUrlStorage {
         return load(host, server) != null;
     }
 
-    void save(String host, String server, String url) {
+    void save(String host, String server, ServerUrl url) {
         if (storage != null) {
-            storage.setItem(id(host, server), url);
+            storage.setItem(id(host, server), url.toBase64String());
         }
     }
 
