@@ -30,7 +30,6 @@ import static java.util.Comparator.comparing;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.BOUND;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.BOUND_ADDRESS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.BOUND_PORT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
@@ -47,7 +46,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDING_GROUP;
 class ServerUrlTasks {
 
     private static final String SOCKET_BINDING_GROUP_KEY = "socket-binding-group";
-    static final String URL_KEY = "url";
+    static final String SERVER_URL_KEY = "serverUrl";
 
     /**
      * Reads the socket binding group which is used to look for a {@code http} or {@code https} socket binding resource.
@@ -96,7 +95,7 @@ class ServerUrlTasks {
     }
 
     /**
-     * Checks whether there's a {@code http} or {@code https} socket binding and puts the name of that socket binding into the
+     * Checks whether there's a {@code http} or {@code https} socket binding and puts an instance of {@link ServerUrl} into the
      * context. Aborts otherwise. Expects the name of the socket binding group in the context.
      */
     static final class ReadSocketBinding implements Task<FlowContext> {
@@ -134,14 +133,7 @@ class ServerUrlTasks {
                     if (optional.isPresent()) {
                         Property property = optional.get();
                         if (property.getValue().hasDefined(BOUND_ADDRESS)) {
-                            StringBuilder url = new StringBuilder();
-                            url.append(optional.get().getName())
-                                    .append("://")
-                                    .append(optional.get().getValue().get(BOUND_ADDRESS).asString());
-                            if (property.getValue().hasDefined(BOUND_PORT)) {
-                                url.append(":").append(property.getValue().get(BOUND_PORT).asInt());
-                            }
-                            return context.resolve(URL_KEY, new ServerUrl(url.toString(), false));
+                            return context.resolve(SERVER_URL_KEY, ServerUrl.fromManagementModel(property));
                         } else {
                             return context
                                     .reject("ReadSocketBinding: No address defined for " + sbg + " / " + property.getName());

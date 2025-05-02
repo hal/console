@@ -43,12 +43,12 @@ import static org.jboss.elemento.Elements.div;
 import static org.jboss.elemento.Elements.p;
 import static org.jboss.hal.ballroom.dialog.Dialog.PRIMARY_POSITION;
 import static org.jboss.hal.ballroom.table.RefreshMode.HOLD;
-import static org.jboss.hal.client.bootstrap.endpoint.Endpoint.SCHEME;
 import static org.jboss.hal.client.bootstrap.endpoint.EndpointDialog.Mode.ADD;
 import static org.jboss.hal.client.bootstrap.endpoint.EndpointDialog.Mode.SELECT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PORT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SCHEME;
 
 /**
  * Modal dialog to manage bootstrap servers. The dialog offers a page to connect to an existing server and a page to add new
