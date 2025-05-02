@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- [HAL-2019](https://issues.redhat.com/browse/HAL-2019): Allow only http and https as schema for URLs in the "Edit URL" dialog
+
 ## [3.7.10] - 2025-03-27
 
 ### Fixed
