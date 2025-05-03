@@ -128,10 +128,17 @@ public interface ModelDescriptionConstants {
     String CANCEL_NON_PROGRESSING_OPERATION = "cancel-non-progressing-operation";
     String CANCEL_OPERATION = "cancel";
     String CANCELLED = "cancelled";
+    String CERTIFICATES = "certificates";
     String CAPABILITY_REFERENCE = "capability-reference";
+    String CERT_FILE = "cert-file";
     String CERTIFICATE_AUTHORITY = "certificate-authority";
     String CERTIFICATE_AUTHORITY_ACCOUNT = "certificate-authority-account";
+    String CERTIFICATE_CONTENT = "certificate-content";
     String CERTIFICATE_DETAILS = "certificate-details";
+    String CERTIFICATE_IMPORT = "certificate-import";
+    String CERTIFICATE_INFO = "certificate-info";
+    String CERTIFICATE_PARSE = "certificate-parse";
+    String CERTIFICATE_REMOVE = "certificate-remove";
     String CHAINED_PRINCIPAL_TRANSFORMER = "chained-principal-transformer";
     String CHANGE_ACCOUNT_KEY = "change-account-key";
     String CHANGE_ALIAS = "change-alias";
@@ -365,6 +372,7 @@ public interface ModelDescriptionConstants {
     String FILTERING_KEY_STORE = "filtering-key-store";
     String FILTERS = "filters";
     String FIND_NON_PROGRESSING_OPERATION = "find-non-progressing-operation";
+    String FINGERPRINT = "fingerprint";
     String FIXED_PORT = "fixed-port";
     String FLAG = "flag";
     String FLUSH_ALL_CONNECTION_IN_POOL = "flush-all-connection-in-pool";
@@ -500,6 +508,7 @@ public interface ModelDescriptionConstants {
     String JVM = "jvm";
     String KERBEROS_SECURITY_FACTORY = "kerberos-security-factory";
     String KEY_ALIAS = "key-alias";
+    String KEY_ID = "key-id";
     String KEY_MANAGER = "key-manager";
     String KEY_OVERRIDES = "key-overrides";
     String KEY_SIZE = "key-size";
@@ -1039,6 +1048,7 @@ public interface ModelDescriptionConstants {
     String TRUST_MANAGER = "trust-manager";
     String TRUST_MODULE = "trust-module";
     String TYPE = "type";
+    String UNACCEPTED_CERTIFICATE="unaccepted-certificates";
     String UNDEFINE_ATTRIBUTE_OPERATION = "undefine-attribute";
     String UNDEFINED = "undefined";
     String UNDEPLOY = "undeploy";
