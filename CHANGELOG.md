@@ -11,6 +11,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - [HAL-2019](https://issues.redhat.com/browse/HAL-2019): Allow only http and https as schema for URLs in the "Edit URL" dialog
 
+### Fixed
+
+- [HAL-1955](https://issues.redhat.com/browse/HAL-1955) Domain mode has server-group missing Resume operation
+
+### Upgrades
+
+- Bump ACE Editor to 1.41.0
+- Bump base-x to 3.0.11
+- Bump Mockito to 5.17.0
+
 ## [3.7.10] - 2025-03-27
 
 ### Fixed
