@@ -51,7 +51,7 @@ public class Version implements Comparable<Version> {
      *
      * @param version String representation of the version identifier. Leading and trailing whitespace will be ignored.
      * @return A <code>Version</code> object representing the version identifier. If <code>version</code> is <code>null</code>
-     * or the empty string or cannot be parsed then <code>EMPTY_VERSION</code> will be returned.
+     *         or the empty string or cannot be parsed then <code>EMPTY_VERSION</code> will be returned.
      */
     public static Version parseVersion(String version) {
         if (version == null) {
@@ -93,11 +93,11 @@ public class Version implements Comparable<Version> {
     /**
      * Creates a version identifier from the specifed components.
      *
-     * @param major     Major component of the version identifier.
-     * @param minor     Minor component of the version identifier.
-     * @param micro     Micro component of the version identifier.
+     * @param major Major component of the version identifier.
+     * @param minor Minor component of the version identifier.
+     * @param micro Micro component of the version identifier.
      * @param qualifier Qualifier component of the version identifier. If <code>null</code> is specified, then the qualifier
-     *                  will be set to the empty string.
+     *        will be set to the empty string.
      * @throws IllegalArgumentException If the numerical components are negative or the qualifier string is invalid.
      */
     public Version(int major, int minor, int micro, String qualifier) {
@@ -270,7 +270,7 @@ public class Version implements Comparable<Version> {
      *
      * @param object The <code>Version</code> object to be compared.
      * @return <code>true</code> if <code>object</code> is a <code>Version</code> and is equal to this object;
-     * <code>false</code> otherwise.
+     *         <code>false</code> otherwise.
      */
     public boolean equals(Object object) {
         if (object == this) { // quicktest
@@ -302,7 +302,7 @@ public class Version implements Comparable<Version> {
      *
      * @param other The <code>Version</code> object to be compared.
      * @return A negative integer, zero, or a positive integer if this object is less than, equal to, or greater than the
-     * specified <code>Version</code> object.
+     *         specified <code>Version</code> object.
      * @throws ClassCastException If the specified object is not a <code>Version</code>.
      */
     public int compareTo(Version other) {
