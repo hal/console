@@ -234,7 +234,7 @@ class RestResourcePreview extends PreviewContent<RestResource> {
                                     Elements.removeChildrenFrom(linkContainer);
                                     //noinspection UnstableApiUsage
                                     linkContainer.appendChild(a().css(clickable)
-                                            .on(click, e -> specifyParameters(url.getUrl(), link, Splitter.on(',')
+                                            .on(click, e -> specifyParameters(url.getUrl().asString(), link, Splitter.on(',')
                                                     .splitToList(linkContainer.dataset.get(LINK))))
                                             .textContent(link).element());
                                 }

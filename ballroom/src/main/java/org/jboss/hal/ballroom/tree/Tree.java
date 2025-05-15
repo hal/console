@@ -175,7 +175,7 @@ public class Tree<T> implements IsElement, Attachable {
 
     // ------------------------------------------------------ events
 
-    public void onReady(EventHandler<Void> handler) {
+    public void onReady(SimpleEventHandler handler) {
         bridge().on("ready.jstree", handler);
     }
 

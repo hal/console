@@ -94,8 +94,9 @@ class ConfigurationChangeDisplay implements ItemDisplay<ConfigurationChange> {
                 boolean allowedProperties = !(prop.getName().equals(OPERATION) || prop.getName()
                         .equals(ADDRESS) || prop.getName().equals(OPERATION_HEADERS));
                 if (allowedProperties) {
+                    String safeValue = SafeHtmlUtils.htmlEscape(prop.getValue().asString());
                     html.append(SafeHtmlUtils.fromTrustedString(
-                            "&nbsp;&nbsp;&nbsp;&nbsp;" + prop.getName() + COLON + prop.getValue() + "<br/>"));
+                            "&nbsp;&nbsp;&nbsp;&nbsp;" + prop.getName() + COLON + safeValue + "<br/>"));
                 }
             });
         });
