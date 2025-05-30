@@ -38,15 +38,23 @@ public class FormHelper {
     public static List<Property> getResettableProperties(Set<String> attributes, Metadata metadata) {
         ResourceDescription description = metadata.getDescription();
 
-        // collect all attributes from the 'requires' list of this attribute
         TreeSet<String> requires = new TreeSet<>();
+        TreeSet<String> parents = new TreeSet<>();
         attributes.forEach(attribute -> {
             ModelNode attributeDescription = description.attributes().get(attribute);
+            // collect all attributes from the 'requires' list of this attribute
             if (attributeDescription != null && attributeDescription.hasDefined(REQUIRES)) {
                 failSafeList(attributeDescription, REQUIRES).forEach(node -> requires.add(node.asString()));
             }
+
+            // collect parents of nested attributes
+            int pos = attribute.indexOf('.');
+            if (pos != -1) {
+                parents.add(attribute.substring(0, pos));
+            }
         });
 
+        attributes.addAll(parents);
         List<String> deprecated = attributes.stream().filter(description.attributes()::isDeprecated)
                 .collect(Collectors.toList());
 
@@ -56,7 +64,8 @@ public class FormHelper {
                         && !requires.contains(prop.getName())
                         && isNillable(prop.getValue())
                         && !isReadonly(prop.getValue())
-                        && !hasAlternatives(prop.getValue(), attributes, deprecated))
+                        && !hasAlternatives(prop.getValue(), attributes, deprecated)
+                        && prop.getName().indexOf('.') == -1)
                 .collect(Collectors.toList());
     }
 
