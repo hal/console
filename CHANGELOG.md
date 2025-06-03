@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- Update i18n resources
+
 ## [3.7.11] - 2025-05-03
 
 ### Added
