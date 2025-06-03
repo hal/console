@@ -11,6 +11,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Update i18n resources
 
+### Fixed
+
+- [HAL-2017](https://issues.redhat.com/browse/HAL-2017): Avoid resetting nested attributes
+
 ## [3.7.11] - 2025-05-03
 
 ### Added
