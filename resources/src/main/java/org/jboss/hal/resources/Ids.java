@@ -861,6 +861,9 @@ public interface Ids {
     String UPDATE_MANAGER_DOMAIN = "update-manager-domain";
     String UPDATE_MANAGER_LIST_UPDATES = "update-manager-list-updates";
     String UPDATE_MANAGER_ARTIFACT_CHANGES = "update-manager-artifact-changes";
+    String UPDATE_MANAGER_CERTIFICATE = "update-manager-certificate";
+    String UPDATE_MANAGER_CERTIFICATE_ADD = "update-manager-certificate-add";
+    String UPDATE_MANAGER_CERTIFICATE_REFRESH = "update-manager-certificate-refresh";
     String UPDATE_MANAGER_CHANNEL = "update-manager-channel";
     String UPDATE_MANAGER_CHANNEL_ADD = "update-manager-channel-add";
     String UPDATE_MANAGER_CHANNEL_CHANGES = "update-manager-channel-changes";
