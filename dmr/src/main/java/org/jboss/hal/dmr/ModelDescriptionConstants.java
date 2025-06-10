@@ -875,6 +875,7 @@ public interface ModelDescriptionConstants {
     String SCHEDULED_COUNT = "scheduled-count";
     String SCHEDULED_THREAD_POOL_MAX_SIZE = "scheduled-thread-pool-max-size";
     String SCHEMA_LOCATIONS = "schema-locations";
+    String SCHEME = "scheme";
     String SCRIPT = "script";
     String SEARCH_BASE_DN = "search-base-dn";
     String SEARCH_PATH = "search-path";

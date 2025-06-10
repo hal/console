@@ -157,7 +157,6 @@ class RestResourcePreview extends PreviewContent<RestResource> {
                                 for (Iterator<String> rmIterator = resourceMethods.iterator(); rmIterator.hasNext();) {
                                     String resourceMethod = rmIterator.next();
                                     if (resourceMethod.contains(" ")) {
-                                        // noinspection UnstableApiUsage
                                         List<String> parts = Splitter.on(' ').limit(2).splitToList(resourceMethod);
                                         if (parts.size() == 2) {
                                             String method = parts.get(0);
@@ -260,9 +259,8 @@ class RestResourcePreview extends PreviewContent<RestResource> {
 
                                 } else {
                                     Elements.removeChildrenFrom(linkContainer);
-                                    // noinspection UnstableApiUsage
                                     linkContainer.appendChild(a().css(clickable)
-                                            .on(click, e -> specifyParameters(url.getUrl().asString(), link, Splitter.on(',')
+                                            .on(click, e -> specifyParameters(url.getUrl(), link, Splitter.on(',')
                                                     .splitToList(linkContainer.dataset.get(LINK))))
                                             .textContent(link).element());
                                 }

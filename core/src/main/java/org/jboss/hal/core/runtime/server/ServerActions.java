@@ -32,9 +32,9 @@ import org.jboss.hal.ballroom.Alert;
 import org.jboss.hal.ballroom.dialog.BlockingDialog;
 import org.jboss.hal.ballroom.dialog.Dialog;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
+import org.jboss.hal.ballroom.form.ButtonItem;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.ballroom.form.SingleSelectBoxItem;
-import org.jboss.hal.ballroom.form.TextBoxItem;
 import org.jboss.hal.core.mbui.dialog.AddResourceDialog;
 import org.jboss.hal.core.mbui.dialog.NameItem;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
@@ -72,8 +72,9 @@ import org.jboss.hal.spi.MessageEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Strings;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 
@@ -92,7 +93,7 @@ import static org.jboss.hal.core.runtime.TimeoutHandler.repeatUntilTimeout;
 import static org.jboss.hal.core.runtime.server.ServerConfigStatus.DISABLED;
 import static org.jboss.hal.core.runtime.server.ServerConfigStatus.STARTED;
 import static org.jboss.hal.core.runtime.server.ServerConfigStatus.STOPPED;
-import static org.jboss.hal.core.runtime.server.ServerUrlTasks.URL_KEY;
+import static org.jboss.hal.core.runtime.server.ServerUrlTasks.SERVER_URL_KEY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES_ONLY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.AUTO_START;
@@ -109,6 +110,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.KILL;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MANAGEMENT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PATH;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PORT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_ATTRIBUTE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_BOOT_ERRORS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
@@ -117,6 +119,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RELOAD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESTART;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESUME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SCHEME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_CONFIG;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER_GROUP;
@@ -135,7 +138,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SUSPEND_STATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SUSPEND_TIMEOUT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SYSTEM_PROPERTY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.UPDATE_AUTO_START_WITH_SERVER_STATUS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.URL;
 import static org.jboss.hal.dmr.ModelNodeHelper.asEnumValue;
 import static org.jboss.hal.dmr.ModelNodeHelper.getOrDefault;
 import static org.jboss.hal.flow.Flow.sequential;
@@ -149,6 +151,7 @@ import static org.jboss.hal.resources.UIConstants.SHORT_TIMEOUT;
 
 public class ServerActions implements Timeouts {
 
+    private static final ServerUrlResources RESOURCES = GWT.create(ServerUrlResources.class);
     private static final Logger logger = LoggerFactory.getLogger(ServerActions.class);
 
     private static AddressTemplate serverConfigTemplate(Server server) {
@@ -604,9 +607,9 @@ public class ServerActions implements Timeouts {
             @Override
             public void onSuccess(ServerUrl url) {
                 Elements.removeChildrenFrom(element);
-                element.appendChild(a(url.getUrl().asString())
+                element.appendChild(a(url.getUrl())
                         .apply(a -> a.target = server.getId())
-                        .innerHtml(url.getUrl()).element());
+                        .innerHtml(SafeHtmlUtils.fromString(url.getUrl())).element());
                 String icon;
                 String tooltip;
                 if (url.isCustom()) {
@@ -621,20 +624,24 @@ public class ServerActions implements Timeouts {
         });
     }
 
+    /** Reads the URL using the information from the specified server instance */
+    private void readUrl(Server server, AsyncCallback<ServerUrl> callback) {
+        readUrl(server.isStandalone(), server.getHost(), server.getServerGroup(), server.getName(), callback);
+    }
+
     /** Reads the URL using the provided parameters */
     public void readUrl(boolean standalone, String host, String serverGroup, String server,
             AsyncCallback<ServerUrl> callback) {
         if (serverUrlStorage.hasUrl(host, server)) {
-            ServerUrl serverUrl = new ServerUrl(serverUrlStorage.load(host, server), true);
+            ServerUrl serverUrl = serverUrlStorage.load(host, server);
             callback.onSuccess(serverUrl);
-
         } else {
             List<Task<FlowContext>> tasks = Arrays.asList(
                     new ReadSocketBindingGroup(standalone, serverGroup, dispatcher),
                     new ReadSocketBinding(standalone, host, server, dispatcher));
             sequential(new FlowContext(), tasks)
                     .then(context -> {
-                        callback.onSuccess(context.get(URL_KEY));
+                        callback.onSuccess(context.get(SERVER_URL_KEY));
                         return null;
                     })
                     .catch_(error -> {
@@ -646,30 +653,26 @@ public class ServerActions implements Timeouts {
         }
     }
 
-    /** Reads the URL using the information from the specified server instance */
-    private void readUrl(Server server, AsyncCallback<ServerUrl> callback) {
-        readUrl(server.isStandalone(), server.getHost(), server.getServerGroup(), server.getName(), callback);
-    }
-
     public void editUrl(Server server, Callback callback) {
-        Alert alert = new Alert(Icons.ERROR, resources.messages().serverUrlError());
+        Metadata metadata = Metadata.staticDescription(RESOURCES.serverUrl());
+        Alert readUrlError = new Alert(Icons.ERROR, resources.messages().serverUrlError());
         HTMLElement info = p().element();
-        TextBoxItem urlItem = new TextBoxItem(URL, Names.URL);
-        Form<ModelNode> form = new ModelNodeForm.Builder<>(Ids.SERVER_URL_FORM, Metadata.empty())
-                .unboundFormItem(urlItem)
-                .addOnly()
+        ButtonItem reset = new ButtonItem(Ids.build(Ids.SERVER_URL_FORM, "reset"), resources.constants().reset());
+        Form<ServerUrl> form = new ModelNodeForm.Builder<ServerUrl>(Ids.SERVER_URL_FORM, metadata)
+                .include(SCHEME, HOST, PORT)
+                .unboundFormItem(reset)
+                .unsorted()
                 .onSave((f, changedValues) -> {
-                    String url = urlItem.getValue();
-                    if (Strings.isNullOrEmpty(url)) {
-                        serverUrlStorage.remove(server.getHost(), server.getName());
-                    } else {
-                        serverUrlStorage.save(server.getHost(), server.getName(), url);
+                    ServerUrl serverUrl = f.getModel();
+                    if (!changedValues.isEmpty()) {
+                        serverUrl.makeCustom();
                     }
+                    serverUrlStorage.save(server.getHost(), server.getName(), serverUrl);
                     callback.execute();
                 })
                 .build();
         Dialog dialog = new Dialog.Builder(resources.constants().editURL())
-                .add(alert.element())
+                .add(readUrlError.element())
                 .add(info)
                 .add(form.element())
                 .primary(form::save)
@@ -678,13 +681,18 @@ public class ServerActions implements Timeouts {
                 .closeOnEsc(true)
                 .build();
         dialog.registerAttachable(form);
-        Elements.setVisible(alert.element(), false);
+        Elements.setVisible(readUrlError.element(), false);
         Elements.setVisible(info, false);
+        reset.onClick((event) -> {
+            serverUrlStorage.remove(server.getHost(), server.getName());
+            dialog.close();
+            callback.execute();
+        });
 
         readUrl(server, new AsyncCallback<ServerUrl>() {
             @Override
             public void onFailure(Throwable caught) {
-                Elements.setVisible(alert.element(), true);
+                Elements.setVisible(readUrlError.element(), true);
                 show(null);
             }
 
@@ -701,10 +709,7 @@ public class ServerActions implements Timeouts {
 
             private void show(ServerUrl serverUrl) {
                 dialog.show();
-                form.edit(new ModelNode());
-                if (serverUrl != null) {
-                    urlItem.setValue(serverUrl.getUrl().asString());
-                }
+                form.edit(serverUrl);
             }
         });
     }

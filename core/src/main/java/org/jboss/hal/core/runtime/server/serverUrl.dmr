@@ -1,0 +1,28 @@
+{
+    "comment" => "This file is not used! It's just here to generate the base64 encoded version using https://github.com/hal/dmr.cmd",
+    "description" => "A custom server URL.",
+    "attributes" => {
+        "scheme" => {
+            "type" => STRING,
+            "description" => "The scheme of the URL. Allowed values are \"http\" and \"https\".",
+            "nillable" => false,
+            "allowed" => [
+                "http",
+                "https"
+            ]
+        },
+        "host" => {
+            "type" => STRING,
+            "description" => "The hostname of the server URL. Leave empty to use the value from the management model.",
+            "nillable" => false,
+            "required" => true
+        },
+        "port" => {
+            "type" => INT,
+            "description" => "The port of the server URL. Leave empty for the default port.",
+            "nillable" => true,
+            "min" => 1L,
+            "max" => 65535L
+        }
+    }
+}

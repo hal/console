@@ -278,7 +278,7 @@ class DeploymentPreview extends PreviewContent<DeploymentResource> {
                             for (HTMLElement linkContainer : linkContainers) {
                                 String link = linkContainer.textContent;
                                 Elements.removeChildrenFrom(linkContainer);
-                                linkContainer.appendChild(a(url.getUrl().asString() + link)
+                                linkContainer.appendChild(a(url.getUrl() + link)
                                         .apply(a -> a.target = Ids.hostServer(host, server))
                                         .textContent(link).element());
                             }
