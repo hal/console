@@ -219,7 +219,7 @@ public class Dialog implements IsElement {
     }
 
     /** Please call this method only if the dialog neither have a close icon, esc handler nor a close button. */
-    void close() {
+    public void close() {
         attachables.forEach(Attachable::detach);
         $(SELECTOR_ID).modal("hide");
         if (builder.closed != null) {
