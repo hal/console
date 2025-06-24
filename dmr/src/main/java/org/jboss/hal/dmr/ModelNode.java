@@ -1386,7 +1386,6 @@ public class ModelNode implements Cloneable {
      */
     void readExternal(DataInput in) {
         checkProtect();
-        byte[] b; // used by some of these
         try {
             ModelType type = ModelType.forChar((char) (in.readByte() & 0xff));
             switch (type) {
@@ -1397,17 +1396,13 @@ public class ModelNode implements Cloneable {
                     value = new BigDecimalModelValue(in);
                     return;
                 case BIG_INTEGER:
-                    b = new byte[in.readInt()];
-                    in.readFully(b);
-                    value = new BigIntegerModelValue(new BigInteger(b));
+                    value = new BigIntegerModelValue(in);
                     return;
                 case BOOLEAN:
                     value = BooleanModelValue.valueOf(in.readBoolean());
                     return;
                 case BYTES:
-                    b = new byte[in.readInt()];
-                    in.readFully(b);
-                    value = new BytesModelValue(b);
+                    value = new BytesModelValue(in);
                     return;
                 case DOUBLE:
                     value = new DoubleModelValue(in.readDouble());

@@ -30,9 +30,18 @@ class BigIntegerModelValue extends ModelValue {
         this.value = value;
     }
 
+    BigIntegerModelValue(DataInput in) {
+        super(ModelType.BIG_INTEGER);
+        byte[] b = new byte[in.readInt()];
+        in.readFully(b);
+        this.value = new BigInteger(b);
+    }
+
     @Override
     void writeExternal(DataOutput out) {
-        out.write(value.toByteArray());
+        byte[] b = value.toByteArray();
+        out.writeInt(b.length);
+        out.write(b);
     }
 
     @Override
