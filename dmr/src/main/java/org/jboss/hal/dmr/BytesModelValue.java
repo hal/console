@@ -34,6 +34,13 @@ class BytesModelValue extends ModelValue {
         this.bytes = bytes;
     }
 
+    BytesModelValue(DataInput in) {
+        super(ModelType.BYTES);
+        byte[] b = new byte[in.readInt()];
+        in.readFully(b);
+        this.bytes = b;
+    }
+
     @Override
     void writeExternal(DataOutput out) {
         out.writeInt(bytes.length);
