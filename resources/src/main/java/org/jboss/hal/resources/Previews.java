@@ -368,6 +368,9 @@ public interface Previews extends ClientBundleWithLookup {
     @Source("previews/update-manager/update-manager.html")
     ExternalTextResource updateManager();
 
+    @Source("previews/update-manager/certificates.html")
+    ExternalTextResource updateManagerCertificates();
+
     @Source("previews/update-manager/channels.html")
     ExternalTextResource updateManagerChannels();
 
@@ -402,4 +405,5 @@ public interface Previews extends ClientBundleWithLookup {
             }
         }
     }
+
 }

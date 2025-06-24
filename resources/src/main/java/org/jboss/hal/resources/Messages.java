@@ -547,6 +547,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String changeAccountKeyQuestion(String name);
     String chooseTemplate(String custom);
     String cleanPatchHistory();
+    SafeHtml componentCertificateImportedDescription();
     String configurationChangesDescription();
     String configurePatchTitle();
     String connectedTo(String url);
@@ -593,6 +594,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String identityPasswordSaltedSimpleDigest();
     String identityPasswordScramDigest();
     String identityPasswordSimpleDigest();
+    SafeHtml importComponentCertificateConfirmation();
     String invalidFormat();
     String invalidJNDIName();
     String invalidLength();
@@ -615,6 +617,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String moreThanOneCacheStoreDetails();
     String noBootErrors();
     String nonEmptyRequires(String fields);
+    SafeHtml noFileSelected();
     String nonProgressingOperation();
     String noPatchesForHost();
     String notifications(@PluralCount int count);
@@ -631,6 +634,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String referenceServer(String server);
     String reload(String name);
     String removeConfirmationTitle(String name);
+    SafeHtml removeUpdateCertificateQuestion(String keyID);
     String resetConfirmationTitle(String type);
     String resetStatisticsTitle();
     String resourceAdapterColumnFilterDescription();
