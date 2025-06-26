@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-code-parent</artifactId>
-        <version>3.7.13-SNAPSHOT</version>
+        <version>3.7.13.Final</version>
         <relativePath>../code-parent/pom.xml</relativePath>
     </parent>
 
