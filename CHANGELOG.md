@@ -7,6 +7,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- Update i18n resources
+
+### Fixed
+
+- [HAL-2022](https://issues.redhat.com/browse/HAL-2022): Sync DMR classes with JBoss
+
+### Upgrades
+
+- Bump ACE Editor to 1.43.0
+- Bump Parcel to 2.15.4
+
 ## [3.7.12] - 2025-06-03
 
 ### Changed
