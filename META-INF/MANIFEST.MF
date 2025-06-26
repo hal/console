@@ -5,15 +5,15 @@ Specification-Title: HAL :: Console
 Specification-Version: 3.7
 Specification-Vendor: Red Hat
 Implementation-Title: HAL :: Console
-Implementation-Version: 3.7.12.Final
+Implementation-Version: 3.7.13.Final
 Implementation-Vendor: Red Hat
 Implementation-URL: https://hal.github.io/
 Java-Vendor: Eclipse Adoptium
 Java-Version: 11
 Os-Arch: amd64
 Os-Name: Linux
-Os-Version: 6.11.0-1014-azure
+Os-Version: 6.11.0-1015-azure
 Scm-Connection: scm:git:git@github.com:hal/console.git
-Scm-Revision: 852d2e9ec23fc75d728c1b311c33de71bfecc15d
+Scm-Revision: 4a6a55162528bb0bfd58a90da8c6da826be85aa6
 Scm-Url: https://github.com/hal/console
 
