@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.7.14] - 2025-07-10
+
 ### Added
 
 - [HAL-1962](https://github.com/hal/console/pull/1422): Support execution-records-limit for jdbc-job-repository in subsystem batch-jberet
@@ -727,7 +729,8 @@ Release process failed. Do not use this release!
 - for dependency upgrades
 -->
 
-[Unreleased]: https://github.com/hal/console/compare/v3.7.13...HEAD
+[Unreleased]: https://github.com/hal/console/compare/v3.7.14...HEAD
+[3.7.14]: https://github.com/hal/console/compare/v3.7.13...v3.7.14
 [3.7.13]: https://github.com/hal/console/compare/v3.7.12...v3.7.13
 [3.7.12]: https://github.com/hal/console/compare/v3.7.11...v3.7.12
 [3.7.11]: https://github.com/hal/console/compare/v3.7.10...v3.7.11
