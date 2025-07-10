@@ -7,6 +7,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- [HAL-1962](https://github.com/hal/console/pull/1422): Support execution-records-limit for jdbc-job-repository in subsystem batch-jberet
+
+### Upgrades
+
+- Bump ACE Editor to 1.43.1
+
 ## [3.7.13] - 2025-06-26
 
 ### Changed
