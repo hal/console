@@ -32,7 +32,7 @@
             <metadata address="/{selected.profile}/subsystem=batch-jberet/in-memory-job-repository=*">
                 <h1>In Memory Job Repository</h1>
                 <p>${metadata.getDescription().getDescription()}</p>
-                <table id="batch-in-memory-job-repo-table" title="In Memory Job">
+                <table id="batch-in-memory-job-repo-table" title="In Memory Job" form-ref="batch-in-memory-job-repo-form">
                     <actions>
                         <action handler-ref="add-resource"/>
                         <action handler-ref="remove-resource" scope="selected"
@@ -42,6 +42,12 @@
                         <column name="name" value="${row.getName()}"/>
                     </columns>
                 </table>
+                <form id="batch-in-memory-job-repo-form" title="In Memory Job" auto-save="true"
+                      name-resolver="${form.getModel().getName()}">
+                    <attributes>
+                        <attribute name="execution-records-limit"/>
+                    </attributes>
+                </form>
             </metadata>
         </item>
 
@@ -69,6 +75,7 @@
                                 </templates>
                             </suggest-handler>
                         </attribute>
+                        <attribute name="execution-records-limit"/>
                     </attributes>
                 </form>
             </metadata>
