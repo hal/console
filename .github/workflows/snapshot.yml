@@ -18,6 +18,9 @@ jobs:
           java-version: 11
           distribution: temurin
           cache: maven
+          server-id: central
+          server-username: CENTRAL_USERNAME
+          server-password: CENTRAL_PASSWORD
       - run: $MVN deploy -DskipTests -P prod
         env:
           CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
