@@ -21,10 +21,8 @@ import org.jboss.hal.js.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import elemental2.dom.HTMLScriptElement;
 import elemental2.promise.Promise;
 
-import static elemental2.dom.DomGlobal.document;
 import static elemental2.dom.DomGlobal.fetch;
 
 public class KeycloakSingleton {
@@ -32,7 +30,6 @@ public class KeycloakSingleton {
     private static final Logger logger = LoggerFactory.getLogger(KeycloakSingleton.class);
 
     private static final String ELYTRON_OIDC_CLIENT_WILDFLY_CONSOLE = "/oidc/wildfly-console";
-    private static final String KEYCLOAK_JS_PATH = "/js/keycloak.js";
     private static final String AUTH_SERVER_URL = "auth-server-url";
     private static final String REALM = "realm";
     private static final String RESOURCE = "resource";
@@ -60,31 +57,44 @@ public class KeycloakSingleton {
                     config.url = json.getString(AUTH_SERVER_URL);
                     config.realm = json.getString(REALM);
                     config.clientId = json.getString(RESOURCE);
-                    return loadKeycloakJs(config);
+                    return instantiateKeycloak(config);
                 })
-                .then(config -> {
+                .then(keycloak -> {
                     if (instance != null) {
                         logger.warn("OIDC has already been initialized!");
                     }
-                    instance = new Keycloak(config);
+                    instance = keycloak;
                     return Promise.resolve(instance);
+                })
+                .catch_(error -> {
+                    logger.error("Failed to initialize Keycloak", error);
+                    return Promise.reject("Failed to initialize Keycloak: " + error);
                 });
     }
 
-    private static Promise<KeycloakConfig> loadKeycloakJs(KeycloakConfig config) {
-        return new Promise<>((resolve, reject) -> {
-            // load keycloak.js from Keycloak server
-            HTMLScriptElement script = (HTMLScriptElement) document.createElement("script");
-            script.src = config.url + KEYCLOAK_JS_PATH;
-            script.onload = onLoadEvent -> {
-                resolve.onInvoke(config);
-            };
-            document.head.appendChild(script);
+    private static native Promise<Keycloak> instantiateKeycloak(KeycloakConfig config) /*-{
+        return new Promise(function(resolve, reject) {
+            if (typeof $wnd.keycloakReady === 'undefined' || typeof $wnd.keycloakReady.then !== 'function') {
+                return reject(new Error("The global 'keycloakReady' promise is not available. Check index.js."));
+            }
+            $wnd.keycloakReady.then(function() {
+                if (typeof $wnd.KeycloakInstance !== 'function') {
+                    return reject(new Error("window.KeycloakInstance is not a constructor."));
+                }
+                resolve(new $wnd.KeycloakInstance({
+                    url: config.url,
+                    realm: config.realm,
+                    clientId: config.clientId
+                }));
+            }, function(err) {
+                console.error("Failed to initialize Keycloak from keycloakReady promise", err);
+                reject(err);
+            });
         });
-    }
+    }-*/;
 
     public static native boolean presentAndValid()/*-{
-        var keycloak = $wnd[keycloak];
+        var keycloak = $wnd.keycloak;
         return keycloak != null && !keycloak.isTokenExpired();
     }-*/;
 
