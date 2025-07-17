@@ -26,7 +26,7 @@ import static org.jboss.hal.resources.UIConstants.OBJECT;
 /**
  * https://www.keycloak.org/docs/latest/securing_apps/index.html#_javascript_adapter
  */
-@JsType(isNative = true, namespace = GLOBAL)
+@JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
 public class Keycloak {
 
     public String subject;
