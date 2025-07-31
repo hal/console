@@ -92,7 +92,7 @@
         <version.apt.tools>0.0.3</version.apt.tools>
         <version.compile.testing>0.21.0</version.compile.testing>
         <version.elemental>1.2.0</version.elemental>
-        <version.elemento>1.0.14-gwtcom</version.elemento>
+        <version.elemento>2.0.5</version.elemento>
         <version.gin>2.1.2</version.gin>
         <version.guava>31.1-jre</version.guava>
         <version.gwt>2.11.0</version.gwt>
