@@ -15,6 +15,7 @@
  */
 package org.jboss.hal.client.installer;
 
+import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.table.Table;
 import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.core.mbui.table.ModelNodeTable;
@@ -27,6 +28,7 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import elemental2.dom.HTMLElement;
 
 import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.p;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NEW_VERSION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.OLD_VERSION;
@@ -34,14 +36,17 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.STATUS;
 import static org.jboss.hal.resources.CSS.marginBottomLarge;
 import static org.jboss.hal.resources.CSS.marginTopLarge;
 
-class ListUpdatesStep<S extends Enum<S>> extends WizardStep<UpdateManagerContext, S> {
+class ListUpdatesStep extends WizardStep<UpdateManagerContext, UpdateState> {
 
     private final HTMLElement root;
     private final Table<ModelNode> table;
+    private final HTMLElement noUpdates;
+    private final HTMLElement tableWrapper;
 
     ListUpdatesStep(final String title,
             final SafeHtml tableDescription,
-            final SafeHtml stepsDescription) {
+            final SafeHtml stepsDescription,
+            final SafeHtml noUpdatesFound) {
         super(title);
 
         table = new ModelNodeTable.Builder<ModelNode>(Ids.build(Ids.UPDATE_MANAGER_LIST_UPDATES),
@@ -50,10 +55,15 @@ class ListUpdatesStep<S extends Enum<S>> extends WizardStep<UpdateManagerContext
                 .build();
         registerAttachable(table);
 
+        noUpdates = p().innerHtml(noUpdatesFound).element();
+
         root = div()
-                .add(div().css(marginBottomLarge).innerHtml(tableDescription))
-                .add(table)
-                .add(div().css(marginTopLarge).innerHtml(stepsDescription))
+                .add(tableWrapper = div()
+                        .add(div().css(marginBottomLarge).innerHtml(tableDescription))
+                        .add(table)
+                        .add(div().css(marginTopLarge).innerHtml(stepsDescription))
+                        .element())
+                .add(noUpdates)
                 .element();
     }
 
@@ -65,6 +75,8 @@ class ListUpdatesStep<S extends Enum<S>> extends WizardStep<UpdateManagerContext
     @Override
     protected void onShow(final UpdateManagerContext context) {
         table.update(context.updates);
+        Elements.setVisible(tableWrapper, !context.updates.isEmpty());
+        Elements.setVisible(noUpdates, context.updates.isEmpty());
     }
 
     @Override

@@ -43,10 +43,14 @@ public class FileItem extends AbstractFormItem<File> {
     private final HTMLInputElement fileInput;
 
     public FileItem(String name, String label) {
+        this(name, label, false);
+    }
+
+    public FileItem(String name, String label, boolean multiple) {
         super(name, label, null);
         addAppearance(Form.State.READONLY, new FileReadOnlyAppearance());
 
-        fileInput = input(file).css(formControl).element();
+        fileInput = input(file).multiple(multiple).css(formControl).element();
         FileEditingAppearance editingAppearance = new FileEditingAppearance(fileInput);
         addAppearance(Form.State.EDITING, editingAppearance);
     }
@@ -125,5 +129,9 @@ public class FileItem extends AbstractFormItem<File> {
         public void clearValue() {
             filename.value = "";
         }
+    }
+
+    public elemental2.dom.FileList getFiles() {
+        return fileInput.files;
     }
 }

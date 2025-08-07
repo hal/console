@@ -863,16 +863,8 @@ public interface Ids {
     String UPDATE_MANAGER_CHANNEL_CHANGES = "update-manager-channel-changes";
     String UPDATE_MANAGER_CHANNEL_REFRESH = "update-manager-channel-refresh";
     String UPDATE_MANAGER_CLEAN = "update-manager-clean";
-    String UPDATE_MANAGER_CUSTOM_PATCHES = "update-manager-custom-patches";
-    String UPDATE_MANAGER_REVERT = "update-manager-revert";
     String UPDATE_MANAGER_UPDATE = "update-manager-update";
-    String UPDATE_MANAGER_UPDATE_OFFLINE = "update-manager-update-offline";
-    String UPDATE_MANAGER_UPDATE_ONLINE = "update-manager-update-online";
-    String UPDATE_MANAGER_UPDATE_PATCH = "update-manager-update-patch";
-    String UPDATE_MANAGER_UPDATE_ADD_ACTIONS = "update-manager-update-add-actions";
     String UPDATE_MANAGER_UPDATE_REFRESH = "update-manager-update-refresh";
-    String UPDATE_MANAGER_UPDATE_SERVER = "update-update-server";
-    String UPDATE_MANAGER_UPDATE_ZIP = "update-manager-update-zip";
     String UPLOAD_FILE_INPUT = "upload-file-input";
     String UPLOAD_NAMES_FORM = "upload-names-form";
     String USER = "user";

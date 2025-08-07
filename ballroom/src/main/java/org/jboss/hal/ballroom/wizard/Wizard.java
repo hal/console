@@ -689,6 +689,11 @@ public class Wizard<C, S extends Enum<S>> {
             return this;
         }
 
+        public Builder<C, S> setInitialState(S initialState) {
+            this.initialState = initialState;
+            return this;
+        }
+
         public Wizard<C, S> build() {
             if (steps.isEmpty()) {
                 throw new IllegalStateException("No steps found for wizard '" + title + "'");
