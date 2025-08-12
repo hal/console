@@ -72,3 +72,7 @@ window.ClipboardJS = require("clipboard");
 
 // TODO Web worker
 window.metadataChannel = new Worker(new URL("./worker.js", import.meta.url), {type: "module"});
+
+window.keycloakReady = import("keycloak-js/lib/keycloak").then(
+  (module) => (window.KeycloakInstance = module.default)
+);
