@@ -16,11 +16,11 @@
 package org.jboss.hal.client.installer;
 
 import java.util.List;
-import java.util.function.Function;
 
 import org.jboss.hal.ballroom.wizard.AsyncStep;
 import org.jboss.hal.ballroom.wizard.WizardStep;
 import org.jboss.hal.ballroom.wizard.WorkflowCallback;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.flow.FlowContext;
@@ -31,6 +31,9 @@ import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
+import com.google.common.base.Strings;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.web.bindery.event.shared.EventBus;
 
 import elemental2.dom.HTMLElement;
@@ -41,24 +44,28 @@ import static java.util.Collections.singletonList;
 import static org.jboss.elemento.Elements.div;
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CLEAN;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.MAVEN_REPO_FILES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PREPARE_REVERT;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PREPARE_UPDATES;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.REVISION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.USE_DEFAULT_LOCAL_CACHE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.WORK_DIR;
 import static org.jboss.hal.flow.Flow.sequential;
 
-class PrepareStep<S extends Enum<S>> extends WizardStep<UpdateManagerContext, S> implements AsyncStep<UpdateManagerContext> {
+class PrepareStep extends WizardStep<UpdateManagerContext, UpdateState> implements AsyncStep<UpdateManagerContext> {
 
-    private final Function<UpdateManagerContext, Operation> operation;
     private final EventBus eventBus;
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
     private final Resources resources;
     private final HTMLElement root;
 
-    PrepareStep(final Function<UpdateManagerContext, Operation> operation,
+    PrepareStep(final String operation,
             final EventBus eventBus,
             final Dispatcher dispatcher,
             final StatementContext statementContext,
             final Resources resources) {
         super(resources.constants().prepareServerCandidate(), true);
-        this.operation = operation;
         this.eventBus = eventBus;
         this.statementContext = statementContext;
         this.dispatcher = dispatcher;
@@ -77,9 +84,27 @@ class PrepareStep<S extends Enum<S>> extends WizardStep<UpdateManagerContext, S>
                 resources.messages().prepareServerCandidatePending());
 
         List<Task<FlowContext>> tasks = singletonList(
-                flowContext -> dispatcher.execute(operation.apply(context)).then(ignore -> Promise.resolve(flowContext)));
+                flowContext -> {
+                    Operation prepareOp = buildPrepareOperation(context);
+                    Promise<ModelNode> promise;
+                    if (!(context.isRevert() && context.hasMavenReposForRevert())) {
+                        promise = dispatcher.execute(prepareOp);
+                    } else {
+                        SafeHtml combinedMessage = new SafeHtmlBuilder()
+                                .append(resources.messages().uploadArchivesPending())
+                                .appendHtmlConstant("<br/>")
+                                .append(resources.messages().prepareServerCandidatePending())
+                                .toSafeHtml();
+                        wizard().showProgress(
+                                resources.constants().uploadingArchives() + " " + resources.constants().and() + " "
+                                        + resources.constants().preparingServerCandidate(),
+                                combinedMessage);
+                        promise = dispatcher.upload(context.mavenReposForRevert, prepareOp);
+                    }
+                    return promise.then(ignore -> Promise.resolve(flowContext));
+                });
         return sequential(new FlowContext(Progress.NOOP), tasks)
-                .timeout(Timeouts.PREPARE * 1_000)
+                .timeout(Timeouts.UPLOAD * 1_000)
                 .then(ignore -> {
                     context.prepared = true;
                     wizard().showSuccess(resources.constants().prepareServerCandidateSuccess(),
@@ -112,5 +137,39 @@ class PrepareStep<S extends Enum<S>> extends WizardStep<UpdateManagerContext, S>
         } else {
             callback.proceed();
         }
+    }
+
+    private Operation buildPrepareOperation(UpdateManagerContext ctx) {
+        String operationName = !ctx.isRevert() ? PREPARE_UPDATES : PREPARE_REVERT;
+        Operation.Builder opBuilder = new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext), operationName);
+
+        switch (ctx.updateType) {
+            case OFFLINE_WITH_REPO:
+                opBuilder.param(USE_DEFAULT_LOCAL_CACHE, false);
+                break;
+            case ONLINE:
+            case REVERT:
+                opBuilder.param(USE_DEFAULT_LOCAL_CACHE, true);
+                break;
+            case CUSTOM:
+                opBuilder.payload(ctx.properties);
+                if (ctx.isRevert() && ctx.hasMavenReposForRevert()) {
+                    ModelNode mavenRepoFiles = new ModelNode();
+                    for (int i = 0; i < ctx.mavenReposForRevert.length; i++) {
+                        mavenRepoFiles.add(i);
+                    }
+                    opBuilder.param(MAVEN_REPO_FILES, mavenRepoFiles);
+                }
+                break;
+        }
+
+        if (ctx.isRevert()) {
+            opBuilder.param(REVISION, ctx.revision);
+        }
+        if (!Strings.isNullOrEmpty(ctx.workDir)) {
+            opBuilder.param(WORK_DIR, ctx.workDir);
+        }
+
+        return opBuilder.build();
     }
 }

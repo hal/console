@@ -19,26 +19,47 @@ import java.util.List;
 
 import org.jboss.hal.dmr.ModelNode;
 
+import com.google.common.base.Strings;
+
 import static java.util.Collections.emptyList;
 
-/** Common context used by all update manager wizards */
+/** Common context used by update manager wizard */
 class UpdateManagerContext {
 
+    UpdateType updateType = UpdateType.ONLINE;
+
     boolean prepared;
-    UpdateItem updateItem;
+    String revision;
     List<ModelNode> updates;
     String workDir;
+    boolean isPropertiesFormBuilt = false;
+    ModelNode properties = new ModelNode();
+    elemental2.dom.FileList mavenReposForRevert;
 
     UpdateManagerContext() {
-        this(emptyList(), null);
+        this(null, emptyList());
     }
 
-    UpdateManagerContext(final List<ModelNode> updates) {
-        this(updates, null);
-    }
-
-    UpdateManagerContext(final List<ModelNode> updates, final UpdateItem updateItem) {
-        this.updateItem = updateItem;
+    UpdateManagerContext(final String revision, List<ModelNode> updates) {
+        this.revision = revision;
         this.updates = updates;
+    }
+
+    public boolean isRevert() {
+        return !Strings.isNullOrEmpty(revision);
+    }
+
+    public boolean hasMavenReposForRevert() {
+        return mavenReposForRevert != null && mavenReposForRevert.length > 0;
+    }
+
+    void reset() {
+        prepared = false;
+        revision = "";
+        updates = emptyList();
+        workDir = "";
+        isPropertiesFormBuilt = false;
+        properties = new ModelNode();
+        mavenReposForRevert = null;
     }
 }

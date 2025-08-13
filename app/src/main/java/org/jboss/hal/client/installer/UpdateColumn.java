@@ -35,7 +35,6 @@ import org.jboss.hal.dmr.ModelNodeHelper;
 import org.jboss.hal.dmr.Operation;
 import org.jboss.hal.dmr.ResourceAddress;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
-import org.jboss.hal.flow.Progress;
 import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.meta.security.Constraint;
@@ -45,7 +44,6 @@ import org.jboss.hal.resources.Ids;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 import org.jboss.hal.spi.AsyncColumn;
-import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 import org.jboss.hal.spi.Requires;
@@ -68,14 +66,12 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.ARTIFACT_CHANGES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CLEAN;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HISTORY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HISTORY_FROM_REVISION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.LIST_UPDATES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PREPARE_REVERT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PREPARE_UPDATES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REVISION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TIMESTAMP;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.UPDATES;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.USE_DEFAULT_LOCAL_CACHE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.UPDATE;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 import static org.jboss.hal.resources.CSS.itemText;
 import static org.jboss.hal.resources.CSS.pfIcon;
@@ -89,7 +85,7 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
     private final StatementContext statementContext;
     private final MetadataRegistry metadataRegistry;
     private final Resources resources;
-    private final Progress progress;
+    private String lastUpdateName;
 
     @Inject
     public UpdateColumn(final Finder finder,
@@ -98,8 +94,7 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
             final StatementContext statementContext,
             final MetadataRegistry metadataRegistry,
             final ColumnActionFactory columnActionFactory,
-            final Resources resources,
-            @Footer final Progress progress) {
+            final Resources resources) {
 
         super(new Builder<UpdateItem>(finder, Ids.UPDATE_MANAGER_UPDATE, Names.UPDATES)
                 .onPreview(item -> new UpdatePreview(item, dispatcher, statementContext, resources))
@@ -112,7 +107,6 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
         this.statementContext = statementContext;
         this.metadataRegistry = metadataRegistry;
         this.resources = resources;
-        this.progress = progress;
 
         setItemsProvider(context -> {
             ResourceAddress address = INSTALLER_TEMPLATE.resolve(statementContext);
@@ -125,6 +119,10 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
                             return date == null ? new Date() : date;
                         }).reversed())
                         .collect(toList());
+                lastUpdateName = nodes.stream()
+                        .filter(itm -> itm.getUpdateKind() == UpdateItem.UpdateType.UPDATE
+                                || itm.getUpdateKind() == UpdateItem.UpdateType.INSTALL)
+                        .map(UpdateItem::getName).findFirst().orElse("");
                 return Promise.resolve(nodes);
             });
         });
@@ -180,7 +178,8 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
             @Override
             public List<ItemAction<UpdateItem>> actions() {
                 List<ItemAction<UpdateItem>> actions = new ArrayList<>();
-                if (item.getUpdateKind() == UpdateItem.UpdateType.UPDATE) {
+                if ((item.getUpdateKind() == UpdateItem.UpdateType.UPDATE
+                        || item.getUpdateKind() == UpdateItem.UpdateType.INSTALL) && !item.getName().equals(lastUpdateName)) {
                     actions.add(new ItemAction.Builder<UpdateItem>()
                             .title(resources.constants().revert())
                             .handler(itm -> revert(itm))
@@ -191,25 +190,11 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
             }
         });
 
-        List<ColumnAction<UpdateItem>> addActions = new ArrayList<>();
-        addActions.add(new ColumnAction.Builder<UpdateItem>(Ids.UPDATE_MANAGER_UPDATE_ONLINE)
-                .title(resources.constants().onlineUpdates())
-                .handler(column -> updateOnline())
+        addColumnAction(new ColumnAction.Builder<UpdateItem>(Ids.build(Ids.UPDATE_MANAGER_UPDATE, UPDATE))
+                .element(columnActionFactory.addButton(resources.constants().update(), "fa fa-download"))
+                .handler(column -> update())
                 .constraint(Constraint.executable(INSTALLER_TEMPLATE, PREPARE_UPDATES))
                 .build());
-        addActions.add(new ColumnAction.Builder<UpdateItem>(Ids.UPDATE_MANAGER_UPDATE_OFFLINE)
-                .title(resources.constants().offlineUsingArchives())
-                .handler(column -> updateOffline())
-                .constraint(Constraint.executable(INSTALLER_TEMPLATE, PREPARE_UPDATES))
-                .build());
-        addActions.add(new ColumnAction.Builder<UpdateItem>(Ids.UPDATE_MANAGER_UPDATE_PATCH)
-                .title(resources.constants().customPatches())
-                .handler(column -> updatePatch())
-                .constraint(Constraint.executable(INSTALLER_TEMPLATE, PREPARE_UPDATES))
-                .build());
-        addColumnActions(Ids.UPDATE_MANAGER_UPDATE_ADD_ACTIONS, fontAwesome("download"),
-                resources.constants().installationUpdateMethods(),
-                addActions);
         addColumnAction(columnActionFactory.refresh(Ids.UPDATE_MANAGER_UPDATE_REFRESH));
         addColumnAction(new ColumnAction.Builder<UpdateItem>(Ids.UPDATE_MANAGER_CLEAN)
                 .element(columnActionFactory.addButton(resources.constants().clean(), "fa fa-eraser"))
@@ -218,38 +203,8 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
                 .build());
     }
 
-    private void updateOnline() {
-        progress.reset();
-        Operation operation = new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext), LIST_UPDATES)
-                .param(USE_DEFAULT_LOCAL_CACHE, true)
-                .build();
-        dispatcher.execute(operation,
-                result -> {
-                    List<ModelNode> updates = result.get(UPDATES).asList();
-                    if (updates.isEmpty()) {
-                        Dialog dialog = new Dialog.Builder(resources.constants().noUpdates())
-                                .add(p().innerHtml(resources.messages().noUpdatesFound()).element())
-                                .closeOnEsc(true)
-                                .closeOnly()
-                                .size(Dialog.Size.SMALL)
-                                .build();
-                        dialog.show();
-                    } else {
-                        new UpdateOnlineWizard(eventBus, dispatcher, statementContext, resources, updates).show(this);
-                    }
-                    progress.finish();
-                }, (op, error) -> {
-                    progress.finish();
-                    MessageEvent.fire(eventBus, Message.error(resources.messages().lastOperationFailed()));
-                });
-    }
-
-    private void updateOffline() {
-        new UpdateOfflineWizard(eventBus, dispatcher, statementContext, resources).show(this);
-    }
-
-    private void updatePatch() {
-        new UpdatePatchWizard(eventBus, dispatcher, statementContext, metadataRegistry, resources).show(this);
+    private void update() {
+        new UpdateWizard(eventBus, dispatcher, statementContext, metadataRegistry, resources, null, null).show(this);
     }
 
     private void clean() {
@@ -275,7 +230,9 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
                                 .build();
                         dialog.show();
                     } else {
-                        new RevertWizard(eventBus, dispatcher, statementContext, resources, updateItem, updates).show(this);
+                        new UpdateWizard(eventBus, dispatcher, statementContext, metadataRegistry, resources, updateItem,
+                                updates)
+                                .show(this);
                     }
                 }, (op, error) -> MessageEvent.fire(eventBus, Message.error(resources.messages().lastOperationFailed())));
     }
