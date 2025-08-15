@@ -102,7 +102,7 @@
         <version.jsinterop>1.0.1</version.jsinterop>
         <version.jdom>2.0.2</version.jdom>
         <version.junit>4.13.2</version.junit>
-        <version.mockito>5.18.0</version.mockito>
+        <version.mockito>5.19.0</version.mockito>
         <version.node>v20.17.0</version.node>
         <version.npm>10.8.2</version.npm>
         <version.slf4j>2.0.3</version.slf4j>
