@@ -30,7 +30,7 @@
     "process": "^0.11.10"
   },
   "dependencies": {
-    "ace-builds": "^1.43.1",
+    "ace-builds": "^1.43.2",
     "bootstrap": "~3.4.1",
     "bootstrap-select": "^1.13.18",
     "bootstrap-switch": "~3.3.5",
@@ -47,6 +47,7 @@
     "jquery": "^3.6.4",
     "js-cookie": "^3.0.5",
     "jstree": "^3.3.16",
+    "keycloak-js": "^26.2.0",
     "moment": "^2.30.1",
     "patternfly": "^3.59.5",
     "pouchdb": "^8.0.1",

@@ -121,7 +121,7 @@ public class EndpointManager {
                                     return null;
                                 })
                                 .catch_(error -> {
-                                    logger.warn(String.valueOf(error));
+                                    logger.warn("Keycloak authentication failed", error);
                                     callback.execute();
                                     return null;
                                 });
