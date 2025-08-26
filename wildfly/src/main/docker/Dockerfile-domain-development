@@ -14,7 +14,7 @@
 #  limitations under the License.
 #
 
-FROM jboss/base-jdk:11
+FROM openjdk:17-alpine
 
 LABEL maintainer="Harald Pehl <hpehl@redhat.com>"
 
@@ -23,10 +23,11 @@ ARG WILDFLY_VERSION
 COPY wildfly-${WILDFLY_VERSION}.tar.gz /
 
 USER root
-ARG WILDFLY_VERSION
-RUN tar xf /wildfly-${WILDFLY_VERSION}.tar.gz --directory=/ \
-    && mv /wildfly-${WILDFLY_VERSION} $JBOSS_HOME \
+RUN mkdir -p ${JBOSS_HOME} \
+    && tar xf /wildfly-${WILDFLY_VERSION}.tar.gz --directory=/ \
+    && mv /wildfly-${WILDFLY_VERSION}/* ${JBOSS_HOME} \
     && rm /wildfly-${WILDFLY_VERSION}.tar.gz \
+    && adduser --disabled-password --gecos "" jboss \
     && chown -R jboss:0 ${JBOSS_HOME} \
     && chmod -R g+rw ${JBOSS_HOME}
 
