@@ -15,67 +15,64 @@
  */
 package org.jboss.hal.client.installer;
 
+import java.util.List;
+
 import org.jboss.hal.ballroom.wizard.Wizard;
-import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.dispatch.Dispatcher;
+import org.jboss.hal.meta.MetadataRegistry;
 import org.jboss.hal.meta.StatementContext;
 import org.jboss.hal.resources.Resources;
 
 import com.google.web.bindery.event.shared.EventBus;
 
-import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE;
-import static org.jboss.hal.client.installer.UpdateOfflineState.APPLY_UPDATE;
-import static org.jboss.hal.client.installer.UpdateOfflineState.LIST_UPDATES;
-import static org.jboss.hal.client.installer.UpdateOfflineState.PREPARE_SERVER;
-import static org.jboss.hal.client.installer.UpdateOfflineState.UPLOAD_ARCHIVES;
+import static org.jboss.hal.client.installer.UpdateState.APPLY_UPDATE;
+import static org.jboss.hal.client.installer.UpdateState.CHOOSE_TYPE;
+import static org.jboss.hal.client.installer.UpdateState.LIST_UPDATES;
+import static org.jboss.hal.client.installer.UpdateState.PREPARE_SERVER;
+import static org.jboss.hal.client.installer.UpdateState.PROPERTIES;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.CLEAR_SELECTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PREPARE_UPDATES;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.USE_DEFAULT_LOCAL_CACHE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.WORK_DIR;
 
-class UpdateOfflineWizard {
+class UpdateWizard {
 
     private final EventBus eventBus;
     private final Dispatcher dispatcher;
     private final StatementContext statementContext;
+    private final MetadataRegistry metadataRegistry;
     private final Resources resources;
     private final UpdateManagerContext context;
 
-    UpdateOfflineWizard(final EventBus eventBus,
-            final Dispatcher dispatcher,
-            final StatementContext statementContext,
-            final Resources resources) {
+    UpdateWizard(EventBus eventBus, Dispatcher dispatcher, StatementContext statementContext,
+            MetadataRegistry metadataRegistry, Resources resources, UpdateItem updateItem, List<ModelNode> updates) {
         this.eventBus = eventBus;
-        this.dispatcher = dispatcher;
         this.statementContext = statementContext;
+        this.metadataRegistry = metadataRegistry;
+        this.dispatcher = dispatcher;
         this.resources = resources;
-        this.context = new UpdateManagerContext();
+        this.context = updateItem == null ? new UpdateManagerContext()
+                : new UpdateManagerContext(updateItem.getName(), updates);
     }
 
     void show(UpdateColumn column) {
-        Wizard.Builder<UpdateManagerContext, UpdateOfflineState> builder = new Wizard.Builder<>(
+        Wizard.Builder<UpdateManagerContext, UpdateState> builder = new Wizard.Builder<>(
                 resources.constants().updateExistingInstallation(), context);
 
         builder.stayOpenAfterFinish()
-                .addStep(UPLOAD_ARCHIVES, new UploadArchivesStep<UpdateOfflineState>(
-                        dispatcher,
-                        statementContext,
-                        resources))
-                .addStep(LIST_UPDATES, new ListUpdatesStep<UpdateOfflineState>(
-                        resources.constants().listComponents(),
+                .addStep(CHOOSE_TYPE, new ChooseTypeStep(dispatcher, statementContext, resources))
+                .addStep(PROPERTIES, new PropertiesStep(dispatcher, statementContext, metadataRegistry, resources))
+                .addStep(LIST_UPDATES, new ListUpdatesStep(
+                        resources.constants().listUpdates(),
                         resources.messages().availableComponentsList(),
                         resources.messages().updateInstallationDescription(
                                 resources.constants().listComponents(),
                                 resources.constants().prepareServerCandidate(),
-                                resources.constants().applyUpdates())))
-                .addStep(PREPARE_SERVER, new PrepareStep<UpdateOfflineState>(
-                        updateManagerContext -> new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext),
-                                PREPARE_UPDATES)
-                                .param(WORK_DIR, updateManagerContext.workDir)
-                                .param(USE_DEFAULT_LOCAL_CACHE, false)
-                                .build(),
+                                resources.constants().applyUpdates()),
+                        resources.messages().noUpdatesFound()))
+                .addStep(PREPARE_SERVER, new PrepareStep(
+                        PREPARE_UPDATES,
                         eventBus, dispatcher, statementContext, resources))
-                .addStep(APPLY_UPDATE, new ApplyStep<UpdateOfflineState>(
+                .addStep(APPLY_UPDATE, new ApplyStep(
                         resources.constants().applyUpdates(),
                         resources.constants().applyingUpdates(),
                         resources.messages().applyUpdatesPending(),
@@ -87,12 +84,15 @@ class UpdateOfflineWizard {
                         resources));
 
         builder.onBack((ctx, currentState) -> {
-            UpdateOfflineState previous = null;
+            UpdateState previous = null;
             switch (currentState) {
-                case UPLOAD_ARCHIVES:
+                case CHOOSE_TYPE:
+                    break;
+                case PROPERTIES:
+                    previous = CHOOSE_TYPE;
                     break;
                 case LIST_UPDATES:
-                    previous = UPLOAD_ARCHIVES;
+                    previous = ctx.updateType != UpdateType.ONLINE ? PROPERTIES : CHOOSE_TYPE;
                     break;
                 case PREPARE_SERVER:
                     previous = LIST_UPDATES;
@@ -105,9 +105,13 @@ class UpdateOfflineWizard {
         });
 
         builder.onNext((ctx, currentState) -> {
-            UpdateOfflineState next = null;
+            UpdateState next = null;
             switch (currentState) {
-                case UPLOAD_ARCHIVES:
+                case CHOOSE_TYPE:
+                    // online requires no user input, skip properties step
+                    next = ctx.updateType != UpdateType.ONLINE ? PROPERTIES : LIST_UPDATES;
+                    break;
+                case PROPERTIES:
                     next = LIST_UPDATES;
                     break;
                 case LIST_UPDATES:
@@ -122,6 +126,11 @@ class UpdateOfflineWizard {
             return next;
         });
 
+        // revert operation triggered from column item
+        if (context.isRevert()) {
+            context.updateType = UpdateType.REVERT;
+            builder.setInitialState(LIST_UPDATES);
+        }
         builder.onFinish((wizard, ctx) -> column.refresh(CLEAR_SELECTION));
 
         builder.build().show();

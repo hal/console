@@ -34,7 +34,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.PERFORM_INSTALLATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SHUTDOWN;
 
-class ApplyStep<S extends Enum<S>> extends WizardStep<UpdateManagerContext, S> {
+class ApplyStep extends WizardStep<UpdateManagerContext, UpdateState> {
 
     private final String progressTitle;
     private final SafeHtml progressMessage;

@@ -15,7 +15,7 @@
  */
 package org.jboss.hal.client.installer;
 
-enum UpdatePatchState {
+enum UpdateState {
 
-    UPLOAD_PATCHES, LIST_UPDATES, PREPARE_SERVER, APPLY_UPDATE
+    CHOOSE_TYPE, PROPERTIES, LIST_UPDATES, PREPARE_SERVER, APPLY_UPDATE
 }

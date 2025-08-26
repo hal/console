@@ -77,6 +77,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String chooseSingleton();
     String chooseStrategy();
     String chooseTemplate();
+    String chooseUpdateType();
     String clean();
     String clear();
     String clearAll();
@@ -469,6 +470,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String processors();
     String productName();
     String productVersion();
+    String properties();
     String providedBy();
     String prune();
     String pruneDisconnected();
@@ -618,6 +620,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String unsubscribe();
     String unsubscribeChannel();
     String unsupportedFileType();
+    String update();
     String updateAccount();
     String updateExistingInstallation();
     String updateManagerHeading();
