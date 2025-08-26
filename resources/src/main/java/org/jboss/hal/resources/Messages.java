@@ -543,6 +543,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String cancelNonProgressingOperation();
     String changeAccountKeyQuestion(String name);
     String chooseTemplate(String custom);
+    String chooseUpdateType(String custom);
     String cleanPatchHistory();
     String configurationChangesDescription();
     String configurePatchTitle();

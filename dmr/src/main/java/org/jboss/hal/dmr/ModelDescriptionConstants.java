@@ -650,6 +650,7 @@ public interface ModelDescriptionConstants {
     String OBJECT = "object";
     String OBTAIN_CERTIFICATE = "obtain-certificate";
     String OFF_HEAP = "off-heap";
+    String OFFLINE = "offline";
     String OLD_MANIFEST = "old-manifest";
     String OLD_REPOSITORY = "old-repository";
     String OLD_VERSION = "old-version";
