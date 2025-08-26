@@ -94,10 +94,7 @@ public class ResourceDescription extends ModelNode {
                     ModelNode parentValue = p.getValue();
                     // process also on LIST type if we're in request attributes.
                     boolean isRequestProperties = path.endsWith(REQUEST_PROPERTIES);
-                    if (parentValue.hasDefined(TYPE)
-                            && (parentValue.get(TYPE).asType().equals(ModelType.OBJECT)
-                                    || (isRequestProperties && parentValue.get(TYPE).asType().equals(ModelType.LIST)))
-                            && !parentValue.get(VALUE_TYPE).asString().equalsIgnoreCase(STRING)) {
+                    if (hasComplexValueType(parentValue, isRequestProperties)) {
                         for (Property nested : parentValue.get(VALUE_TYPE).asPropertyList()) {
                             ModelNode nestedValue = nested.getValue();
                             // inherit from parent
@@ -143,5 +140,11 @@ public class ResourceDescription extends ModelNode {
             map.put(path, new AttributeCollection(emptyList()));
         }
         return map.get(path);
+    }
+
+    private boolean hasComplexValueType(ModelNode parentValue, boolean isRequestProperties) {
+        return parentValue.hasDefined(TYPE) && (parentValue.get(TYPE).asType().equals(ModelType.OBJECT)
+                || (isRequestProperties && parentValue.get(TYPE).asType().equals(ModelType.LIST)))
+                && (parentValue.hasDefined(VALUE_TYPE) && !parentValue.get(VALUE_TYPE).asString().equalsIgnoreCase(STRING));
     }
 }
