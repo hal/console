@@ -28,4 +28,7 @@ interface UpdateManagerResources extends ClientBundle {
 
     @Source("channelChange.base64")
     TextResource channelChange();
+
+    @Source("certificate.base64")
+    TextResource componentCertificate();
 }

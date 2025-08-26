@@ -1,0 +1,26 @@
+{
+    "comment" => "This file is not used! It's just here to generate the base64 encoded version using https://github.com/hal/dmr.cmd",
+    "description" => "Component certificate information.",
+    "attributes" => {
+        "key-id" => {
+            "type" => STRING,
+            "description" => "The hex ID of the certificate.",
+            "nillable" => false
+        },
+        "fingerprint" => {
+            "type" => STRING,
+            "description" => "The hash of the certificate.",
+            "nillable" => true
+        },
+        "description" => {
+            "type" => STRING,
+            "description" => "The description of issuer of this certificate.",
+            "nillable" => true
+        },
+        "status" => {
+            "type" => STRING,
+            "description" => "The status of the certificate (TRUSTED, REVOKED, EXPIRED).",
+            "nillable" => true
+        }
+    }
+}

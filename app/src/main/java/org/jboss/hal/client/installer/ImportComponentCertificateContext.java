@@ -15,7 +15,26 @@
  */
 package org.jboss.hal.client.installer;
 
-enum RevertState {
+import elemental2.dom.File;
 
-    LIST_UPDATES, PREPARE_SERVER, APPLY_REVERT, IMPORT_CERTIFICATES
+class ImportComponentCertificateContext {
+
+    private CertificateInfo certificate;
+    private File file;
+
+    public void setImportedCertificate(CertificateInfo certificate) {
+        this.certificate = certificate;
+    }
+
+    public CertificateInfo getImportedCertificate() {
+        return certificate;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+    }
+
+    public File getFile() {
+        return file;
+    }
 }

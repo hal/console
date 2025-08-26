@@ -28,12 +28,13 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import static org.jboss.hal.client.installer.AddressTemplates.INSTALLER_TEMPLATE;
 import static org.jboss.hal.client.installer.RevertState.APPLY_REVERT;
+import static org.jboss.hal.client.installer.RevertState.IMPORT_CERTIFICATES;
 import static org.jboss.hal.client.installer.RevertState.LIST_UPDATES;
 import static org.jboss.hal.client.installer.RevertState.PREPARE_SERVER;
 import static org.jboss.hal.core.finder.FinderColumn.RefreshMode.RESTORE_SELECTION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ARTIFACT_CHANGES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PREPARE_REVERT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.REVISION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.USE_DEFAULT_LOCAL_CACHE;
 
 class RevertWizard {
 
@@ -52,22 +53,39 @@ class RevertWizard {
         this.context = new UpdateManagerContext(updates, updateItem);
     }
 
+    RevertWizard(EventBus eventBus, Dispatcher dispatcher, StatementContext statementContext, Resources resources,
+            UpdateItem updateItem, Operation listOperation, List<String> missingCerts, List<CertificateInfo> missingCertInfos) {
+        this.eventBus = eventBus;
+        this.statementContext = statementContext;
+        this.dispatcher = dispatcher;
+        this.resources = resources;
+        this.context = new UpdateManagerContext(updateItem, missingCerts, missingCertInfos, listOperation, ARTIFACT_CHANGES);
+    }
+
     void show(UpdateColumn column) {
         Wizard.Builder<UpdateManagerContext, RevertState> builder = new Wizard.Builder<>(
                 resources.constants().revertUpdatePreviousState(), context);
 
-        builder.stayOpenAfterFinish()
+        builder.stayOpenAfterFinish();
+
+        if (context.updates.isEmpty()) {
+            builder.addStep(IMPORT_CERTIFICATES, new ImportMissingComponentCertificateStep<RevertState>(
+                    dispatcher, statementContext, resources, eventBus));
+        }
+
+        builder
                 .addStep(LIST_UPDATES, new ListUpdatesStep<RevertState>(
                         resources.constants().listComponents(),
                         resources.messages().revertComponentsList(),
                         resources.messages().revertComponentsDescription(
                                 resources.constants().listComponents(),
                                 resources.constants().prepareServerCandidate(),
-                                resources.constants().applyUpdates())))
+                                resources.constants().applyUpdates()),
+                        resources.constants().noUpdates(),
+                        resources.messages().noUpdatesFound()))
                 .addStep(PREPARE_SERVER, new PrepareStep<RevertState>(
                         context -> new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext), PREPARE_REVERT)
                                 .param(REVISION, context.updateItem.getName())
-                                .param(USE_DEFAULT_LOCAL_CACHE, true)
                                 .build(),
                         eventBus, dispatcher, statementContext, resources))
                 .addStep(APPLY_REVERT, new ApplyStep<RevertState>(
@@ -82,6 +100,7 @@ class RevertWizard {
         builder.onBack((ctx, currentState) -> {
             RevertState previous = null;
             switch (currentState) {
+                case IMPORT_CERTIFICATES:
                 case LIST_UPDATES:
                     break;
                 case PREPARE_SERVER:
@@ -97,6 +116,9 @@ class RevertWizard {
         builder.onNext((ctx, currentState) -> {
             RevertState next = null;
             switch (currentState) {
+                case IMPORT_CERTIFICATES:
+                    next = LIST_UPDATES;
+                    break;
                 case LIST_UPDATES:
                     next = ctx.prepared ? APPLY_REVERT : PREPARE_SERVER;
                     break;

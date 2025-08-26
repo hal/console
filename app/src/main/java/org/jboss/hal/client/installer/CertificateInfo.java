@@ -15,7 +15,30 @@
  */
 package org.jboss.hal.client.installer;
 
-enum RevertState {
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.NamedNode;
 
-    LIST_UPDATES, PREPARE_SERVER, APPLY_REVERT, IMPORT_CERTIFICATES
+public class CertificateInfo extends NamedNode {
+
+    protected static final String TRUSTED = "TRUSTED";
+
+    CertificateInfo(final ModelNode node) {
+        super(node.get("key-id").asString(), node);
+    }
+
+    String getKeyID() {
+        return get("key-id").asString();
+    }
+
+    public String getFingerprint() {
+        return get("fingerprint").asString();
+    }
+
+    public String getDescription() {
+        return get("description").asString();
+    }
+
+    public String getStatus() {
+        return get("status").asString();
+    }
 }

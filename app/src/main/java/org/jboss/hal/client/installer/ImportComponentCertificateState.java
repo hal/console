@@ -15,7 +15,6 @@
  */
 package org.jboss.hal.client.installer;
 
-enum RevertState {
-
-    LIST_UPDATES, PREPARE_SERVER, APPLY_REVERT, IMPORT_CERTIFICATES
+enum ImportComponentCertificateState {
+    UPLOAD_CERTIFICATE, CONFIRM_CERTIFICATE
 }

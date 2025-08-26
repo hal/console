@@ -67,7 +67,9 @@ class UpdateOfflineWizard {
                         resources.messages().updateInstallationDescription(
                                 resources.constants().listComponents(),
                                 resources.constants().prepareServerCandidate(),
-                                resources.constants().applyUpdates())))
+                                resources.constants().applyUpdates()),
+                        resources.constants().noUpdates(),
+                        resources.messages().noUpdatesFound()))
                 .addStep(PREPARE_SERVER, new PrepareStep<UpdateOfflineState>(
                         updateManagerContext -> new Operation.Builder(INSTALLER_TEMPLATE.resolve(statementContext),
                                 PREPARE_UPDATES)
