@@ -12,8 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 [HAL-2029](https://issues.redhat.com/browse/HAL-2029): Improve id generation, fix singleton processing
 [HAL-2028](https://issues.redhat.com/browse/HAL-2028): Fix attribute processing
 [HAL-2026](https://issues.redhat.com/browse/HAL-2026): Refactor undefine-attribute operation rules
-[HAL-1951](https://issues.redhat.com/browse/HAL-1951): Combine update manager wizards, add customizable installation option
 [HAL-2008](https://issues.redhat.com/browse/HAL-2008): Make SSO compatible with latest Keycloak version
+[HAL-1951](https://issues.redhat.com/browse/HAL-1951): Combine update manager wizards, add customizable installation option
 
 ### Upgrades
 
