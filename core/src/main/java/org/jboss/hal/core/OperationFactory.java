@@ -38,6 +38,7 @@ import org.jboss.hal.meta.Metadata;
 import org.jboss.hal.meta.description.ResourceDescription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Strings;
 
 import static java.util.function.Function.identity;
@@ -192,8 +193,7 @@ public class OperationFactory {
      * {@linkplain org.jboss.hal.dmr.ModelDescriptionConstants#UNDEFINE_ATTRIBUTE_OPERATION undefine-attribute} operations for
      * each attribute of type {@code BOOLEAN, BYTES, EXPRESSION, LIST, OBJECT, PROPERTY} or {@code STRING} and
      * {@linkplain org.jboss.hal.dmr.ModelDescriptionConstants#UNDEFINE_ATTRIBUTE_OPERATION undefine-attribute} operations for
-     * attributes of type {@code BIG_DECIMAL, BIG_INTEGER, DOUBLE, INT} or {@code LONG} if they have a default
-     * value.
+     * attributes of type {@code BIG_DECIMAL, BIG_INTEGER, DOUBLE, INT} or {@code LONG} if they have a default value.
      *
      * @param address the fq address used for the operations
      * @param attributes the attributes to reset
