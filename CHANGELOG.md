@@ -7,11 +7,23 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+[HAL-2029](https://issues.redhat.com/browse/HAL-2029): Improve id generation, fix singleton processing
+[HAL-2028](https://issues.redhat.com/browse/HAL-2028): Fix attribute processing
+[HAL-2026](https://issues.redhat.com/browse/HAL-2026): Refactor undefine-attribute operation rules
+[HAL-1951](https://issues.redhat.com/browse/HAL-1951): Combine update manager wizards, add customizable installation option
+[HAL-2008](https://issues.redhat.com/browse/HAL-2008): Make SSO compatible with latest Keycloak version
+
+### Upgrades
+
+- Bump ACE Editor to 1.43.2
+- Bump JBoss Parent to 50
+- Bump Mockito to 5.19.0
+
 ## [3.7.14] - 2025-07-10
 
 ### Added
 
-- [HAL-1962](https://github.com/hal/console/pull/1422): Support execution-records-limit for jdbc-job-repository in subsystem batch-jberet
+- [HAL-1962](https://issues.redhat.com/browse/1422): Support execution-records-limit for jdbc-job-repository in subsystem batch-jberet
 
 ### Upgrades
 
