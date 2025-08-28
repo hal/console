@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.7.15] - 2025-08-28
+
 [HAL-2029](https://issues.redhat.com/browse/HAL-2029): Improve id generation, fix singleton processing
 [HAL-2028](https://issues.redhat.com/browse/HAL-2028): Fix attribute processing
 [HAL-2026](https://issues.redhat.com/browse/HAL-2026): Refactor undefine-attribute operation rules
@@ -741,7 +743,8 @@ Release process failed. Do not use this release!
 - for dependency upgrades
 -->
 
-[Unreleased]: https://github.com/hal/console/compare/v3.7.14...HEAD
+[Unreleased]: https://github.com/hal/console/compare/v3.7.15...HEAD
+[3.7.15]: https://github.com/hal/console/compare/v3.7.14...v3.7.15
 [3.7.14]: https://github.com/hal/console/compare/v3.7.13...v3.7.14
 [3.7.13]: https://github.com/hal/console/compare/v3.7.12...v3.7.13
 [3.7.12]: https://github.com/hal/console/compare/v3.7.11...v3.7.12
