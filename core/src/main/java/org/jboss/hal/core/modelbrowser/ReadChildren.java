@@ -16,6 +16,7 @@
 package org.jboss.hal.core.modelbrowser;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -38,10 +39,16 @@ import com.google.common.collect.Multimap;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.DATA_SOURCE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_SINGLETONS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_TYPES_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.WORKMANAGER;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.XA_DATA_SOURCE;
 import static org.jboss.hal.resources.CSS.fontAwesome;
+import static org.jboss.hal.resources.Ids.MODEL_BROWSER_ROOT;
 
 /**
  * Function which gets invoked when the user opens a node in the model browser tree. TODO Error handling
@@ -51,11 +58,21 @@ final class ReadChildren implements DataFunction<Context> {
     private static final String ID_SEPARATOR = "___";
     private static final String NO_SINGLETON = "no_singleton";
 
+    // some resources are implemented as singletons but there is no reason to display them that way
+    // since they do not represent pre-defined values
+    List<String> falseSingletons = Arrays.asList(HOST, SERVER, DATA_SOURCE, XA_DATA_SOURCE, WORKMANAGER);
+
     static String uniqueId(Node<Context> parent, String name) {
         String parentId = parent.id;
         int index = parent.id.lastIndexOf(ID_SEPARATOR);
         if (index != -1 && parent.data.isFullyQualified()) {
             parentId = parent.id.substring(index + ID_SEPARATOR.length());
+
+            String[] grandparentParts = parent.parents[0].split(ID_SEPARATOR);
+            String resourceName = grandparentParts[0];
+            if (grandparentParts.length == 2 && !resourceName.equals(MODEL_BROWSER_ROOT)) {
+                parentId = resourceName + "__" + parentId;
+            }
         }
         return parentId + ID_SEPARATOR + name;
     }
@@ -90,7 +107,7 @@ final class ReadChildren implements DataFunction<Context> {
                 for (Map.Entry<String, Collection<String>> entry : resources.asMap().entrySet()) {
                     String name = entry.getKey();
                     Set<String> singletons = new HashSet<>(entry.getValue());
-                    if (singletons.size() == 1 && singletons.contains(NO_SINGLETON)) {
+                    if ((singletons.size() == 1 && singletons.contains(NO_SINGLETON)) || falseSingletons.contains(name)) {
                         singletons = Collections.emptySet();
                     }
                     ResourceAddress address = new ResourceAddress(node.data.getAddress()).add(name, "*");
