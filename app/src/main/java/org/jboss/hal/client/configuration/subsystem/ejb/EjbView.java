@@ -265,7 +265,7 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
                 .columns(TYPE, VALUE)
                 .build();
 
-        channelCreationOptionsForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(rpId, Ids.FORM),
+        channelCreationOptionsForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(ccoId, Ids.FORM),
                 channelCreationOptionsMetadata)
                 .onSave((form, changedValues) -> {
                     String name = form.getModel().getName();
