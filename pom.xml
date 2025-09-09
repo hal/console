@@ -99,7 +99,7 @@
         <version.gwtp>1.6</version.gwtp>
         <version.jaxen>1.2.0</version.jaxen>
         <version.jboss.dmr>1.7.0.Final</version.jboss.dmr>
-        <version.jsinterop>1.0.1</version.jsinterop>
+        <version.jsinterop>1.1.1</version.jsinterop>
         <version.jdom>2.0.2</version.jdom>
         <version.junit>4.13.2</version.junit>
         <version.mockito>5.19.0</version.mockito>
