@@ -90,7 +90,7 @@
         <version.checkstyle.config>1.0.8.Final</version.checkstyle.config>
         <version.auto.service>1.1.1</version.auto.service>
         <version.apt.tools>0.0.3</version.apt.tools>
-        <version.compile.testing>0.22.0</version.compile.testing>
+        <version.compile.testing>0.23.0</version.compile.testing>
         <version.elemental>1.2.0</version.elemental>
         <version.elemento>1.0.14-gwtcom</version.elemento>
         <version.gin>2.1.2</version.gin>
