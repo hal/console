@@ -8,7 +8,7 @@
   },
   "devDependencies": {
     "@parcel/diagnostic": "^2.15.4",
-    "@parcel/plugin": "^2.15.4",
+    "@parcel/plugin": "^2.16.0",
     "parcel": "^2.15.4"
   }
 }
