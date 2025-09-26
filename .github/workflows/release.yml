@@ -3,45 +3,36 @@ name: Release HAL
 on:
   push:
     tags:
-      - "v*"
+      - 'v*'
 
 jobs:
+
   deploy:
     name: Deploy Maven Artifacts
     runs-on: ubuntu-latest
     env:
-      MVN: ./mvnw --show-version --batch-mode
+      MVN: ./mvnw --show-version --batch-mode --no-transfer-progress
     steps:
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v4
-      - name: Set up JDK
-        id: setup-jdk
-        uses: actions/setup-java@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
         with:
           java-version: 11
           distribution: temurin
           cache: maven
-      - name: Package
-        id: package
-        run: $MVN package -P prod,theme-wildfly
-      - name: Set up Maven Settings
-        id: setup-maven-settings
-        uses: actions/setup-java@v4
+      - run: $MVN package -P prod,theme-wildfly
+      - uses: actions/setup-java@v5
         with: # running setup-java again overwrites the settings.xml
           java-version: 11
           distribution: temurin
-          server-id: ossrh
-          server-username: OSSRH_USERNAME
-          server-password: OSSRH_PASSWORD
+          server-id: central
+          server-username: CENTRAL_USERNAME
+          server-password: CENTRAL_PASSWORD
           gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
-      - name: Deploy
-        id: deploy
-        run: $MVN deploy -P prod,release,theme-wildfly
+      - run: $MVN deploy -P prod,release,theme-wildfly
         env:
-          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
+          CENTRAL_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
 
   standalone:
@@ -49,33 +40,24 @@ jobs:
     needs: deploy
     runs-on: ubuntu-latest
     env:
-      MVN: ./mvnw --show-version --batch-mode
+      MVN: ./mvnw --show-version --batch-mode --no-transfer-progress
     steps:
-      - name: Get Version
-        id: get-version
+      - id: get-version
         uses: battila7/get-version-action@v2.3.0
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v4
-      - name: Set up JDK
-        id: setup-jdk
-        uses: actions/setup-java@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
         with:
           java-version: 11
           distribution: temurin
           cache: maven
-      - name: Login to Quay.io
-        id: login-to-quay-io
-        uses: docker/login-action@v3
+      - uses: docker/login-action@v3
         with:
           registry: quay.io
           username: ${{ secrets.QUAY_USERNAME }}
           password: ${{ secrets.QUAY_ROBOT_TOKEN }}
-      - name: Standalone Tag
-        id: standalone-tag
+      - id: standalone-tag
         run: $MVN package --projects standalone --also-make -P native,prod,theme-hal -Dquarkus.container-image.build=true -Dquarkus.container-image.push=true -Dquarkus.container-image.image=quay.io/halconsole/hal:${{ steps.get-version.outputs.version-without-v }}.Final '-Dquarkus.container-image.labels."org.opencontainers.image.revision"='$GITHUB_SHA -Dquarkus.native.remote-container-build=true
-      - name: Check Latest
-        id: check-latest
+      - id: check-latest
         run: |
           LATEST_TAG=$( git tag | sort -V | tail -1 )
           if [ "$LATEST_TAG" = "${{ steps.get-version.outputs.version }}" ]; then
@@ -83,31 +65,24 @@ jobs:
           else
             echo "::set-output name=latest::false"
           fi
-      - name: Standalone Latest
-        id: standalone-latest
+      - id: standalone-latest
         if: steps.check-latest.outputs.latest == 'true'
-        run: $MVN package --projects standalone --also-make -P native,prod,theme-hal -Dquarkus.container-image.build=true -Dquarkus.container-image.push=true -Dquarkus.container-image.image=quay.io/halconsole/hal:latest '-Dquarkus.container-image.labels."org.opencontainers.image.revision"='$GITHUB_SHA -Dquarkus.native.remote-container-build=true
+        run: $MVN -DskipTests package --projects standalone --also-make -P native,prod,theme-hal -Dquarkus.container-image.build=true -Dquarkus.container-image.push=true -Dquarkus.container-image.image=quay.io/halconsole/hal:latest '-Dquarkus.container-image.labels."org.opencontainers.image.revision"='$GITHUB_SHA -Dquarkus.native.remote-container-build=true
 
   release:
     name: Create GitHub Release
     needs: deploy
     runs-on: ubuntu-latest
     steps:
-      - name: Get Version
-        id: get-version
+      - id: get-version
         uses: battila7/get-version-action@v2.3.0
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v4
-      - name: Read Changelog
-        id: read-changelog
+      - uses: actions/checkout@v5
+      - id: read-changelog
         uses: mindsers/changelog-reader-action@v2
         with:
           path: ./CHANGELOG.md
           version: ${{ steps.get-version.outputs.version-without-v }}
-      - name: Create GitHub Release
-        id: create-gh-release
-        uses: actions/create-release@v1
+      - uses: actions/create-release@v1
         env:
           # Don't use ${{ secrets.GITHUB_TOKEN }}
           # This doesn't trigger the release event
