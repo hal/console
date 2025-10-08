@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.7.16] - 2025-10-08
+
 ### Added
 
 - [HAL-2038](https://issues.redhat.com/browse/HAL-2038): Update constants and messages for de, en and pt
@@ -761,7 +763,8 @@ Release process failed. Do not use this release!
 - for dependency upgrades
 -->
 
-[Unreleased]: https://github.com/hal/console/compare/v3.7.15...HEAD
+[Unreleased]: https://github.com/hal/console/compare/v3.7.16...HEAD
+[3.7.16]: https://github.com/hal/console/compare/v3.7.15...v3.7.16
 [3.7.15]: https://github.com/hal/console/compare/v3.7.14...v3.7.15
 [3.7.14]: https://github.com/hal/console/compare/v3.7.13...v3.7.14
 [3.7.13]: https://github.com/hal/console/compare/v3.7.12...v3.7.13
