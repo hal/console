@@ -7,13 +7,31 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- [HAL-2038](https://issues.redhat.com/browse/HAL-2038): Update constants and messages for de, en and pt
+
+### Fixed
+
+- [HAL-2025](https://issues.redhat.com/browse/HAL-2025): Webconsole page for EJB3 remoting profile contains duplicate ID
+
+### Upgrades
+
+- Bump ACE Editor to 1.43.3
+- Bump Mockito to 5.20.0
+
 ## [3.7.15] - 2025-08-28
 
-[HAL-2029](https://issues.redhat.com/browse/HAL-2029): Improve id generation, fix singleton processing
-[HAL-2028](https://issues.redhat.com/browse/HAL-2028): Fix attribute processing
-[HAL-2026](https://issues.redhat.com/browse/HAL-2026): Refactor undefine-attribute operation rules
-[HAL-2008](https://issues.redhat.com/browse/HAL-2008): Make SSO compatible with latest Keycloak version
-[HAL-1951](https://issues.redhat.com/browse/HAL-1951): Combine update manager wizards, add customizable installation option
+### Changed
+
+- [HAL-2029](https://issues.redhat.com/browse/HAL-2029): Improve id generation, fix singleton processing
+- [HAL-2026](https://issues.redhat.com/browse/HAL-2026): Refactor undefine-attribute operation rules
+- [HAL-2008](https://issues.redhat.com/browse/HAL-2008): Make SSO compatible with latest Keycloak version
+- [HAL-1951](https://issues.redhat.com/browse/HAL-1951): Combine update manager wizards, add customizable installation option
+
+### Fixed
+
+- [HAL-2028](https://issues.redhat.com/browse/HAL-2028): Fix attribute processing
 
 ### Upgrades
 
