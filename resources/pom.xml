@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jboss.hal</groupId>
         <artifactId>hal-gwt-parent</artifactId>
-        <version>3.7.16.Final</version>
+        <version>3.7.17-SNAPSHOT</version>
         <relativePath>../gwt-parent/pom.xml</relativePath>
     </parent>
 
