@@ -25,7 +25,7 @@
     "copyfiles": "^2.4.1",
     "parcel": "^2.15.4",
     "@parcel/plugin": "^2.15.4",
-    "parcel-resolver-ignore": "^2.2.0",
+    "parcel-resolver-ignore": "^2.2.1",
     "parcel-resolver-theme": "file:local_modules/parcel-resolver-theme",
     "process": "^0.11.10"
   },
