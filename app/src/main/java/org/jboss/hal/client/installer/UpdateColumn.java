@@ -16,6 +16,7 @@
 package org.jboss.hal.client.installer;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -182,7 +183,12 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
                         || item.getUpdateKind() == UpdateItem.UpdateType.INSTALL) && !item.getName().equals(lastUpdateName)) {
                     actions.add(new ItemAction.Builder<UpdateItem>()
                             .title(resources.constants().revert())
-                            .handler(itm -> revert(itm))
+                            .handler(itm -> revert(itm, false))
+                            .constraint(Constraint.executable(INSTALLER_TEMPLATE, PREPARE_REVERT))
+                            .build());
+                    actions.add(new ItemAction.Builder<UpdateItem>()
+                            .title(resources.constants().customRevert())
+                            .handler(itm -> revert(itm, true))
                             .constraint(Constraint.executable(INSTALLER_TEMPLATE, PREPARE_REVERT))
                             .build());
                 }
@@ -213,7 +219,7 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
                 result -> MessageEvent.fire(eventBus, Message.success(resources.messages().serverCandidateCleanupSuccess())));
     }
 
-    private void revert(UpdateItem updateItem) {
+    private void revert(UpdateItem updateItem, boolean custom) {
         Operation operation = new Operation.Builder(AddressTemplates.INSTALLER_TEMPLATE.resolve(statementContext),
                 HISTORY_FROM_REVISION)
                 .param(REVISION, updateItem.getName())
@@ -221,7 +227,7 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
         dispatcher.execute(operation,
                 result -> {
                     List<ModelNode> updates = result.get(ARTIFACT_CHANGES).asList();
-                    if (updates.isEmpty()) {
+                    if (updates.isEmpty() && !custom) {
                         Dialog dialog = new Dialog.Builder(resources.constants().noUpdates())
                                 .add(p().innerHtml(resources.messages().noUpdatesFound()).element())
                                 .closeOnEsc(true)
@@ -231,7 +237,7 @@ public class UpdateColumn extends FinderColumn<UpdateItem> {
                         dialog.show();
                     } else {
                         new UpdateWizard(eventBus, dispatcher, statementContext, metadataRegistry, resources, updateItem,
-                                updates)
+                                custom ? Collections.emptyList() : updates)
                                 .show(this);
                     }
                 }, (op, error) -> MessageEvent.fire(eventBus, Message.error(resources.messages().lastOperationFailed())));

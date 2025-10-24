@@ -128,8 +128,8 @@ class UpdateWizard {
 
         // revert operation triggered from column item
         if (context.isRevert()) {
-            context.updateType = UpdateType.REVERT;
-            builder.setInitialState(LIST_UPDATES);
+            context.updateType = !context.updates.isEmpty() ? UpdateType.REVERT : UpdateType.CUSTOM;
+            builder.setInitialState(!context.updates.isEmpty() ? LIST_UPDATES : PROPERTIES);
         }
         builder.onFinish((wizard, ctx) -> column.refresh(CLEAR_SELECTION));
 

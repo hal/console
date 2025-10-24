@@ -120,6 +120,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String currentPage();
     String custom();
     String customPatches();
+    String customRevert();
     String data();
     String dataTablesDecimal();
     String dataTablesEmptyTable();

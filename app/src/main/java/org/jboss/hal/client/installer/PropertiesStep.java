@@ -163,6 +163,9 @@ class PropertiesStep extends WizardStep<UpdateManagerContext, UpdateState>
 
         context.isPropertiesFormBuilt = true;
         form.edit(new ModelNode());
+        if (context.revision != null) {
+            form.getFormItem(REVISION).setValue(context.revision);
+        }
     }
 
     @Override
