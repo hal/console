@@ -17,11 +17,14 @@ package org.jboss.hal.ballroom.form;
 
 import java.util.EnumSet;
 
+import org.jboss.elemento.EventCallbackFn;
 import org.jboss.hal.ballroom.LabelBuilder;
 
 import com.google.common.base.Strings;
 
+import elemental2.dom.Event;
 import elemental2.dom.HTMLInputElement;
+import jsinterop.base.Js;
 
 import static org.jboss.elemento.Elements.input;
 import static org.jboss.elemento.EventType.bind;
@@ -60,17 +63,18 @@ public class TextBoxItem extends AbstractFormItem<String> {
     @Override
     public void attach() {
         super.attach();
-        bind(inputElement, change, event -> {
+        remember(bind(inputElement, change, event -> {
             if (hasExpressionScheme(inputElement.value)) {
                 modifyExpressionValue(inputElement.value);
             } else {
                 modifyValue(inputElement.value);
             }
-        });
-        bind(inputElement, keyup, event -> {
+        }));
+        EventCallbackFn<Event> keyUpCallback = (__ -> {
             toggleExpressionSupport(inputElement.value);
             inputElement.focus();
         });
+        remember(bind(inputElement, keyup.getName(), (e) -> keyUpCallback.onEvent(Js.cast(e))));
     }
 
     @Override

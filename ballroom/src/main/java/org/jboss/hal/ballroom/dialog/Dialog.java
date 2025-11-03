@@ -37,6 +37,7 @@ import org.jboss.hal.spi.Callback;
 import com.google.common.collect.Iterables;
 import com.google.gwt.core.client.GWT;
 
+import elemental2.core.JsObject;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLElement;
 
@@ -213,10 +214,20 @@ public class Dialog implements IsElement {
         setVisible(Dialog.footer, !buttons.isEmpty());
 
         attachables.forEach(Attachable::attach);
+        // subsequent calls to $(id).modal(opts) do not overwrite the options so we have to change the value directly,
+        // but we still need to call the method to correctly set up event listeners
+        JsObject jso = $(SELECTOR_ID).data("bs.modal");
+        if (jso != null) {
+            overwriteCloseOnEsc(jso, builder.closeOnEsc);
+        }
         $(SELECTOR_ID).modal(ModalOptions.create(builder.closeOnEsc));
         $(SELECTOR_ID).modal("show");
         PatternFly.initComponents(SELECTOR_ID);
     }
+
+    private native void overwriteCloseOnEsc(JsObject data, boolean closeOnEsc) /*-{
+        data.options.keyboard = closeOnEsc
+    }-*/;
 
     /** Please call this method only if the dialog neither have a close icon, esc handler nor a close button. */
     public void close() {

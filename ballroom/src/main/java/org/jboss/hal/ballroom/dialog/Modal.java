@@ -17,6 +17,7 @@ package org.jboss.hal.ballroom.dialog;
 
 import org.jboss.hal.ballroom.JsCallback;
 
+import elemental2.core.JsObject;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsType;
@@ -35,6 +36,8 @@ public abstract class Modal {
     public native void modal(String action);
 
     public native void on(String event, JsCallback callback);
+
+    public native JsObject data(String selector);
 
     @JsType(isNative = true, namespace = GLOBAL, name = OBJECT)
     public static class ModalOptions {

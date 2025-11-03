@@ -32,6 +32,7 @@ import static org.jboss.elemento.Elements.label;
 import static org.jboss.elemento.EventType.click;
 import static org.jboss.elemento.EventType.keyup;
 import static org.jboss.elemento.InputType.search;
+import static org.jboss.elemento.Key.Enter;
 import static org.jboss.hal.resources.CSS.*;
 
 public class Search implements IsElement<HTMLElement> {
@@ -56,7 +57,7 @@ public class Search implements IsElement<HTMLElement> {
                                         .attr(UIConstants.PLACEHOLDER, CONSTANTS.search())
                                         .on(keyup, event -> {
                                             setVisible(clearSearch, !Strings.isNullOrEmpty(searchBox.value));
-                                            if ("Enter".equals(event.key)) { // NON-NLS
+                                            if (Enter.match(event)) {
                                                 builder.onSearch.search(searchBox.value);
                                             }
                                         }).element())

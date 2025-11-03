@@ -41,13 +41,14 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.event.shared.HandlerRegistration;
 
+import elemental2.dom.Event;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLFieldSetElement;
 import elemental2.dom.HTMLHRElement;
 import elemental2.dom.HTMLLegendElement;
 import elemental2.dom.HTMLUListElement;
-import elemental2.dom.KeyboardEvent;
+import jsinterop.base.Js;
 
 import static java.util.stream.Collectors.toList;
 
@@ -66,6 +67,7 @@ import static org.jboss.elemento.Elements.ul;
 import static org.jboss.elemento.EventType.bind;
 import static org.jboss.elemento.EventType.click;
 import static org.jboss.elemento.EventType.keyup;
+import static org.jboss.elemento.Key.Escape;
 import static org.jboss.hal.ballroom.form.Form.Operation.CANCEL;
 import static org.jboss.hal.ballroom.form.Form.Operation.CLEAR;
 import static org.jboss.hal.ballroom.form.Form.Operation.EDIT;
@@ -138,7 +140,7 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
     private HTMLDivElement errorPanel;
     private HTMLElement errorMessage;
     private HTMLUListElement errorMessages;
-    private EventCallbackFn<KeyboardEvent> escCallback;
+    private EventCallbackFn<Event> escCallback;
     private HandlerRegistration escRegistration;
 
     // accessible in subclasses
@@ -235,8 +237,8 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
         }
 
         if (stateMachine.supports(EDIT)) {
-            escCallback = (KeyboardEvent event) -> {
-                if ("Escape".equals(event.key) && // NON-NLS
+            escCallback = (Event event) -> {
+                if (Escape.match(event) &&
                         stateMachine.current() == EDITING &&
                         panels.get(EDITING) != null &&
                         Elements.isVisible(panels.get(EDITING))) {
@@ -585,9 +587,9 @@ public abstract class AbstractForm<T> extends LazyElement implements Form<T> {
                 if (!Iterables.isEmpty(getFormItems())) {
                     setTimeout((o) -> getFormItems().iterator().next().setFocus(true), MEDIUM_TIMEOUT);
                 }
-                if (escCallback != null && panels.get(EDITING) != null) {
+                if (escCallback != null && panels.get(EDITING) != null && escRegistration == null) {
                     // Exit *this* edit state by pressing ESC
-                    escRegistration = bind(panels.get(EDITING), keyup, escCallback);
+                    escRegistration = bind(panels.get(EDITING), keyup.getName(), ((e) -> escCallback.onEvent(Js.cast(e))));
                 }
                 break;
             default:

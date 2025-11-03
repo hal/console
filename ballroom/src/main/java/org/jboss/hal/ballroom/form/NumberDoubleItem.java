@@ -18,6 +18,7 @@ package org.jboss.hal.ballroom.form;
 import java.util.EnumSet;
 import java.util.List;
 
+import org.jboss.elemento.EventCallbackFn;
 import org.jboss.hal.resources.Constants;
 import org.jboss.hal.resources.Messages;
 import org.slf4j.Logger;
@@ -26,7 +27,9 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
 
+import elemental2.dom.Event;
 import elemental2.dom.HTMLInputElement;
+import jsinterop.base.Js;
 
 import static java.util.Arrays.asList;
 
@@ -95,10 +98,11 @@ public class NumberDoubleItem extends AbstractFormItem<Double> {
                 }
             }
         }));
-        remember(bind(inputElement, keyup, event -> {
+        EventCallbackFn<Event> keyUpCallback = (__ -> {
             toggleExpressionSupport(inputElement.value);
             inputElement.focus();
-        }));
+        });
+        remember(bind(inputElement, keyup.getName(), (e) -> keyUpCallback.onEvent(Js.cast(e))));
     }
 
     private void setRange(long min, long max) {

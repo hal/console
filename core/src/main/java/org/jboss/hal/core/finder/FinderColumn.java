@@ -346,7 +346,7 @@ public class FinderColumn<T> implements IsElement<HTMLDivElement>, Attachable {
     // ------------------------------------------------------ event handler
 
     private void onFilter(KeyboardEvent event) {
-        if (Escape == Key.fromEvent(event)) {
+        if (Escape.match(event)) {
             filterElement.value = "";
             // hide the 'clear' icon when there are no chars
             Elements.setVisible(clearFilterElement, false);
