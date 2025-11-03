@@ -126,7 +126,7 @@ jobs:
         run: gu.cmd install native-image
       - name: Configure Pagefile
         id: configure-pagefile
-        uses: al-cheb/configure-pagefile-action@v1.4
+        uses: al-cheb/configure-pagefile-action@v1.5
       - name: Setup MSVC
         id: setup-msvc
         uses: ilammy/msvc-dev-cmd@v1.13.0
