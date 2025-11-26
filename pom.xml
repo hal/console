@@ -126,7 +126,7 @@
         <!-- 3.2.0 has LTS with support for Java 11 -->
         <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
         <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-        <quarkus.platform.version>3.2.0.Final</quarkus.platform.version>
+        <quarkus.platform.version>3.30.1</quarkus.platform.version>
 
         <!-- Repos & URLs -->
         <repo.scm.connection>git@github.com:hal/console.git</repo.scm.connection>
