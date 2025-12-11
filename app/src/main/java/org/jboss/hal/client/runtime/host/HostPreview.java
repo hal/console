@@ -15,6 +15,8 @@
  */
 package org.jboss.hal.client.runtime.host;
 
+import java.util.List;
+
 import org.jboss.elemento.Elements;
 import org.jboss.hal.ballroom.Format;
 import org.jboss.hal.ballroom.LabelBuilder;
@@ -24,6 +26,10 @@ import org.jboss.hal.core.finder.PreviewAttributes.PreviewAttribute;
 import org.jboss.hal.core.runtime.host.Host;
 import org.jboss.hal.core.runtime.host.HostActions;
 import org.jboss.hal.core.runtime.host.HostPreviewAttributes;
+import org.jboss.hal.dmr.ModelDescriptionConstants;
+import org.jboss.hal.dmr.ModelNode;
+import org.jboss.hal.dmr.Operation;
+import org.jboss.hal.dmr.dispatch.Dispatcher;
 import org.jboss.hal.resources.Names;
 import org.jboss.hal.resources.Resources;
 
@@ -33,9 +39,14 @@ import static java.util.Arrays.asList;
 
 import static org.jboss.elemento.Elements.a;
 import static org.jboss.elemento.Elements.div;
+import static org.jboss.elemento.Elements.h;
+import static org.jboss.elemento.Elements.li;
+import static org.jboss.elemento.Elements.setVisible;
 import static org.jboss.elemento.Elements.span;
+import static org.jboss.elemento.Elements.ul;
 import static org.jboss.elemento.EventType.click;
 import static org.jboss.hal.client.runtime.host.HostColumn.hostTemplate;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHANNEL_VERSIONS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DISCONNECTED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST_STATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.LAST_CONNECTED;
@@ -43,6 +54,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.MANAGEMENT_MAJOR_VERSI
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MANAGEMENT_MICRO_VERSION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MANAGEMENT_MINOR_VERSION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MANAGEMENT_VERSION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PRODUCT_INFO;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PRODUCT_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PRODUCT_VERSION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RELEASE_CODENAME;
@@ -50,23 +62,35 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.RELEASE_VERSION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RELOAD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESTART;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RUNNING_MODE;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SUMMARY;
 import static org.jboss.hal.meta.security.Constraint.executable;
 import static org.jboss.hal.resources.CSS.alertLink;
 import static org.jboss.hal.resources.CSS.clickable;
 import static org.jboss.hal.resources.CSS.hidden;
+import static org.jboss.hal.resources.CSS.listGroup;
+import static org.jboss.hal.resources.CSS.listGroupItem;
+import static org.jboss.hal.resources.CSS.value;
 import static org.jboss.hal.resources.UIConstants.CONSTRAINT;
 
 public class HostPreview extends RuntimePreview<Host> {
 
+    private static final String ID_HEADER_CHANNEL_VERSIONS = "h2-channel-versions";
+    private static final String ID_CHANNEL_VERSIONS = "channel-versions";
+
+    private final Dispatcher dispatcher;
     private final HTMLElement reloadLink;
     private final HTMLElement restartLink;
     private final PreviewAttributes<Host> attributes;
     private final HostActions hostActions;
     private final Resources resources;
     private final LabelBuilder labelBuilder;
+    private final HTMLElement headerChannelVersions = h(2, new LabelBuilder().label(CHANNEL_VERSIONS)).id(
+            ID_HEADER_CHANNEL_VERSIONS).element();
+    private final HTMLElement ulChannelVersions = ul().id(ID_CHANNEL_VERSIONS).css(listGroup).element();
 
-    public HostPreview(HostActions hostActions, Host host, Resources resources) {
+    public HostPreview(Dispatcher dispatcher, HostActions hostActions, Host host, Resources resources) {
         super(host.getName(), host.isDomainController() ? Names.DOMAIN_CONTROLLER : Names.HOST_CONTROLLER, resources);
+        this.dispatcher = dispatcher;
         this.hostActions = hostActions;
         this.resources = resources;
         this.labelBuilder = new LabelBuilder();
@@ -104,6 +128,11 @@ public class HostPreview extends RuntimePreview<Host> {
                                 : Names.NOT_AVAILABLE));
         previewBuilder().addAll(attributes);
 
+        setVisible(headerChannelVersions, false);
+        setVisible(ulChannelVersions, false);
+        previewBuilder().add(headerChannelVersions);
+        previewBuilder().add(ulChannelVersions);
+
         update(host);
     }
 
@@ -127,11 +156,45 @@ public class HostPreview extends RuntimePreview<Host> {
             unknown(resources.messages().hostUndefined(host.getName()));
         }
 
-        // Do not simply hide the links, but add the hidden CSS class.
+        // Do not simply hide the links but add the hidden CSS class.
         // Important when constraints for the links are processed later.
         Elements.toggle(reloadLink, hidden, !host.needsReload());
         Elements.toggle(restartLink, hidden, !host.needsRestart());
 
         HostPreviewAttributes.refresh(host, attributes, hostActions);
+
+        if (host.isRunning() || host.needsRestart() || host.needsReload()) {
+            dispatcher.execute(new Operation.Builder(host.getAddress(), PRODUCT_INFO).build()).then(result -> {
+                boolean showChannelVersions = false;
+                if (result.isDefined()) {
+                    ModelNode summary = findSummary(result.asList(), host);
+                    if (summary.hasDefined(CHANNEL_VERSIONS)) {
+                        Elements.removeChildrenFrom(ulChannelVersions);
+                        summary.get(CHANNEL_VERSIONS)
+                                .asList()
+                                .forEach(cv -> ulChannelVersions.appendChild(li().css(listGroupItem)
+                                        .add(span().css(value).style("margin-left:0")
+                                                .textContent(cv.asString()).element())
+                                        .element()));
+                        showChannelVersions = true;
+                    }
+                }
+                setVisible(headerChannelVersions, showChannelVersions);
+                setVisible(ulChannelVersions, showChannelVersions);
+                return null;
+            });
+        }
+    }
+
+    private ModelNode findSummary(List<ModelNode> summaries, Host host) {
+        for (ModelNode modelNode : summaries) {
+            if (modelNode.hasDefined(ModelDescriptionConstants.SUMMARY)) {
+                ModelNode summary = modelNode.get(SUMMARY);
+                if (host.getName().equals(summary.get("node-name").asString())) {
+                    return summary;
+                }
+            }
+        }
+        return new ModelNode();
     }
 }

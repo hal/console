@@ -122,7 +122,7 @@ public class HostColumn extends FinderColumn<Host> implements HostActionHandler,
 
         super(new Builder<Host>(finder, Ids.HOST, Names.HOST)
                 .onItemSelect(host -> eventBus.fireEvent(new HostSelectionEvent(host.getAddressName())))
-                .onPreview(item -> new HostPreview(hostActions, item, resources))
+                .onPreview(item -> new HostPreview(dispatcher, hostActions, item, resources))
                 .pinnable()
                 .showCount()
                 // Unlike other columns the host column does not have a custom breadcrumb item handler.

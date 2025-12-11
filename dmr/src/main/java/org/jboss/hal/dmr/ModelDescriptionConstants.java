@@ -731,6 +731,7 @@ public interface ModelDescriptionConstants {
     String PROCESS_STATE_LISTENER = "process-state-listener";
     String PROCESSING_TIME = "processing-time";
     String PRODUCES = "produces";
+    String PRODUCT_INFO = "product-info";
     String PRODUCT_NAME = "product-name";
     String PRODUCT_VERSION = "product-version";
     String PROFILE = "profile";
@@ -994,6 +995,7 @@ public interface ModelDescriptionConstants {
     String SUBSYSTEM = "subsystem";
     String SUCCESS = "success";
     String SUGGEST_CAPABILITIES = "suggest-capabilities";
+    String SUMMARY = "summary";
     String SUSPEND = "suspend";
     String SUSPEND_SERVERS = "suspend-servers";
     String SUSPEND_STATE = "suspend-state";

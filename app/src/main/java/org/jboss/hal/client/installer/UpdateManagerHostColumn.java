@@ -103,7 +103,7 @@ public class UpdateManagerHostColumn extends FinderColumn<Host> implements HostA
                         }))
 
                 .onItemSelect(host -> eventBus.fireEvent(new HostSelectionEvent(host.getName())))
-                .onPreview(item -> new HostPreview(hostActions, item, resources))
+                .onPreview(item -> new HostPreview(dispatcher, hostActions, item, resources))
                 .pinnable()
                 .showCount()
                 .useFirstActionAsBreadcrumbHandler()
