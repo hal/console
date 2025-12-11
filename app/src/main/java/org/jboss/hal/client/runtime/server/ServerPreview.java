@@ -60,14 +60,17 @@ import static org.jboss.elemento.Elements.a;
 import static org.jboss.elemento.Elements.div;
 import static org.jboss.elemento.Elements.h;
 import static org.jboss.elemento.Elements.li;
+import static org.jboss.elemento.Elements.setVisible;
 import static org.jboss.elemento.Elements.span;
 import static org.jboss.elemento.Elements.ul;
 import static org.jboss.elemento.EventType.click;
 import static org.jboss.hal.client.runtime.server.ServerColumn.serverConfigTemplate;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.AUTO_START;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHANNEL_VERSIONS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.PRODUCT_INFO;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROFILE_NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.QUERY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_NAMES_OPERATION;
@@ -85,6 +88,7 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.SOCKET_BINDING_PORT_OF
 import static org.jboss.hal.dmr.ModelDescriptionConstants.START;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.STATUS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.STOP;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.SUMMARY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SUSPEND_STATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.WHERE;
 import static org.jboss.hal.flow.Flow.sequential;
@@ -103,6 +107,8 @@ class ServerPreview extends RuntimePreview<Server> {
     private static final AddressTemplate SELECTED_SERVER = AddressTemplate.of("{selected.host}/{selected.server}");
     private static final String ID_OPEN_PORTS = "open-ports";
     private static final String ID_HEADER_OPEN_PORTS = "h2-open-ports";
+    private static final String ID_HEADER_CHANNEL_VERSIONS = "h2-channel-versions";
+    private static final String ID_CHANNEL_VERSIONS = "channel-versions";
 
     private final ServerActions serverActions;
     private final Dispatcher dispatcher;
@@ -119,6 +125,9 @@ class ServerPreview extends RuntimePreview<Server> {
     private final PreviewAttributes<Server> attributes;
     private final HTMLElement ulOpenPorts = ul().id(ID_OPEN_PORTS).css(listGroup).element();
     private final HTMLElement headerOpenPorts = h(2, resources.constants().openPorts()).id(ID_HEADER_OPEN_PORTS).element();
+    private final HTMLElement headerChannelVersions = h(2, new LabelBuilder().label(CHANNEL_VERSIONS)).id(
+            ID_HEADER_CHANNEL_VERSIONS).element();
+    private final HTMLElement ulChannelVersions = ul().id(ID_CHANNEL_VERSIONS).css(listGroup).element();
 
     ServerPreview(ServerActions serverActions,
             Server server,
@@ -169,7 +178,7 @@ class ServerPreview extends RuntimePreview<Server> {
                         .add(bootErrorsLink = a().css(clickable, alertLink)
                                 .on(click, event -> {
                                     PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(
-                                            NameTokens.SERVER_BOOT_ERRORS)
+                                                    NameTokens.SERVER_BOOT_ERRORS)
                                             .with(HOST, server.getHost())
                                             .with(SERVER, server.getName())
                                             .build();
@@ -178,7 +187,7 @@ class ServerPreview extends RuntimePreview<Server> {
                                 .textContent(resources.constants().view()).element())
                         .element());
 
-        links = new HTMLElement[] { startLink, stopLink, reloadLink, restartLink, resumeLink, bootErrorsLink };
+        links = new HTMLElement[]{startLink, stopLink, reloadLink, restartLink, resumeLink, bootErrorsLink};
 
         serverUrl = span().textContent(Names.NOT_AVAILABLE).element();
         PreviewAttributeFunction<Server> previewFunction = model -> new PreviewAttribute(Names.URL, serverUrl);
@@ -227,6 +236,10 @@ class ServerPreview extends RuntimePreview<Server> {
             previewBuilder().add(this.headerOpenPorts);
             previewBuilder().add(this.ulOpenPorts);
         }
+        setVisible(headerChannelVersions, false);
+        setVisible(ulChannelVersions, false);
+        previewBuilder().add(headerChannelVersions);
+        previewBuilder().add(ulChannelVersions);
     }
 
     @Override
@@ -363,11 +376,38 @@ class ServerPreview extends RuntimePreview<Server> {
         }
         Elements.setVisible(headerOpenPorts, displayOpenPorts);
         Elements.setVisible(ulOpenPorts, displayOpenPorts);
+
+        if (displayOpenPorts) {
+            dispatcher.execute(new Operation.Builder(server.getServerAddress(), PRODUCT_INFO).build()).then(result -> {
+                boolean showChannelVersions = false;
+                if (result.isDefined()) {
+                    if (!result.asList().isEmpty()) {
+                        ModelNode payload = result.asList().get(0);
+                        if (payload.hasDefined(SUMMARY)) {
+                            ModelNode summary = payload.get(SUMMARY);
+                            if (summary.hasDefined(CHANNEL_VERSIONS)) {
+                                Elements.removeChildrenFrom(ulChannelVersions);
+                                summary.get(CHANNEL_VERSIONS)
+                                        .asList()
+                                        .forEach(cv -> ulChannelVersions.appendChild(li().css(listGroupItem)
+                                                .add(span().css(value).style("margin-left:0")
+                                                        .textContent(cv.asString()).element())
+                                                .element()));
+                                showChannelVersions = true;
+                            }
+                        }
+                    }
+                }
+                setVisible(headerChannelVersions, showChannelVersions);
+                setVisible(ulChannelVersions, showChannelVersions);
+                return null;
+            });
+        }
     }
 
     private void disableAllLinks() {
         for (HTMLElement l : links) {
-            // Do not simply hide the links, but add the hidden CSS class.
+            // Do not simply hide the links but add the hidden CSS class.
             // Important when constraints for the links are processed later.
             l.classList.add(hidden);
         }
@@ -378,7 +418,7 @@ class ServerPreview extends RuntimePreview<Server> {
             if (l == link) {
                 continue;
             }
-            // Do not simply hide the links, but add the hidden CSS class.
+            // Do not simply hide the links but add the hidden CSS class.
             // Important when constraints for the links are processed later.
             l.classList.add(hidden);
         }
