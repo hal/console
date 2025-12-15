@@ -113,9 +113,7 @@ class StackElement implements IsElement<HTMLElement>, Attachable, HasPresenter<J
                 resources, SELECTED_REMOTE_SITE_TEMPLATE, Names.REMOTE_SITE, Ids.JGROUPS_REMOTE_SITE);
         protocolElement = new GenericElement(metadataRegistry.lookup(PROTOCOL_TEMPLATE), tableButtonFactory,
                 resources, SELECTED_PROTOCOL_TEMPLATE, Names.PROTOCOL, Ids.JGROUPS_PROTOCOL);
-        transportElement = new TransportElement(metadataRegistry, tableButtonFactory,
-                metadataRegistry.lookup(TRANSPORT_TEMPLATE), resources, SELECTED_TRANSPORT_TEMPLATE, Names.TRANSPORT,
-                Ids.JGROUPS_TRANSPORT);
+        transportElement = new TransportElement(metadataRegistry, resources);
 
         innerPages = new Pages(Ids.build(Ids.JGROUPS_STACK_CONFIG, Ids.PAGES), STACK_ID, section);
         // Relay page
