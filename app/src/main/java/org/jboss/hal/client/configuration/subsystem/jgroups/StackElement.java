@@ -60,7 +60,7 @@ class StackElement implements IsElement<HTMLElement>, Attachable, HasPresenter<J
 
     private final RelayElement relayElement;
     private final GenericElement remoteSiteElement;
-    private final GenericElement protocolElement;
+    private final ProtocolElement protocolElement;
     private final TransportElement transportElement;
 
     @SuppressWarnings({ "ConstantConditions", "HardCodedStringLiteral" })
@@ -111,7 +111,7 @@ class StackElement implements IsElement<HTMLElement>, Attachable, HasPresenter<J
         relayElement = new RelayElement(metadataRegistry, tableButtonFactory, resources);
         remoteSiteElement = new GenericElement(metadataRegistry.lookup(REMOTE_SITE_TEMPLATE), tableButtonFactory,
                 resources, SELECTED_REMOTE_SITE_TEMPLATE, Names.REMOTE_SITE, Ids.JGROUPS_REMOTE_SITE);
-        protocolElement = new GenericElement(metadataRegistry.lookup(PROTOCOL_TEMPLATE), tableButtonFactory,
+        protocolElement = new ProtocolElement(metadataRegistry.lookup(PROTOCOL_TEMPLATE), tableButtonFactory,
                 resources, SELECTED_PROTOCOL_TEMPLATE, Names.PROTOCOL, Ids.JGROUPS_PROTOCOL);
         transportElement = new TransportElement(metadataRegistry, resources);
 

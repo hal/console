@@ -74,6 +74,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String chooseOrDragFile();
     String chooseOrDragFiles();
     String choosePolicy();
+    String chooseProtocol();
     String chooseSingleton();
     String chooseStrategy();
     String chooseTemplate();

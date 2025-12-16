@@ -40,6 +40,8 @@ interface AddressTemplates {
     String SELECTED_CHANNEL_FORK_ADDRESS = JGROUPS_ADDRESS + "/channel={selected.channel}/fork=*";
     String SELECTED_CHANNEL_FORK_PROTOCOL_ADDRESS = JGROUPS_ADDRESS
             + "/channel={selected.channel}/fork={selected.fork}/protocol=*";
+    String AUTH_TOKEN_ADDRESS = JGROUPS_ADDRESS + "/stack=*/protocol=AUTH/token=*";
+    String SELECTED_AUTH_TOKEN_ADDRESS = JGROUPS_ADDRESS + "/stack={selected.stack}/protocol=AUTH/token=*";
 
     AddressTemplate JGROUPS_TEMPLATE = AddressTemplate.of(JGROUPS_ADDRESS);
     AddressTemplate STACK_TEMPLATE = AddressTemplate.of(STACK_ADDRESS);
@@ -64,5 +66,7 @@ interface AddressTemplates {
     AddressTemplate CHANNEL_FORK_PROTOCOL_TEMPLATE = AddressTemplate.of(CHANNEL_FORK_PROTOCOL_ADDRESS);
     AddressTemplate SELECTED_CHANNEL_FORK_PROTOCOL_TEMPLATE = AddressTemplate.of(
             SELECTED_CHANNEL_FORK_PROTOCOL_ADDRESS);
+    AddressTemplate AUTH_TOKEN_TEMPLATE = AddressTemplate.of(AUTH_TOKEN_ADDRESS);
+    AddressTemplate SELECTED_AUTH_TOKEN_TEMPLATE = AddressTemplate.of(SELECTED_AUTH_TOKEN_ADDRESS);
 
 }

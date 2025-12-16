@@ -47,6 +47,7 @@ public interface ModelDescriptionConstants {
     String ADD_CONTENT = "add-content";
     String ADD_IDENTITY = "add-identity";
     String ADD_IDENTITY_ATTRIBUTE = "add-identity-attribute";
+    String ADD_INDEX = "add-index";
     String ADD_PREFIX_ROLE_MAPPER = "add-prefix-role-mapper";
     String ADD_SUFFIX_ROLE_MAPPER = "add-suffix-role-mapper";
     String ADDRESS = "address";
@@ -1026,6 +1027,7 @@ public interface ModelDescriptionConstants {
     String TIMESTAMP_COLUMN = "timestamp-column";
     String TO = "to";
     String TO_PROFILE = "to-profile";
+    String TOKEN = "token";
     String TOKEN_REALM = "token-realm";
     String TOPIC_ADDRESS = "topic-address";
     String TOTAL_PROCESSING_TIME = "total-processing-time";

@@ -297,7 +297,8 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
     protected void prepare(State state) {
         super.prepare(state);
 
-        SecurityContext securityContext = metadata.getSecurityContext();
+        SecurityContext securityContext = isFromRequestProperties ? metadata.forOperation(ADD).getSecurityContext()
+                : metadata.getSecurityContext();
         switch (state) {
             case EMPTY:
                 ElementGuard.processElements(
