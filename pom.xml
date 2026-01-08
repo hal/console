@@ -111,7 +111,7 @@
 
         <!-- Plugin versions -->
         <version.build.helper.plugin>3.6.1</version.build.helper.plugin>
-        <version.central.publishing.plugin>0.9.0</version.central.publishing.plugin>
+        <version.central.publishing.plugin>0.10.0</version.central.publishing.plugin>
         <version.checkstyle.plugin>3.3.0</version.checkstyle.plugin>
         <version.degraph.plugin>4.0.3</version.degraph.plugin>
         <version.enforcer.plugin>3.3.0</version.enforcer.plugin>
