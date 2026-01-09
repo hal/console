@@ -69,7 +69,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT_SECURITY_DOMAI
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT_SFSB_CACHE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT_SFSB_PASSIVATION_DISABLED_CACHE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT_SLSB_INSTANCE_POOL;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PASSIVATION_STORE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVICE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TYPE;
@@ -153,7 +152,7 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
                                     (name, address) -> presenter.reload()))
                     .button(mbuiContext.tableButtonFactory().remove(Names.APPLICATION_SECURITY_DOMAIN, template,
                             (api) -> api.selectedRow().getName(), () -> presenter.reload()))
-                    .column(NAME, (cell, type, row, meta) -> row.getName())
+                    .nameColumn()
                     .build();
 
             appSecurityDomainForm = new ModelNodeForm.Builder<NamedNode>(Ids.EJB3_APPLICATION_SECURITY_DOMAIN_FORM,
@@ -209,7 +208,7 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
                 .button(mbuiContext.tableButtonFactory().remove(rpTypeLabel, REMOTING_PROFILE_TEMPLATE,
                         table -> table.selectedRow().getName(),
                         () -> presenter.reload()))
-                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .nameColumn()
                 .column(ejbReceiverPage.makeInlineAction(), "20em")
                 .column(httpConnectionPage.makeInlineAction(), "20em")
                 .build();
@@ -261,7 +260,7 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
                 .button(mbuiContext.tableButtonFactory().remove(RER_CHANNEL_CREATION_OPTIONS_TEMPLATE,
                         table -> presenter.removeRerChannelCreationOptions(ccoTypeLabel, table.selectedRow().getName(),
                                 selectedRemotingProfile, selectedEjbReceiver)))
-                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .nameColumn()
                 .columns(TYPE, VALUE)
                 .build();
 
@@ -426,7 +425,7 @@ public abstract class EjbView extends MbuiViewImpl<EjbPresenter> implements EjbP
                     .button(mbuiContext.tableButtonFactory().remove(template,
                             table -> presenter.removeRemotingProfileChild(label, table.selectedRow().getName(),
                                     selectedRemotingProfile, childType, template)))
-                    .column(NAME, (cell, t, row, meta) -> row.getName())
+                    .nameColumn()
                     .columns(columnNames);
 
             if (childType.equals(ER_TYPE)) {

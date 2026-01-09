@@ -85,7 +85,7 @@ public class RemoteCacheContainerView extends HalViewImpl implements RemoteCache
                 .button(tableButtonFactory.add(REMOTE_CLUSTER_TEMPLATE, table -> presenter.addRemoteCluster()))
                 .button(tableButtonFactory.remove(REMOTE_CLUSTER_TEMPLATE,
                         table -> presenter.removeRemoteCluster(table.selectedRow().getName())))
-                .column(resources.constants().name(), (cell, type, row, meta) -> row.getName())
+                .nameColumn()
                 .column(Names.SOCKET_BINDINGS, (cell, type, row, meta) -> {
                     ModelNode socketBindings = row.get(SOCKET_BINDINGS);
                     if (socketBindings.isDefined()) {

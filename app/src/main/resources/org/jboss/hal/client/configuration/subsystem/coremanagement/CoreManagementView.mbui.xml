@@ -40,6 +40,7 @@
                                 name-resolver="${table.selectedRow().getName()}"/>
                     </actions>
                     <columns>
+                        <column name="index" value="${String.valueOf(meta.row)}"/>
                         <column name="name" value="${row.getName()}"/>
                     </columns>
                 </table>

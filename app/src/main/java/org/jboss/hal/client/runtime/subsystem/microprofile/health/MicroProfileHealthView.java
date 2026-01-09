@@ -61,7 +61,7 @@ public class MicroProfileHealthView extends HalViewImpl implements MicroProfileH
 
         checkTable = new ModelNodeTable.Builder<>(Ids.build(MICRO_PROFILE_HEALTH, TABLE), metadata)
                 .button(resources.constants().refresh(), table -> presenter.reload())
-                .column(resources.constants().name(), (cell, type, row, meta) -> row.get(NAME).asString())
+                .nameColumn()
                 .column(Names.STATUS, (cell, type, row, meta) -> row.get(STATUS).asString())
                 .build();
 

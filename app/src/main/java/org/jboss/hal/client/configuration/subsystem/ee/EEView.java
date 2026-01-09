@@ -290,7 +290,7 @@ public class EEView extends HalViewImpl implements EEPresenter.MyView {
 
         Table<NamedNode> table = new ModelNodeTable.Builder<NamedNode>(Ids.build(baseId, Ids.TABLE),
                 metadata)
-                .column(NAME, (cell, t, row, meta) -> row.getName())
+                .nameColumn()
                 .button(tableButtonFactory.add(Ids.build(baseId, Ids.ADD), type, template,
                         (name, address) -> presenter.reload()))
                 .button(tableButtonFactory.remove(type, template, (api) -> api.selectedRow().getName(),

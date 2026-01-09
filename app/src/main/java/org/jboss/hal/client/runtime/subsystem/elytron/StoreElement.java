@@ -44,7 +44,6 @@ import static org.jboss.elemento.Elements.p;
 import static org.jboss.elemento.Elements.section;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ALIAS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.CERTIFICATE_DETAILS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.resources.Ids.FORM;
 import static org.jboss.hal.resources.Ids.PAGE;
 import static org.jboss.hal.resources.Ids.PAGES;
@@ -71,7 +70,7 @@ public class StoreElement implements IsElement<HTMLElement>, Attachable {
         builder.buttonsHandler.forEach(tableBuilder::button);
 
         table = tableBuilder
-                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .nameColumn()
                 .column(new InlineAction<>(builder.resources.constants().aliases(),
                         row -> {
                             selectedResource = row.getName();

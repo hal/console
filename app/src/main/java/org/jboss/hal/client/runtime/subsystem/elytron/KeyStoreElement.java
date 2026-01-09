@@ -83,7 +83,7 @@ public class KeyStoreElement implements IsElement<HTMLElement>, Attachable {
                 .button(new Button<>(cons.obtain(), cons.obtainCertificate(),
                         table -> presenter.obtainCertificate(metadata, table.selectedRow().getName()),
                         Constraint.executable(KEY_STORE_TEMPLATE, OBTAIN_CERTIFICATE)))
-                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .nameColumn()
                 .column(new InlineAction<>(cons.aliases(),
                         row -> {
                             selectedKeystore = row.getName();

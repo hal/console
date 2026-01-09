@@ -165,7 +165,7 @@ public abstract class DistributableWebView extends MbuiViewImpl<DistributableWeb
                         SessionManagement.HOTROD.template,
                         table -> table.selectedRow().getName(),
                         () -> presenter.reload()))
-                .column("name", (cell, type, row, meta) -> row.getName())
+                .nameColumn()
                 .build();
         hotRodSessionManagementAffinityElement = new AffinityElement(SessionManagement.HOTROD, mbuiContext.metadataRegistry(),
                 mbuiContext.resources());
@@ -197,7 +197,7 @@ public abstract class DistributableWebView extends MbuiViewImpl<DistributableWeb
                         SessionManagement.INFINISPAN.template,
                         table -> table.selectedRow().getName(),
                         () -> presenter.reload()))
-                .column("name", (cell, type, row, meta) -> row.getName())
+                .nameColumn()
                 .build();
         infinispanSessionManagementAffinityElement = new AffinityElement(SessionManagement.INFINISPAN,
                 mbuiContext.metadataRegistry(), mbuiContext.resources());

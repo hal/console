@@ -49,7 +49,6 @@ import static org.jboss.elemento.Elements.*;
 import static org.jboss.elemento.EventType.click;
 import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
 import static org.jboss.hal.resources.CSS.*;
 
@@ -179,7 +178,7 @@ public class JpaView extends HalViewImpl implements JpaPresenter.MyView {
 
         Table<NamedNode> table = new ModelNodeTable.Builder<NamedNode>(
                 Ids.build(baseId, resource, Ids.TABLE), metadata)
-                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .nameColumn()
                 .build();
 
         Form<NamedNode> form = new ModelNodeForm.Builder<NamedNode>(Ids.build(baseId, resource, Ids.FORM),

@@ -18,7 +18,9 @@ package org.jboss.hal.core.mbui.table;
 import java.util.List;
 import java.util.function.Function;
 
+import org.jboss.hal.ballroom.LabelBuilder;
 import org.jboss.hal.ballroom.table.Column;
+import org.jboss.hal.ballroom.table.ColumnBuilder;
 import org.jboss.hal.ballroom.table.DataTable;
 import org.jboss.hal.ballroom.table.GenericOptionsBuilder;
 import org.jboss.hal.ballroom.table.Options;
@@ -38,6 +40,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import static org.jboss.hal.ballroom.table.RefreshMode.RESET;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.INDEX;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.resources.UIConstants.HASH;
 import static org.jboss.hal.resources.UIConstants.data;
@@ -105,7 +108,9 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
 
     private void checkIdentifier(T data) {
         if (data != null) {
-            if (data.hasDefined(NAME)) {
+            if (data.hasDefined(INDEX)) {
+                identifier = model -> model.get(INDEX).asString();
+            } else if (data.hasDefined(NAME)) {
                 identifier = model -> model.get(NAME).asString();
             }
             identifierChecked = true;
@@ -163,6 +168,19 @@ public class ModelNodeTable<T extends ModelNode> extends DataTable<T> {
                         attribute, metadata.getDescription());
                 return that();
             }
+        }
+
+        public Builder<T> indexColumn() {
+            column(new ColumnBuilder<T>(INDEX, new LabelBuilder().label(INDEX),
+                    (c, t, r, meta) -> String.valueOf(meta.row))
+                    .width("8rem")
+                    .build());
+            return that();
+        }
+
+        public Builder<T> nameColumn() {
+            column(NAME, (c, t, row, m) -> row.get(NAME).asString());
+            return that();
         }
 
         @Override

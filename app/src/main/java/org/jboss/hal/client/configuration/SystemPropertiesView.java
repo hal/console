@@ -42,7 +42,6 @@ import static org.jboss.hal.ballroom.LayoutBuilder.column;
 import static org.jboss.hal.ballroom.LayoutBuilder.row;
 import static org.jboss.hal.client.configuration.SystemPropertiesPresenter.ROOT_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.BOOT_TIME;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 
 public class SystemPropertiesView extends HalViewImpl implements SystemPropertiesPresenter.MyView {
@@ -74,7 +73,7 @@ public class SystemPropertiesView extends HalViewImpl implements SystemPropertie
                 .button(tableButtonFactory.remove(Names.SYSTEM_PROPERTY, ROOT_TEMPLATE,
                         table -> table.selectedRow().getName(),
                         () -> presenter.reload()))
-                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .nameColumn()
                 .column(VALUE);
         if (!environment.isStandalone()) {
             tb.column("boot-time");

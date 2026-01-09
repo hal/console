@@ -79,7 +79,7 @@ class ThreadPoolsEditor implements IsElement<HTMLElement>, Attachable, HasPresen
                 .button(tableButtonFactory.remove(WORKMANAGER_LRT_TEMPLATE,
                         table -> presenter.removeThreadPool(workmanagerTemplate, workmanager,
                                 table.selectedRow())))
-                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .nameColumn()
                 .column(resources.constants().type(), (cell, type, row, meta) -> row.getRunningMode())
                 .column(MAX_THREADS)
                 .build();

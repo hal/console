@@ -50,7 +50,6 @@ import static org.jboss.elemento.Elements.h;
 import static org.jboss.elemento.Elements.p;
 import static org.jboss.elemento.Elements.section;
 import static org.jboss.hal.client.configuration.subsystem.jgroups.JGroupsPresenter.AUTH;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TOKEN;
 
 public class ProtocolElement implements IsElement<HTMLElement>, Attachable, HasPresenter<JGroupsPresenter> {
@@ -86,7 +85,8 @@ public class ProtocolElement implements IsElement<HTMLElement>, Attachable, HasP
                 .button(tableButtonFactory.add(template, launchWizard))
                 .button(tableButtonFactory.remove(template,
                         table -> presenter.removeResource(template, table.selectedRow().getName(), resourceName)))
-                .column(NAME, (cell, t, row, meta) -> row.getName())
+                .indexColumn()
+                .nameColumn()
                 .build();
         form = createForm(metadata);
 

@@ -37,7 +37,6 @@ import static org.jboss.elemento.Elements.h;
 import static org.jboss.elemento.Elements.p;
 import static org.jboss.elemento.Elements.section;
 import static org.jboss.hal.client.configuration.subsystem.webservice.AddressTemplates.HANDLER_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 /** Element to configure handlers of a handler chain. */
 class HandlerElement implements IsElement<HTMLElement>, Attachable, HasPresenter<WebservicePresenter> {
@@ -57,7 +56,7 @@ class HandlerElement implements IsElement<HTMLElement>, Attachable, HasPresenter
                 .button(tableButtonFactory.add(HANDLER_TEMPLATE, table -> presenter.addHandler()))
                 .button(tableButtonFactory.remove(HANDLER_TEMPLATE,
                         table -> presenter.removeHandler(table.selectedRow().getName())))
-                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .nameColumn()
                 .build();
 
         String formId = Ids.build(configType.baseId, "handler", Ids.FORM);

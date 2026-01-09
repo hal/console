@@ -111,7 +111,7 @@ public abstract class RemoteActiveMQView extends MbuiViewImpl<RemoteActiveMQPres
                                 table.selectedRow()),
                         Scope.SELECTED,
                         Constraint.executable(POOLED_CONNECTION_FACTORY_TEMPLATE, REMOVE))
-                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .nameColumn()
                 .build();
 
         pooledConnectionFactoryForm = new ModelNodeForm.Builder<NamedNode>(

@@ -41,7 +41,6 @@ import static org.jboss.elemento.Elements.h;
 import static org.jboss.elemento.Elements.p;
 import static org.jboss.elemento.Elements.section;
 import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTemplates.*;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 /** Element to configure the stack resource */
 class StackElement implements IsElement<HTMLElement>, Attachable, HasPresenter<JGroupsPresenter> {
@@ -90,7 +89,7 @@ class StackElement implements IsElement<HTMLElement>, Attachable, HasPresenter<J
                 .button(tableButtonFactory.remove(STACK_TEMPLATE,
                         table -> presenter.removeResource(STACK_TEMPLATE, table.selectedRow().getName(),
                                 Names.STACK)))
-                .column(NAME, (cell, t, row, meta) -> row.getName())
+                .nameColumn()
                 .column(inlineActions)
                 .build();
 

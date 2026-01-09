@@ -37,7 +37,6 @@ import static org.jboss.elemento.Elements.h;
 import static org.jboss.elemento.Elements.p;
 import static org.jboss.elemento.Elements.section;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SERVER_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 class ListenerElement implements IsElement<HTMLElement>, Attachable, HasPresenter<ServerPresenter> {
 
@@ -58,7 +57,7 @@ class ListenerElement implements IsElement<HTMLElement>, Attachable, HasPresente
                 .button(tableButtonFactory.add(template, table -> presenter.addListener(listenerType)))
                 .button(tableButtonFactory.remove(template,
                         table -> presenter.removeListener(listenerType, table.selectedRow().getName())))
-                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .nameColumn()
                 .build();
 
         form = new ModelNodeForm.Builder<NamedNode>(Ids.build(listenerType.baseId, Ids.FORM), metadata)

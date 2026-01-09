@@ -37,7 +37,6 @@ import elemental2.dom.HTMLElement;
 import static org.jboss.elemento.Elements.h;
 import static org.jboss.elemento.Elements.section;
 import static org.jboss.hal.client.configuration.subsystem.webservice.AddressTemplates.HANDLER_CHAIN_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 /** Element to configure handler chains of a client or endpoint configuration. */
 class HandlerChainElement implements IsElement<HTMLElement>, Attachable, HasPresenter<WebservicePresenter> {
@@ -58,7 +57,7 @@ class HandlerChainElement implements IsElement<HTMLElement>, Attachable, HasPres
                 .button(tableButtonFactory.add(HANDLER_CHAIN_TEMPLATE, table -> presenter.addHandlerChain()))
                 .button(tableButtonFactory.remove(HANDLER_CHAIN_TEMPLATE,
                         table -> presenter.removeHandlerChain(table.selectedRow().getName())))
-                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .nameColumn()
                 .column(new InlineAction<>(Names.HANDLER, row -> presenter.showHandlers(row)))
                 .build();
 

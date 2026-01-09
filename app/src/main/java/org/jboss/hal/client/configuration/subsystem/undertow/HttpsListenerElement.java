@@ -40,7 +40,6 @@ import static org.jboss.elemento.EventType.bind;
 import static org.jboss.elemento.EventType.click;
 import static org.jboss.hal.client.configuration.subsystem.undertow.AddressTemplates.SERVER_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.undertow.Listener.HTTPS;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SSL_CONTEXT;
 import static org.jboss.hal.resources.CSS.halTableButtons;
 import static org.jboss.hal.resources.Ids.ENABLE_SSL;
@@ -67,7 +66,7 @@ class HttpsListenerElement extends ListenerElement {
                 .button(tableButtonFactory.add(template, table -> presenter.addListener(HTTPS)))
                 .button(tableButtonFactory.remove(template,
                         table -> presenter.removeListener(HTTPS, table.selectedRow().getName())))
-                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .nameColumn()
                 .build();
 
         form = new ModelNodeForm.Builder<NamedNode>(Ids.build(HTTPS.baseId, Ids.FORM), metadata)

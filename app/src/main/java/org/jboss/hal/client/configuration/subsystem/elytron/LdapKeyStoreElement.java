@@ -61,7 +61,7 @@ class LdapKeyStoreElement implements IsElement<HTMLElement>, Attachable, HasPres
                         asList(DIR_CONTEXT, SEARCH_PATH), (n, a) -> presenter.reloadLdapKeyStores()))
                 .button(tableButtonFactory.remove(Names.LDAP_KEY_STORE, metadata.getTemplate(),
                         (table) -> table.selectedRow().getName(), () -> presenter.reloadLdapKeyStores()))
-                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .nameColumn()
                 .build();
 
         attributes = new ModelNodeForm.Builder<NamedNode>(id(FORM), metadata)
