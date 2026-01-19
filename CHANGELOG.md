@@ -7,6 +7,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- [HAL-2047](https://issues.redhat.com/browse/HAL-2047): JGroups protocol stack ordering is not preserved and is sorted instead
+- [HAL-2044](https://issues.redhat.com/browse/HAL-2044): JGroups protocols cannot be added at particular index nor reordered
+- [HAL-2043](https://issues.redhat.com/browse/HAL-2043): New attributes in /subsystem=jgroups/stack=*/transport=TCP are not showing up in console transport view
+- [HAL-2042](https://issues.redhat.com/browse/HAL-2042): Report channel version information
+- [HAL-2041](https://issues.redhat.com/browse/HAL-2041): Listeners for keyup event throw an error when autocomplete is used
+- [HAL-2039](https://issues.redhat.com/browse/HAL-2039): Update Manager - Add a "custom revert" button
+
 ## [3.7.16] - 2025-10-08
 
 ### Added
