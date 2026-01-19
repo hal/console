@@ -32,8 +32,11 @@ class PropertyFilter implements Predicate<Property> {
     @Override
     public boolean test(final Property property) {
         Predicate<Property> filter;
-        Predicate<Property> required = p -> ((p.getValue().hasDefined(REQUIRED) && p.getValue().get(REQUIRED).asBoolean()) ||
-                (p.getValue().hasDefined(NILLABLE) && !p.getValue().get(NILLABLE).asBoolean()));
+        // always include add-index
+        Predicate<Property> isAddIndex = p -> p.getName().equals(ADD_INDEX);
+        Predicate<Property> required = isAddIndex
+                .or(p -> ((p.getValue().hasDefined(REQUIRED) && p.getValue().get(REQUIRED).asBoolean()) ||
+                        (p.getValue().hasDefined(NILLABLE) && !p.getValue().get(NILLABLE).asBoolean())));
 
         // do not include "deprecated" attributes
         if (builder.hideDeprecated && property.getValue().hasDefined(DEPRECATED)) {

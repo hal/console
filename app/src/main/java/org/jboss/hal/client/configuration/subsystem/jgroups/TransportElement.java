@@ -17,10 +17,12 @@ package org.jboss.hal.client.configuration.subsystem.jgroups;
 
 import java.util.List;
 
+import org.jboss.elemento.IsElement;
+import org.jboss.hal.ballroom.Attachable;
 import org.jboss.hal.ballroom.Tabs;
 import org.jboss.hal.ballroom.form.Form;
 import org.jboss.hal.core.mbui.form.ModelNodeForm;
-import org.jboss.hal.core.mbui.table.TableButtonFactory;
+import org.jboss.hal.core.mvp.HasPresenter;
 import org.jboss.hal.dmr.ModelNode;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.meta.AddressTemplate;
@@ -32,81 +34,119 @@ import org.jboss.hal.resources.Resources;
 
 import elemental2.dom.HTMLElement;
 
+import static org.jboss.elemento.Elements.h;
+import static org.jboss.elemento.Elements.p;
+import static org.jboss.elemento.Elements.section;
+import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTemplates.SELECTED_TRANSPORT_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTemplates.SELECTED_TRANSPORT_THREAD_POOL_TEMPLATE;
+import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTemplates.TRANSPORT_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTemplates.TRANSPORT_THREAD_POOL_DEFAULT_TEMPLATE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.THREAD_POOL;
 
-class TransportElement extends GenericElement {
+class TransportElement implements IsElement<HTMLElement>, Attachable, HasPresenter<JGroupsPresenter> {
 
+    private Form<ModelNode> transportForm;
     private Form<ModelNode> threadPoolDefaultForm;
+    private JGroupsPresenter presenter;
+    private final Tabs transportTabs;
+    private final HTMLElement section;
+    private final HTMLElement heading;
+    private final HTMLElement description;
+    private final MetadataRegistry metadataRegistry;
+    private final Resources resources;
+    private String currentTransportType;
 
-    TransportElement(MetadataRegistry metadataRegistry, TableButtonFactory tableButtonFactory,
-            Metadata formMetadata, Resources resources, AddressTemplate template,
-            String name, String resourceId) {
-        super(formMetadata, tableButtonFactory, resources, template, name, resourceId);
+    TransportElement(MetadataRegistry metadataRegistry, Resources resources) {
+        this.metadataRegistry = metadataRegistry;
+        this.resources = resources;
 
+        final String threadPoolDefaultName = Names.THREAD_POOL + " Default";
         Metadata threadPoolDefaultMetadata = metadataRegistry.lookup(TRANSPORT_THREAD_POOL_DEFAULT_TEMPLATE);
-
         threadPoolDefaultForm = new ModelNodeForm.Builder<>(Ids.JGROUPS_TRANSPORT_THREADPOOL_DEFAULT_FORM,
                 threadPoolDefaultMetadata)
                 .onSave((form, changedValues) -> {
                     AddressTemplate template1 = SELECTED_TRANSPORT_THREAD_POOL_TEMPLATE
-                            .replaceWildcards(table.selectedRow().getName(), DEFAULT);
+                            .replaceWildcards(currentTransportType, DEFAULT);
                     presenter.saveSingleton(template1, threadPoolDefaultMetadata, changedValues,
-                            resources.messages().modifySingleResourceSuccess(Names.THREAD_POOL + " Default"));
+                            resources.messages().modifySingleResourceSuccess(threadPoolDefaultName));
                 })
                 .prepareReset(form -> {
                     AddressTemplate template1 = SELECTED_TRANSPORT_THREAD_POOL_TEMPLATE
-                            .replaceWildcards(table.selectedRow().getName(), DEFAULT);
-                    presenter.resetSingleton(template1, Names.THREAD_POOL + " Default", form,
+                            .replaceWildcards(currentTransportType, DEFAULT);
+                    presenter.resetSingleton(template1, threadPoolDefaultName, form,
                             threadPoolDefaultMetadata);
                 })
                 .build();
 
-        HTMLElement parentElement = (HTMLElement) table.element().parentNode;
-        // as we are reusing the GenericElement, the form is already added to the section element, then we need to
-        // retrieve the form element and add it to the tab
-        HTMLElement form1 = (HTMLElement) parentElement.lastElementChild;
-        // remove the element, then adds to the tab element
-        parentElement.removeChild(form1);
-
-        Tabs threadPoolTabs = new Tabs(Ids.JGROUPS_TRANSPORT_THREADPOOL_TAB_CONTAINER);
-        threadPoolTabs.add(Ids.build("jgroups-transport", Ids.FORM), resources.constants().attributes(), form1);
-        threadPoolTabs.add(Ids.JGROUPS_TRANSPORT_THREADPOOL_DEFAULT_TAB, "Thread Pool Default",
+        transportTabs = new Tabs(Ids.JGROUPS_TRANSPORT_THREADPOOL_TAB_CONTAINER);
+        transportTabs.add(Ids.build("jgroups-transport", Ids.FORM, Ids.TAB), resources.constants().attributes(),
+                section().element());
+        transportTabs.add(Ids.JGROUPS_TRANSPORT_THREADPOOL_DEFAULT_TAB, threadPoolDefaultName,
                 threadPoolDefaultForm.element());
 
-        parentElement.appendChild(threadPoolTabs.element());
+        section = section()
+                .add(heading = h(1).element())
+                .add(description = p().element())
+                .add(transportTabs).element();
     }
 
     @Override
     public void attach() {
-        super.attach();
         threadPoolDefaultForm.attach();
-
-        table.onSelectionChange(table -> {
-            if (table.hasSelection()) {
-                NamedNode selectedTransport = table.selectedRow();
-                threadPoolDefaultForm.view(selectedTransport.get(THREAD_POOL).get(DEFAULT));
-            } else {
-                threadPoolDefaultForm.clear();
-            }
-        });
     }
 
     @Override
     public void detach() {
-        super.detach();
+        if (transportForm != null) {
+            transportForm.detach();
+        }
         threadPoolDefaultForm.detach();
     }
 
-    @Override
     void update(List<NamedNode> models) {
-        super.update(models);
-        // disable the ADD and REMOVE buttons, as the transport is a required singleton resource, but the r-r-d
-        // doesn't says so
-        // super.update enables the "remove" button if the model is not empty
-        table.enableButton(0, false);
-        table.enableButton(1, false);
+        if (models.isEmpty()) {
+            return;
+        }
+        NamedNode transport = models.get(0);
+        String transportType = transport.getName();
+
+        if (!transportType.equals(currentTransportType)) {
+            currentTransportType = transportType;
+            // metadata is at .../stack=*/transport=<type>, the first wildcard needs to be preserved
+            AddressTemplate metadataTemplate = TRANSPORT_TEMPLATE.replaceWildcards("*", currentTransportType);
+            Metadata transportMetadata = metadataRegistry.lookup(metadataTemplate);
+            AddressTemplate transportTemplate = SELECTED_TRANSPORT_TEMPLATE.replaceWildcards(currentTransportType);
+            String fullName = Names.TRANSPORT + ": " + currentTransportType;
+
+            transportForm = new ModelNodeForm.Builder<>(Ids.build(Ids.JGROUPS_TRANSPORT, Ids.FORM), transportMetadata)
+                    .onSave((form, changedValues) -> {
+                        presenter.saveSingleton(transportTemplate, transportMetadata, changedValues,
+                                resources.messages().modifySingleResourceSuccess(fullName));
+                    })
+                    .prepareReset(form -> {
+                        presenter.resetSingleton(transportTemplate, fullName, form,
+                                transportMetadata);
+                    })
+                    .build();
+            transportForm.attach();
+
+            heading.textContent = fullName;
+            description.textContent = transportMetadata.getDescription().getDescription();
+            transportTabs.setContent(0, transportForm.element());
+        }
+
+        transportForm.view(transport);
+        threadPoolDefaultForm.view(transport.get(THREAD_POOL).get(DEFAULT));
+    }
+
+    @Override
+    public HTMLElement element() {
+        return section;
+    }
+
+    @Override
+    public void setPresenter(JGroupsPresenter presenter) {
+        this.presenter = presenter;
     }
 }

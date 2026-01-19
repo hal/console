@@ -141,4 +141,9 @@ public class JGroupsView extends HalViewImpl implements JGroupsPresenter.MyView 
         channelConfig.updateProtocol(model);
     }
 
+    public void attach() {
+        super.attach();
+        presenter.processStackSingletons();
+    }
+
 }

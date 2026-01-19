@@ -545,6 +545,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     String bootErrors();
     String cancelNonProgressingOperation();
     String changeAccountKeyQuestion(String name);
+    String chooseProtocol(String custom);
     String chooseTemplate(String custom);
     String chooseUpdateType(String custom);
     String cleanPatchHistory();

@@ -312,6 +312,7 @@ public class CredentialReference {
 
         private final Resources resources;
         private final boolean prefixed;
+        private final String customName;
 
         public CrFormValuesValidation(Resources resources) {
             this(resources, false);
@@ -320,13 +321,23 @@ public class CredentialReference {
         public CrFormValuesValidation(Resources resources, boolean prefixed) {
             this.resources = resources;
             this.prefixed = prefixed;
+            this.customName = null;
+        }
+
+        public CrFormValuesValidation(Resources resources, String customName) {
+            this.resources = resources;
+            this.prefixed = false;
+            this.customName = customName;
         }
 
         @Override
         public ValidationResult validate(Form<ModelNode> form) {
-            FormItem<Object> storeItem = form.getFormItem(prefixed ? STORE_PREFIXED : STORE);
-            FormItem<Object> aliasItem = form.getFormItem(prefixed ? ALIAS_PREFIXED : ALIAS);
-            FormItem<Object> clearTextItem = form.getFormItem(prefixed ? CLEAR_TEXT_PREFIXED : CLEAR_TEXT);
+            FormItem<Object> storeItem = form
+                    .getFormItem(prefixed ? STORE_PREFIXED : (customName != null ? customName + DOT + STORE : STORE));
+            FormItem<Object> aliasItem = form
+                    .getFormItem(prefixed ? ALIAS_PREFIXED : (customName != null ? customName + DOT + ALIAS : ALIAS));
+            FormItem<Object> clearTextItem = form.getFormItem(
+                    prefixed ? CLEAR_TEXT_PREFIXED : (customName != null ? customName + DOT + CLEAR_TEXT : CLEAR_TEXT));
             if (!clearTextItem.isEmpty() && storeItem.isEmpty() && aliasItem.isEmpty()) {
                 // clear-text only not recommended mode
                 return ValidationResult.OK;
