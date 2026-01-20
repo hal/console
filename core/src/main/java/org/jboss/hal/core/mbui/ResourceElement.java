@@ -446,6 +446,11 @@ public class ResourceElement implements IsElement<HTMLElement>, Attachable {
             return this;
         }
 
+        public Builder nameColumn() {
+            tableBuilder.nameColumn();
+            return this;
+        }
+
         /**
          * Adds a complex attribute of type {@code OBJECT}. The operation checks whether the resource contains the complex
          * attribute.

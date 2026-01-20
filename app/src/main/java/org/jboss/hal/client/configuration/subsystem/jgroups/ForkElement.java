@@ -39,7 +39,6 @@ import static org.jboss.elemento.Elements.section;
 import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTemplates.CHANNEL_FORK_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTemplates.SELECTED_CHANNEL_FORK_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.jgroups.ChannelElement.PROTOCOL_ID;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 public class ForkElement implements IsElement<HTMLElement>, Attachable, HasPresenter<JGroupsPresenter> {
 
@@ -66,7 +65,7 @@ public class ForkElement implements IsElement<HTMLElement>, Attachable, HasPrese
                 .button(tableButtonFactory.remove(CHANNEL_FORK_TEMPLATE,
                         table -> presenter.removeResource(SELECTED_CHANNEL_FORK_TEMPLATE,
                                 table.selectedRow().getName(), Names.FORK)))
-                .column(NAME, (cell, t, row, meta) -> row.getName())
+                .nameColumn()
                 .column(new InlineAction<>(Names.PROTOCOL, row -> {
                     presenter.showChannelProtocol(row);
                     presenter.showChannelInnerPage(PROTOCOL_ID);

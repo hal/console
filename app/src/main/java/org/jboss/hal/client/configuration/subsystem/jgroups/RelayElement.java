@@ -41,7 +41,6 @@ import static org.jboss.elemento.Elements.section;
 import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTemplates.RELAY_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTemplates.SELECTED_RELAY_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.jgroups.StackElement.REMOTE_SITE_ID;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 public class RelayElement implements IsElement<HTMLElement>, Attachable, HasPresenter<JGroupsPresenter> {
 
@@ -61,7 +60,7 @@ public class RelayElement implements IsElement<HTMLElement>, Attachable, HasPres
                 .button(tableButtonFactory.remove(RELAY_TEMPLATE,
                         table -> presenter.removeResource(SELECTED_RELAY_TEMPLATE, table.selectedRow().getName(),
                                 Names.RELAY)))
-                .column(NAME, (cell, t, row, meta) -> row.getName())
+                .nameColumn()
                 .column(new InlineAction<>(Names.REMOTE_SITE, row -> {
                     presenter.showRemoteSites(row);
                     presenter.showStackInnerPage(REMOTE_SITE_ID);

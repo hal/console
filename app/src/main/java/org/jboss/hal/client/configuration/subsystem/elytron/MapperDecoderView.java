@@ -50,7 +50,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.CONSTANT_PERMISSION_MA
 import static org.jboss.hal.dmr.ModelDescriptionConstants.FROM;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MAPPED_ROLE_MAPPER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.MODULE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PERMISSIONS;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ROLE_MAP;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TABLE;
@@ -123,7 +122,7 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
         Metadata metadata = mbuiContext.metadataRegistry().lookup(CONSTANT_PERMISSION_MAPPER_TEMPLATE);
         constantPermissionMapperElement = new ResourceElement.Builder(Ids.ELYTRON_CONSTANT_PERMISSION_MAPPER,
                 CONSTANT_PERMISSION_MAPPER, metadata, mbuiContext)
-                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .nameColumn()
                 .setComplexListAttribute(PERMISSIONS, asList(CLASS_NAME, MODULE), asList(CLASS_NAME, MODULE),
                         modelNode -> build(modelNode.get(CLASS_NAME).asString(), modelNode.get(MODULE).asString()))
                 .onCrud(() -> presenter.reload(CONSTANT_PERMISSION_MAPPER, this::updateConstantPermissionMapper))
@@ -148,7 +147,7 @@ public class MapperDecoderView extends MbuiViewImpl<MapperDecoderPresenter>
                 .button(mbuiContext.tableButtonFactory().remove(title, MAPPED_ROLE_MAPPER_TEMPLATE,
                         table -> table.selectedRow().getName(),
                         () -> presenter.reload()))
-                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .nameColumn()
                 .build();
 
         mappedRoleMapperForm = new ModelNodeForm.Builder<NamedNode>(build(mappedId, FORM), mappedMetadata)

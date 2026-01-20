@@ -42,7 +42,6 @@ import static org.jboss.elemento.Elements.section;
 import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTemplates.CHANNEL_FORK_PROTOCOL_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTemplates.CHANNEL_TEMPLATE;
 import static org.jboss.hal.client.configuration.subsystem.jgroups.AddressTemplates.SELECTED_CHANNEL_FORK_PROTOCOL_TEMPLATE;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 /** Element to configure the fork resource */
 class ChannelElement implements IsElement<HTMLElement>, Attachable, HasPresenter<JGroupsPresenter> {
@@ -72,7 +71,7 @@ class ChannelElement implements IsElement<HTMLElement>, Attachable, HasPresenter
                 .button(tableButtonFactory.remove(CHANNEL_TEMPLATE,
                         table -> presenter.removeResource(CHANNEL_TEMPLATE, table.selectedRow().getName(),
                                 Names.CHANNEL)))
-                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .nameColumn()
                 .column(new InlineAction<>(Names.FORK, row -> {
                     selectedChannel = row.getName();
                     presenter.showForks(row);

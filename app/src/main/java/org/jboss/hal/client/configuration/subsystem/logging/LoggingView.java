@@ -138,7 +138,7 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
                         JSON_FORMATTER_TEMPLATE, (name, address) -> presenter.reload()))
                 .button(mbuiContext.tableButtonFactory().remove(jsonLabel, JSON_FORMATTER_TEMPLATE,
                         table -> table.selectedRow().getName(), () -> presenter.reload()))
-                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .nameColumn()
                 .build();
 
         jsonFormatterForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(LOGGING, JSON, FORMATTER, FORM),
@@ -200,7 +200,7 @@ public abstract class LoggingView extends MbuiViewImpl<LoggingPresenter> impleme
                         XML_FORMATTER_TEMPLATE, (name, address) -> presenter.reload()))
                 .button(mbuiContext.tableButtonFactory().remove(xmlLabel, XML_FORMATTER_TEMPLATE,
                         table -> table.selectedRow().getName(), () -> presenter.reload()))
-                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .nameColumn()
                 .build();
 
         xmlFormatterForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(LOGGING, XML, FORMATTER, FORM), xmlMetadata)

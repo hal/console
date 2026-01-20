@@ -48,7 +48,6 @@ import static org.jboss.elemento.Elements.p;
 import static org.jboss.elemento.Elements.section;
 import static org.jboss.hal.client.configuration.subsystem.webservice.HandlerChain.POST_HANDLER_CHAIN;
 import static org.jboss.hal.client.configuration.subsystem.webservice.HandlerChain.PRE_HANDLER_CHAIN;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROPERTY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.VALUE;
 import static org.jboss.hal.dmr.ModelNodeHelper.failSafePropertyList;
@@ -77,7 +76,7 @@ class ConfigElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
                 .button(tableButtonFactory.add(configType.template, table -> presenter.addConfig()))
                 .button(tableButtonFactory.remove(configType.template,
                         table -> presenter.removeConfig(table.selectedRow().getName())))
-                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .nameColumn()
                 .column(inlineActions)
                 .build();
 

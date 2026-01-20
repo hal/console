@@ -68,7 +68,7 @@ public class LdapRealmElement implements IsElement<HTMLElement>, Attachable, Has
                 .button(tableButtonFactory.add(metadata.getTemplate(), table -> presenter.addLdapRealm()))
                 .button(tableButtonFactory.remove(Names.LDAP_REALM, metadata.getTemplate(),
                         (table) -> table.selectedRow().getName(), () -> presenter.reloadLdapRealms()))
-                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .nameColumn()
                 .column(new InlineAction<>(Names.IDENTITY_ATTRIBUTE_MAPPING, this::showIdentityAttributeMapping),
                         "15em")
                 .build();

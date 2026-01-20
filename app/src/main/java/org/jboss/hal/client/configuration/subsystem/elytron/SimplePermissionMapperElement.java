@@ -75,7 +75,7 @@ public class SimplePermissionMapperElement
                         SIMPLE_PERMISSION_MAPPER_TEMPLATE, (name, address) -> presenter.reloadSimplePermissionMapper()))
                 .button(tableButtonFactory.remove(Names.SIMPLE_PERMISSION_MAPPER, metadata.getTemplate(),
                         (table) -> table.selectedRow().getName(), () -> presenter.reloadSimplePermissionMapper()))
-                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .nameColumn()
                 .column(new InlineAction<>(Names.PERMISSION_MAPPINGS, this::showPermissionMappings), "15em")
                 .build();
 

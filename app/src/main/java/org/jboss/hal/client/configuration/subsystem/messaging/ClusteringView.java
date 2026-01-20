@@ -103,7 +103,7 @@ public abstract class ClusteringView extends MbuiViewImpl<ClusteringPresenter>
                 .button(mbuiContext.resources().constants().remove(),
                         table -> presenter.remove(ServerSubResource.BRIDGE, table.selectedRow()), Scope.SELECTED,
                         Constraint.executable(BRIDGE_TEMPLATE, REMOVE))
-                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .nameColumn()
                 .build();
 
         bridgeForm = new ModelNodeForm.Builder<NamedNode>(Ids.build(Ids.MESSAGING_BRIDGE, Ids.FORM), metadata)

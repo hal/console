@@ -36,7 +36,6 @@ import elemental2.dom.HTMLElement;
 import static org.jboss.elemento.Elements.h;
 import static org.jboss.elemento.Elements.p;
 import static org.jboss.elemento.Elements.section;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 
 public class GenericElement implements IsElement<HTMLElement>, Attachable, HasPresenter<JGroupsPresenter> {
 
@@ -57,7 +56,7 @@ public class GenericElement implements IsElement<HTMLElement>, Attachable, HasPr
                         Ids.build(resourceId, Ids.ADD, Ids.FORM), name)))
                 .button(tableButtonFactory.remove(template,
                         table -> presenter.removeResource(template, table.selectedRow().getName(), name)))
-                .column(NAME, (cell, t, row, meta) -> row.getName())
+                .nameColumn()
                 .build();
         form = new ModelNodeForm.Builder<NamedNode>(Ids.build(resourceId, Ids.FORM), metadata)
                 .onSave((form, changedValues) -> presenter

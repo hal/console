@@ -86,7 +86,7 @@ public abstract class SocketBindingGroupView extends MbuiViewImpl<SocketBindingG
                         table -> presenter.addSocketBinding(INBOUND)))
                 .button(mbuiContext.tableButtonFactory().remove(inboundTemplate,
                         table -> presenter.removeSocketBinding(INBOUND, table.selectedRow().getName())))
-                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .nameColumn()
                 .column(PORT, (cell, type, row, meta) -> row.get(PORT).asString())
                 .column(new InlineAction<>(Names.CLIENT_MAPPINGS, row -> presenter.showClientMappings(row)))
                 .build();

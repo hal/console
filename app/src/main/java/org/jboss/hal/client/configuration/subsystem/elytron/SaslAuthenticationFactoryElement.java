@@ -68,7 +68,7 @@ class SaslAuthenticationFactoryElement implements IsElement<HTMLElement>, Attach
                         metadata.getTemplate(), (n, a) -> presenter.reloadSaslAuthenticationFactories()))
                 .button(tableButtonFactory.remove(Names.SASL_AUTHENTICATION_FACTORY, metadata.getTemplate(),
                         (table) -> table.selectedRow().getName(), () -> presenter.reloadSaslAuthenticationFactories()))
-                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .nameColumn()
                 .column(new InlineAction<>(Names.MECHANISM_CONFIGURATIONS, this::showMechanismConfiguration), "15em")
                 .build();
         factoryForm = new ModelNodeForm.Builder<NamedNode>(id(FORM), metadata)

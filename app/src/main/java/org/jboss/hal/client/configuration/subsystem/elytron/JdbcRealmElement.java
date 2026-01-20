@@ -67,7 +67,7 @@ class JdbcRealmElement implements IsElement<HTMLElement>, Attachable, HasPresent
                 .button(tableButtonFactory.add(metadata.getTemplate(), table -> presenter.addJdbcRealm()))
                 .button(tableButtonFactory.remove(Names.JDBC_REALM, metadata.getTemplate(),
                         (table) -> table.selectedRow().getName(), () -> presenter.reloadJdbcRealms()))
-                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .nameColumn()
                 .column(new InlineAction<>(Names.PRINCIPAL_QUERY, this::showPrincipalQuery))
                 .build();
         HTMLElement jdbcRealmSection = section()

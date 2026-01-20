@@ -65,7 +65,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.FILTER_REF;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HANDLER;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.HOST;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.LOCATION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.NAME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PRIORITY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SERVLET_CONTAINER;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
@@ -124,7 +123,7 @@ public class ServerView extends HalViewImpl implements ServerPresenter.MyView {
                 .button(tableButtonFactory.add(HOST_TEMPLATE, table -> presenter.addHost()))
                 .button(tableButtonFactory.remove(HOST_TEMPLATE,
                         table -> presenter.removeHost(table.selectedRow().getName())))
-                .column(NAME, (cell, type, row, meta) -> row.getName())
+                .nameColumn()
                 .column(inlineActions, "15em")
                 .build();
 
