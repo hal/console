@@ -16,6 +16,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - [HAL-2041](https://issues.redhat.com/browse/HAL-2041): Listeners for keyup event throw an error when autocomplete is used
 - [HAL-2039](https://issues.redhat.com/browse/HAL-2039): Update Manager - Add a "custom revert" button
 
+### Upgrades
+
+- Bump ACE Editor to 1.43.4
+- Bump JBoss Parent to 50
+- Bum Keycloak to 26.2.2
+- Bump Mockito to 5.21.0
+
 ## [3.7.16] - 2025-10-08
 
 ### Added
