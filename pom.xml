@@ -29,7 +29,7 @@
 
     <groupId>org.jboss.hal</groupId>
     <artifactId>hal-parent</artifactId>
-    <version>3.7.17-SNAPSHOT</version>
+    <version>3.7.17.Final</version>
     <packaging>pom</packaging>
     <name>HAL :: Parent</name>
     <description>WildFly / EAP management console</description>

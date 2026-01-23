@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.7.17] - 2026-01-23
+
 ### Changed
 
 - [HAL-2047](https://issues.redhat.com/browse/HAL-2047): JGroups protocol stack ordering is not preserved and is sorted instead
@@ -779,7 +781,8 @@ Release process failed. Do not use this release!
 - for dependency upgrades
 -->
 
-[Unreleased]: https://github.com/hal/console/compare/v3.7.16...HEAD
+[Unreleased]: https://github.com/hal/console/compare/v3.7.17...HEAD
+[3.7.17]: https://github.com/hal/console/compare/v3.7.16...v3.7.17
 [3.7.16]: https://github.com/hal/console/compare/v3.7.15...v3.7.16
 [3.7.15]: https://github.com/hal/console/compare/v3.7.14...v3.7.15
 [3.7.14]: https://github.com/hal/console/compare/v3.7.13...v3.7.14
