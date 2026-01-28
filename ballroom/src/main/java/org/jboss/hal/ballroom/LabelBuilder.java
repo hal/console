@@ -87,7 +87,6 @@ public class LabelBuilder {
             .put("ocsp", "OCSP")
             .put("oidc", "OIDC")
             .put("openapi", "OpenAPI")
-            .put("Opentelemetry", "OpenTelemetry")
             .put("otp", "OTP")
             .put("rdn", "RDN")
             .put("sar", "SAR")
