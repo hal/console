@@ -264,6 +264,12 @@ public class CacheColumn extends FinderColumn<Cache> {
                                     crud.add(cacheType.type, name, address, model,
                                             (n, a) -> refresh(Ids.build(cacheType.baseId, name)));
                                     return null;
+                                })
+                                .catch_(error -> {
+                                    MessageEvent.fire(eventBus, Message.error(
+                                            resources.messages().addResourceError(cacheType.type, name),
+                                            String.valueOf(error)));
+                                    return null;
                                 });
                     }
 
