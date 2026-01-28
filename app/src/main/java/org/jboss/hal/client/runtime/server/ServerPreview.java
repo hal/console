@@ -178,7 +178,7 @@ class ServerPreview extends RuntimePreview<Server> {
                         .add(bootErrorsLink = a().css(clickable, alertLink)
                                 .on(click, event -> {
                                     PlaceRequest placeRequest = new PlaceRequest.Builder().nameToken(
-                                                    NameTokens.SERVER_BOOT_ERRORS)
+                                            NameTokens.SERVER_BOOT_ERRORS)
                                             .with(HOST, server.getHost())
                                             .with(SERVER, server.getName())
                                             .build();
@@ -187,7 +187,7 @@ class ServerPreview extends RuntimePreview<Server> {
                                 .textContent(resources.constants().view()).element())
                         .element());
 
-        links = new HTMLElement[]{startLink, stopLink, reloadLink, restartLink, resumeLink, bootErrorsLink};
+        links = new HTMLElement[] { startLink, stopLink, reloadLink, restartLink, resumeLink, bootErrorsLink };
 
         serverUrl = span().textContent(Names.NOT_AVAILABLE).element();
         PreviewAttributeFunction<Server> previewFunction = model -> new PreviewAttribute(Names.URL, serverUrl);

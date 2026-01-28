@@ -78,6 +78,7 @@ public class LabelBuilder {
             .put("jts", "JTS")
             .put("jvm", "JVM")
             .put("jwt", "JWT")
+            .put("lra", "LRA")
             .put("mcp", "MCP")
             .put("mdb", "MDB")
             .put("mbean", "MBean")
