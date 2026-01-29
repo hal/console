@@ -76,6 +76,8 @@
                         <attribute name="max-retries"/>
                         <attribute name="problem-server-retry"/>
                         <attribute name="request-queue-size"/>
+                        <attribute name="reuse-x-forwarded-header"/>
+                        <attribute name="rewrite-host-header"/>
                         <attribute name="session-cookie-names"/>
                         <attribute
                                 form-item='${new org.jboss.hal.ballroom.form.TextBoxItem("hosts", mbuiContext.resources().constants().hostsUsingThisHandler())}'/>
