@@ -105,7 +105,7 @@
         <version.mockito>5.21.0</version.mockito>
         <version.node>v20.17.0</version.node>
         <version.npm>10.8.2</version.npm>
-        <version.slf4j>2.0.3</version.slf4j>
+        <version.slf4j>2.0.17</version.slf4j>
         <version.slf4j.gwt>1.7.7.1</version.slf4j.gwt>
         <version.validation>1.0.0.GA</version.validation>
 
