@@ -78,6 +78,7 @@ import static org.jboss.hal.ballroom.form.Form.State.EMPTY;
 import static org.jboss.hal.ballroom.form.Form.State.READONLY;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ACCESS_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTE_GROUP;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEFAULT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_WRITE;
@@ -152,6 +153,21 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         int index = 0;
         LabelBuilder labelBuilder = new LabelBuilder();
         HelpTextBuilder helpTextBuilder = new HelpTextBuilder();
+
+        switch (builder.sortOrder) {
+            case NONE:
+                break;
+            case NAME:
+                properties.sort(Comparator.comparing(Property::getName));
+                break;
+            case ATTRIBUTE_GROUP:
+                properties.sort(Comparator.comparing(
+                        prop -> prop.getValue().hasDefined(ATTRIBUTE_GROUP)
+                                ? prop.getValue().get(ATTRIBUTE_GROUP).asString()
+                                : ""));
+                break;
+        }
+
         for (Property property : properties) {
 
             // any unbound form items for the current index?
@@ -428,6 +444,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         PrepareReset<T> prepareReset;
         PrepareRemove<T> prepareRemove;
         boolean panelForOptionalAttributes;
+        SortOrder sortOrder;
 
         // ------------------------------------------------------ configure required and optional settings
 
@@ -448,6 +465,7 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
             this.verifyExcludes = true;
             this.omitNoAttributesWarning = false;
             this.isFromRequestProperties = false;
+            this.sortOrder = SortOrder.ATTRIBUTE_GROUP;
         }
 
         public Builder<T> include(String[] attributes) {
@@ -640,6 +658,11 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
             return this;
         }
 
+        public Builder<T> sortBy(SortOrder sortOrder) {
+            this.sortOrder = sortOrder;
+            return this;
+        }
+
         // ------------------------------------------------------ build
 
         /**
@@ -709,5 +732,9 @@ public class ModelNodeForm<T extends ModelNode> extends AbstractForm<T> {
         private String formId() {
             return "form(" + id + ")"; // NON-NLS
         }
+    }
+
+    public enum SortOrder {
+        NONE, NAME, ATTRIBUTE_GROUP
     }
 }
