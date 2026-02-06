@@ -97,7 +97,7 @@
         <version.guava>31.1-jre</version.guava>
         <version.gwt>2.11.0</version.gwt>
         <version.gwtp>1.6</version.gwtp>
-        <version.jaxen>1.2.0</version.jaxen>
+        <version.jaxen>2.0.0</version.jaxen>
         <version.jboss.dmr>1.7.0.Final</version.jboss.dmr>
         <version.jsinterop>1.0.1</version.jsinterop>
         <version.jdom>2.0.2</version.jdom>
