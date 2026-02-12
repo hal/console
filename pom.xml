@@ -95,7 +95,7 @@
         <version.elemento>1.0.14-gwtcom</version.elemento>
         <version.gin>2.1.2</version.gin>
         <version.guava>31.1-jre</version.guava>
-        <version.gwt>2.11.0</version.gwt>
+        <version.gwt>2.13.0</version.gwt>
         <version.gwtp>1.6</version.gwtp>
         <version.jaxen>2.0.0</version.jaxen>
         <version.jboss.dmr>1.7.0.Final</version.jboss.dmr>
