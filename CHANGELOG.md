@@ -7,6 +7,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- [HAL-2049](https://issues.redhat.com/browse/HAL-2049): Error only logged to browser console when adding replicated-cache to standalone.xml
+- [HAL-2046](https://issues.redhat.com/browse/HAL-2046): Allow form attributes to be sorted
+- [HAL-2050](https://issues.redhat.com/browse/HAL-2050): Add two attributes to reverse-proxy resource
+
+### Upgrades
+
+- Bump ACE Editor to 1.43.6
+- Bump GWT to 2.13.0
+- Bump Jaxen to 2.0.0
+- Bump KeycloakJs 26.2.3
+- Bump Parcel to 2.16.4
+- Bump SLF4J to 2.0.17
+
 ## [3.7.17] - 2026-01-23
 
 ### Changed
