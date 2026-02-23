@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.7.18] - 2026-02-23
+
 ### Changed
 
 - [HAL-2049](https://issues.redhat.com/browse/HAL-2049): Error only logged to browser console when adding replicated-cache to standalone.xml
@@ -796,7 +798,8 @@ Release process failed. Do not use this release!
 - for dependency upgrades
 -->
 
-[Unreleased]: https://github.com/hal/console/compare/v3.7.17...HEAD
+[Unreleased]: https://github.com/hal/console/compare/v3.7.18...HEAD
+[3.7.18]: https://github.com/hal/console/compare/v3.7.17...v3.7.18
 [3.7.17]: https://github.com/hal/console/compare/v3.7.16...v3.7.17
 [3.7.16]: https://github.com/hal/console/compare/v3.7.15...v3.7.16
 [3.7.15]: https://github.com/hal/console/compare/v3.7.14...v3.7.15
