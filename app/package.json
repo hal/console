@@ -20,11 +20,11 @@
     "prod": "parcel build --public-url \"./\" --dist-dir target/bundle"
   },
   "devDependencies": {
+    "@parcel/plugin": "^2.16.4",
     "@parcel/reporter-cli": "^2.16.4",
     "@parcel/transformer-less": "^2.16.4",
     "copyfiles": "^2.4.1",
-    "parcel": "^2.15.4",
-    "@parcel/plugin": "^2.15.4",
+    "parcel": "^2.16.4",
     "parcel-resolver-ignore": "^2.2.1",
     "parcel-resolver-theme": "file:local_modules/parcel-resolver-theme",
     "process": "^0.11.10"
