@@ -14,7 +14,7 @@
 #  limitations under the License.
 #
 
-FROM openjdk:17-alpine
+FROM registry.access.redhat.com/ubi9/openjdk-21:latest
 
 LABEL maintainer="Harald Pehl <hpehl@redhat.com>"
 
@@ -23,11 +23,13 @@ ARG WILDFLY_VERSION
 COPY wildfly-${WILDFLY_VERSION}.tar.gz /
 
 USER root
-RUN mkdir -p ${JBOSS_HOME} \
-    && tar xf /wildfly-${WILDFLY_VERSION}.tar.gz --directory=/ \
+RUN microdnf install -y gzip \
+    && microdnf clean all \
+    && mkdir -p ${JBOSS_HOME} \
+    && tar xf /wildfly-${WILDFLY_VERSION}.tar.gz --no-same-owner --directory=/ \
     && mv /wildfly-${WILDFLY_VERSION}/* ${JBOSS_HOME} \
     && rm /wildfly-${WILDFLY_VERSION}.tar.gz \
-    && adduser --disabled-password --gecos "" jboss \
+    && useradd -m jboss \
     && chown -R jboss:0 ${JBOSS_HOME} \
     && chmod -R g+rw ${JBOSS_HOME}
 
