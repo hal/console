@@ -1,1 +1,1 @@
-3.7.19-SNAPSHOT
+3.7.19.Final

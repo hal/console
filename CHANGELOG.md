@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.7.19] - 2026-03-09
+
 ### Changed
 
 - [HAL-2052](https://issues.redhat.com/browse/HAL-2052): Replace old copyfiles NPM package with modern cpy-cli package
@@ -806,7 +808,8 @@ Release process failed. Do not use this release!
 - for dependency upgrades
 -->
 
-[Unreleased]: https://github.com/hal/console/compare/v3.7.18...HEAD
+[Unreleased]: https://github.com/hal/console/compare/v3.7.19...HEAD
+[3.7.19]: https://github.com/hal/console/compare/v3.7.18...v3.7.19
 [3.7.18]: https://github.com/hal/console/compare/v3.7.17...v3.7.18
 [3.7.17]: https://github.com/hal/console/compare/v3.7.16...v3.7.17
 [3.7.16]: https://github.com/hal/console/compare/v3.7.15...v3.7.16
