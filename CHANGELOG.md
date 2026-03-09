@@ -7,6 +7,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- [HAL-2052](https://issues.redhat.com/browse/HAL-2052): Replace old copyfiles NPM package with modern cpy-cli package
+
+### Upgrades
+
+- Bump Mockito to 5.22.0
+
 ## [3.7.18] - 2026-02-23
 
 ### Changed
