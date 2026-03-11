@@ -33,6 +33,8 @@
                         <attribute name="maximum-timeout"/>
                         <attribute name="node-identifier"/>
                         <attribute name="statistics-enabled"/>
+                        <attribute name="transactions-recovery-graceful-shutdown"/>
+                        <attribute name="use-hornetq-store"/>
                         <attribute name="use-journal-store"/>
                     </attributes>
                 </form>
