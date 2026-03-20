@@ -80,7 +80,8 @@ class ConfigElement implements IsElement<HTMLElement>, Attachable, HasPresenter<
                 .column(inlineActions)
                 .build();
 
-        String propertyDescription = metadata.getDescription().children().description(PROPERTY);
+        String propertyDescription = metadataRegistry.lookup(configType.template.append(PROPERTY + "=*"))
+                .getDescription().getDescription();
         propertiesItem = new PropertiesItem(PROPERTY);
         form = new ModelNodeForm.Builder<NamedNode>(Ids.build(configType.baseId, Ids.FORM), metadata)
                 .unboundFormItem(propertiesItem, 0, SafeHtmlUtils.fromString(propertyDescription))

@@ -34,7 +34,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.ADD;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ALTERNATIVES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTES;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.ATTRIBUTE_GROUP;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILDREN;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DEPRECATED;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.DESCRIPTION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.NILLABLE;
@@ -79,10 +78,6 @@ public class ResourceDescription extends ModelNode {
 
     public AttributeCollection operations() {
         return getAttributes(OPERATIONS);
-    }
-
-    public AttributeCollection children() {
-        return getAttributes(CHILDREN);
     }
 
     private AttributeCollection getAttributes(String path) {
