@@ -45,6 +45,7 @@ import org.jboss.hal.spi.Footer;
 import org.jboss.hal.spi.Message;
 import org.jboss.hal.spi.MessageEvent;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 import com.google.web.bindery.event.shared.EventBus;
 
@@ -308,7 +309,7 @@ public class PropertiesOperations {
                     .map(property -> {
                         ResourceAddress address = new ResourceAddress(this.address).add(propertiesResource, property);
                         Operation.Builder builder = new Operation.Builder(address, ADD);
-                        if (properties.get(property) != null) {
+                        if (!Strings.isNullOrEmpty(properties.get(property))) {
                             builder.param(VALUE, properties.get(property));
                         }
                         return builder.build();

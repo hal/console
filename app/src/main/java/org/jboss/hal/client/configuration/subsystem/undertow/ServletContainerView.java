@@ -108,7 +108,7 @@ public class ServletContainerView extends HalViewImpl implements ServletContaine
         welcomeFileForm = new ModelNodeForm.Builder<>(Ids.UNDERTOW_SERVLET_CONTAINER_WELCOME_FILE_FORM, emptyMetadata)
                 .unboundFormItem(welcomeFileItem, 0, SafeHtmlUtils.fromString(welcomeFileDescription))
                 .onSave((form, changedValues) -> presenter.saveWelcomeFile(welcomeFileItem.getValue().stream()
-                        .collect(toMap(Function.identity(), value -> null))))
+                        .collect(toMap(Function.identity(), value -> ""))))
                 .prepareReset(form -> presenter.resetWelcomeFile(form))
                 .build();
 
