@@ -92,21 +92,21 @@ public class ServletContainerView extends HalViewImpl implements ServletContaine
 
         Metadata emptyMetadata = Metadata.empty();
 
-        ModelNode mimeMappingDescription = failSafeGet(configurationMetadata.getDescription(),
-                "children/mime-mapping/description"); // NON-NLS
+        String mimeMappingDescription = metadataRegistry.lookup(SERVLET_CONTAINER_TEMPLATE.append(MIME_MAPPING + "=*"))
+                .getDescription().getDescription();
         mimeMappingItem = new PropertiesItem(MIME_MAPPING, Names.MIME_MAPPING);
         mimeMappingForm = new ModelNodeForm.Builder<>(Ids.UNDERTOW_SERVLET_CONTAINER_MIME_MAPPING_FORM, emptyMetadata)
-                .unboundFormItem(mimeMappingItem, 0, SafeHtmlUtils.fromString(mimeMappingDescription.asString()))
+                .unboundFormItem(mimeMappingItem, 0, SafeHtmlUtils.fromString(mimeMappingDescription))
                 .exclude(VALUE)
                 .onSave((form, changedValues) -> presenter.saveMimeMapping(mimeMappingItem.getValue()))
                 .prepareReset(form -> presenter.resetMimeMapping(form))
                 .build();
 
-        ModelNode welcomeFileDescription = failSafeGet(configurationMetadata.getDescription(),
-                "children/welcome-file/description"); // NON-NLS
+        String welcomeFileDescription = metadataRegistry.lookup(SERVLET_CONTAINER_TEMPLATE.append(WELCOME_FILE + "=*"))
+                .getDescription().getDescription();
         welcomeFileItem = new ListItem(WELCOME_FILE, Names.WELCOME_FILE);
         welcomeFileForm = new ModelNodeForm.Builder<>(Ids.UNDERTOW_SERVLET_CONTAINER_WELCOME_FILE_FORM, emptyMetadata)
-                .unboundFormItem(welcomeFileItem, 0, SafeHtmlUtils.fromString(welcomeFileDescription.asString()))
+                .unboundFormItem(welcomeFileItem, 0, SafeHtmlUtils.fromString(welcomeFileDescription))
                 .onSave((form, changedValues) -> presenter.saveWelcomeFile(welcomeFileItem.getValue().stream()
                         .collect(toMap(Function.identity(), value -> null))))
                 .prepareReset(form -> presenter.resetWelcomeFile(form))
