@@ -17,9 +17,11 @@
     "predev": "cpy --flat node_modules/pouchdb/dist/pouchdb.min.js target/gwt/devmode/war/hal/",
     "dev": "parcel build --public-url \"./\" --dist-dir target/gwt/devmode/war/hal --no-optimize",
     "preprod": "cpy --flat node_modules/pouchdb/dist/pouchdb.min.js target/bundle/",
-    "prod": "parcel build --public-url \"./\" --dist-dir target/bundle"
+    "prod": "parcel build --public-url \"./\" --dist-dir target/bundle",
+    "sbom": "cyclonedx-npm --output-format JSON --output-file target/npm-bom.cdx.json --omit dev"
   },
   "devDependencies": {
+    "@cyclonedx/cyclonedx-npm": "^1.19.3",
     "@parcel/plugin": "^2.16.4",
     "@parcel/reporter-cli": "^2.16.4",
     "@parcel/transformer-less": "^2.16.4",

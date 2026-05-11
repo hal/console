@@ -1,6 +1,7 @@
 *.bak
 *.iml
 .DS_Store
+.claude
 .classpath
 .factorypath
 .idea
