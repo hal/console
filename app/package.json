@@ -21,7 +21,7 @@
     "sbom": "cyclonedx-npm --output-format JSON --output-file target/npm-bom.cdx.json --omit dev"
   },
   "devDependencies": {
-    "@cyclonedx/cyclonedx-npm": "^1.19.3",
+    "@cyclonedx/cyclonedx-npm": "^4.2.1",
     "@parcel/plugin": "^2.16.4",
     "@parcel/reporter-cli": "^2.16.4",
     "@parcel/transformer-less": "^2.16.4",
