@@ -47,7 +47,7 @@
     "font-awesome": "^4.7.0",
     "google-code-prettify": "^1.0.5",
     "jquery": "^3.6.4",
-    "js-cookie": "^3.0.7",
+    "js-cookie": "^3.0.8",
     "jstree": "^3.3.16",
     "keycloak-js": "^26.2.4",
     "moment": "^2.30.1",
