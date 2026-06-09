@@ -237,6 +237,10 @@ public class Subsystems {
                 .nextColumn(Ids.REST_RESOURCE)
                 .preview(resources.previews().runtimeJaxRs())
                 .build());
+        addRuntime(new SubsystemMetadata.Builder(JGROUPS, Names.JGROUPS)
+                .nextColumn(Ids.JGROUPS_CHANNEL_RUNTIME)
+                .preview(resources.previews().configurationJgroups())
+                .build());
         addRuntime(new SubsystemMetadata.Builder(LOGGING, resources.constants().logFiles())
                 .nextColumn(Ids.LOG_FILE)
                 .preview(resources.previews().runtimeLogFiles())

@@ -65,6 +65,7 @@ public interface NameTokens {
     String IO = ModelDescriptionConstants.IO;
     String JCA = ModelDescriptionConstants.JCA;
     String JGROUPS = ModelDescriptionConstants.JGROUPS;
+    String JGROUPS_CHANNEL = "jgroups-channel";
     String JMS_BRIDGE = ModelDescriptionConstants.JMS_BRIDGE;
     String JMS_QUEUE = "jms-queue";
     String JMS_TOPIC = "jms-topic";

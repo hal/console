@@ -396,6 +396,7 @@ public interface Ids {
     String JGROUPS_CHANNEL_FORK_ITEM = "jgroups-channel-item-fork-item";
     String JGROUPS_CHANNEL_FORK_PROTOCOL = "fork-protocol";
     String JGROUPS_CHANNEL_ITEM = "jgroups-channel-item";
+    String JGROUPS_CHANNEL_RUNTIME = "jgroups-channel-r";
     String JGROUPS_FORM = "jgroups-form";
     String JGROUPS_ITEM = "jgroups-item";
     String JGROUPS_PROTOCOL = "protocol";
