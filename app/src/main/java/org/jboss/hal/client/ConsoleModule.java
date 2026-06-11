@@ -277,6 +277,11 @@ public class ConsoleModule extends AbstractPresenterModule {
                 ChannelView.class,
                 ChannelPresenter.MyProxy.class);
 
+        bindPresenter(org.jboss.hal.client.runtime.subsystem.jgroups.ChannelPresenter.class,
+                org.jboss.hal.client.runtime.subsystem.jgroups.ChannelPresenter.MyView.class,
+                org.jboss.hal.client.runtime.subsystem.jgroups.ChannelView.class,
+                org.jboss.hal.client.runtime.subsystem.jgroups.ChannelPresenter.MyProxy.class);
+
         bindPresenter(ClusteringPresenter.class,
                 ClusteringPresenter.MyView.class,
                 Mbui_ClusteringView.class,
