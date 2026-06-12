@@ -114,7 +114,10 @@ class TransportElement implements IsElement<HTMLElement>, Attachable, HasPresent
         if (!transportType.equals(currentTransportType)) {
             currentTransportType = transportType;
             // metadata is at .../stack=*/transport=<type>, the first wildcard needs to be preserved
-            AddressTemplate metadataTemplate = TRANSPORT_TEMPLATE.replaceWildcards("*", currentTransportType);
+            // if the name is not recognized use generic metadata
+            AddressTemplate metadataTemplate = presenter.getTransportNames().contains(currentTransportType)
+                    ? TRANSPORT_TEMPLATE.replaceWildcards("*", currentTransportType)
+                    : TRANSPORT_TEMPLATE;
             Metadata transportMetadata = metadataRegistry.lookup(metadataTemplate);
             AddressTemplate transportTemplate = SELECTED_TRANSPORT_TEMPLATE.replaceWildcards(currentTransportType);
             String fullName = Names.TRANSPORT + ": " + currentTransportType;
