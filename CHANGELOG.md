@@ -11,14 +11,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- [HAL-2059](https://issues.redhat.com/browse/HAL-2059): Implement JGroups runtime section
-- [HAL-2053](https://issues.redhat.com/browse/HAL-2053): Add support for new transaction attributes
+- [HAL-2059](https://redhat.atlassian.net/browse/HAL-2059): Implement JGroups runtime section
+- [HAL-2053](https://redhat.atlassian.net/browse/HAL-2053): Add support for new transaction attributes
 
 ### Fixed
 
-- [HAL-2062](https://issues.redhat.com/browse/HAL-2062): Fix metadata retrieval for JGroups transport
-- [HAL-2055](https://issues.redhat.com/browse/HAL-2055): Fix metadata retrieval
-- [HAL-2054](https://issues.redhat.com/browse/HAL-2054): Fix properties processing
+- [HAL-2062](https://redhat.atlassian.net/browse/HAL-2062): Fix metadata retrieval for JGroups transport
+- [HAL-2055](https://redhat.atlassian.net/browse/HAL-2055): Fix metadata retrieval
+- [HAL-2054](https://redhat.atlassian.net/browse/HAL-2054): Fix properties processing
 
 ### Upgrades
 
