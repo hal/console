@@ -7,6 +7,29 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.7.20] - 2026-06-16
+
+### Added
+
+- [HAL-2059](https://issues.redhat.com/browse/HAL-2059): Implement JGroups runtime section
+- [HAL-2053](https://issues.redhat.com/browse/HAL-2053): Add support for new transaction attributes
+
+### Fixed
+
+- [HAL-2062](https://issues.redhat.com/browse/HAL-2062): Fix metadata retrieval for JGroups transport
+- [HAL-2055](https://issues.redhat.com/browse/HAL-2055): Fix metadata retrieval
+- [HAL-2054](https://issues.redhat.com/browse/HAL-2054): Fix properties processing
+
+### Upgrades
+
+- Bump ACE Editor to 1.44.0
+- Bump GWT Maven Plugin to 1.3.0
+- Bump Jaxen to 2.0.6
+- Bump JS Cookie to 3.0.8
+- Bump Keycloak JS to 26.2.4
+- Bump Mockito to 5.23.0
+- Bump SLF4J to 2.0.18
+
 ## [3.7.19] - 2026-03-09
 
 ### Changed
@@ -808,7 +831,8 @@ Release process failed. Do not use this release!
 - for dependency upgrades
 -->
 
-[Unreleased]: https://github.com/hal/console/compare/v3.7.19...HEAD
+[Unreleased]: https://github.com/hal/console/compare/v3.7.20...HEAD
+[3.7.20]: https://github.com/hal/console/compare/v3.7.19...v3.7.20
 [3.7.19]: https://github.com/hal/console/compare/v3.7.18...v3.7.19
 [3.7.18]: https://github.com/hal/console/compare/v3.7.17...v3.7.18
 [3.7.17]: https://github.com/hal/console/compare/v3.7.16...v3.7.17
