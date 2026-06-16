@@ -9,8 +9,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [3.7.20] - 2026-06-16
 
-## [3.7.20] - 2026-06-16
-
 ### Added
 
 - [HAL-2059](https://issues.redhat.com/browse/HAL-2059): Implement JGroups runtime section
