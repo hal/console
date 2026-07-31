@@ -43,7 +43,7 @@ OUTPUT_DIR="target/i18n"
 usage() {
   cat <<EOF
 USAGE:
-    $(basename "${BASH_SOURCE[0]}") [FLAGS] <tag-or-commit>
+    $(basename "${BASH_SOURCE[0]}") [FLAGS] [tag-or-commit]
 
 FLAGS:
     -h, --help          Prints help information
@@ -51,11 +51,12 @@ FLAGS:
     --no-color          Uses plain text output
 
 ARGS:
-    <tag-or-commit>     A git tag or commit hash to diff against (e.g., v3.7.14)
+    [tag-or-commit]     Optional git tag or commit hash to diff against (e.g., v3.7.14)
+                        If provided, a delta ZIP is generated in addition to the full ZIP.
 
 OUTPUT:
-    ${OUTPUT_DIR}/hal-i18n-full-YYYY-MM-DD.zip     All i18n resources
-    ${OUTPUT_DIR}/hal-i18n-delta-<tag>.zip          Changes since <tag-or-commit>
+    ${OUTPUT_DIR}/hal-i18n-full-YYYY-MM-DD.zip     All English i18n resources (always)
+    ${OUTPUT_DIR}/hal-i18n-delta-<tag>.zip          Changes since <tag-or-commit> (if provided)
 EOF
   exit
 }
@@ -105,8 +106,8 @@ parse_params() {
   done
 
   ARGS=("$@")
-  [[ ${#ARGS[@]} -eq 1 ]] || die "Missing tag or commit reference. See --help."
-  TAG_REF=${ARGS[0]}
+  [[ ${#ARGS[@]} -le 1 ]] || die "Too many arguments. See --help."
+  TAG_REF="${ARGS[0]-}"
   return 0
 }
 
@@ -115,8 +116,10 @@ check_preconditions() {
   command -v zip >/dev/null 2>&1 || die "zip is required but not found"
   [[ -f "pom.xml" ]] || die "Must be run from the project root (pom.xml not found)"
   [[ -d ".git" ]] || die "Not a git repository"
-  git rev-parse --verify "${TAG_REF}^{commit}" >/dev/null 2>&1 \
-    || die "Tag or commit '${TAG_REF}' not found in git history"
+  if [[ -n "${TAG_REF}" ]]; then
+    git rev-parse --verify "${TAG_REF}^{commit}" >/dev/null 2>&1 \
+      || die "Tag or commit '${TAG_REF}' not found in git history"
+  fi
   [[ -d "${RESOURCES_BASE}" ]] || die "Resources directory not found: ${RESOURCES_BASE}"
 }
 
@@ -131,9 +134,31 @@ generate_full_zip() {
   STAGING_DIR="${staging}"
 
   mkdir -p "${staging}/properties"
-  cp "${RESOURCES_BASE}"/*.properties "${staging}/properties/"
+  for f in "${RESOURCES_BASE}"/*.properties; do
+    local basename
+    basename=$(basename "${f}")
+    # Skip translated variants (e.g., Constants_fr.properties, Messages_pt_BR.properties, Messages_zh_Hans.properties)
+    if [[ "${basename}" =~ _[a-zA-Z]+\.properties$ ]]; then
+      continue
+    fi
+    cp "${f}" "${staging}/properties/"
+  done
 
-  cp -R "${RESOURCES_BASE}/previews" "${staging}/previews"
+  # Copy only English previews (exclude translated variants like _fr.html, _ja.html, _zh_cn.html)
+  mkdir -p "${staging}/previews"
+  find "${RESOURCES_BASE}/previews" -name '*.html' | while IFS= read -r f; do
+    local basename
+    basename=$(basename "${f}")
+    if [[ "${basename}" =~ _[a-zA-Z]+\.html$ ]]; then
+      continue
+    fi
+    local rel_path
+    rel_path="${f#"${RESOURCES_BASE}/previews/"}"
+    local subdir
+    subdir=$(dirname "${rel_path}")
+    mkdir -p "${staging}/previews/${subdir}"
+    cp "${f}" "${staging}/previews/${subdir}/"
+  done
 
   local zip_name="hal-i18n-full-$(date +%Y-%m-%d).zip"
   (cd "${staging}" && zip -r -q "${script_dir}/${OUTPUT_DIR}/${zip_name}" .)
@@ -241,7 +266,9 @@ setup_colors
 
 msg ""
 msg "Generating i18n resource bundles..."
-msg "  Reference: ${CYAN}${TAG_REF}${NOFORMAT}"
+if [[ -n "${TAG_REF}" ]]; then
+  msg "  Reference: ${CYAN}${TAG_REF}${NOFORMAT}"
+fi
 msg ""
 
 check_preconditions
@@ -250,10 +277,12 @@ prepare_output_dir
 FULL_ZIP=""
 DELTA_ZIP=""
 
-msg "Full ZIP (all resources):"
+msg "Full ZIP (English base resources):"
 generate_full_zip
 
-msg "Delta ZIP (changes since ${TAG_REF}):"
-generate_delta_zip
+if [[ -n "${TAG_REF}" ]]; then
+  msg "Delta ZIP (changes since ${TAG_REF}):"
+  generate_delta_zip
+fi
 
 print_summary
