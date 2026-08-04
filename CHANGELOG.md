@@ -7,6 +7,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Security
+
+- Fix CVE-2026-59869: Upgrade js-yaml to 4.3.x to address quadratic CPU DoS via YAML merge-key chains
+- Fix CVE-2026-13149: Remove orphaned brace-expansion entry vulnerable to exponential-time DoS
+
+### Upgrades
+
+- Bump @cyclonedx/cyclonedx-npm from 4.2.1 to 6.0.0
+
 ## [3.7.20] - 2026-06-16
 
 ### Added

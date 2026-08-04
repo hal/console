@@ -60,6 +60,7 @@
   },
   "overrides": {
     "d3-color": "3.1.0",
+    "js-yaml": "^4.3.0",
     "moment-timezone": "0.5.37",
     "patternfly": {
       "bootstrap-select": "1.13.18",
