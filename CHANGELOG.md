@@ -7,14 +7,27 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- Add script to collect i18n resources
+
+### Changed
+
+- Make tag-or-commit argument optional in i18n.sh and export only English resources
+
 ### Security
 
 - Fix CVE-2026-59869: Upgrade js-yaml to 4.3.x to address quadratic CPU DoS via YAML merge-key chains
-- Fix CVE-2026-13149: Remove orphaned brace-expansion entry vulnerable to exponential-time DoS
+- Fix CVE-2026-13149: Update brace-expansion to 2.1.4 to address exponential-time DoS
 
 ### Upgrades
 
 - Bump @cyclonedx/cyclonedx-npm from 4.2.1 to 6.0.0
+- Bump Central Publishing Maven Plugin from 0.10.0 to 0.11.0
+- Bump fast-uri from 3.1.2 to 3.1.5
+- Bump GWT from 2.13.0 to 2.13.1
+- Bump ip-address from 10.2.0 to 10.4.0
+- Bump tar from 7.5.15 to 7.5.22
 
 ## [3.7.20] - 2026-06-16
 
