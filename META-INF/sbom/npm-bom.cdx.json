@@ -3,9 +3,9 @@
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
   "version": 1,
-  "serialNumber": "urn:uuid:7aa0ae1c-8902-4d61-8f5f-b43b96dd53cb",
+  "serialNumber": "urn:uuid:5c59452a-3da7-4be7-b739-ec5d08c7dcb5",
   "metadata": {
-    "timestamp": "2026-06-16T15:00:25.571Z",
+    "timestamp": "2026-08-12T07:45:21.372Z",
     "tools": {
       "components": [
         {
@@ -17,7 +17,7 @@
           "type": "application",
           "name": "cyclonedx-npm",
           "group": "@cyclonedx",
-          "version": "4.2.1",
+          "version": "6.0.0",
           "author": "Jan Kowalleck",
           "description": "Create CycloneDX Software Bill of Materials (SBOM) from NPM projects.",
           "licenses": [
