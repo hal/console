@@ -32,5 +32,12 @@
             <directory>${project.build.directory}/${project.build.finalName}/${gwt.moduleShortname}</directory>
             <outputDirectory>webroot</outputDirectory>
         </fileSet>
+        <fileSet>
+            <directory>${project.build.directory}</directory>
+            <outputDirectory>META-INF/sbom</outputDirectory>
+            <includes>
+                <include>npm-bom.cdx.json</include>
+            </includes>
+        </fileSet>
     </fileSets>
 </assembly>
