@@ -209,6 +209,17 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>npm-sbom</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>run sbom</arguments>
+                            <skip>${skip.gwt}</skip>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>npm-parcel</id>
                         <phase>generate-resources</phase>
                         <goals>
