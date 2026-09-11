@@ -24,10 +24,9 @@ import javax.inject.Provider;
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.ColumnAction;
 import org.jboss.hal.core.finder.ColumnActionFactory;
+import org.jboss.hal.core.finder.DependentItemsProvider;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
-import org.jboss.hal.core.finder.FinderPath;
-import org.jboss.hal.core.finder.FinderSegment;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
@@ -64,7 +63,6 @@ import elemental2.promise.Promise;
 
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
-import static java.util.Collections.emptyList;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 
@@ -91,12 +89,12 @@ import static org.jboss.hal.resources.CSS.pfIcon;
         SCATTERED_CACHE_ADDRESS }, recursive = false)
 public class CacheColumn extends FinderColumn<Cache> {
 
-    private static String findCacheContainer(FinderPath path) {
-        FinderSegment<?> segment = path.findColumn(Ids.CACHE_CONTAINER);
-        if (segment != null) {
-            return Ids.extractCacheContainer(segment.getItemId());
-        }
-        return null;
+    private static String getCacheContainerId() {
+        return Ids.CACHE_CONTAINER;
+    }
+
+    private String findCacheContainer() {
+        return DependentItemsProvider.resolver(getCacheContainerId(), getFinder().getContext().getPath()).getName();
     }
 
     private static final String JGROUPS_ADDITION_STATUS = "jgrupsAdditionStatus";
@@ -123,28 +121,23 @@ public class CacheColumn extends FinderColumn<Cache> {
             EventBus eventBus) {
 
         super(new Builder<Cache>(finder, Ids.CACHE, Names.CACHE)
-                .itemsProvider(context -> new Promise<>((resolve, reject) -> {
-                    String cacheContainer = findCacheContainer(context.getPath());
-                    if (cacheContainer != null) {
-                        CacheType[] cacheTypes = CacheType.values();
-                        ResourceAddress address = CACHE_CONTAINER_TEMPLATE.resolve(statementContext, cacheContainer);
-                        List<String> children = stream(cacheTypes).map(CacheType::resource).collect(toList());
-                        crud.readChildren(address, children, 1, result -> {
-                            List<Cache> caches = new ArrayList<>();
-                            for (int i = 0; i < result.size(); i++) {
-                                List<Property> properties = result.step(i).get(RESULT).asPropertyList();
-                                for (Property property : properties) {
-                                    caches.add(new Cache(property.getName(), cacheTypes[i], property.getValue()));
+                .itemsProvider(new DependentItemsProvider<Cache>(
+                        cacheContainer -> new Promise<>((resolve, reject) -> {
+                            CacheType[] cacheTypes = CacheType.values();
+                            ResourceAddress address = CACHE_CONTAINER_TEMPLATE.resolve(statementContext, cacheContainer);
+                            List<String> children = stream(cacheTypes).map(CacheType::resource).collect(toList());
+                            crud.readChildren(address, children, 1, result -> {
+                                List<Cache> caches = new ArrayList<>();
+                                for (int i = 0; i < result.size(); i++) {
+                                    List<Property> properties = result.step(i).get(RESULT).asPropertyList();
+                                    for (Property property : properties) {
+                                        caches.add(new Cache(property.getName(), cacheTypes[i], property.getValue()));
+                                    }
                                 }
-                            }
-                            // Collections.sort(caches, (c1, c2) -> c1.getName().compareTo(c2.getName()));
-                            caches.sort(comparing(NamedNode::getName));
-                            resolve.onInvoke(caches);
-                        });
-                    } else {
-                        resolve.onInvoke(emptyList());
-                    }
-                }))
+                                caches.sort(comparing(NamedNode::getName));
+                                resolve.onInvoke(caches);
+                            });
+                        }), getCacheContainerId()))
                 .onPreview(CachePreview::new)
                 .pinnable()
                 .showCount()
@@ -203,7 +196,7 @@ public class CacheColumn extends FinderColumn<Cache> {
             @Override
             public List<ItemAction<Cache>> actions() {
                 List<ItemAction<Cache>> actions = new ArrayList<>();
-                String cacheContainer = findCacheContainer(getFinder().getContext().getPath());
+                String cacheContainer = findCacheContainer();
                 if (cacheContainer != null) {
                     actions.add(itemActionFactory.viewAndMonitor(Ids.build(item.type().baseId, item.getName()),
                             places.selectedProfile(item.type().nameToken)
@@ -231,7 +224,7 @@ public class CacheColumn extends FinderColumn<Cache> {
         AddResourceDialog dialog = new AddResourceDialog(Ids.build(cacheType.baseId, Ids.ADD),
                 resources.messages().addResourceTitle(cacheType.type), metadata,
                 (name, model) -> {
-                    String cacheContainer = findCacheContainer(getFinder().getContext().getPath());
+                    String cacheContainer = findCacheContainer();
                     ResourceAddress address = cacheType.template.resolve(statementContext, cacheContainer, name);
 
                     if (cacheType.equals(CacheType.LOCAL)) {

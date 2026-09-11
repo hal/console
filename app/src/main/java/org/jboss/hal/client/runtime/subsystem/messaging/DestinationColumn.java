@@ -24,10 +24,10 @@ import javax.inject.Inject;
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.client.runtime.subsystem.messaging.Destination.Type;
 import org.jboss.hal.core.finder.ColumnActionFactory;
+import org.jboss.hal.core.finder.DependentItemsProvider;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
 import org.jboss.hal.core.finder.FinderPathFactory;
-import org.jboss.hal.core.finder.FinderSegment;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
@@ -58,7 +58,6 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import elemental2.dom.HTMLElement;
 import elemental2.promise.Promise;
 
-import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 import static org.jboss.hal.client.runtime.subsystem.messaging.AddressTemplates.MESSAGING_CORE_QUEUE_ADDRESS;
@@ -83,7 +82,6 @@ import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATIO
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESULT;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RESUME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.SUBDEPLOYMENT;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.UNDEFINED;
 import static org.jboss.hal.resources.CSS.fontAwesome;
 
 @AsyncColumn(Ids.MESSAGING_SERVER_DESTINATION_RUNTIME)
@@ -123,47 +121,42 @@ public class DestinationColumn extends FinderColumn<Destination> {
         this.eventBus = eventBus;
         this.resources = resources;
 
-        ItemsProvider<Destination> itemsProvider = context -> {
-            // extract server name from the finder path
-            FinderSegment<?> segment = context.getPath().findColumn(Ids.MESSAGING_SERVER_RUNTIME);
-            if (segment != null) {
-                String server = segment.getItemTitle();
-                List<Operation> operations = new ArrayList<>();
-                for (Type type : SUBSYSTEM_RESOURCES) {
-                    ResourceAddress address = MESSAGING_SERVER_TEMPLATE.append(type.resource + "=*")
-                            .resolve(statementContext, server);
-                    operations.add(new Operation.Builder(address, READ_RESOURCE_OPERATION)
-                            .param(INCLUDE_RUNTIME, true)
-                            .build());
-                }
-                for (Type type : DEPLOYMENT_RESOURCES) {
-                    ResourceAddress address = MESSAGING_DEPLOYMENT_TEMPLATE.append(type.resource + "=*")
-                            .resolve(statementContext);
-                    operations.add(new Operation.Builder(address, READ_RESOURCE_OPERATION)
-                            .param(INCLUDE_RUNTIME, true)
-                            .build());
-                }
-                return dispatcher.execute(new Composite(operations)).then(result -> {
-                    List<Destination> destinations = new ArrayList<>();
-                    for (ModelNode step : result) {
-                        if (!step.isFailure()) {
-                            for (ModelNode node : step.get(RESULT).asList()) {
-                                AddressTemplate template = AddressTemplate.of(new ResourceAddress(node.get(ADDRESS)));
-                                if (!template.firstName().equals(HOST)) {
-                                    // Add correct host and server before the messaging address if it is missing
-                                    template = SELECTED_HOST_SELECTED_SERVER_TEMPLATE.append(template);
+        ItemsProvider<Destination> itemsProvider = new DependentItemsProvider<Destination>(
+                server -> {
+                    List<Operation> operations = new ArrayList<>();
+                    for (Type type : SUBSYSTEM_RESOURCES) {
+                        ResourceAddress address = MESSAGING_SERVER_TEMPLATE.append(type.resource + "=*")
+                                .resolve(statementContext, server);
+                        operations.add(new Operation.Builder(address, READ_RESOURCE_OPERATION)
+                                .param(INCLUDE_RUNTIME, true)
+                                .build());
+                    }
+                    for (Type type : DEPLOYMENT_RESOURCES) {
+                        ResourceAddress address = MESSAGING_DEPLOYMENT_TEMPLATE.append(type.resource + "=*")
+                                .resolve(statementContext);
+                        operations.add(new Operation.Builder(address, READ_RESOURCE_OPERATION)
+                                .param(INCLUDE_RUNTIME, true)
+                                .build());
+                    }
+                    return dispatcher.execute(new Composite(operations)).then(result -> {
+                        List<Destination> destinations = new ArrayList<>();
+                        for (ModelNode step : result) {
+                            if (!step.isFailure()) {
+                                for (ModelNode node : step.get(RESULT).asList()) {
+                                    AddressTemplate template = AddressTemplate.of(new ResourceAddress(node.get(ADDRESS)));
+                                    if (!template.firstName().equals(HOST)) {
+                                        // Add correct host and server before the messaging address if it is missing
+                                        template = SELECTED_HOST_SELECTED_SERVER_TEMPLATE.append(template);
+                                    }
+                                    destinations.add(new Destination(template.resolve(statementContext), node.get(RESULT)));
                                 }
-                                destinations.add(new Destination(template.resolve(statementContext), node.get(RESULT)));
                             }
                         }
-                    }
-                    destinations.sort(Comparator.comparing(NamedNode::getName));
-                    return Promise.resolve(destinations);
-                });
-            } else {
-                return Promise.resolve(emptyList());
-            }
-        };
+                        destinations.sort(Comparator.comparing(NamedNode::getName));
+                        return Promise.resolve(destinations);
+                    });
+                },
+                getServerId());
         setItemsProvider(itemsProvider);
         setBreadcrumbItemsProvider(context -> itemsProvider.items(context)
                 .then(result -> Promise.resolve(result.stream()
@@ -173,7 +166,8 @@ public class DestinationColumn extends FinderColumn<Destination> {
         setItemRenderer(item -> new ItemDisplay<Destination>() {
             @Override
             public String getId() {
-                return Ids.destination(item.getDeployment(), item.getSubdeployment(), messageServer(), item.type.name(),
+                return Ids.destination(item.getDeployment(), item.getSubdeployment(), findMessageServer(),
+                        item.type.name(),
                         item.getName());
             }
 
@@ -231,7 +225,7 @@ public class DestinationColumn extends FinderColumn<Destination> {
                             builder.with(SUBDEPLOYMENT, item.getSubdeployment());
                         }
                     }
-                    builder.with(Ids.MESSAGING_SERVER, messageServer()).with(NAME, item.getName());
+                    builder.with(Ids.MESSAGING_SERVER, findMessageServer()).with(NAME, item.getName());
                     actions.add(itemActionFactory.view(builder.build()));
                 } else if (item.type == Type.JMS_TOPIC) {
                     actions.add(new ItemAction.Builder<Destination>()
@@ -260,13 +254,12 @@ public class DestinationColumn extends FinderColumn<Destination> {
         });
     }
 
-    private String messageServer() {
-        String server = UNDEFINED;
-        FinderSegment<?> segment = getFinder().getContext().getPath().findColumn(Ids.MESSAGING_SERVER_RUNTIME);
-        if (segment != null) {
-            server = Ids.extractMessagingServer(segment.getItemId());
-        }
-        return server;
+    private String getServerId() {
+        return Ids.MESSAGING_SERVER_RUNTIME;
+    }
+
+    private String findMessageServer() {
+        return DependentItemsProvider.resolver(getServerId(), getFinder().getContext().getPath()).getName();
     }
 
     private void resume(Destination destination) {

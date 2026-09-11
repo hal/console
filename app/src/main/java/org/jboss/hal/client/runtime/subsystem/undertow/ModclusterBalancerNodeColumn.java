@@ -18,9 +18,9 @@ package org.jboss.hal.client.runtime.subsystem.undertow;
 import javax.inject.Inject;
 
 import org.jboss.hal.core.finder.ColumnActionFactory;
+import org.jboss.hal.core.finder.DependentItemsProvider;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
-import org.jboss.hal.core.finder.FinderSegment;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.dmr.NamedNode;
 import org.jboss.hal.dmr.Operation;
@@ -54,29 +54,19 @@ public class ModclusterBalancerNodeColumn extends FinderColumn<NamedNode> {
 
         super(new Builder<NamedNode>(finder, Ids.UNDERTOW_RUNTIME_MODCLUSTER_BALANCER_NODE, Names.NODE)
                 .columnAction(columnActionFactory.refresh(Ids.UNDERTOW_MODCLUSTER_BALANCER_NODE_REFRESH))
-                .itemsProvider(context -> {
-                    String modcluster = "";
-                    String balancer = "";
-
-                    FinderSegment<?> modclusterSegment = context.getPath().findColumn(Ids.UNDERTOW_RUNTIME_MODCLUSTER);
-                    if (modclusterSegment != null) {
-                        modcluster = Ids.extractUndertowModcluster(modclusterSegment.getItemId());
-                    }
-
-                    FinderSegment<?> balancerSegment = context.getPath().findColumn(Ids.UNDERTOW_RUNTIME_MODCLUSTER_BALANCER);
-                    if (balancerSegment != null) {
-                        balancer = Ids.extractUndertowModclusterBalancer(balancerSegment.getItemId());
-                    }
-
-                    ResourceAddress address = MODCLUSTER_BALANCER_TEMPLATE.resolve(statementContext, modcluster,
-                            balancer);
-                    Operation operation = new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
-                            .param(CHILD_TYPE, NODE)
-                            .param(INCLUDE_RUNTIME, true)
-                            .build();
-                    return dispatcher.execute(operation)
-                            .then(result -> Promise.resolve(asNamedNodes(result.asPropertyList())));
-                })
+                .itemsProvider(new DependentItemsProvider<NamedNode>(
+                        parentNames -> {
+                            ResourceAddress address = MODCLUSTER_BALANCER_TEMPLATE.resolve(statementContext,
+                                    parentNames);
+                            Operation operation = new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
+                                    .param(CHILD_TYPE, NODE)
+                                    .param(INCLUDE_RUNTIME, true)
+                                    .build();
+                            return dispatcher.execute(operation)
+                                    .then(result -> Promise.resolve(asNamedNodes(result.asPropertyList())));
+                        },
+                        Ids.UNDERTOW_RUNTIME_MODCLUSTER,
+                        Ids.UNDERTOW_RUNTIME_MODCLUSTER_BALANCER))
                 .itemRenderer(item -> new ItemDisplay<NamedNode>() {
                     @Override
                     public String getId() {

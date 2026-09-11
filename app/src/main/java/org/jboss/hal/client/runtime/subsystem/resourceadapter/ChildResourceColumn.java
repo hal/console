@@ -16,15 +16,14 @@
 package org.jboss.hal.client.runtime.subsystem.resourceadapter;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import org.jboss.hal.config.Environment;
+import org.jboss.hal.core.finder.DependentItemsProvider;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
-import org.jboss.hal.core.finder.FinderSegment;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
@@ -95,50 +94,45 @@ public class ChildResourceColumn extends FinderColumn<StatisticsResource> {
                 .filterDescription(resources.messages().filterBy("name, type"))
                 .useFirstActionAsBreadcrumbHandler());
 
-        ItemsProvider<StatisticsResource> itemsProvider = context -> {
-            // extract server name from the finder path
-            FinderSegment<?> segment = context.getPath().findColumn(Ids.RESOURCE_ADAPTER_RUNTIME);
+        ItemsProvider<StatisticsResource> itemsProvider = new DependentItemsProvider<StatisticsResource>(
+                parentNames -> {
+                    String raName = parentNames[0];
+                    List<Operation> operations = new ArrayList<>();
 
-            if (segment != null) {
-                String raName = segment.getItemTitle();
-                List<Operation> operations = new ArrayList<>();
-
-                ResourceAddress resourceAdapterAddress = RESOURCE_ADAPTER_TEMPLATE.resolve(statementContext, raName);
-                operations.add(new Operation.Builder(resourceAdapterAddress, READ_CHILDREN_RESOURCES_OPERATION)
-                        .param(CHILD_TYPE, ADMIN_OBJECTS)
-                        .param(INCLUDE_RUNTIME, true)
-                        .param(RECURSIVE_DEPTH, 2)
-                        .build());
-
-                operations.add(new Operation.Builder(resourceAdapterAddress, READ_CHILDREN_RESOURCES_OPERATION)
-                        .param(CHILD_TYPE, CONNECTION_DEFINITIONS)
-                        .param(INCLUDE_RUNTIME, true)
-                        .param(RECURSIVE_DEPTH, 2)
-                        .build());
-
-                if (!environment.isStandalone()) {
-                    ResourceAddress serverAddress = AddressTemplate.of(SELECTED_HOST, SELECTED_SERVER)
-                            .resolve(statementContext);
-                    operations.add(new Operation.Builder(serverAddress, READ_RESOURCE_OPERATION)
+                    ResourceAddress resourceAdapterAddress = RESOURCE_ADAPTER_TEMPLATE.resolve(statementContext, raName);
+                    operations.add(new Operation.Builder(resourceAdapterAddress, READ_CHILDREN_RESOURCES_OPERATION)
+                            .param(CHILD_TYPE, ADMIN_OBJECTS)
                             .param(INCLUDE_RUNTIME, true)
-                            .param(ATTRIBUTES_ONLY, true)
+                            .param(RECURSIVE_DEPTH, 2)
                             .build());
-                }
-                return dispatcher.execute(new Composite(operations)).then(result -> {
-                    server = environment.isStandalone()
-                            ? Server.STANDALONE
-                            : new Server(statementContext.selectedHost(), result.step(2).get(RESULT));
-                    List<StatisticsResource> combined = new ArrayList<>();
-                    combined.addAll(result.step(0).get(RESULT).asPropertyList().stream()
-                            .map(ao -> new StatisticsResource(raName, ADMIN_OBJECT, ao)).collect(toList()));
-                    combined.addAll(result.step(1).get(RESULT).asPropertyList().stream()
-                            .map(cd -> new StatisticsResource(raName, CONNECTION_DEFINITION, cd)).collect(toList()));
-                    combined.sort(comparing(NamedNode::getName));
-                    return Promise.resolve(combined);
-                });
-            }
-            return Promise.resolve(Collections.emptyList());
-        };
+
+                    operations.add(new Operation.Builder(resourceAdapterAddress, READ_CHILDREN_RESOURCES_OPERATION)
+                            .param(CHILD_TYPE, CONNECTION_DEFINITIONS)
+                            .param(INCLUDE_RUNTIME, true)
+                            .param(RECURSIVE_DEPTH, 2)
+                            .build());
+
+                    if (!environment.isStandalone()) {
+                        ResourceAddress serverAddress = AddressTemplate.of(SELECTED_HOST, SELECTED_SERVER)
+                                .resolve(statementContext);
+                        operations.add(new Operation.Builder(serverAddress, READ_RESOURCE_OPERATION)
+                                .param(INCLUDE_RUNTIME, true)
+                                .param(ATTRIBUTES_ONLY, true)
+                                .build());
+                    }
+                    return dispatcher.execute(new Composite(operations)).then(result -> {
+                        server = environment.isStandalone()
+                                ? Server.STANDALONE
+                                : new Server(statementContext.selectedHost(), result.step(2).get(RESULT));
+                        List<StatisticsResource> combined = new ArrayList<>();
+                        combined.addAll(result.step(0).get(RESULT).asPropertyList().stream()
+                                .map(ao -> new StatisticsResource(raName, ADMIN_OBJECT, ao)).collect(toList()));
+                        combined.addAll(result.step(1).get(RESULT).asPropertyList().stream()
+                                .map(cd -> new StatisticsResource(raName, CONNECTION_DEFINITION, cd)).collect(toList()));
+                        combined.sort(comparing(NamedNode::getName));
+                        return Promise.resolve(combined);
+                    });
+                }, Ids.RESOURCE_ADAPTER_RUNTIME);
         setItemsProvider(itemsProvider);
 
         // reuse the items provider to filter breadcrumb items

@@ -21,9 +21,9 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.jboss.hal.core.CrudOperations;
+import org.jboss.hal.core.finder.DependentItemsProvider;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
-import org.jboss.hal.core.finder.FinderSegment;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.PreviewContent;
@@ -90,75 +90,70 @@ public class ServerSettingsColumn
         this.dispatcher = dispatcher;
         this.resources = resources;
 
-        setItemsProvider(context -> new Promise<>((resolve, reject) -> {
-            List<StaticItem> items = new ArrayList<>();
-            FinderSegment<?> segment = context.getPath().findColumn(Ids.MESSAGING_SERVER_CONFIGURATION);
-            if (segment != null) {
-                String server = segment.getItemTitle();
-                StatementContext serverStatementContext = new SelectionAwareStatementContext(statementContext,
-                        () -> server);
-                ResourceAddress address = SELECTED_SERVER_TEMPLATE.resolve(serverStatementContext);
-                HaPolicy.readChildren(crud, address, 1, children -> {
+        setItemsProvider(new DependentItemsProvider<StaticItem>(
+                parentNames -> new Promise<>((resolve, reject) -> {
+                    List<StaticItem> items = new ArrayList<>();
+                    String server = parentNames[0];
+                    StatementContext serverStatementContext = new SelectionAwareStatementContext(statementContext,
+                            () -> server);
+                    ResourceAddress address = SELECTED_SERVER_TEMPLATE.resolve(serverStatementContext);
+                    HaPolicy.readChildren(crud, address, 1, children -> {
 
-                    items.add(new StaticItem.Builder(Names.DESTINATIONS)
-                            .id(Ids.MESSAGING_SERVER_DESTINATION)
-                            .action(itemActionFactory.view(
-                                    places.selectedProfile(NameTokens.MESSAGING_SERVER_DESTINATION)
-                                            .with(SERVER, server)
-                                            .build()))
-                            .onPreview(new PreviewContent<>(Names.DESTINATIONS,
-                                    resources.previews().configurationMessagingDestinations()))
-                            .build());
-                    items.add(new StaticItem.Builder(Names.CONNECTIONS)
-                            .id(Ids.MESSAGING_SERVER_CONNECTION)
-                            .action(itemActionFactory.view(
-                                    places.selectedProfile(NameTokens.MESSAGING_SERVER_CONNECTION)
-                                            .with(SERVER, server)
-                                            .build()))
-                            .onPreview(new PreviewContent<>(Names.CONNECTIONS,
-                                    resources.previews().configurationMessagingConnections()))
-                            .build());
-                    items.add(new StaticItem.Builder(Names.CLUSTERING)
-                            .id(Ids.MESSAGING_SERVER_CLUSTERING)
-                            .action(itemActionFactory.view(
-                                    places.selectedProfile(NameTokens.MESSAGING_SERVER_CLUSTERING)
-                                            .with(SERVER, server)
-                                            .build()))
-                            .onPreview(new PreviewContent<>(Names.CLUSTERING,
-                                    resources.previews().configurationMessagingClustering()))
-                            .build());
-
-                    StaticItem.Builder builder = new StaticItem.Builder(Names.HA_POLICY)
-                            .id(Ids.MESSAGING_SERVER_HA_POLICY);
-                    if (children.isEmpty()) {
-                        builder.action(resources.constants().add(), item -> addHaPolicy(serverStatementContext))
+                        items.add(new StaticItem.Builder(Names.DESTINATIONS)
+                                .id(Ids.MESSAGING_SERVER_DESTINATION)
                                 .action(itemActionFactory.view(
-                                        places.selectedProfile(NameTokens.MESSAGING_SERVER_HA_POLICY)
+                                        places.selectedProfile(NameTokens.MESSAGING_SERVER_DESTINATION)
                                                 .with(SERVER, server)
                                                 .build()))
-                                .onPreview(new PreviewContent<>(Names.HA_POLICY,
-                                        resources.previews().configurationMessagingHaPolicy()));
+                                .onPreview(new PreviewContent<>(Names.DESTINATIONS,
+                                        resources.previews().configurationMessagingDestinations()))
+                                .build());
+                        items.add(new StaticItem.Builder(Names.CONNECTIONS)
+                                .id(Ids.MESSAGING_SERVER_CONNECTION)
+                                .action(itemActionFactory.view(
+                                        places.selectedProfile(NameTokens.MESSAGING_SERVER_CONNECTION)
+                                                .with(SERVER, server)
+                                                .build()))
+                                .onPreview(new PreviewContent<>(Names.CONNECTIONS,
+                                        resources.previews().configurationMessagingConnections()))
+                                .build());
+                        items.add(new StaticItem.Builder(Names.CLUSTERING)
+                                .id(Ids.MESSAGING_SERVER_CLUSTERING)
+                                .action(itemActionFactory.view(
+                                        places.selectedProfile(NameTokens.MESSAGING_SERVER_CLUSTERING)
+                                                .with(SERVER, server)
+                                                .build()))
+                                .onPreview(new PreviewContent<>(Names.CLUSTERING,
+                                        resources.previews().configurationMessagingClustering()))
+                                .build());
 
-                    } else {
-                        Property child = children.get(0);
-                        HaPolicy haPolicy = HaPolicy.fromResourceName(child.getName());
-                        builder.action(itemActionFactory.view(
-                                places.selectedProfile(NameTokens.MESSAGING_SERVER_HA_POLICY)
-                                        .with(SERVER, server)
-                                        .build()))
-                                .action(resources.constants().remove(),
-                                        item -> removeHaPolicy(serverStatementContext, haPolicy))
-                                .onPreview(new HaPolicyPreview(haPolicy, child.getValue()));
-                    }
-                    items.add(builder.build());
+                        StaticItem.Builder builder = new StaticItem.Builder(Names.HA_POLICY)
+                                .id(Ids.MESSAGING_SERVER_HA_POLICY);
+                        if (children.isEmpty()) {
+                            builder.action(resources.constants().add(), item -> addHaPolicy(serverStatementContext))
+                                    .action(itemActionFactory.view(
+                                            places.selectedProfile(NameTokens.MESSAGING_SERVER_HA_POLICY)
+                                                    .with(SERVER, server)
+                                                    .build()))
+                                    .onPreview(new PreviewContent<>(Names.HA_POLICY,
+                                            resources.previews().configurationMessagingHaPolicy()));
 
-                    resolve.onInvoke(items);
-                });
+                        } else {
+                            Property child = children.get(0);
+                            HaPolicy haPolicy = HaPolicy.fromResourceName(child.getName());
+                            builder.action(itemActionFactory.view(
+                                    places.selectedProfile(NameTokens.MESSAGING_SERVER_HA_POLICY)
+                                            .with(SERVER, server)
+                                            .build()))
+                                    .action(resources.constants().remove(),
+                                            item -> removeHaPolicy(serverStatementContext, haPolicy))
+                                    .onPreview(new HaPolicyPreview(haPolicy, child.getValue()));
+                        }
+                        items.add(builder.build());
 
-            } else {
-                resolve.onInvoke(items);
-            }
-        }));
+                        resolve.onInvoke(items);
+                    });
+                }), Ids.MESSAGING_SERVER_CONFIGURATION));
     }
 
     private void addHaPolicy(StatementContext statementContext) {
