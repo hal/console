@@ -22,9 +22,9 @@ import javax.inject.Inject;
 
 import org.jboss.hal.ballroom.dialog.DialogFactory;
 import org.jboss.hal.core.finder.ColumnActionFactory;
+import org.jboss.hal.core.finder.DependentItemsProvider;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
-import org.jboss.hal.core.finder.FinderSegment;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemDisplay;
 import org.jboss.hal.dmr.Composite;
@@ -47,8 +47,6 @@ import org.jboss.hal.spi.Requires;
 import com.google.web.bindery.event.shared.EventBus;
 
 import elemental2.promise.Promise;
-
-import static java.util.Collections.emptyList;
 
 import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.AJP_LISTENER_ADDRESS;
 import static org.jboss.hal.client.runtime.subsystem.undertow.AddressTemplates.AJP_LISTENER_TEMPLATE;
@@ -87,58 +85,54 @@ public class ListenerColumn extends FinderColumn<NamedNode> {
 
         super(new Builder<NamedNode>(finder, Ids.UNDERTOW_RUNTIME_LISTENER, Names.LISTENER)
                 .columnAction(columnActionFactory.refresh(Ids.UNDERTOW_LISTENER_REFRESH))
-                .itemsProvider(context -> {
-                    // extract server name from the finder path
-                    FinderSegment<?> segment = context.getPath().findColumn(Ids.UNDERTOW_RUNTIME_SERVER);
-                    if (segment != null) {
-                        String server = Ids.extractUndertowServer(segment.getItemId());
-                        ResourceAddress address = WEB_SERVER_TEMPLATE.resolve(statementContext, server);
+                .itemsProvider(new DependentItemsProvider<NamedNode>(
+                        parentNames -> {
+                            String server = parentNames[0];
+                            ResourceAddress address = WEB_SERVER_TEMPLATE.resolve(statementContext, server);
 
-                        Operation opAjp = new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
-                                .param(CHILD_TYPE, AJP_LISTENER)
-                                .param(INCLUDE_RUNTIME, true)
-                                .build();
-                        Operation opHttp = new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
-                                .param(CHILD_TYPE, HTTP_LISTENER)
-                                .param(INCLUDE_RUNTIME, true)
-                                .build();
-                        Operation opHttps = new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
-                                .param(CHILD_TYPE, HTTPS_LISTENER)
-                                .param(INCLUDE_RUNTIME, true)
-                                .build();
+                            Operation opAjp = new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
+                                    .param(CHILD_TYPE, AJP_LISTENER)
+                                    .param(INCLUDE_RUNTIME, true)
+                                    .build();
+                            Operation opHttp = new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
+                                    .param(CHILD_TYPE, HTTP_LISTENER)
+                                    .param(INCLUDE_RUNTIME, true)
+                                    .build();
+                            Operation opHttps = new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
+                                    .param(CHILD_TYPE, HTTPS_LISTENER)
+                                    .param(INCLUDE_RUNTIME, true)
+                                    .build();
 
-                        return dispatcher.execute(new Composite(opAjp, opHttp, opHttps)).then(result -> {
+                            return dispatcher.execute(new Composite(opAjp, opHttp, opHttps)).then(result -> {
 
-                            List<Property> ajpProps = result.step(0).get(RESULT).asPropertyList();
-                            List<Property> httpProps = result.step(1).get(RESULT).asPropertyList();
-                            List<Property> httpsProps = result.step(2).get(RESULT).asPropertyList();
-                            // add the listener type and undertow server to the result, because the preview pane
-                            // contains a link to refresh the values, that it call a :read-resource operation
-                            // and the listener-type and undertow server is part of the resource address.
-                            ajpProps.forEach(p -> {
-                                p.getValue().get(HAL_LISTENER_TYPE).set(AJP_LISTENER);
-                                p.getValue().get(HAL_WEB_SERVER).set(server);
+                                List<Property> ajpProps = result.step(0).get(RESULT).asPropertyList();
+                                List<Property> httpProps = result.step(1).get(RESULT).asPropertyList();
+                                List<Property> httpsProps = result.step(2).get(RESULT).asPropertyList();
+                                // add the listener type and undertow server to the result, because the preview pane
+                                // contains a link to refresh the values, that it call a :read-resource operation
+                                // and the listener-type and undertow server is part of the resource address.
+                                ajpProps.forEach(p -> {
+                                    p.getValue().get(HAL_LISTENER_TYPE).set(AJP_LISTENER);
+                                    p.getValue().get(HAL_WEB_SERVER).set(server);
+                                });
+                                httpProps.forEach(p -> {
+                                    p.getValue().get(HAL_LISTENER_TYPE).set(HTTP_LISTENER);
+                                    p.getValue().get(HAL_WEB_SERVER).set(server);
+                                });
+                                httpsProps.forEach(p -> {
+                                    p.getValue().get(HAL_LISTENER_TYPE).set(HTTPS_LISTENER);
+                                    p.getValue().get(HAL_WEB_SERVER).set(server);
+                                });
+
+                                List<NamedNode> listeners = new ArrayList<>();
+                                listeners.addAll(asNamedNodes(ajpProps));
+                                listeners.addAll(asNamedNodes(httpProps));
+                                listeners.addAll(asNamedNodes(httpsProps));
+
+                                return Promise.resolve(listeners);
                             });
-                            httpProps.forEach(p -> {
-                                p.getValue().get(HAL_LISTENER_TYPE).set(HTTP_LISTENER);
-                                p.getValue().get(HAL_WEB_SERVER).set(server);
-                            });
-                            httpsProps.forEach(p -> {
-                                p.getValue().get(HAL_LISTENER_TYPE).set(HTTPS_LISTENER);
-                                p.getValue().get(HAL_WEB_SERVER).set(server);
-                            });
-
-                            List<NamedNode> listeners = new ArrayList<>();
-                            listeners.addAll(asNamedNodes(ajpProps));
-                            listeners.addAll(asNamedNodes(httpProps));
-                            listeners.addAll(asNamedNodes(httpsProps));
-
-                            return Promise.resolve(listeners);
-                        });
-                    } else {
-                        return Promise.resolve(emptyList());
-                    }
-                })
+                        },
+                        Ids.UNDERTOW_RUNTIME_SERVER))
                 .onPreview(server -> new ListenerPreview(dispatcher, statementContext, resources, server)));
         this.dispatcher = dispatcher;
         this.resources = resources;

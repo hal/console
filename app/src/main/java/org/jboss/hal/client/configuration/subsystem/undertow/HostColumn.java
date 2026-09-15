@@ -22,9 +22,9 @@ import javax.inject.Inject;
 
 import org.jboss.hal.core.CrudOperations;
 import org.jboss.hal.core.finder.ColumnActionFactory;
+import org.jboss.hal.core.finder.DependentItemsProvider;
 import org.jboss.hal.core.finder.Finder;
 import org.jboss.hal.core.finder.FinderColumn;
-import org.jboss.hal.core.finder.FinderSegment;
 import org.jboss.hal.core.finder.ItemAction;
 import org.jboss.hal.core.finder.ItemActionFactory;
 import org.jboss.hal.core.finder.ItemDisplay;
@@ -149,10 +149,6 @@ public class HostColumn extends FinderColumn<NamedNode> {
     }
 
     private String findServer() {
-        FinderSegment<?> segment = getFinder().getContext().getPath().findColumn(Ids.UNDERTOW_SERVER);
-        if (segment != null) {
-            return Ids.extractUndertowServer(segment.getItemId());
-        }
-        return null;
+        return DependentItemsProvider.resolver(Ids.UNDERTOW_SERVER, getFinder().getContext().getPath()).getName();
     }
 }
