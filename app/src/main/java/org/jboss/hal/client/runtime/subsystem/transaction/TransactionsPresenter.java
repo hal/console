@@ -45,9 +45,10 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import static org.jboss.hal.client.runtime.subsystem.transaction.AddressTemplates.LOGSTORE_RUNTIME_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.transaction.AddressTemplates.TRANSACTIONS_LOGSTORE_RUNTIME_TEMPLATE;
 import static org.jboss.hal.client.runtime.subsystem.transaction.AddressTemplates.TRANSACTION_RUNTIME_ADDRESS;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.CHILD_TYPE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.INCLUDE_RUNTIME;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.PROBE_OPERATION;
-import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_RESOURCE_OPERATION;
+import static org.jboss.hal.dmr.ModelDescriptionConstants.READ_CHILDREN_RESOURCES_OPERATION;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.RECURSIVE;
 import static org.jboss.hal.dmr.ModelDescriptionConstants.TRANSACTIONS;
 import static org.jboss.hal.dmr.ModelNodeHelper.asNamedNodes;
@@ -97,14 +98,13 @@ public class TransactionsPresenter
 
     @Override
     protected void reload() {
-        ResourceAddress address = TRANSACTIONS_LOGSTORE_RUNTIME_TEMPLATE.resolve(statementContext);
-        Operation operation = new Operation.Builder(address, READ_RESOURCE_OPERATION)
+        ResourceAddress address = LOGSTORE_RUNTIME_TEMPLATE.resolve(statementContext);
+        Operation operation = new Operation.Builder(address, READ_CHILDREN_RESOURCES_OPERATION)
+                .param(CHILD_TYPE, TRANSACTIONS)
                 .param(INCLUDE_RUNTIME, true)
                 .param(RECURSIVE, true)
                 .build();
-        dispatcher.execute(operation, result -> {
-            getView().update(asNamedNodes(result.asPropertyList()));
-        });
+        dispatcher.execute(operation, result -> getView().update(asNamedNodes(result.asPropertyList())));
     }
 
     void probe() {
