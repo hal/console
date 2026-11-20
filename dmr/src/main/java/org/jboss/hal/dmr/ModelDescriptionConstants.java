@@ -672,7 +672,7 @@ public interface ModelDescriptionConstants {
     String OVERRIDE_ALL = "override-all";
     String OVERRIDE_MODULE = "override-modules";
     String PARAMS = "params";
-    String PARTICIPANTS = "partitcipants";
+    String PARTICIPANTS = "participants";
     String PARTITION_HANDLING = "partition-handling";
     String PASSIVATED_COUNT = "passivated-count";
     String PASSIVATION_STORE = "passivation-store";
