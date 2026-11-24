@@ -8,6 +8,7 @@ on:
 jobs:
   snapshot:
     name: Deploy Snapshot
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     env:
       MVN: ./mvnw --show-version --batch-mode --no-transfer-progress
@@ -21,7 +22,7 @@ jobs:
           server-id: central
           server-username: CENTRAL_USERNAME
           server-password: CENTRAL_PASSWORD
-      - run: $MVN deploy -DskipTests -P prod
+      - run: $MVN deploy -DskipTests -P prod -Dmaven.repository.credentialScope=id
         env:
           CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
           CENTRAL_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
