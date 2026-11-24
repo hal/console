@@ -115,12 +115,12 @@ public class TransactionsView extends HalViewImpl implements TransactionsPresent
 
         initElement(row()
                 .add(column()
-                        .addAll(section, sectionParticipants)));
+                        .add(pages)));
     }
 
     private void showParticipants(NamedNode transactionNode) {
         selectedTx = transactionNode.getName();
-        List<NamedNode> participants = asNamedNodes(transactionNode.asPropertyList());
+        List<NamedNode> participants = asNamedNodes(transactionNode.get(PARTICIPANTS).asPropertyList());
         participantsForm.clear();
         participantsTable.update(participants);
         pages.showPage(Ids.TRANSACTION_PARTICIPANTS_PAGE);
